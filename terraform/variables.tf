@@ -33,4 +33,14 @@ variable "production_branch" {
   default     = "main"
 }
 
+variable "allowed_emails" {
+  description = "Comma-separated list of email addresses allowed via Email OTP"
+  type        = string
+  default     = "fake@example.com"
+}
+
+locals {
+  email_list = split(",", var.allowed_emails)
+}
+
 
