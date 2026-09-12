@@ -1,10 +1,10 @@
 ---
-status: draft
+status: accepted
 title: "Infrastructure & Deployment Architecture"
 author: "sdelrio"
 date: "2026-09-12"
 tags: [infrastructure, deployment, ci-cd, cloudflare, security, terraform]
-affects: [wrangler.toml, terraform/, package.json]
+affects: [wrangler.jsonc, terraform/, package.json]
 adr_constraints: []
 ---
 
@@ -97,7 +97,7 @@ When ready to migrate from `*.pages.dev` to `dnd-companion.lorien.cloud`:
 - `terraform/variables.tf` — Input variables (allowed emails, domain, etc.)
 - `terraform/terraform.tfvars` — Variable values (gitignored)
 - `terraform/.gitignore` — Exclude state files and tfvars
-- `wrangler.toml` — Optional Wrangler config for local dev / manual deployments
+- `wrangler.jsonc` — Optional Wrangler config for local dev / manual deployments
 
 ## ADR Constraints
 
@@ -119,6 +119,6 @@ No existing ADRs constrain this implementation.
 
 ## Status
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] ADR updated (if new decision made)
+- [x] Implementation complete
+- [x] Tests passing
+- [x] ADR updated (if new decision made)
