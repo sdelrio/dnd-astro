@@ -27,3 +27,16 @@ Consult these guides before working on related tasks:
 - Index: `agent-docs/adr/README.md`
 - Format: MADR with YAML front matter
 - Only `accepted` ADRs are binding. Check status before relying on a decision.
+
+## Spec-Driven Development
+
+Before implementing any feature:
+
+1. Read `agent-docs/specs/README.md` to find a relevant spec.
+2. Match your task to specs via **tags** and **description** — only load the relevant spec.
+3. Read the ADRs listed in `adr_constraints` front matter.
+4. Implement per the spec's implementation plan.
+5. If a new architectural decision was made, draft an ADR and update the index.
+6. When done, set spec `status: archived`. Do not delete the folder.
+
+Template: `agent-docs/specs/_TEMPLATE.md`
