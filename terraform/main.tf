@@ -60,6 +60,6 @@ resource "cloudflare_zero_trust_access_policy" "email_otp" {
   decision   = "allow"
 
   include {
-    email = var.allowed_emails
+    email = local.email_list
   }
 }
