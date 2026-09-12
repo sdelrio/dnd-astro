@@ -22,7 +22,7 @@ The project needs a secure, zero-server deployment pipeline that gates access to
 
 - Zero Node.js server in production (static assets only)
 - Git-synced deployment from private GitHub repository to Cloudflare Pages
-- Edge-gated access via Cloudflare Zero Trust Email OTP (up to 50 emails)
+- Edge-gated access via Cloudflare Zero Trust Email OTP (6 allowed emails, built-in provider)
 - Infrastructure as Code via Terraform with fallback to Cloudflare dashboard
 - Support initial `*.pages.dev` deployment with migration path to `dnd-companion.lorien.cloud`
 
@@ -67,14 +67,14 @@ Create an Access application and policy to gate the entire `.pages.dev` deployme
 **Terraform:**
 - Define `cloudflare_zero_trust_access_application` for the Pages domain
 - Define `cloudflare_zero_trust_access_policy` with Email OTP provider
-- Configure allowed email list (up to 50 emails)
+- Configure allowed email list (6 emails, Cloudflare built-in Email OTP)
 
 **Dashboard fallback:**
 1. Go to Cloudflare Zero Trust → Access → Applications
 2. Add application for `*.pages.dev` domain
 3. Create Access policy:
    - Provider: Email OTP
-   - Add allowed email addresses (up to 50)
+   - Add allowed email addresses (6 emails, built-in provider)
 4. Enable policy for the application
 
 ### Step 4: Domain Migration (Future)
