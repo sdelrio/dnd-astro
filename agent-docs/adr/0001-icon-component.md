@@ -1,34 +1,46 @@
-# ADR 0001: Icon Component Strategy
+---
+status: accepted
+date: 2026-08-15
+supersedes: null
+superseded_by: null
+tags: [icons, performance, astro-components]
+---
 
-## Status
-Accepted
+# ADR-0001: Icon Component Strategy
 
-## Context
+## Context and Problem Statement
+
 Starlight documentation pages need to render decorative icons from the [Iconify](https://icon-sets.iconify.design/) ecosystem (e.g. `game-icons:*` sets). The original implementation used `@iconify/react`, a React component, directly inside MDX files. This caused a `NoMatchingRenderer` build error because Astro's MDX integration had no React renderer configured for those pages.
 
-Two approaches were evaluated:
+How should we render Iconify icons in MDX documentation pages without shipping unnecessary client-side JavaScript?
 
-### Option A: Pure Astro Component (Server-Rendered)
-Create a lightweight Astro component (`src/components/IconifyIcon.astro`) that fetches SVGs from the Iconify API at build time and renders them as inline HTML. Zero client-side JavaScript is shipped.
+## Decision Drivers
 
-### Option B: React Island
-Add the `react()` integration to `astro.config.mjs` and wrap each icon usage in a `client:load` React island. This bundles the React runtime (~40KB) into every page that uses icons.
+- Align with SPEC.md Section 3 "Rule of Least Client-Side JavaScript"
+- Minimize client-side JavaScript payload
+- Keep React reserved for the three defined interactive islands (Dice Roller, Feat Matrix, XML Viewer)
+- Provide a simple developer experience for documentation authors
 
-## Decision
-**Option A** — Use `src/components/IconifyIcon.astro`.
+## Considered Options
 
-## Rationale
-* Aligns with SPEC.md Section 3 "Rule of Least Client-Side JavaScript": decorative icons are purely visual with no interactivity, so shipping a React runtime is unnecessary overhead.
-* React must be reserved for the three defined islands (Dice Roller, Feat Matrix, XML Viewer) per SPEC.md Section 3.
-* The Astro component produces identical SVG output at build time with 0 bytes of client JS.
-* No changes to `astro.config.mjs` integrations are required.
+- **Option A: Pure Astro Component (Server-Rendered)** — Create a lightweight Astro component that fetches SVGs from the Iconify API at build time and renders them as inline HTML. Zero client-side JavaScript is shipped.
+- **Option B: React Island** — Add the `react()` integration to `astro.config.mjs` and wrap each icon usage in a `client:load` React island. This bundles the React runtime (~40KB) into every page that uses icons.
 
-## Consequences
-* `src/components/IconifyIcon.astro` is the canonical component for rendering Iconify icons in MDX documentation pages.
-* `@iconify/react` remains in `package.json` but is not used in documentation pages. It may be used within React island components if needed.
-* Icon availability depends on the Iconify API at build time; offline builds will fail to render icons.
+## Decision Outcome
+
+Chosen option: **Option A** — Use `src/components/IconifyIcon.astro`
+
+### Consequences
+
+- Good, because decorative icons are purely visual with no interactivity, so shipping a React runtime is unnecessary overhead.
+- Good, because React is reserved for the three defined islands per SPEC.md Section 3.
+- Good, because the Astro component produces identical SVG output at build time with 0 bytes of client JS.
+- Good, because no changes to `astro.config.mjs` integrations are required.
+- Neutral, because Icon availability depends on the Iconify API at build time; offline builds will fail to render icons.
+- Neutral, because `@iconify/react` remains in `package.json` but is not used in documentation pages. It may be used within React island components if needed.
 
 ## Usage
+
 ```astro
 import IconifyIcon from '../../components/IconifyIcon.astro';
 
@@ -37,6 +49,7 @@ import IconifyIcon from '../../components/IconifyIcon.astro';
 ```
 
 ## Related
-* SPEC.md Section 3: UI/UX Architecture & Framework Distribution
-* SPEC.md Section 3: Rule of Least Client-Side JavaScript
-* SPEC.md Section 4: Repository & File System Conventions
+
+- SPEC.md Section 3: UI/UX Architecture & Framework Distribution
+- SPEC.md Section 3: Rule of Least Client-Side JavaScript
+- SPEC.md Section 4: Repository & File System Conventions
