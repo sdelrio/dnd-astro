@@ -65,8 +65,8 @@ Ensure `NODE_VERSION=24` is set in the Cloudflare Pages project settings (Dashbo
 Create an Access application and policy to gate the entire `.pages.dev` deployment.
 
 **Terraform:**
-- Define `cloudflare_access_application` for the Pages domain
-- Define `cloudflare_access_policy` with Email OTP provider
+- Define `cloudflare_zero_trust_access_application` for the Pages domain
+- Define `cloudflare_zero_trust_access_policy` with Email OTP provider
 - Configure allowed email list (up to 50 emails)
 
 **Dashboard fallback:**
@@ -93,7 +93,7 @@ When ready to migrate from `*.pages.dev` to `dnd-companion.lorien.cloud`:
 
 ## Files to Create/Modify
 
-- `terraform/main.tf` — Cloudflare Pages project, Access application, Access policy
+- `terraform/main.tf` — Cloudflare Pages project, Zero Trust Access application, Access policy
 - `terraform/variables.tf` — Input variables (allowed emails, domain, etc.)
 - `terraform/terraform.tfvars` — Variable values (gitignored)
 - `terraform/.gitignore` — Exclude state files and tfvars
