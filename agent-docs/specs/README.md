@@ -7,6 +7,7 @@ This directory contains feature specifications (specs) for the DnD Companion pro
 | ID | Title | Status | Tags | Affects | Description |
 |----|-------|--------|------|---------|-------------|
 | 001 | Spec-Driven Development Workflow | archived | workflow, docs | `agent-docs/specs/`, `AGENTS.md` | Structured workflow for spec-first development |
+| 002 | Infrastructure & Deployment Architecture | draft | infrastructure, deployment, ci-cd, cloudflare, security, terraform | `wrangler.toml`, `terraform/`, `package.json` | Static Astro on Cloudflare Pages with Zero Trust edge security |
 
 ## About Specs
 
