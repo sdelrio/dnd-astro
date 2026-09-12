@@ -34,8 +34,9 @@ variable "production_branch" {
 }
 
 variable "allowed_emails" {
-  description = "List of email addresses allowed via Email OTP (max 50)"
+  description = "List of email addresses allowed via Email OTP"
   type        = list(string)
+  default     = ["fake@example.com"]
 }
 
 
