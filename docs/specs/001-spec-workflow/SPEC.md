@@ -5,7 +5,7 @@ author: "opencode"
 date: "2026-09-12"
 tags: [workflow, docs, process]
 affects:
-  - agent-docs/specs/
+  - docs/specs/
   - AGENTS.md
 adr_constraints: []
 ---
@@ -37,7 +37,7 @@ We need a structured workflow for agents to follow when implementing features, e
 
 ### Step 1: Create Documentation Structure
 
-Create `agent-docs/specs/` directory with:
+Create `docs/specs/` directory with:
 - `_TEMPLATE.md` — Reusable spec template
 - `001-spec-workflow/SPEC.md` — This spec (the first dogfood)
 
@@ -61,8 +61,8 @@ Add workflow rules to AGENTS.md:
 
 ## Files to Create/Modify
 
-- `agent-docs/specs/_TEMPLATE.md` — Reusable spec template
-- `agent-docs/specs/001-spec-workflow/SPEC.md` — This spec
+- `docs/specs/_TEMPLATE.md` — Reusable spec template
+- `docs/specs/001-spec-workflow/SPEC.md` — This spec
 - `AGENTS.md` — Add workflow rules
 
 ## ADR Constraints
@@ -77,7 +77,7 @@ No ADR constraints for this workflow setup spec.
 
 ## Rollback
 
-Remove `agent-docs/specs/` directory and revert AGENTS.md changes.
+Remove `docs/specs/` directory and revert AGENTS.md changes.
 
 ## Status
 

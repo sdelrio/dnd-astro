@@ -6,7 +6,7 @@ This directory contains feature specifications (specs) for the DnD Companion pro
 
 | ID | Title | Status | Tags | Affects | Description |
 |----|-------|--------|------|---------|-------------|
-| 001 | Spec-Driven Development Workflow | archived | workflow, docs | `agent-docs/specs/`, `AGENTS.md` | Structured workflow for spec-first development |
+| 001 | Spec-Driven Development Workflow | archived | workflow, docs | `docs/specs/`, `AGENTS.md` | Structured workflow for spec-first development |
 | 002 | Infrastructure & Deployment Architecture | draft | infrastructure, deployment, ci-cd, cloudflare, security, terraform | `wrangler.toml`, `terraform/`, `package.json` | Static Astro on Cloudflare Pages with Zero Trust edge security |
 
 ## About Specs
@@ -43,9 +43,9 @@ Specs define implementation plans for features. They capture the problem, goals,
 ### Discovery Workflow
 
 ```
-1. Read agent-docs/specs/README.md (index)
+1. Read docs/specs/README.md (index)
 2. Match task → spec (via description + tags)
-3. Read only agent-docs/specs/NNN-feature/SPEC.md
+3. Read only docs/specs/NNN-feature/SPEC.md
 4. Implement per plan
 5. Archive when done
 ```

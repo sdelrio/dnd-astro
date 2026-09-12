@@ -37,7 +37,7 @@ This project is a high-performance, secure digital compendium for D&D homebrew a
 To optimize performance, JavaScript frameworks must not be universally bundled or loaded on documentation pages. Frameworks must be scoped strictly to individual component instances or specific layout islands.
 
 ### Icon Components (Zero-JS / Static Server Hydration)
-Decorative icons from the Iconify ecosystem must be rendered via `src/components/IconifyIcon.astro`, a pure Astro component that fetches SVGs from the Iconify API at build time. See [ADR 0001](./agent-docs/adr/0001-icon-component.md) for full rationale.
+Decorative icons from the Iconify ecosystem must be rendered via `src/components/IconifyIcon.astro`, a pure Astro component that fetches SVGs from the Iconify API at build time. See [ADR 0001](./docs/adr/0001-icon-component.md) for full rationale.
 
 ```astro
 import IconifyIcon from '../../components/IconifyIcon.astro';
@@ -88,7 +88,7 @@ Agents executing changes in this repository must maintain the following file sys
 
 ```text
 ├── .github/workflows/    # CI Automation (Optional, Cloudflare hooks directly to Git)
-├── agent-docs/
+├── docs/
 │   └── adr/                         # Architecture Decision Records
 ├── src/
 │   ├── assets/
