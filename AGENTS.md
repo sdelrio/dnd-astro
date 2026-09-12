@@ -40,3 +40,19 @@ Before implementing any feature:
 6. When done, set spec `status: archived`. Do not delete the folder.
 
 Template: `docs/specs/_TEMPLATE.md`
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues via `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+**Always** read `docs/agents/issue-tracker.md` before publishing tickets. Use `gh issue create`, never write local `.scratch/` files unless the tracker is explicitly set to local markdown. Publish **all** tickets, including blocked ones — blockers indicate ordering, not whether to create the ticket.
+
+### Triage labels
+
+Default labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context. ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
