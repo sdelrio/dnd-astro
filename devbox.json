@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.1/.schema/devbox.schema.json",
+  "packages": [
+    "github:NixOS/nixpkgs/93108a538f079596c9a16c72cf03e9322782b6dd#nodejs_24",
+    "github:NixOS/nixpkgs/93108a538f079596c9a16c72cf03e9322782b6dd#pnpm"
+  ],
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to devbox!' > /dev/null"
+    ],
+    "scripts": {
+      "test": [
+        "echo \"Error: no test specified\" && exit 1"
+      ],
+      "dev": "pnpm dev",
+      "build": "pnpm build"
+    }
+  },
+  "nixpkgs": {
+    "commit": "93108a538f079596c9a16c72cf03e9322782b6dd"
+  }
+}

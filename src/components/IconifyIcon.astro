@@ -1,0 +1,38 @@
+---
+import { icons as gameIcons } from '@iconify-json/game-icons';
+
+interface Props {
+  icon: string;
+  width?: string;
+  class?: string;
+  label?: string;
+}
+
+const { icon, width = '1em', class: className, label } = Astro.props;
+
+const [prefix, name] = icon.split(':');
+
+const iconSets: Record<string, any> = { 'game-icons': gameIcons };
+
+let svg = '';
+const iconSet = iconSets[prefix];
+const iconData = iconSet?.icons?.[name];
+if (iconData) {
+  const w = iconData.width ?? iconSet.width ?? 512;
+  const h = iconData.height ?? iconSet.height ?? 512;
+  svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">${iconData.body}</svg>`;
+} else {
+  console.error(`Icon not found: ${icon}`);
+}
+
+const a11yAttrs = label
+  ? { 'aria-label': label }
+  : { 'aria-hidden': 'true' };
+---
+
+<Fragment
+  set:html={svg.replace(
+    /<svg/,
+    `<svg width="${width}" height="${width}" class="${className ?? ''}" ${Object.entries(a11yAttrs).map(([k, v]) => `${k}="${v}"`).join(' ')}`
+  )}
+/>
