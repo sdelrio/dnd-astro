@@ -42,3 +42,24 @@ resource "cloudflare_pages_project" "dnd_astro" {
     }
   }
 }
+
+# Zero Trust Access application gating the Pages domain
+resource "cloudflare_zero_trust_access_application" "dnd_astro" {
+  account_id = var.cloudflare_account_id
+  name       = "${var.project_name} Access"
+  domain     = "${var.project_name}.pages.dev"
+  type       = "self_hosted"
+  session_duration = "24h"
+  auto_redirect_to_identity = false
+}
+
+# Access policy: Email OTP for allowed emails
+resource "cloudflare_zero_trust_access_policy" "email_otp" {
+  account_id = var.cloudflare_account_id
+  name       = "Email OTP policy"
+  decision   = "allow"
+
+  include {
+    email = local.email_list
+  }
+}
