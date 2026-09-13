@@ -1,0 +1,1277 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root version="3.1" release="7|CoreRPG:3">
+	<character>
+		<abilities>
+			<charisma>
+				<bonus type="number">0</bonus>
+				<save type="number">0</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">10</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">3</bonus>
+				<save type="number">3</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">16</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">3</bonus>
+				<save type="number">3</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">16</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">15</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">3</bonus>
+				<save type="number">5</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">17</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">3</bonus>
+				<save type="number">5</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">16</score>
+			</wisdom>
+		</abilities>
+		<adventurelist>
+		</adventurelist>
+		<age type="string">29</age>
+		<alignment type="string">Neutral Good</alignment>
+		<appearance type="string">Ojos naranjas, peque&#241;os cortes en la piel como consecuencia del uso del rito de sangre.</appearance>
+		<background type="string">Outlander</background>
+		<backgroundlink type="windowreference">
+			<class>reference_background</class>
+			<recordname>reference.backgrounddata.outlander@DD PHB Deluxe</recordname>
+		</backgroundlink>
+		<bonds type="string">I suffer awful visions of a coming disaster and will do anything to prevent it.</bonds>
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">0</casterlevelinvmult>
+				<casterpactmagic type="number">0</casterpactmagic>
+				<hddie type="dice">d10</hddie>
+				<hdused type="number">1</hdused>
+				<level type="number">3</level>
+				<name type="string">Blood Hunter</name>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>reference.classdata.bloodhunter@Blood Hunter</recordname>
+				</shortcut>
+			</id-00001>
+		</classes>
+		<coins>
+			<slot1>
+				<amount type="number">29</amount>
+				<name type="string">GP</name>
+			</slot1>
+			<slot2>
+				<amount type="number">12</amount>
+				<name type="string">SP</name>
+			</slot2>
+			<slot3>
+				<amount type="number">17</amount>
+				<name type="string">CP</name>
+			</slot3>
+			<slot4>
+				<amount type="number">0</amount>
+			</slot4>
+			<slot5>
+				<amount type="number">0</amount>
+			</slot5>
+			<slot6>
+				<amount type="number">0</amount>
+			</slot6>
+		</coins>
+		<defenses>
+			<ac>
+				<armor type="number">2</armor>
+				<disstealth type="number">0</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">0</shield>
+				<temporary type="number">0</temporary>
+				<total type="number">15</total>
+			</ac>
+		</defenses>
+		<encumbrance>
+			<encumbered type="number">85</encumbered>
+			<encumberedheavy type="number">170</encumberedheavy>
+			<liftpushdrag type="number">510</liftpushdrag>
+			<load type="number">57.6</load>
+			<max type="number">255</max>
+		</encumbrance>
+		<exp type="number">1234</exp>
+		<expneeded type="number">2700</expneeded>
+		<featlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Heavily Armored</name>
+				<prerequisite type="string">Proficiency with medium armor</prerequisite>
+				<text type="formattedtext">
+					<p><i>Prerequisite: Proficiency with medium armor</i></p>
+					<p>You have trained to master the use of heavy armor, gaining the following benefits:</p>
+					<list>
+						<li>Increase your Strength score by 1, to a maximum of 20.</li>
+						<li>You gain proficiency with heavy armor.</li>
+					</list>
+				</text>
+			</id-00001>
+		</featlist>
+		<featurelist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Wanderer</name>
+				<source type="string">Outlander</source>
+				<text type="formattedtext">
+					<p>You have an excellent memory for maps and geography, and you can always recall the general layout of terrain, settlements, and other features around you. In addition, you can find food and fresh water for yourself and up to five other people each day, provided that the land offers berries, small game, water, and so forth.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Hunter's Bane</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>Beginning at lst level, you have survived the imbibing ofthc Hunter's Bane, a poisonous alchemical concoction that alters your life's blood, forever binding you to the darkness and honing your senses against it.</p>
+					<p>You have advantage on Wisdom (Survival) checks to track Fey, fiends, and Undead, as well as on Intelligence checks to recall information about them. If you are actively tracking one of these creature types, you cannot be surprised by any creatures of that type. You can only be tracking one type of creature at a time.</p>
+					<p>Upon reaching 11th level, you can flare the internal toxic scars from the ritual, using the pain to give clarity, or promote anger. You can choose to suffer damage equal to your crimson rite damage die to gain advantage on a Wisdom (Insight) check or Charisma (Intimidation) check.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Crimson Rite</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>At lst level. you learn to invoke a rite of blood magic within your weapon at the cost of your own vitality. Choose to learn one rite from the Primal Rites listed below. You cannot change this choice.</p>
+					<p>As a bonus action. you imbue a single weapon with the elemental energy of a known rite for up to 8 hours. While active, attacks from this weapon deal an additional 1d4 rite damage of the chosen elemental type. Rite damage is considered magical. The rite damage die changes as you gain blood hunter levels, as shown in the crimson rite damage die column of the blood hunter table. Should your weapon leave your grip, the rite fades immediately. An active rite on a weapon thrown fades directly after the attack is completed.</p>
+					<p>When a crimson rite is activated, it reduces your maximum hit points by a number equal to your character level. These lost maximum hit points return once the rite fades and cannot be restored by other means. When a rite fades, no hit points are regained as part of the restoration of maximum hit points.</p>
+					<p>Crimson rite can be used on multiple weapons. costing additional hit point loss. Most weapons can only be subject to a single rite at any given time. Each end of a polearm or quarterstaff is treated as a seperate weapon for the purposes of this feature. A rite can be allowed to fade at any time with no action required.</p>
+					<p>You gain access to an additional Primal Rite at 6th level and 11th level. You can choose to learn one Esoteric Rite from the list below at 14th level.</p>
+					<p><b>Primal Rites</b></p>
+					<p>Choose from the following:</p>
+					<list>
+						<li><b>Rite of the Flame: </b>Your rite damage is fire type.</li>
+						<li><b>Rite of the Frozen: </b>Your rite damage is cold type.</li>
+						<li><b>Rite of the Storm: </b>Your rite damage is lightning type.</li>
+					</list>
+					<p><b>Esoteric Rites</b></p>
+					<p>Choose from the following:</p>
+					<list>
+						<li><b>Rite of the Roar: </b>Your rite damage is thunder type.</li>
+						<li><b>Rite of the Oracle: </b>Your rite damage is psychic type.</li>
+						<li><b>Rite of the Dead: </b>Your rite damage is necrotic type.</li>
+					</list>
+				</text>
+			</id-00003>
+			<id-00004>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Fighting Style (Dueling)</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p><b>fighting Style</b></p>
+					<p>At 2nd level, you adopt a style of fighting as your specialty. Choose one of the following options. You can't take a fighting Style option more than once. even if you later get to choose again.</p>
+					<p><b>Archery</b></p>
+					<p>You gain a +2 bonus to attack rolls you make with ranged weapons.</p>
+					<p><b>Dueling</b></p>
+					<p>When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.</p>
+					<p><b>Great Weapon Fighting</b></p>
+					<p>When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll. The weapon must have the two~handed or versatile property for you to gain this benfit.</p>
+					<p><b>Two-Weapon Fighting</b></p>
+					<p>When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.</p>
+				</text>
+			</id-00004>
+			<id-00005>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Order of the Profane Soul</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>The magics adopted by the wayward blood hunter prove formidable against many an evil across the realm. However, the darkest of abominations draw from an ancient well of cruel, unfathomable power. These terrors can control shadows to do their bidding, hide in plain sight among the noblest of nobles, and bend the minds of the most stalwart warrior with but a glance. These fiends were far trickier to hunt, and many lost their lives in pursuit of such wickedness.</p>
+					<p>A small sect of blood hunters had finaly had enough and delved into this same well of corrupting arcane knowledge, making pacts with lesser evils to better combat the greater. While they may have lost a part of themselves, the power gained far outwelghted the price, for even devils now quake when they know they've the attention of the Order of the Profane Soul.</p>
+					<h>Features</h>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.otherworldpatron3@Blood Hunter">Otherworld Patron</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.ritefocus3@Blood Hunter">Rite Focus</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.mysticfrenzy7@Blood Hunter">Mystic Frenzy</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.revealedarcana7@Blood Hunter">Revealed Arcana</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.diabolicchannel11@Blood Hunter">Diabolic Channel</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.unsealedarcana15@Blood Hunter">Unsealed Arcana</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.soulsyphon18@Blood Hunter">Soul Syphon</link>
+					</linklist>
+				</text>
+			</id-00005>
+			<id-00006>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Rite Focus</name>
+				<source type="string">Blood Hunter</source>
+				<specialization type="string">Order of the Profane Soul</specialization>
+				<text type="formattedtext">
+					<p>At 3rd level, your weapon becomes a core to your pact with your chosen dark patron. You can use your weapon as a spellcasting focus (found in chapter 5, phb) for your warlock spells. Your chosen pact also enhances your rite (outlined below).</p>
+					<p><b>The Archfey. </b>If you deal rite damage to a creature, that creature loses any half or three-quarters cover bonuses, as well as invisibility, until the beginning of your next turn.</p>
+					<p><b>The Fiend. </b>While using the Kite of the Flame, if you roll a 1 on your rite damage die, you may reroll the die. You may do this reroll only once per attack.</p>
+					<p><b>The Great Old One. </b>Whenever you deal a critical hit to a creature, that creature must make a Wisdom saving throw against your spell save DC, On a failure, the creature is frightened of you until the end of your next turn.</p>
+					<p><b>The Undying. </b>Whenever you reduce a hostile creature to 0 hit points, and kill it, you regain hit points equal to your crimson rite damage die.</p>
+				</text>
+			</id-00006>
+			<id-00007>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Otherworld Patron: Fiend (Graz'zt)</name>
+				<source type="string">Blood Hunter</source>
+				<specialization type="string">Order of the Profane Soul</specialization>
+				<text type="formattedtext">
+					<p>When you reach 3rd level, you strike a bargan with an other worldy being of your choice; the Archfey, the Fiend, or the Great Old One, each detailed on page 109 of the PHB, or the Undying on page 139 of the Sword Coast Adventurer's Guide, Your choice augments some of your order features.</p>
+					<p><b>Pact Magic</b></p>
+					<p>When you reach 3rd level, you can augment your combat techniques with the ability to cast Warlock spells. See chapter 10 (phb) for the general rules of spellcasting and chapter 11 (phb) for the Warlock spell list.</p>
+					<p><b>Cantrips</b></p>
+					<p>You learn two can trips of your choice from the warlock spell list. You learn an additional warlock cantrip of your choice at 10th level.</p>
+					<p><b>Spell Slots</b></p>
+					<p>The Profane Soul Spellcasting table shows how many spell slots you have. The table also shows what the level of those slots is; all of your spell slots are the same level. To cast one of your warlock spells of 1st level or higher, you must expend a spell slot. You regain all expended spell slots when you finish a short or long rest.</p>
+					<p>For example, when you are 8th level, you have two 2nd-level spell slots. To cast the 1st-level spell thunderwave, you must spend one of those slots, and you cast it as a 2nd-level spell.</p>
+					<p><b>Spells Known of 1st Level and Higher</b></p>
+					<p>At 3rd level, you know two 1st-level spells of your choice from the warlock spell list.</p>
+					<p>The Spells Known column of the Profane Soul table shows when you learn more warlock spells of your choice of 1st level and higher. A spell you choose must be of a level no higher than what's shown in the table's Slot Level column for your level. When you reach 11th level, for example, you learn a new warlock spell, which can be 1st, 2nd, or 3rd level.</p>
+					<p>Additionally, when you gain a level in this class and Order, you can choose one of the warlock spells you know and replace is with another spell from the warlock spell list, which also must be of a level for which you have spell slots.</p>
+					<p><b>Spellcasting Ability</b></p>
+					<p>Wisdom is your spellcasting ability for your warlock spells, so you use your Wisdom whenever a spell refers to your spellcasting ability. In addition, you use your 'Wisdom modifier when setting the saving throw DC for a warlock spell you cast and when making an attack roll with one.</p>
+					<p><b>Spell save DC </b>= 8 + your proficiency bonus + your Wisdom modifier</p>
+					<p><b>Spell attack modifier </b>= your proficiency bonus + your Wisdom modifier</p>
+					<table>
+						<tr>
+							<td><b>Blood Hunter Level</b></td>
+							<td><b>Cantrips Known</b></td>
+							<td><b>Spells Known</b></td>
+							<td><b>Spell Slots</b></td>
+							<td><b>Slot Level</b></td>
+						</tr>
+						<tr>
+							<td>3rd</td>
+							<td>2</td>
+							<td>2</td>
+							<td>1</td>
+							<td>1st</td>
+						</tr>
+						<tr>
+							<td>4th</td>
+							<td>2</td>
+							<td>2</td>
+							<td>1</td>
+							<td>1st</td>
+						</tr>
+						<tr>
+							<td>5th</td>
+							<td>2</td>
+							<td>3</td>
+							<td>2</td>
+							<td>1st</td>
+						</tr>
+						<tr>
+							<td>6th</td>
+							<td>2</td>
+							<td>3</td>
+							<td>2</td>
+							<td>1st</td>
+						</tr>
+						<tr>
+							<td>7th</td>
+							<td>2</td>
+							<td>4</td>
+							<td>2</td>
+							<td>2ns</td>
+						</tr>
+						<tr>
+							<td>8th</td>
+							<td>2</td>
+							<td>4</td>
+							<td>2</td>
+							<td>2nd</td>
+						</tr>
+						<tr>
+							<td>9th</td>
+							<td>2</td>
+							<td>5</td>
+							<td>2</td>
+							<td>2nd</td>
+						</tr>
+						<tr>
+							<td>10th</td>
+							<td>3</td>
+							<td>5</td>
+							<td>2</td>
+							<td>2nd</td>
+						</tr>
+						<tr>
+							<td>11th</td>
+							<td>3</td>
+							<td>6</td>
+							<td>2</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>12th</td>
+							<td>3</td>
+							<td>6</td>
+							<td>2</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>13th</td>
+							<td>3</td>
+							<td>7</td>
+							<td>2</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>14th</td>
+							<td>3</td>
+							<td>7</td>
+							<td>3</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>15th</td>
+							<td>3</td>
+							<td>8</td>
+							<td>3</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>16th</td>
+							<td>3</td>
+							<td>8</td>
+							<td>3</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>17th</td>
+							<td>3</td>
+							<td>9</td>
+							<td>3</td>
+							<td>4th</td>
+						</tr>
+						<tr>
+							<td>18th</td>
+							<td>3</td>
+							<td>9</td>
+							<td>3</td>
+							<td>4th</td>
+						</tr>
+						<tr>
+							<td>19th</td>
+							<td>3</td>
+							<td>10</td>
+							<td>3</td>
+							<td>4th</td>
+						</tr>
+						<tr>
+							<td>20th</td>
+							<td>3</td>
+							<td>11</td>
+							<td>3</td>
+							<td>4th</td>
+						</tr>
+					</table>
+				</text>
+			</id-00007>
+		</featurelist>
+		<flaws type="string">I feel the thrill of the hunt, once I am commited to slay a monstruosity, I can't stop till it's done.</flaws>
+		<gender type="string">Male</gender>
+		<height type="string">5' 7''</height>
+		<hp>
+			<deathsavefail type="number">3</deathsavefail>
+			<deathsavesuccess type="number">2</deathsavesuccess>
+			<hdmod type="number">0</hdmod>
+			<temporary type="number">0</temporary>
+			<total type="number">28</total>
+			<wounds type="number">28</wounds>
+		</hp>
+		<ideals type="string">Nature. The natural balance is more important than all the constructs of civilization</ideals>
+		<initiative>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">3</total>
+		</initiative>
+		<inspiration type="number">1</inspiration>
+		<inventorylist>
+			<id-00001>
+				<carried type="number">1</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Backpack</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">3</weight>
+			</id-00001>
+			<id-00002>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">2</count>
+				<damage type="string">1d6 piercing</damage>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Javelin</name>
+				<properties type="string">Thrown (range 30/120)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">2</weight>
+			</id-00002>
+			<id-00004>
+				<carried type="number">1</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d4 piercing</damage>
+				<isidentified type="number">1</isidentified>
+				<location type="string">belt</location>
+				<locked type="number">1</locked>
+				<name type="string">Dagger</name>
+				<properties type="string">Finesse, light, thrown (range 20/60)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">1</weight>
+			</id-00004>
+			<id-00005>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Drinking this potion removes 1 exhaustion level you are suffering</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<location type="string">Backpack</location>
+				<locked type="number">1</locked>
+				<name type="string">Lesser Potion of Vitality</name>
+				<nonid_name type="string">A potion</nonid_name>
+				<nonidentified type="string">A milky white potion</nonidentified>
+				<type type="string">Potion</type>
+				<weight type="number">0.05</weight>
+			</id-00005>
+			<id-00006>
+				<carried type="number">1</carried>
+				<cost type="string">15 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d8 slashing</damage>
+				<isidentified type="number">1</isidentified>
+				<location type="string">belt</location>
+				<locked type="number">1</locked>
+				<name type="string">Longsword</name>
+				<properties type="string">Versatile (1d10)</properties>
+				<subtype type="string">Martial Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">3</weight>
+			</id-00006>
+			<id-00007>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>When you drink this potion, you regain 2d4 + 2 hit points.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<location type="string">backpack</location>
+				<locked type="number">1</locked>
+				<name type="string">Potion of Healing</name>
+				<nonid_name type="string">A potion</nonid_name>
+				<type type="string">Potion</type>
+				<weight type="number">0.05</weight>
+			</id-00007>
+			<id-00008>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A quiver can hold up to 20 arrows.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<location type="string">back</location>
+				<locked type="number">1</locked>
+				<name type="string">Quiver</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00008>
+			<id-00009>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<location type="string">Quiver</location>
+				<locked type="number">1</locked>
+				<name type="string">Arrows (20)</name>
+				<subtype type="string">Ammunition</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00009>
+			<id-00010>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A spell scroll bears the words of a single spell, written in a mystical cipher. If the spell is on your class's spell list, you can use an action to read the scroll and cast its spell without having to provide any of the spell's components. Otherwise, the scroll is unintelligible.</p>
+					<p>If the spell is on your class's spell list but of a higher level than you can normally cast, you must make an ability check using your spellcasting ability to determine whether you cast it successfully. The DC equals 10+ the spell's level. On a failed check, the spell disappears from the scroll with no other effect.</p>
+					<p>Once the spell is cast, the words on the scroll fade, and the scroll itself crumbles to dust.</p>
+				</description>
+				<isidentified type="number">0</isidentified>
+				<istemplate type="number">0</istemplate>
+				<location type="string">backpack</location>
+				<locked type="number">1</locked>
+				<name type="string">Scroll of See Invisibility</name>
+				<nonid_name type="string">Scroll</nonid_name>
+				<nonidentified type="string">An arcane scroll</nonidentified>
+				<type type="string">Scroll</type>
+				<weight type="number">0</weight>
+			</id-00010>
+			<id-00011>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A spell scroll bears the words of a single spell, written in a mystical cipher. If the spell is on your class's spell list, you can use an action to read the scroll and cast its spell without having to provide any of the spell's components. Otherwise, the scroll is unintelligible.</p>
+					<p>If the spell is on your class's spell list but of a higher level than you can normally cast, you must make an ability check using your spellcasting ability to determine whether you cast it successfully. The DC equals 10+ the spell's level. On a failed check, the spell disappears from the scroll with no other effect.</p>
+					<p>Once the spell is cast, the words on the scroll fade, and the scroll itself crumbles to dust.</p>
+				</description>
+				<isidentified type="number">0</isidentified>
+				<istemplate type="number">0</istemplate>
+				<location type="string">backpack</location>
+				<locked type="number">1</locked>
+				<name type="string">Scroll of Sending</name>
+				<nonid_name type="string">Scroll</nonid_name>
+				<nonidentified type="string">An arcane scroll</nonidentified>
+				<type type="string">Scroll</type>
+				<weight type="number">0</weight>
+			</id-00011>
+			<id-00012>
+				<ac type="number">2</ac>
+				<carried type="number">1</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your Armor Class by 2. You can benefit from only one shield at a time.</p>
+				</description>
+				<dexbonus type="string">-</dexbonus>
+				<isidentified type="number">1</isidentified>
+				<location type="string">back</location>
+				<locked type="number">1</locked>
+				<name type="string">Shield</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Shield</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">6</weight>
+			</id-00012>
+			<id-00013>
+				<carried type="number">1</carried>
+				<cost type="string">25 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d6 piercing</damage>
+				<isidentified type="number">1</isidentified>
+				<location type="string">back</location>
+				<locked type="number">1</locked>
+				<name type="string">Shortbow</name>
+				<properties type="string">Ammunition (range 80/320), two-handed</properties>
+				<subtype type="string">Simple Ranged Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">2</weight>
+			</id-00013>
+			<id-00014>
+				<ac type="number">12</ac>
+				<carried type="number">1</carried>
+				<cost type="string">45 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Made from supple and thin materials, light armor favors agile adventurers since it offers some protection without sacrificing mobility. If you wear light armor, you add your Dexterity modifier to the base number from your armor type to determine your Armor Class.</p>
+					<p>Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.</p>
+				</description>
+				<dexbonus type="string">Yes</dexbonus>
+				<isidentified type="number">1</isidentified>
+				<location type="string">chest</location>
+				<locked type="number">1</locked>
+				<name type="string">Studded Leather</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Light Armor</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">13</weight>
+			</id-00014>
+			<id-00015>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<location type="string">backpack</location>
+				<locked type="number">1</locked>
+				<name type="string">Tubo de pergaminos</name>
+				<weight type="number">0.5</weight>
+			</id-00015>
+			<id-00017>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<location type="string">backpack</location>
+				<locked type="number">1</locked>
+				<name type="string">Bedroll</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">4</weight>
+			</id-00017>
+			<id-00018>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">7</count>
+				<description type="formattedtext">
+					<p>Rations consist of dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<location type="string">backpack</location>
+				<locked type="number">1</locked>
+				<name type="string">Rations (1 Day)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">2</weight>
+			</id-00018>
+			<id-00020>
+				<carried type="number">1</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<location type="string">backpack</location>
+				<locked type="number">1</locked>
+				<name type="string">Waterskin</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00020>
+		</inventorylist>
+		<languagelist>
+			<id-00001>
+				<name type="string">Goblin</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Common</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Abyssal</name>
+			</id-00003>
+		</languagelist>
+		<level type="number">3</level>
+		<name type="string">Gromash</name>
+		<notes type="string">He encontrado a un Druida que dice llamarse Erevan, que quiz&#225;s pueda ser el que estaba buscando en el bosque. Dice ser del dios Silvanus, pero no me fio. Mi familia fue asesinada por una criatura que ten&#237;a apariencia de hombre lobo, pero por mis investigaciones descubr&#237; que lo m&#225;s probable es que fuera un 'Evil Druid'.\n</notes>
+		<perception type="number">15</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<personalitytraits type="string">I have a lesson for every situation, drawn from observing nature.</personalitytraits>
+		<powergroup>
+			<id-00001>
+				<atkmod type="number">0</atkmod>
+				<atkprof type="number">1</atkprof>
+				<castertype type="string">memorization</castertype>
+				<name type="string">Spells</name>
+				<prepared type="number">0</prepared>
+				<saveprof type="number">1</saveprof>
+				<stat type="string">wisdom</stat>
+				<uses type="number">0</uses>
+			</id-00001>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">1</max>
+				<used type="number">1</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powers>
+			<id-00001>
+				<actions>
+					<id-00001>
+						<atktype type="string">ranged</atktype>
+						<order type="number">1</order>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d10</dice>
+								<type type="string">force</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>A beam of crackling energy streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 force damage.</p>
+					<p>The spell creates more than one beam when you reach higher levels: two beams at 5th level, three beams at 11th level, and four beams at 17th level. You can direct the beams at the same target or at different ones. Make a separate attack roll for each beam.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Eldritch Blast</name>
+				<prepared type="number">0</prepared>
+				<range type="string">120 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Warlock</source>
+			</id-00001>
+			<id-00002>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">S, M (a bit of fleece)</components>
+				<description type="formattedtext">
+					<p>You create a sound or an image of an object within range that lasts for the duration. The illusion also ends if you dismiss it as an action or cast this spell again.</p>
+					<p>If you create a sound, its volume can range from a whisper to a scream. It can be your voice, someone else's voice, a lion's roar, a beating of drums, or any other sound you choose. The sound continues unabated throughout the duration, or you can make discrete sounds at different times before the spell ends.</p>
+					<p>If you create an image of an object-such as a chair, muddy footprints, or a small chest-it must be no larger than a5-foot cube. The image can't create sound, light, smell, or any other sensory effect. Physical interaction with the image reveals it to be an illusion, because things can pass through it.</p>
+					<p>If a creature uses its action to examine the sound or image, the creature can determine that it is an illusion with a successful Intelligence (Investigation) check against your spell save DC. If a creature discerns the illusion for what it is, the illusion becomes faint to the creature.</p>
+				</description>
+				<duration type="string">1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Minor Illusion</name>
+				<prepared type="number">0</prepared>
+				<range type="string">30 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Illusion</school>
+				<source type="string">Bard, Eldritch Knight, Monk, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00002>
+			<id-00003>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<bonus type="number">5</bonus>
+								<dice type="dice"></dice>
+							</id-00001>
+						</heallist>
+						<healtargeting type="string">self</healtargeting>
+						<healtype type="string">temp</healtype>
+						<order type="number">1</order>
+						<type type="string">heal</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">5</bonus>
+								<dice type="dice"></dice>
+								<type type="string">cold</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a cup of water)</components>
+				<description type="formattedtext">
+					<p>A protective magical force surrounds you, manifesting as a spectral frost that covers you and your gear. You gain 5 temporary hit points for the duration. If a creature hits you with a melee attack while you have these hit points, the creature takes 5 cold damage.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, both the temporary hit points and the cold damage increase by 5 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Armor of Agathys</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Self</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Warlock</source>
+			</id-00003>
+			<id-00005>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savetype type="string">wisdom</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Charmed</label>
+						<order type="number">2</order>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You attempt to charm a humanoid you can see within range. It must make a Wisdom saving throw, and does so with advantage if you or your companions are fighting it. If it fails the saving throw, it is charmed by you until the spell ends or until you or your companions do anything harmful to it. The charmed creature regards you as a friendly acquaintance. When the spell ends, the creature knows it was charmed by you.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, you can target one additional creature for each slot level above 1st. The creatures must be within 30 feet of each other when you target them.</p>
+				</description>
+				<duration type="string">1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Charm Person</name>
+				<prepared type="number">0</prepared>
+				<range type="string">30 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Enchantment</school>
+				<source type="string">Bard, Cleric Trickery Domain, Druid, Eldritch Knight, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00005>
+		</powers>
+		<profbonus type="number">2</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<name type="string">Tool: One type of musical instrument</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Weapon: Simple Weapons, Martial Weapons</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Tool: Alchemist's Supplies</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Armor: Light Armor, Medium Armor, Heavy Armor</name>
+			</id-00004>
+		</proficiencylist>
+		<race type="string">Human-Variant</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>reference.racedata.human_variant@DD PHB Deluxe</recordname>
+		</racelink>
+		<size type="string">Medium</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">5</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">1</prof>
+				<stat type="string">strength</stat>
+				<total type="number">5</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">5</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">4</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">3</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">3</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">1</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">5</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00018>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">30</base>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">30</total>
+		</speed>
+		<temp>
+		</temp>
+		<token type="token">portrait_id-00004_token</token>
+		<traitlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Skills</name>
+				<source type="string">Human-Variant</source>
+				<text type="formattedtext">
+					<p>You gain proficiency in one skill of your choice.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<locked type="number">1</locked>
+				<name type="string">Feat</name>
+				<source type="string">Human-Variant</source>
+				<text type="formattedtext">
+					<p>You gain one feat of your choice.</p>
+				</text>
+			</id-00002>
+		</traitlist>
+		<weaponlist>
+			<id-00001>
+				<attackbonus type="number">0</attackbonus>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">2</bonus>
+						<dice type="dice">d8</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+					<id-00002>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<type type="string">fire</type>
+					</id-00002>
+				</damagelist>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Longsword CR Flame</name>
+				<prof type="number">1</prof>
+				<properties type="string">Crimson Rite</properties>
+				<shortcut type="windowreference">
+					<class></class>
+					<recordname></recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00001>
+			<id-00002>
+				<attackbonus type="number">0</attackbonus>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">2</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Dagger</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00004</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00002>
+			<id-00003>
+				<attackbonus type="number">0</attackbonus>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">1</maxammo>
+				<name type="string">Dagger</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00004</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00003>
+			<id-00004>
+				<attackbonus type="number">0</attackbonus>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">2</bonus>
+						<dice type="dice">d8</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Longsword</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00006</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00004>
+			<id-00005>
+				<attackbonus type="number">0</attackbonus>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">20</maxammo>
+				<name type="string">Shortbow</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00013</recordname>
+				</shortcut>
+				<type type="number">1</type>
+			</id-00005>
+			<id-00006>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">2</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+					<id-00002>
+						<dice type="dice">d4</dice>
+						<type type="string">fire</type>
+					</id-00002>
+				</damagelist>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Dagger CR Flame</name>
+				<prof type="number">1</prof>
+				<properties type="string">Crimson Rite</properties>
+				<shortcut type="windowreference">
+					<class></class>
+					<recordname></recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00006>
+			<id-00007>
+				<attackbonus type="number">0</attackbonus>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Javelin</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00002</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00007>
+			<id-00008>
+				<attackbonus type="number">0</attackbonus>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">2</maxammo>
+				<name type="string">Javelin</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00002</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00008>
+			<id-00009>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">-1</bonus>
+						<dice type="dice">d4</dice>
+						<type type="string">fire</type>
+					</id-00001>
+				</damagelist>
+				<maxammo type="number">0</maxammo>
+				<name type="string">The Fiend Reroll</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class></class>
+					<recordname></recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00009>
+		</weaponlist>
+		<weight type="string">160 lbs</weight>
+	</character>
+</root>

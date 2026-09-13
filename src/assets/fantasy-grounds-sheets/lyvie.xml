@@ -1,0 +1,1323 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root version="3.3" release="7|CoreRPG:3">
+	<character>
+		<abilities>
+			<charisma>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">9</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">3</bonus>
+				<save type="number">3</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">16</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">4</bonus>
+				<save type="number">4</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">19</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">0</bonus>
+				<save type="number">0</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">10</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">0</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">11</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">3</bonus>
+				<save type="number">5</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">16</score>
+			</wisdom>
+		</abilities>
+		<adventurelist>
+		</adventurelist>
+		<age type="string">18</age>
+		<alignment type="string">Neutral Good</alignment>
+		<background type="string">Outlander</background>
+		<backgroundlink type="windowreference">
+			<class>reference_background</class>
+			<recordname>reference.backgrounddata.outlander@DD PHB Deluxe</recordname>
+		</backgroundlink>
+		<bonds type="string">I suffer awful visions of a coming disaster and will do anything to prevent it.</bonds>
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">0</casterlevelinvmult>
+				<casterpactmagic type="number">0</casterpactmagic>
+				<hddie type="dice">d10</hddie>
+				<hdused type="number">3</hdused>
+				<level type="number">3</level>
+				<name type="string">Blood Hunter</name>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>reference.classdata.bloodhunter@Blood Hunter</recordname>
+				</shortcut>
+			</id-00001>
+		</classes>
+		<coins>
+			<slot1>
+				<amount type="number">124</amount>
+				<name type="string">GP</name>
+			</slot1>
+			<slot2>
+				<amount type="number">8</amount>
+				<name type="string">sp</name>
+			</slot2>
+			<slot3>
+				<amount type="number">1</amount>
+				<name type="string">PP</name>
+			</slot3>
+			<slot4>
+				<amount type="number">10</amount>
+				<name type="string">EP</name>
+			</slot4>
+			<slot5>
+				<amount type="number">0</amount>
+			</slot5>
+			<slot6>
+				<amount type="number">0</amount>
+			</slot6>
+		</coins>
+		<defenses>
+			<ac>
+				<armor type="number">2</armor>
+				<disstealth type="number">0</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">0</shield>
+				<temporary type="number">0</temporary>
+				<total type="number">16</total>
+			</ac>
+		</defenses>
+		<encumbrance>
+			<encumbered type="number">55</encumbered>
+			<encumberedheavy type="number">110</encumberedheavy>
+			<liftpushdrag type="number">330</liftpushdrag>
+			<load type="number">48.5</load>
+			<max type="number">165</max>
+		</encumbrance>
+		<exp type="number">1442</exp>
+		<expneeded type="number">2700</expneeded>
+		<featlist>
+		</featlist>
+		<featurelist>
+			<id-00001>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Hunter's Bane</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>Beginning at lst level, you have survived the imbibing ofthc Hunter's Bane, a poisonous alchemical concoction that alters your life's blood, forever binding you to the darkness and honing your senses against it.</p>
+					<p>You have advantage on Wisdom (Survival) checks to track Fey, fiends, and Undead, as well as on Intelligence checks to recall information about them. If you are actively tracking one of these creature types, you cannot be surprised by any creatures of that type. You can only be tracking one type of creature at a time.</p>
+					<p>Upon reaching 11th level, you can flare the internal toxic scars from the ritual, using the pain to give clarity, or promote anger. You can choose to suffer damage equal to your crimson rite damage die to gain advantage on a Wisdom (Insight) check or Charisma (Intimidation) check.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<level type="number">1</level>
+				<locked type="number">0</locked>
+				<name type="string">Crimson Rite (Cold)</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>At lst level. you learn to invoke a rite of blood magic within your weapon at the cost of your own vitality. Choose to learn one rite from the Primal Rites listed below. You cannot change this choice.</p>
+					<p>As a bonus action. you imbue a single weapon with the elemental energy of a known rite for up to 8 hours. While active, attacks from this weapon deal an additional 1d4 rite damage of the chosen elemental type. Rite damage is considered magical. The rite damage die changes as you gain blood hunter levels, as shown in the crimson rite damage die column of the blood hunter table. Should your weapon leave your grip, the rite fades immediately. An active rite on a weapon thrown fades directly after the attack is completed.</p>
+					<p>When a crimson rite is activated, it reduces your maximum hit points by a number equal to your character level. These lost maximum hit points return once the rite fades and cannot be restored by other means. When a rite fades, no hit points are regained as part of the restoration of maximum hit points.</p>
+					<p>Crimson rite can be used on multiple weapons. costing additional hit point loss. Most weapons can only be subject to a single rite at any given time. Each end of a polearm or quarterstaff is treated as a seperate weapon for the purposes of this feature. A rite can be allowed to fade at any time with no action required.</p>
+					<p>You gain access to an additional Primal Rite at 6th level and 11th level. You may learn one Esoteric Rite from the list below at 14th level.</p>
+					<p><b>Primal Rites</b></p>
+					<p>Choose from the following:</p>
+					<list>
+						<li><b>Rite of the Flame: </b>Your rite damage is fire type.</li>
+						<li><b>Rite of the Frozen: </b>Your rite damage is cold type.</li>
+						<li><b>Rite of the Storm: </b>Your rite damage is lightning type.</li>
+					</list>
+					<p><b>Esoteric Rites</b></p>
+					<p>Choose from the following:</p>
+					<list>
+						<li><b>Rite of the Roar: </b>Your rite damage is thunder type.</li>
+						<li><b>Rite of the Oracle: </b>Your rite damage is psychic type.</li>
+						<li><b>Rite of the Dead: </b>Your rite damage is necrotic type.</li>
+					</list>
+				</text>
+			</id-00002>
+			<id-00003>
+				<locked type="number">1</locked>
+				<name type="string">Wanderer</name>
+				<source type="string">Outlander</source>
+				<text type="formattedtext">
+					<p>You have an excellent memory for maps and geography, and you can always recall the general layout of terrain, settlements, and other features around you. In addition, you can find food and fresh water for yourself and up to five other people each day, provided that the land offers berries, small game, water, and so forth.</p>
+				</text>
+			</id-00003>
+			<id-00004>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Fighting Style (el de siempre)</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p><b>fighting Style</b></p>
+					<p>At 2nd level, you adopt a style of fighting as your specialty. Choose one of the following options. You can't take a fighting Style option more than once. even if you later get to choose again.</p>
+					<p><b>Archery</b></p>
+					<p>You gain a +2 bonus to attack rolls you make with ranged weapons.</p>
+					<p><b>Dueling</b></p>
+					<p>When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.</p>
+					<p><b>Great Weapon Fighting</b></p>
+					<p>When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll. The weapon must have the two~handed or versatile property for you to gain this benfit.</p>
+					<p><b>Two-Weapon Fighting</b></p>
+					<p>When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.</p>
+				</text>
+			</id-00004>
+			<id-00005>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Blood Maledict (Fallen Puppet)</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>At 2nd level, you gain the knowledge to further channel, and sacrifice a part of your vital essence to curse and manipulate your enemies. You gain two blood curses of your choice. detailed in the &#34;blood curses&#34; section below. You learn one additional blood curse of your choice at 6th, 10th, 14th, and 18th level.</p>
+					<p>When you use your Blood Maledict, you choose which curse to invoke. While invoking a blood curse, but before it affects the target, you may choose to <i>amplify </i>the curse by suffering damage equal to your crimson rite damage die. An amplified curse gains an addition effect, noted in the curse's description. Creatures that do not have blood are immune to blood curses (At GM's discretion). You can use this feature twice. You regain expended uses when you finish a short or long rest. Beginning at 6th level, you can use your Blood Maledict twice between rests. At 11th level, you can use your Blood Maledict three times between rests, and at 17th level you can use it four times between rests.</p>
+					<p><b>Blood Curses</b></p>
+					<p>The Blood Curses are presented in alphabetical order.</p>
+					<list>
+						<li>Blood Curse of Binding. As a bonus action, you can attempt to bind an enemy no more than one size larger than you within 30 feet. The target must succeed on a Strength saving throw (DC equal to 8 + your proficiency bonus + your Wisdom modifier) or have their speed be reduced to 0 until the beginning of your next turn.</li>
+					</list>
+					<p><i>Amplify: </i>This curse becomes ongoing, and can affect a creature up to no more than two sizes larger than you. At the end of each of its turns, the target can make another Strength saving throw. On a success, this curse ends. You can end the curse whenever you like (no action required).</p>
+					<list>
+						<li>Blood Curse of the Eyeless. When an enemy with eyes within 30 feet makes a weapon attack against you, you can use your reaction to impose disadvantage on the attack.</li>
+					</list>
+					<p><i>Amplify: </i>The triggering attack can be targeting a creature other than yourself.</p>
+					<list>
+						<li>Blood Curse of the Fallen Puppet. The moment a creature falls unconscious or dies within 30 feet of you, you can use your reaction to give that creature a final act of aggression. That creature can immediately make a single weapon attack against a target of your choice within its attack range. After the attack. the creature returns to being unconscious or dead.</li>
+					</list>
+					<p><i>Amplify: </i>You grant a bonus to the attack roll and damage of the cursed creatures attack equal to your Wisdom modifier (minimum of 1).</p>
+					<list>
+						<li>Blood Curse of the Fending Rite. When an enemy casts a spell, you can use your reaction to deflect the spell with your crimson rite. You gain a bonus to the inital saving throw against that spell equal to your Wisdom Modifier (minimum of 1). This curse is invoked before the saving throw is made.</li>
+					</list>
+					<p><i>Amplify: </i>You grant all allies within 5 feet of you to also gain this bonus to their saving throw against the triggering spell.</p>
+					<list>
+						<li>Blood Curse of the Marked. As a bonus action. you can mark an enemy within 30 feet. Until the end of your turn, all crimson rite damage you deal to the target is doubled.</li>
+					</list>
+					<p><i>Amplify: </i>You cause the marked target to lose resistance to your rite damage type until the beginning of your next turn.</p>
+					<list>
+						<li>Blood Curse of Mutual Suffering. As a bonus action, you can link to a creature within 30 feet for up to 1 minute, forcing them to share in any pain they inflict upon you. Each time you suffer any damage from the cursed creature, this curse deals necrotic damage equal to half of the damage you suffered. This curse then ends.</li>
+					</list>
+					<p><i>Amplify: </i>This curse instead deals necrotic damage equal to the damage you suffered and it ignores Necrotic resistance.</p>
+					<list>
+						<li>Blood Curse of Spell Sunder: When an enemy casts a spell within 30 feet that requires a spell attack roll and targets you, you can use your reaction to to rend the spell from the air, imposing disadvantage on the spell attack roll.</li>
+					</list>
+					<p><i>Amplify: </i>You make a Wisdom ability check. The DC equals 10 + the spells level. On a success. the creatures spell misses you automatically.</p>
+					<list>
+						<li>Blood Curse of Purgation. As a bonus action, you can manipulate the vitality of a creature within 30 feet to expunge a corruption in their blood. The target creature can immediately make a saving throw against a poisoned condition afflicting it.</li>
+					</list>
+					<p><i>Amplify: </i>Your target can instead immediately make a saving throw against one other condition afflicting it. This condition can be blinded, deafened, or paralyzed.</p>
+				</text>
+			</id-00005>
+			<id-00006>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Order of the Profane Soul</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>The magics adopted by the wayward blood hunter prove formidable against many an evil across the realm. However, the darkest of abominations draw from an ancient well of cruel, unfathomable power. These terrors can control shadows to do their bidding, hide in plain sight among the noblest of nobles, and bend the minds of the most stalwart warrior with but a glance. These fiends were far trickier to hunt, and many lost their lives in pursuit of such wickedness.</p>
+					<p>A small sect of blood hunters had finaly had enough and delved into this same well of corrupting arcane knowledge, making pacts with lesser evils to better combat the greater. While they may have lost a part of themselves, the power gained far outwelghted the price, for even devils now quake when they know they've the attention of the Order of the Profane Soul.</p>
+					<h>Features</h>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.otherworldpatron3@Blood Hunter">Otherworld Patron</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.ritefocus3@Blood Hunter">Rite Focus</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.mysticfrenzy7@Blood Hunter">Mystic Frenzy</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.revealedarcana7@Blood Hunter">Revealed Arcana</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.diabolicchannel11@Blood Hunter">Diabolic Channel</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.unsealedarcana15@Blood Hunter">Unsealed Arcana</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.soulsyphon18@Blood Hunter">Soul Syphon</link>
+					</linklist>
+				</text>
+			</id-00006>
+			<id-00007>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Otherworld Patron: The Undying</name>
+				<source type="string">Blood Hunter</source>
+				<specialization type="string">Order of the Profane Soul</specialization>
+				<text type="formattedtext">
+					<p>When you reach 3rd level, you strike a bargan with an other worldy being of your choice; the Archfey, the Fiend, or the Great Old One, each detailed on page 109 of the PHB, or the Undying on page 139 of the Sword Coast Adventurer's Guide, Your choice augments some of your order features.</p>
+					<p><b>Pact Magic</b></p>
+					<p>When you reach 3rd level, you can augment your combat techniques with the ability to cast Warlock spells. See chapter 10 (phb) for the general rules of spellcasting and chapter 11 (phb) for the Warlock spell list.</p>
+					<p><b>Cantrips</b></p>
+					<p>You learn two can trips of your choice from the warlock spell list. You learn an additional warlock cantrip of your choice at 10th level.</p>
+					<p><b>Spell Slots</b></p>
+					<p>The Profane Soul Spellcasting table shows how many spell slots you have. The table also shows what the level of those slots is; all of your spell slots are the same level. To cast one of your warlock spells of 1st level or higher, you must expend a spell slot. You regain all expended spell slots when you finish a short or long rest.</p>
+					<p>For example, when you are 8th level, you have two 2nd-level spell slots. To cast the 1st-level spell thunderwave, you must spend one of those slots, and you cast it as a 2nd-level spell.</p>
+					<p><b>Spells Known of 1st Level and Higher</b></p>
+					<p>At 3rd level, you know two 1st-level spells of your choice from the warlock spell list.</p>
+					<p>The Spells Known column of the Profane Soul table shows when you learn more warlock spells of your choice of 1st level and higher. A spell you choose must be of a level no higher than what's shown in the table's Slot Level column for your level. When you reach 11th level, for example, you learn a new warlock spell, which can be 1st, 2nd, or 3rd level.</p>
+					<p>Additionally, when you gain a level in this class and Order, you can choose one of the warlock spells you know and replace is with another spell from the warlock spell list, which also must be of a level for which you have spell slots.</p>
+					<p><b>Spellcasting Ability</b></p>
+					<p>Wisdom is your spellcasting ability for your warlock spells, so you use your Wisdom whenever a spell refers to your spellcasting ability. In addition, you use your 'Wisdom modifier when setting the saving throw DC for a warlock spell you cast and when making an attack roll with one.</p>
+					<p><b>Spell save DC </b>= 8 + your proficiency bonus + your Wisdom modifier</p>
+					<p><b>Spell attack modifier </b>= your proficiency bonus + your Wisdom modifier</p>
+					<table>
+						<tr>
+							<td><b>Blood Hunter Level</b></td>
+							<td><b>Cantrips Known</b></td>
+							<td><b>Spells Known</b></td>
+							<td><b>Spell Slots</b></td>
+							<td><b>Slot Level</b></td>
+						</tr>
+						<tr>
+							<td>3rd</td>
+							<td>2</td>
+							<td>2</td>
+							<td>1</td>
+							<td>1st</td>
+						</tr>
+						<tr>
+							<td>4th</td>
+							<td>2</td>
+							<td>2</td>
+							<td>1</td>
+							<td>1st</td>
+						</tr>
+						<tr>
+							<td>5th</td>
+							<td>2</td>
+							<td>3</td>
+							<td>2</td>
+							<td>1st</td>
+						</tr>
+						<tr>
+							<td>6th</td>
+							<td>2</td>
+							<td>3</td>
+							<td>2</td>
+							<td>1st</td>
+						</tr>
+						<tr>
+							<td>7th</td>
+							<td>2</td>
+							<td>4</td>
+							<td>2</td>
+							<td>2ns</td>
+						</tr>
+						<tr>
+							<td>8th</td>
+							<td>2</td>
+							<td>4</td>
+							<td>2</td>
+							<td>2nd</td>
+						</tr>
+						<tr>
+							<td>9th</td>
+							<td>2</td>
+							<td>5</td>
+							<td>2</td>
+							<td>2nd</td>
+						</tr>
+						<tr>
+							<td>10th</td>
+							<td>3</td>
+							<td>5</td>
+							<td>2</td>
+							<td>2nd</td>
+						</tr>
+						<tr>
+							<td>11th</td>
+							<td>3</td>
+							<td>6</td>
+							<td>2</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>12th</td>
+							<td>3</td>
+							<td>6</td>
+							<td>2</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>13th</td>
+							<td>3</td>
+							<td>7</td>
+							<td>2</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>14th</td>
+							<td>3</td>
+							<td>7</td>
+							<td>3</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>15th</td>
+							<td>3</td>
+							<td>8</td>
+							<td>3</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>16th</td>
+							<td>3</td>
+							<td>8</td>
+							<td>3</td>
+							<td>3rd</td>
+						</tr>
+						<tr>
+							<td>17th</td>
+							<td>3</td>
+							<td>9</td>
+							<td>3</td>
+							<td>4th</td>
+						</tr>
+						<tr>
+							<td>18th</td>
+							<td>3</td>
+							<td>9</td>
+							<td>3</td>
+							<td>4th</td>
+						</tr>
+						<tr>
+							<td>19th</td>
+							<td>3</td>
+							<td>10</td>
+							<td>3</td>
+							<td>4th</td>
+						</tr>
+						<tr>
+							<td>20th</td>
+							<td>3</td>
+							<td>11</td>
+							<td>3</td>
+							<td>4th</td>
+						</tr>
+					</table>
+				</text>
+			</id-00007>
+			<id-00008>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Rite Focus</name>
+				<source type="string">Blood Hunter</source>
+				<specialization type="string">Order of the Profane Soul</specialization>
+				<text type="formattedtext">
+					<p>At 3rd level, your weapon becomes a core to your pact with your chosen dark patron. You can use your weapon as a spellcasting focus (found in chapter 5, phb) for your warlock spells. Your chosen pact also enhances your rite (outlined below).</p>
+					<p><b>The Archfey. </b>If you deal rite damage to a creature, that creature loses any half or three-quarters cover bonuses, as well as invisibility, until the beginning of your next turn.</p>
+					<p><b>The Fiend. </b>While using the Kite of the Flame, if you roll a 1 on your rite damage die, you may reroll the die. You may do this reroll only once per attack.</p>
+					<p><b>The Great Old One. </b>Whenever you deal a critical hit to a creature, that creature must make a Wisdom saving throw against your spell save DC, On a failure, the creature is frightened of you until the end of your next turn.</p>
+					<p><b>The Undying. </b>Whenever you reduce a hostile creature to 0 hit points with a weapon attack, and kill it, you regain hit points equal to your crimson rite damage die.</p>
+				</text>
+			</id-00008>
+		</featurelist>
+		<flaws type="string">I remember every insult I've received and nurse a silent resentment toward anyone who's ever wronged me.</flaws>
+		<gender type="string">Femal</gender>
+		<height type="string">1,80</height>
+		<hero type="number">12</hero>
+		<hp>
+			<deathsavefail type="number">3</deathsavefail>
+			<deathsavesuccess type="number">0</deathsavesuccess>
+			<temporary type="number">0</temporary>
+			<total type="number">28</total>
+			<wounds type="number">28</wounds>
+		</hp>
+		<ideals type="string">Greater Good. It is each person's responsibility to make the most happiness for the whole tribe. (Good)</ideals>
+		<initiative>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">4</total>
+		</initiative>
+		<inspiration type="number">0</inspiration>
+		<inventorylist>
+			<id-00001>
+				<carried type="number">0</carried>
+				<cost type="string">5 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>When you use your action to set it, this trap forms a saw-toothed steel ring that snaps shut when a creature steps on a pressure plate in the center. The trap is affixed by a heavy chain to an immobile object, such as a tree or a spike driven into the ground. A creature that steps on the plate must succeed on a DC 13 Dexterity saving throw or take 1d4 piercing damage and stop moving. Thereafter, until the creature breaks free of the trap, its movement is limited by the length of the chain (typically 3 feet long). A creature can use its action to make a DC 13 Strength check, freeing itself or another creature within its reach on a success. Each failed check deals 1 piercing damage to the trapped creature.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Hunting Trap</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">25</weight>
+			</id-00001>
+			<id-00002>
+				<carried type="number">0</carried>
+				<cost type="string">5 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A druidic focus might be a sprig of mistletoe or holly, a wand or scepter made of yew or another special wood, a staff drawn whole out of a living tree, or a totem object incorporating feathers, fur, bones, and teeth from sacred animals. A druid (see chapter 3 of the Player's Handbook) can use such an object as a spellcasting focus, as described in chapter 10.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Wooden Staff</name>
+				<subtype type="string">Druidic Focus</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">4</weight>
+			</id-00002>
+			<id-00003>
+				<carried type="number">0</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Clothes, Traveler's</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">4</weight>
+			</id-00003>
+			<id-00004>
+				<carried type="number">1</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Several of the most common types of musical instruments are shown on the table as examples. If you have proficiency with a given musical instrument, you can add your proficiency bonus to any ability checks you make to play music with the instrument. A bard can use a musical instrument as a spellcasting focus, as described in Part 3: The Rules of Magic, Casting a Spell. Each type of musical instrument requires a separate proficiency.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Flute</name>
+				<subtype type="string">Musical Instrument</subtype>
+				<type type="string">Tools</type>
+				<weight type="number">1</weight>
+			</id-00004>
+			<id-00005>
+				<ac type="number">12</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">45 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Made from supple and thin materials, light armor favors agile adventurers since it offers some protection without sacrificing mobility. If you wear light armor, you add your Dexterity modifier to the base number from your armor type to determine your Armor Class.</p>
+					<p>Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.</p>
+				</description>
+				<dexbonus type="string">Yes</dexbonus>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Studded Leather</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Light Armor</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">13</weight>
+			</id-00005>
+			<id-00007>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">25 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d8 piercing</damage>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">El Rapier de siempre</name>
+				<properties type="string">Finesse</properties>
+				<subtype type="string">Martial Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">2</weight>
+			</id-00007>
+			<id-00008>
+				<carried type="number">2</carried>
+				<cost type="string">25 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d8 piercing</damage>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Crossbow, Light</name>
+				<properties type="string">Ammunition (range 80/320), loading, two-handed</properties>
+				<subtype type="string">Simple Ranged Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">5</weight>
+			</id-00008>
+			<id-00009>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Crossbow Bolts (20)</name>
+				<subtype type="string">Ammunition</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1.5</weight>
+			</id-00009>
+			<id-00010>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Bedroll</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">7</weight>
+			</id-00010>
+			<id-00011>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">3</count>
+				<description type="formattedtext">
+					<p>Rations consist of dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Rations (1 Day)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">2</weight>
+			</id-00011>
+			<id-00012>
+				<carried type="number">1</carried>
+				<cost type="string">1 cp</cost>
+				<count type="number">2</count>
+				<description type="formattedtext">
+					<p>A torch burns for 1 hour, providing bright light in a 20-foot radius and dim light for an additional 20 feet. If you make a melee attack with a burning torch and hit, it deals 1 fire damage.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Torch</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00012>
+			<id-00013>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This small container holds flint, fire steel, and tinder (usually dry cloth soaked in light oil) used to kindle a fire. Using it to light a torch-or anything else with abundant, exposed fuel-takes an action. Lighting any other fire takes 1 minute.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Tinderbox</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00013>
+			<id-00014>
+				<carried type="number">1</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Waterskin</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00014>
+			<id-00015>
+				<carried type="number">0</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This tin box contains a cup and simple cutlery. The box clamps together, and one side can be used as a cooking pan and the other as a plate or shallow bowl.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Mess Kit</name>
+				<subtype type="string">Equipment Kits</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00015>
+			<id-00016>
+				<carried type="number">0</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Rope, Hempen (50 Feet)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">10</weight>
+			</id-00016>
+			<id-00017>
+				<carried type="number">1</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Backpack (Empty)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00017>
+		</inventorylist>
+		<languagelist>
+			<id-00001>
+				<name type="string">Common</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Elvish</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Abyssal</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Undercommon</name>
+			</id-00004>
+		</languagelist>
+		<level type="number">3</level>
+		<name type="string">Lyvie Ferndale</name>
+		<pc_label_hero type="string">Placeholder</pc_label_hero>
+		<perception type="number">15</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<personalitytraits type="string">I place no stock in wealthy or well-mannered folk. Money and manners won't save you from a hungry owlbear.</personalitytraits>
+		<powergroup>
+			<id-00001>
+				<atkmod type="number">0</atkmod>
+				<atkprof type="number">1</atkprof>
+				<atkstat type="string">wisdom</atkstat>
+				<castertype type="string">memorization</castertype>
+				<name type="string">Spells</name>
+				<prepared type="number">0</prepared>
+				<savemod type="number">0</savemod>
+				<saveprof type="number">1</saveprof>
+				<savestat type="string">wisdom</savestat>
+				<uses type="number">0</uses>
+			</id-00001>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">1</max>
+				<used type="number">1</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powermode type="string">standard</powermode>
+		<powers>
+			<id-00001>
+				<actions>
+					<id-00001>
+						<durmod type="number">8</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">DMG: 1d4 cold</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>At lst level. you learn to invoke a rite of blood magic within your weapon at the cost of your own vitality. Choose to learn one rite from the Primal Rites listed below. You cannot change this choice.</p>
+					<p>As a bonus action. you imbue a single weapon with the elemental energy of a known rite for up to 8 hours. While active, attacks from this weapon deal an additional 1d4 rite damage of the chosen elemental type. Rite damage is considered magical. The rite damage die changes as you gain blood hunter levels, as shown in the crimson rite damage die column of the blood hunter table. Should your weapon leave your grip, the rite fades immediately. An active rite on a weapon thrown fades directly after the attack is completed.</p>
+					<p>When a crimson rite is activated, it reduces your maximum hit points by a number equal to your character level. These lost maximum hit points return once the rite fades and cannot be restored by other means. When a rite fades, no hit points are regained as part of the restoration of maximum hit points.</p>
+					<p>Crimson rite can be used on multiple weapons. costing additional hit point loss. Most weapons can only be subject to a single rite at any given time. Each end of a polearm or quarterstaff is treated as a seperate weapon for the purposes of this feature. A rite can be allowed to fade at any time with no action required.</p>
+					<p>You gain access to an additional Primal Rite at 6th level and 11th level. You may learn one Esoteric Rite from the list below at 14th level.</p>
+					<p>Primal Rites</p>
+					<p>Choose from the following:</p>
+					<p>Rite of the Flame:</p>
+					<p>Your rite damage is fire type.Rite of the Frozen:</p>
+					<p>Your rite damage is cold type.Rite of the Storm:</p>
+					<p>Your rite damage is lightning type.Esoteric Rites</p>
+					<p>Choose from the following:</p>
+					<p>Rite of the Roar:</p>
+					<p>Your rite damage is thunder type.Rite of the Oracle:</p>
+					<p>Your rite damage is psychic type.Rite of the Dead:</p>
+					<p>Your rite damage is necrotic type.</p>
+				</description>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Crimsom Rite</name>
+				<prepared type="number">0</prepared>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">\n</shortdescription>
+			</id-00001>
+			<id-00002>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<level type="number">0</level>
+				<name type="string">Blood Curse (fallen puppet)</name>
+				<prepared type="number">1</prepared>
+				<ritual type="number">0</ritual>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00002>
+			<id-00003>
+				<actions>
+					<id-00001>
+						<atktype type="string">ranged</atktype>
+						<order type="number">1</order>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d10</dice>
+								<type type="string">force</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>A beam of crackling energy streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 force damage.</p>
+					<p>The spell creates more than one beam when you reach higher levels: two beams at 5th level, three beams at 11th level, and four beams at 17th level. You can direct the beams at the same target or at different ones. Make a separate attack roll for each beam.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Eldritch Blast</name>
+				<prepared type="number">0</prepared>
+				<range type="string">120 feet</range>
+				<school type="string">Evocation</school>
+				<source type="string">Warlock</source>
+			</id-00003>
+			<id-00004>
+				<actions>
+					<id-00001>
+						<onmissdamage type="string">half</onmissdamage>
+						<order type="number">1</order>
+						<savetype type="string">dexterity</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d10,d10</dice>
+								<type type="string">fire</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 reaction, which you take in response to being damaged by a creature within 60 feet of you that you can see</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You point your finger, and the creature that damaged you is momentarily surrounded by hellish flames. The creature must make a Dexterity saving throw. It takes 2d10 fire damage on a failed save, or half as much damage on a successful one.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d10 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Hellish Rebuke</name>
+				<prepared type="number">0</prepared>
+				<range type="string">60 feet</range>
+				<school type="string">Evocation</school>
+				<source type="string">Warlock</source>
+			</id-00004>
+			<id-00005>
+				<actions>
+					<id-00001>
+						<durmod type="number">10</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">IFT: (aberration, celestial, elemental, fey, fiend, undead); GRANTDISATK; IMMUNE: charmed,frightened,possessed; (C)</label>
+						<order type="number">1</order>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (holy water or powdered silver and iron, which the spell consumes)</components>
+				<description type="formattedtext">
+					<p>Until the spell ends, one willing creature you touch is protected against certain types of creatures: aberrations, celestials, elementals, fey, fiends, and undead.</p>
+					<p>The protection grants several benefits. Creatures of those types have disadvantage on attack rolls against the target. The target also can't be charmed, frightened, or possessed by them. If the target is already charmed, frightened, or possessed by such a creature, the target has advantage on any new saving throw against the relevant effect.</p>
+				</description>
+				<duration type="string">Concentration up to 10 minutes</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Protection from Evil and Good</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Cleric, Eldritch Knight, Paladin, Warlock, Wizard, Arcane Trickster</source>
+			</id-00005>
+			<id-00006>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savetype type="string">dexterity</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d6</dice>
+								<type type="string">force</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V</components>
+				<description type="formattedtext">
+					<p>You create a momentary circle of spectral blades that sweep around you. Each creature within range, other than you, must succeed on a Dexterity saving throw or take 1d6 force damage.</p>
+					<p>This spell's damage increases by 1d6 when you reach 5th level (2d6), 11th level (3d6), and 17th level (4d6).</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Sword Burst</name>
+				<prepared type="number">0</prepared>
+				<range type="string">5 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Conjuration</school>
+				<source type="string">Sorcerer, Warlock, Wizard</source>
+			</id-00006>
+			<id-00007>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d4</dice>
+							</id-00001>
+						</heallist>
+						<healtargeting type="string">self</healtargeting>
+						<order type="number">1</order>
+						<type type="string">heal</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<level type="number">0</level>
+				<name type="string">Undying feature</name>
+				<prepared type="number">0</prepared>
+			</id-00007>
+			<id-00008>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>You can inspire others through stirring words or music. To do so, you use a bonus action on your turn to choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die, a d6.</p>
+					<p>Once within the next 10 minutes, the creature can roll the die and add the number rolled to one ability check, attack roll, or saving throw it makes. The creature can wait until after it rolls the d20 before deciding to use the Bardic Inspiration die, but must decide before the GM says whether the roll succeeds or fails. Once the Bardic Inspiration die is rolled, it is lost. A creature can have only one Bardic Inspiration die at a time.</p>
+					<p>You can use this feature a number of times equal to your Charisma modifier (a minimum of once). You regain any expended uses when you finish a long rest.</p>
+					<p>Your Bardic Inspiration die changes when you reach certain levels in this class. The die becomes a d8 at 5th level, a d10 at 10th level, and a d12 at 15th level.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Bardic Inspiration</name>
+				<prepared type="number">0</prepared>
+				<source type="string">Bard</source>
+			</id-00008>
+			<id-00009>
+				<actions>
+					<id-00001>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d6,d6</dice>
+								<type type="string">poison</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">1</order>
+						<type type="string">damage</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>When you join the College of Whispers at 3rd level, you gain the ability to magically make your weapon attacks toxic for a moment.</p>
+					<p>When you hit a creature with a weapon attack, you can expend one use of your Bardic Inspiration to deal an additional 2d6 poison damage to that target. You can do so only once per round on your turn.</p>
+					<p>The additional damage increases when you reach certain levels in this class, increasing to 2d8 at 5th level, 2d10 at 10th level, and 2d12 at 15th level.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Venomous Blades</name>
+				<prepared type="number">0</prepared>
+				<source type="string">Bard</source>
+				<specialization type="string">College of Whispers</specialization>
+				<specializationchoice type="number">0</specializationchoice>
+			</id-00009>
+			<id-00010>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>Beginning at 2nd level, you can use soothing music or oration to help revitalize your wounded allies during a short rest. If you or any friendly creatures who can hear your performance regain hit points at the end of the short rest by spending one or more Hit Dice, each of those creatures regains an extra 1d6 hit points.</p>
+					<p>The extra hit points increase when you reach certain levels in this class: to 1d8 at 9th level, to 1d10 at 13th level, and to 1d12 at 17th level.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Song of Rest</name>
+				<prepared type="number">0</prepared>
+				<source type="string">Bard</source>
+			</id-00010>
+			<id-00011>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savetype type="string">wisdom</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<label type="string">Frightened</label>
+						<order type="number">2</order>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>At 3rd level, you learn to infuse innocent-seeming words with an insidious magic. A creature that hears you speak can become plunged into fear and paranoia.</p>
+					<p>If you speak to a humanoid alone for at least 10 minutes, you can attempt to seed paranoia and fear into its mind. At the end of the conversation, the target must succeed on a Wisdom saving throw against your spell save DC or be frightened for the next hour, until it is attacked or damaged, or until it witnesses its allies being attacked or damaged. While frightened in this way, the target is paranoid and tries to avoid the company of others, including its allies. The target seeks out what it considers the safest, most secret place available to it and hides there.</p>
+					<p>If the target succeeds on its save, the target has no hint that you tried to frighten it.</p>
+					<p>Once you use this feature, you can't use it again until you finish a short rest or long rest.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Venomous Words</name>
+				<prepared type="number">0</prepared>
+				<source type="string">Bard</source>
+				<specialization type="string">College of Whispers</specialization>
+				<specializationchoice type="number">0</specializationchoice>
+			</id-00011>
+		</powers>
+		<profbonus type="number">2</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<name type="string">Weapon: Simple Weapons, Martial Weapons</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Tool: Alchemist's Supplies</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Armor: Light Armor, Medium Armor</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Tool: One type of musical instrument</name>
+			</id-00004>
+		</proficiencylist>
+		<race type="string">Wood Elf</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>reference.racedata.elf@DD PHB Deluxe</recordname>
+		</racelink>
+		<senses type="string">Darkvision 60</senses>
+		<size type="string">Medium</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">5</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">1</prof>
+				<stat type="string">strength</stat>
+				<total type="number">2</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">0</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">0</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">5</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">4</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">0</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">4</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">5</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">4</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">0</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00018>
+			<id-00019>
+				<misc type="number">0</misc>
+				<name type="string">Alchemist Supplies</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00019>
+			<id-00020>
+				<misc type="number">0</misc>
+				<name type="string">Musical Instrument: Flute</name>
+				<prof type="number">1</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">1</total>
+			</id-00020>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">35</base>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">35</total>
+		</speed>
+		<temp>
+			<item>
+			</item>
+		</temp>
+		<token type="token">portrait_id-00005_token</token>
+		<traitlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Trance</name>
+				<source type="string">Elf</source>
+				<text type="formattedtext">
+					<p>Elves don't need to sleep. Instead, they meditate deeply, remaining semiconscious, for 4 hours a day. (The Common word for such meditation is &#34;trance.&#34;) While meditating, you can dream after a fashion; such dreams are actually mental exercises that have become reflexive through years of practice. After resting in this way, you gain the same benefit that a human does from 8 hours of sleep.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00001>
+			<id-00002>
+				<locked type="number">1</locked>
+				<name type="string">Keen Senses</name>
+				<source type="string">Elf</source>
+				<text type="formattedtext">
+					<p>You have proficiency in the Perception skill.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00002>
+			<id-00003>
+				<locked type="number">1</locked>
+				<name type="string">Fey Ancestry</name>
+				<source type="string">Elf</source>
+				<text type="formattedtext">
+					<p>You have advantage on saving throws against being charmed, and magic can't put you to sleep.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00003>
+			<id-00004>
+				<locked type="number">1</locked>
+				<name type="string">Mask of the Wild</name>
+				<source type="string">Wood Elf</source>
+				<text type="formattedtext">
+					<p>You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.</p>
+				</text>
+				<type type="string">subracial</type>
+			</id-00004>
+			<id-00005>
+				<locked type="number">1</locked>
+				<name type="string">Elf Weapon Training</name>
+				<source type="string">Wood Elf</source>
+				<text type="formattedtext">
+					<p>You have proficiency with the longsword, shortsword, shortbow, and longbow.</p>
+				</text>
+				<type type="string">subracial</type>
+			</id-00005>
+		</traitlist>
+		<weaponlist>
+			<id-00001>
+				<attackbonus type="number">0</attackbonus>
+				<attackstat type="string">dexterity</attackstat>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">2</bonus>
+						<dice type="dice">d8</dice>
+						<stat type="string">dexterity</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Rapier</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00007</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00001>
+			<id-00002>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d8</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">20</maxammo>
+				<name type="string">Crossbow, Light</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00008</recordname>
+				</shortcut>
+				<type type="number">1</type>
+			</id-00002>
+		</weaponlist>
+		<weight type="string">62 kg</weight>
+	</character>
+</root>

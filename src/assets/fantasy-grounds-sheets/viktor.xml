@@ -1,0 +1,1421 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root version="3.3" release="8|CoreRPG:4">
+	<character>
+		<abilities>
+			<charisma>
+				<bonus type="number">3</bonus>
+				<save type="number">5</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">16</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">0</bonus>
+				<save type="number">0</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">10</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">0</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">10</score>
+			</wisdom>
+		</abilities>
+		<adventurelist>
+		</adventurelist>
+		<background type="string">Criminal</background>
+		<backgroundlink type="windowreference">
+			<class>reference_background</class>
+			<recordname>reference.backgrounddata.criminal@DD PHB Deluxe</recordname>
+		</backgroundlink>
+		<bonds type="string">I'm guilty of a terrible crime. I hope I can redeem myself for it.</bonds>
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">1</casterlevelinvmult>
+				<casterpactmagic type="number">1</casterpactmagic>
+				<hddie type="dice">d8</hddie>
+				<hdused type="number">4</hdused>
+				<level type="number">4</level>
+				<name type="string">Warlock</name>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>reference.classdata.warlock@DD PHB Deluxe</recordname>
+				</shortcut>
+			</id-00001>
+		</classes>
+		<coins>
+			<slot1>
+				<amount type="number">0</amount>
+				<name type="string">GP</name>
+			</slot1>
+			<slot2>
+				<amount type="number">0</amount>
+				<name type="string">SP</name>
+			</slot2>
+			<slot3>
+				<amount type="number">0</amount>
+				<name type="string">sp</name>
+			</slot3>
+			<slot4>
+				<amount type="number">0</amount>
+				<name type="string">EP</name>
+			</slot4>
+			<slot5>
+				<amount type="number">0</amount>
+				<name type="string">PP</name>
+			</slot5>
+			<slot6>
+				<amount type="number">0</amount>
+				<name type="string">CP</name>
+			</slot6>
+		</coins>
+		<defenses>
+			<ac>
+				<armor type="number">3</armor>
+				<dexbonus type="string">max2</dexbonus>
+				<disstealth type="number">0</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">0</shield>
+				<temporary type="number">0</temporary>
+				<total type="number">15</total>
+			</ac>
+			<special type="string">Escudo y daga</special>
+		</defenses>
+		<deity type="string">Lord Arioch, El Se&#241;or de las Siete Oscuridades, El caballero de las Espadas</deity>
+		<effectlist>
+		</effectlist>
+		<encumbrance>
+			<encumbered type="number">70</encumbered>
+			<encumberedheavy type="number">140</encumberedheavy>
+			<liftpushdrag type="number">420</liftpushdrag>
+			<load type="number">62.5</load>
+			<max type="number">210</max>
+		</encumbrance>
+		<exp type="number">4499</exp>
+		<expneeded type="number">6500</expneeded>
+		<featlist>
+			<id-00002>
+				<locked type="number">1</locked>
+				<name type="string">Combat Reflexes</name>
+				<prerequisite type="string">Dex 13+</prerequisite>
+				<text type="formattedtext">
+					<p><i>Prerequisite: Dex 13+</i></p>
+					<p>Benefit:</p>
+					<list>
+						<li>You can perform a number of opportunity attacks per round equal to your Dexterity modifier (minimum 1).</li>
+						<li>You gain advantage on all opportunity attacks.</li>
+					</list>
+				</text>
+			</id-00002>
+		</featlist>
+		<featurelist>
+			<id-00001>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">The Hexblade</name>
+				<source type="string">Warlock</source>
+				<text type="formattedtext">
+					<p>You have made your pact with a powerful, sentient magic weapon carved from the stuff of the Shadowfell. The mighty sword Blackrazor is the most notable of these weapons, several of which have spread across the multiverse over the ages. These weapons grow stronger as they consume the life essence of their victims. The strongest of them can use their ties to the Shadowfell to offer power to mortals who serve them. The Raven Queen forged the first of these weapons. They, along with the hexblade warlocks, are another tool she can use to manipulate events in the Material Plane to her inscrutable ends.</p>
+					<h>Features</h>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.hexbladespelllist@Unearthed Arcana">Expanded Spell List</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.hexbladehexwarrior@Unearthed Arcana">Hex Warrior</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.hexbladescurse@Unearthed Arcana">Hexblade's Curse</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.hexbladeshadowhound@Unearthed Arcana">Shadow Hound</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.hexbladearmorofhexes@Unearthed Arcana">Armor of Hexes</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.hexblademasterofhexes@Unearthed Arcana">Master of Hexes</link>
+					</linklist>
+				</text>
+			</id-00001>
+			<id-00002>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Hexblade's Curse</name>
+				<source type="string">Warlock</source>
+				<specialization type="string">The Hexblade</specialization>
+				<text type="formattedtext">
+					<p>Starting at 1st level, you gain the ability to place a baleful curse on an enemy. As a bonus action, choose one creature you can see within 30 feet of you. The target is cursed for 1 minute. Until the curse ends, you gain the following benefits:</p>
+					<list>
+						<li>You gain a bonus to damage rolls against the cursed target. The bonus equals your proficiency bonus.</li>
+						<li>Any attack roll you make against the cursed target is a critical hit on a roll of 19 or 20 on the d20.</li>
+						<li>If the cursed target dies, you regain hit points equal to your warlock level + your Charisma modifier.</li>
+					</list>
+					<p>You can't use this feature again until you finish a short or long rest.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Pact Magic</name>
+				<source type="string">Warlock</source>
+				<text type="formattedtext">
+					<p>Your arcane research and the magic bestowed on you by your patron have given you facility with spells.</p>
+					<h>Cantrips</h>
+					<p>You know two cantrips of your choice from the warlock spell list. You learn additional warlock cantrips of your choice at higher levels, as shown in the Cantrips Known column of the Warlock table.</p>
+					<h>Spell Slots</h>
+					<p>The Warlock table shows how many spell slots you have. The table also shows what the level of those slots is; all of your spell slots are the same level. To cast one of your warlock spells of 1st level or higher, you must expend a spell slot. You regain all expended spell slots when you finish a short or long rest.</p>
+					<p>For example, when you are 5th level, you have two 3rd-level spell slots. To cast the 1st-level spell thunderwave, you must spend one of those slots, and you cast it as a 3rd-level spell.</p>
+					<h>Spells Known of 1st Level and Higher</h>
+					<p>At 1st level, you know two 1st-level spells of your choice from the warlock spell list.</p>
+					<p>The Spells Known column of the Warlock table shows when you learn more warlock spells of your choice of 1st level and higher. A spell you choose must be of a level no higher than what's shown in the table's Slot Level column for your level. When you reach 6th level, for example, you learn a new warlock spell, which can be 1st, 2nd, or 3rd level.</p>
+					<p>Additionally, when you gain a level in this class, you can choose one of the warlock spells you know and replace it with another spell from the warlock spell list, which also must be of a level for which you have spell slots.</p>
+					<h>Spellcasting Ability</h>
+					<p>Charisma is your spellcasting ability for your warlock spells, so you use your Charisma whenever a spell refers to your spellcasting ability. In addition, you use your Charisma modifier when setting the saving throw DC for a warlock spell you cast and when making an attack roll with one.</p>
+					<p><b>Spell save DC </b>= 8 + your proficiency bonus + your Charisma modifier</p>
+					<p><b>Spell attack modifier </b>= your proficiency bonus + your Charisma modifier</p>
+					<h>Spellcasting Focus</h>
+					<p>You can use an arcane focus as a spellcasting focus for your warlock spells.</p>
+				</text>
+			</id-00003>
+			<id-00004>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Expanded Spell List (Hexblade)</name>
+				<source type="string">Warlock</source>
+				<specialization type="string">The Hexblade</specialization>
+				<text type="formattedtext">
+					<p>The Hexblade lets you choose from an expanded list of spells when you learn a warlock spell. The following spells are added to the warlock spell list for you.</p>
+					<p><b>Hexblade Expanded Spells</b></p>
+					<table>
+						<tr>
+							<td><b>Spell Level</b></td>
+							<td colspan="3"><b>Spells</b></td>
+						</tr>
+						<tr>
+							<td>1st</td>
+							<td colspan="3"><i>shield, wrathful smite</i></td>
+						</tr>
+						<tr>
+							<td>2nd</td>
+							<td colspan="3"><i>branding smite, magic weapon</i></td>
+						</tr>
+						<tr>
+							<td>3rd</td>
+							<td colspan="3"><i>blink, elemental weapon</i></td>
+						</tr>
+						<tr>
+							<td>4th</td>
+							<td colspan="3"><i>phantasmal killer, staggering smite</i></td>
+						</tr>
+						<tr>
+							<td>5th</td>
+							<td colspan="3"><i>cone of cold, destructive wave</i></td>
+						</tr>
+					</table>
+				</text>
+			</id-00004>
+			<id-00005>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Hex Warrior</name>
+				<source type="string">Warlock</source>
+				<specialization type="string">The Hexblade</specialization>
+				<text type="formattedtext">
+					<p>At 1st level, you gain proficiency with medium armor, shields, and martial weapons. In addition, when attacking with a melee weapon that you are proficient with and that lacks the two-handed property, you can use your Charisma modifier, instead of Strength or Dexterity, for the attack and damage rolls.</p>
+				</text>
+			</id-00005>
+			<id-00006>
+				<locked type="number">1</locked>
+				<name type="string">Criminal Contact</name>
+				<source type="string">Criminal</source>
+				<text type="formattedtext">
+					<p>You have a reliable and trustworthy contact who acts as your liaison to a network of other criminals. You know how to get messages to and from your contact, even over great distances; specifically, you know the local messengers, corrupt caravan masters, and seedy sailors who can deliver messages for you.</p>
+				</text>
+			</id-00006>
+			<id-00007>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Eldritch Invocations</name>
+				<source type="string">Warlock</source>
+				<text type="formattedtext">
+					<p>In your study of occult lore, you have unearthed eldritch invocations, fragments of forbidden knowledge that imbue you with an abiding magical ability.</p>
+					<p>At 2nd level, you gain two eldritch invocations of your choice. When you gain certain warlock levels, you gain additional invocations of your choice, as shown in the Invocations Known column of the Warlock table.</p>
+					<p>Additionally, when you gain a level in this class, you can choose one of the invocations you know and replace it with another invocation that you could learn at that level.</p>
+					<p>If an eldritch invocation has prerequisites, noted in paranthesis after the name, you must meet them to learn it. You can learn the invocation at the same time that you meet its prerequisites. A level prerequisite refers to your level in this class.</p>
+					<p><b><u>2nd Level</u></b></p>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationagonizingblast@Unearthed Arcana">Agonizing Blast (eldritch blast)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationarcanegunslinger@Unearthed Arcana">Arcane Gunslinger (Modern; Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationarmorofshadows@Unearthed Arcana">Armor of Shadows</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationaspectofthemoon@Unearthed Arcana">Aspect of the Moon (Pact of the Tome)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationbeastspeech@Unearthed Arcana">Beast Speech</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationbeguilinginfluence@Unearthed Arcana">Beguiling Influence</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationbookofancientsecrets@Unearthed Arcana">Book of Ancient Secrets (Pact of the Tome)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationburninghex@Unearthed Arcana">Burning Hex (The Hexblade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationcaiphonsbeacon@Unearthed Arcana">Caiphon's Beacon (The Great Old One)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationchillinghex@Unearthed Arcana">Chilling Hex (The Hexblade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationchronicleoftheravenqueen@Unearthed Arcana">Chronicles of the Raven Queen (Raven Queen, Pact of the Tome)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationclawofacamar@Unearthed Arcana">Claw of Acamar (The Great Old One, Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationcursebringer@Unearthed Arcana">Curse Bringer (The Hexblade, Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationdevilssight@Unearthed Arcana">Devil's Sight</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationeldritchsight@Unearthed Arcana">Eldritch Sight</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationeldritchspear@Unearthed Arcana">Eldritch Spear (eldritch blast)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationeyesoftherunekeeper@Unearthed Arcana">Eyes of the Rune Keeper</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationfiendishvigor@Unearthed Arcana">Fiendish Vigor</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationfrostlance@Unearthed Arcana">Frost Lance (eldritch blast)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationgazeoftwominds@Unearthed Arcana">Gaze of Two Minds</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationgraspofhadar@Unearthed Arcana">Grasp of Hadar (The Great Old One, eldritch blast)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationgiftofthedepths@Unearthed Arcana">Gift of the Depths</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationgiftoftheeverlivingones@Unearthed Arcana">Gift of the Ever-Living Ones (Pact of the Chain)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationimprovedpactweapon@Unearthed Arcana">Improved Pact Weapon (Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationmaceofdispater@Unearthed Arcana">Mace of Dispater (The Fiend, Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationmaskofmanyfaces@Unearthed Arcana">Mask of Many Faces</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationmistyvisions@Unearthed Arcana">Misty Visions</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationmoonbow@Unearthed Arcana">Moon Bow (The Archfey, Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationpathoftheseeker@Unearthed Arcana">Path of the Seeker (The Seeker)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationravenqueensblessing@Unearthed Arcana">Raven Queen's Blessing (Raven Queen, eldritch blast)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationrepellingblast@Unearthed Arcana">Repelling Blast (eldritch blast)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationseekersspeech@Unearthed Arcana">Seeker's Speech (The Seeker)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationthiefoffivefates@Unearthed Arcana">Thief of Five Fates</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationvoiceofthechainmaster@Unearthed Arcana">Voice of the Chain Master (Pact of the Chain)</link>
+					</linklist>
+					<p><b><u>5th Level</u></b></p>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationcloakofbaalzebul@Unearthed Arcana">Cloak of Flies</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationeldritchsmite@Unearthed Arcana">Eldritch Smite (Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationkissofmephistopheles@Unearthed Arcana">Kiss of Mephistopheles (eldritch blast)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationmaddeninghex@Unearthed Arcana">Maddening Hex</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationmirethemind@Unearthed Arcana">Mire the Mind</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationonewithshadows@Unearthed Arcana">One with Shadows</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationrelentlesshex@Unearthed Arcana">Relentless Hex</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationsignofillomen@Unearthed Arcana">Sign of Ill Omen</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationthirstingblade@Unearthed Arcana">Thirsting Blade (Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationtomboflevistus@Unearthed Arcana">Tomb of Levistus</link>
+					</linklist>
+					<p><b><u>7th Level</u></b></p>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationbewitchingwhispers@Unearthed Arcana">Bewitching Whispers</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationdreadfulword@Unearthed Arcana">Dreadful Word</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationghostlygaze@Unearthed Arcana">Ghostly Gaze</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationsculptorofflesh@Unearthed Arcana">Sculptor of Flesh</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationtrickstersescape@Unearthed Arcana">Trickster's Escape</link>
+					</linklist>
+					<p><b><u>9th Level</u></b></p>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationascendantstep@Unearthed Arcana">Ascendant Step</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationminionsofchaos@Unearthed Arcana">Minions of Chaos</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationotherwordlyleap@Unearthed Arcana">Otherworldly Leap</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationsuperiorpactweapon@Unearthed Arcana">Superior Pact Weapon (Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationwhispersofthegrave@Unearthed Arcana">Whispers of the Grave</link>
+					</linklist>
+					<p><b><u>12th Level</u></b></p>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationlifedrinker@Unearthed Arcana">Lifedrinker (Pact of the Blade)</link>
+					</linklist>
+					<p><b><u>15th Level</u></b></p>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationchainsofcarceri@Unearthed Arcana">Chains of Carceri (Pact of the Chain)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationmasterofmyriadforms@Unearthed Arcana">Master of Myriad Forms</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationshroudofshadow@Unearthed Arcana">Shroud of Shadow</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationultimatepactweapon@Unearthed Arcana">Ultimate Pact Weapon (Pact of the Blade)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationvisionsofdistantrealms@Unearthed Arcana">Visions of Distant Realms</link>
+						<link class="reference_classfeature" recordname="reference.classdata.UAwarlock.features.invocationwitchsight@Unearthed Arcana">Witch Sight</link>
+					</linklist>
+				</text>
+			</id-00007>
+			<id-00008>
+				<level type="number">4</level>
+				<locked type="number">1</locked>
+				<name type="string">Ability Score Improvement</name>
+				<source type="string">Warlock</source>
+				<text type="formattedtext">
+					<p>When you reach 4th level, and again at 8th, 12th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability s cores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.</p>
+				</text>
+			</id-00008>
+			<id-00009>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Agonizing Blast</name>
+				<source type="string">Warlock</source>
+				<specializationchoice type="number">0</specializationchoice>
+				<text type="formattedtext">
+					<p><b>Prerequisite </b>: eldritch blast cantrip</p>
+					<p>When you cast eldritch blast, add your Charisma modifier to the damage it deals on a hit.</p>
+				</text>
+			</id-00009>
+			<id-00010>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Pact Boon</name>
+				<source type="string">Warlock</source>
+				<text type="formattedtext">
+					<p>At 3rd level, your otherworldly patron bestows a gift upon you for your loyal service. You gain one of the following features of your choice.</p>
+					<h>Pact of the Chain</h>
+					<p>You learn the <i>find familiar </i>spell and can cast it as a ritual. The spell doesn't count against your number of spells known.</p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.findfamiliar@*"><b>Spell: </b></link>Find Familiar</linklist>
+					<p>When you cast the spell, you can choose one of the normal forms for your familiar or one of the following special forms: imp, pseudodragon, quasit, or sprite. Additionally, when you take the Attack action, you can forgo one of your own attacks to allow your familiar to make one attack of its own. When you let your familiar attack, it does so with its reaction.</p>
+					<h>Pact of the Blade</h>
+					<p>You can use your action to create a pact weapon in your empty hand. You can choose the form that this melee weapon takes each time you create it (see chapter 5 for weapon options). You are proficient with it while you wield it. This weapon counts as magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage.</p>
+					<p>Your pact weapon disappears if it is more than 5 feet away from you for 1 minute or more. It also disappears if you use this feature again, if you dismiss the weapon (no action required), or if you die.</p>
+					<p>You can transform one magic weapon into your pact weapon by performing a special ritual while you hold the weapon. You perform the ritual over the course of 1 hour, which can be done during a short rest.</p>
+					<p>You can then dismiss the weapon, shunting it into an extra dimensional space, and it appears whenever you create your pact weapon thereafter. You can't affect an artifact or a sentient weapon in this way. The weapon ceases being your pact weapon if you die, if you perform the 1-hour ritual on a different weapon, or if you use a 1-hour ritual to break your bond to it. The weapon appears at your feet if it is in the extra dimensional space when the bond breaks.</p>
+					<h>Pact of the Tome</h>
+					<p>Your patron gives you a grimoire called a Book of Shadows. When you gain this feature, choose three cantrips from any class's spell list. While the book is on your person, you can cast those cantrips at will. They don't count against your number of cantrips known. Any cantrip you cast with this feature is considered a warlock cantrip for you.</p>
+					<p>If you lose your Book of Shadows, you can perform a 1-hour ceremony to receive a replacement from your patron. This ceremony can be performed during a short or long rest, and it destroys the previous book. The book turns to ash when you die.</p>
+					<h>Your Pact Boon</h>
+					<p>Each Pact Boon option produces a special creature or an object that reflects your patron's nature.</p>
+					<p><b>Pact of the Chain. </b>Your familiar is more cunning than a typical familiar. Its default form can be a reflection of your patron, with sprites and pseudodragons tied to the Archfey and imps and quasits tied to the Fiend. Because the Great Old One's nature is inscrutable, any familiar form is suitable for it.</p>
+					<p><b>Pact of the Blade. </b>If your patron is the Archfey, your weapon might be a slender blade wrapped in leafy vines. If you serve the Fiend, your weapon could be an axe made of black metal and adorned with decorative flames. If your patron is the Great Old One, your weapon might be an ancient-looking spear, with a gemstone embedded in its head, carved to look like a terrible unblinking eye.</p>
+					<p><b>Pact of the Tome. </b>Your Book of Shadows might be a fine, gilt-edged tome with spells of enchantment and illusion, gifted to you by the lordly Archfey. It could be a weighty tome bound in demon hide studded with iron, holding spells of conjuration and a wealth of forbidden lore about the sinister regions of the cosmos, a gift of the Fiend. Or it could be the tattered diary of a lunatic driven mad by contact with the Great Old One, holding scraps of spells that only your own burgeoning insanity allows you to understand and cast.</p>
+				</text>
+			</id-00010>
+			<id-00011>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Improved Pact Weapon</name>
+				<specializationchoice type="number">0</specializationchoice>
+				<text type="formattedtext">
+					<p><b>Prerequisite </b>: Pact of the Blade feature</p>
+					<p>You can use any weapon you summon with your Pact of the Blade feature as a spellcasting focus for your warlock spells.</p>
+					<p>In addition, the weapon counts as a magic weapon with a +1 bonus to its attack and damage rolls, unless it is already a magic weapon that you transformed into your pact weapon.</p>
+				</text>
+			</id-00011>
+		</featurelist>
+		<flaws type="string">When I see something valuable, I can't think about anything but how to steal it.</flaws>
+		<gender type="string">Male</gender>
+		<hero type="number">0</hero>
+		<hp>
+			<deathsavefail type="number">3</deathsavefail>
+			<deathsavesuccess type="number">0</deathsavesuccess>
+			<hdmod type="number">0</hdmod>
+			<temporary type="number">0</temporary>
+			<total type="number">31</total>
+			<wounds type="number">31</wounds>
+		</hp>
+		<ideals type="string">Charity. I steal from the wealthy so that I can help people in need. (Good)</ideals>
+		<initiative>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">2</total>
+		</initiative>
+		<inspiration type="number">0</inspiration>
+		<inventorylist>
+			<id-00001>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Bedroll</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">4</weight>
+			</id-00001>
+			<id-00002>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d4 piercing</damage>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<effectlist>
+					<id-00001>
+						<ability_modifier type="number">0</ability_modifier>
+						<actiononly type="number">0</actiononly>
+						<durdice type="dice"></durdice>
+						<durmod type="number">0</durmod>
+						<effect type="string">AC: 1</effect>
+						<effect_description type="string">[AC: 1]</effect_description>
+						<misc_modifier type="number">0</misc_modifier>
+						<name type="string">Dagger</name>
+						<save_modifier type="number">0</save_modifier>
+						<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+					</id-00001>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Dagger</name>
+				<properties type="string">Finesse, light, thrown (range 20/60)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">1</weight>
+			</id-00002>
+			<id-00003>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">A skin full of heady, mixed spirits</name>
+				<weight type="number">2</weight>
+			</id-00003>
+			<id-00004>
+				<carried type="number">1</carried>
+				<cost type="string">5 cp</cost>
+				<count type="number">10</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Piton</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">0.25</weight>
+			</id-00004>
+			<id-00005>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">3</count>
+				<description type="formattedtext">
+					<p>Rations consist of dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts.</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Rations (1 Day)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">2</weight>
+			</id-00005>
+			<id-00006>
+				<carried type="number">1</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Waterskin</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00006>
+			<id-00007>
+				<carried type="number">1</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Backpack (Empty)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">3</weight>
+			</id-00007>
+			<id-00008>
+				<ac type="number">0</ac>
+				<bonus type="number">1</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">15 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d8 slashing, magic</damage>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Improved pact weapon (longsword)</name>
+				<properties type="string">Versatile(1d10), off-hand(m)</properties>
+				<subtype type="string">Martial Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">0</weight>
+			</id-00008>
+			<id-00009>
+				<carried type="number">1</carried>
+				<cost type="string">1 cp</cost>
+				<count type="number">6</count>
+				<description type="formattedtext">
+					<p>A torch burns for 1 hour, providing bright light in a 20-foot radius and dim light for an additional 20 feet. If you make a melee attack with a burning torch and hit, it deals 1 fire damage.</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Torch</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00009>
+			<id-00010>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This small container holds flint, fire steel, and tinder (usually dry cloth soaked in light oil) used to kindle a fire. Using it to light a torch-or anything else with abundant, exposed fuel-takes an action. Lighting any other fire takes 1 minute.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Tinderbox</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00010>
+			<id-00011>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Hammer</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">3</weight>
+			</id-00011>
+			<id-00012>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">50 gp</cost>
+				<count type="number">2</count>
+				<description type="formattedtext">
+					<p>This sticky, adhesive fluid ignites when exposed to air. As an action, you can throw this flask up to 20 feet, shattering it on impact. Make a ranged attack against a creature or object, treating the alchemist's fire as an improvised weapon. On a hit, the target takes 1d4 fire damage at the start of each of its turns. A creature can end this damage by using its action to make a DC 10 Dexterity check to extinguish the flames.</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Alchemist's Fire (Flask)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00012>
+			<id-00014>
+				<carried type="number">1</carried>
+				<cost type="string">1 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This item encompasses a wide range of game pieces, including dice and decks of cards (for games such as Three-Dragon Ante). A few common examples appear on the Tools table, but other kinds of gaming sets exist. If you are proficient with a gaming set, you can add your proficiency bonus to ability checks you make to play a game with that set. Each type of gaming set requires a separate proficiency.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Dice Set</name>
+				<subtype type="string">Gaming Set</subtype>
+				<type type="string">Tools</type>
+				<weight type="number">0</weight>
+			</id-00014>
+			<id-00015>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">25 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>These special tools include the items needed to pursue a craft or trade. The table shows examples of the most common types of tools, each providing items related to a single craft. Proficiency with a set of artisan's tools lets you add your proficiency bonus to any ability checks you make using the tools in your craft. Each type of artisan's tools requires a separate proficiency.</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Jeweler's Tools</name>
+				<subtype type="string">Artisan's Tools</subtype>
+				<type type="string">Tools</type>
+				<weight type="number">2</weight>
+			</id-00015>
+			<id-00017>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">25 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d8 piercing</damage>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Crossbow, Light</name>
+				<properties type="string">Ammunition (range 80/320), loading, two-handed</properties>
+				<subtype type="string">Simple Ranged Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">5</weight>
+			</id-00017>
+			<id-00018>
+				<ac type="number">13</ac>
+				<carried type="number">2</carried>
+				<cost type="string">50 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Medium armor offers more protection than light armor, but it also impairs movement more. If you wear medium armor, you add your Dexterity modifier, to a maximum of +2, to the base number from your armor type to determine your Armor Class.</p>
+					<p>Made of interlocking metal rings, a chain shirt is worn between layers of clothing or leather. This armor offers modest protection to the wearer's upper body and allows the sound of the rings rubbing against one another to be muffled by outer layers.</p>
+				</description>
+				<dexbonus type="string">Yes (max 2)</dexbonus>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Chain Shirt</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Medium Armor</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">20</weight>
+			</id-00018>
+		</inventorylist>
+		<languagelist>
+			<id-00001>
+				<name type="string">Common</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Sylvan</name>
+			</id-00002>
+		</languagelist>
+		<level type="number">4</level>
+		<name type="string">Viktor Steiner-Davion</name>
+		<pc_label_hero type="string">Hero Point</pc_label_hero>
+		<perception type="number">10</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<personalitytraits type="string">I blow up at the slightest insult.</personalitytraits>
+		<powergroup>
+			<id-00001>
+				<atkprof type="number">1</atkprof>
+				<castertype type="string">memorization</castertype>
+				<name type="string">Spells</name>
+				<saveprof type="number">1</saveprof>
+				<stat type="string">charisma</stat>
+			</id-00001>
+			<id-00002>
+				<name type="string">Start Effect</name>
+			</id-00002>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">2</max>
+				<used type="number">2</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powers>
+			<id-00001>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<effect_target type="string">targets</effect_target>
+						<label type="string">Hexblade Curse; DMG: 2</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+					<id-00002>
+						<heallist>
+							<id-00001>
+								<bonus type="number">3</bonus>
+								<dice type="dice"></dice>
+								<stat type="string">warlock</stat>
+								<statmult type="number">1</statmult>
+							</id-00001>
+						</heallist>
+						<healtargeting type="string">self</healtargeting>
+						<order type="number">2</order>
+						<type type="string">heal</type>
+					</id-00002>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<effect_target type="string">targets</effect_target>
+						<label type="string">NOTE: Critical range 19-20 against target</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00003>
+				</actions>
+				<cast type="number">1</cast>
+				<description type="formattedtext">
+					<p>Starting at 1st level, you gain the ability to place a baleful curse on an enemy. As a bonus action, choose one creature you can see within 30 feet of you. The target is cursed for 1 minute. Until the curse ends, you gain the following benefits:</p>
+					<p>You gain a bonus to damage rolls against the cursed target. The bonus equals your proficiency bonus.</p>
+					<p>Any attack roll you make against the cursed target is a critical hit on a roll of 19 or 20 on the d20.</p>
+					<p>If the cursed target dies, you regain hit points equal to your warlock level + your Charisma modifier.</p>
+					<p></p>
+					<p>You can't use this feature again until you finish a short or long rest.</p>
+				</description>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Hexblade curse (bonus action)</name>
+				<prepared type="number">1</prepared>
+				<ritual type="number">0</ritual>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00001>
+			<id-00002>
+				<actions>
+					<id-00001>
+						<durmod type="number">0</durmod>
+						<label type="string">Combat Reflexes; ADVATK: opportunity</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>Prerequisite: Dex 13+</p>
+					<p>Benefit:</p>
+					<p>You can perform a number of opportunity attacks per round equal to your Dexterity modifier (minimum 1).</p>
+					<p>You gain advantage on all opportunity attacks.</p>
+				</description>
+				<group type="string">Start Effect</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Combat Reflexes (reaction)</name>
+				<prepared type="number">0</prepared>
+				<ritual type="number">0</ritual>
+			</id-00002>
+			<id-00003>
+				<actions>
+					<id-00001>
+						<atktype type="string">ranged</atktype>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d10</dice>
+								<stat type="string">base</stat>
+								<type type="string">force</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>A beam of crackling energy streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 force damage.</p>
+					<p>The spell creates more than one beam when you reach higher levels: two beams at 5th level, three beams at 11th level, and four beams at 17th level. You can direct the beams at the same target or at different ones. Make a separate attack roll for each beam.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Eldritch Blast (agonizing blast)</name>
+				<prepared type="number">0</prepared>
+				<range type="string">120 feet</range>
+				<school type="string">Evocation</school>
+				<source type="string">Warlock</source>
+			</id-00003>
+			<id-00004>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<bonus type="number">10</bonus>
+								<dice type="dice"></dice>
+							</id-00001>
+						</heallist>
+						<healtargeting type="string">self</healtargeting>
+						<healtype type="string">temp</healtype>
+						<order type="number">1</order>
+						<type type="string">heal</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">10</bonus>
+								<dice type="dice"></dice>
+								<type type="string">cold</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a cup of water)</components>
+				<description type="formattedtext">
+					<p>A protective magical force surrounds you, manifesting as a spectral frost that covers you and your gear. You gain 5 temporary hit points for the duration. If a creature hits you with a melee attack while you have these hit points, the creature takes 5 cold damage.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, both the temporary hit points and the cold damage increase by 5 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Armor of Agathys</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Warlock</source>
+			</id-00004>
+			<id-00005>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">GRANTDISATK; (C)</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V</components>
+				<description type="formattedtext">
+					<p>Your body becomes blurred, shifting and wavering to all who can see you. For the duration, any creature has disadvantage on attack rolls against you. An attacker is immune to this effect if it doesn't rely on sight, as with blindsight, or can see through illusions, as with truesight.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Blur</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self</range>
+				<school type="string">Illusion</school>
+				<source type="string">Druid Desert Circle, Eldritch Knight, Sorcerer, Wizard, Arcane Trickster</source>
+			</id-00005>
+			<id-00006>
+				<actions>
+					<id-00001>
+						<onmissdamage type="string">half</onmissdamage>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">strength</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d6,d6</dice>
+								<type type="string">necrotic</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You invoke the power of Hadar, the Dark Hunger. Tendrils of dark energy erupt from you and batter all creatures within 10 feet of you. Each creature in that area must make a Strength saving throw. On a failed save, a target takes 2d6 necrotic damage and can't take reactions until its next turn. On a successful save, the creature takes half damage, but suffers no other effect.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d6 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Arms of Hadar</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self (10-foot radius)</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Conjuration</school>
+				<source type="string">Warlock</source>
+			</id-00006>
+			<id-00007>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">RESIST: bludgeoning,piercing,slashing</label>
+						<order type="number">1</order>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You extend your hand and trace a sigil of warding in the air. Until the end of your next turn, you have resistance against bludgeoning, piercing, and slashing damage dealt by weapon attacks.</p>
+				</description>
+				<duration type="string">1 round</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Blade Ward</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Self</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Bard, Eldritch Knight, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00007>
+			<id-00008>
+				<actions>
+					<id-00001>
+						<onmissdamage type="string">half</onmissdamage>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">constitution</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d8,d8,d8</dice>
+								<type type="string">thunder</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a chip of mica)</components>
+				<description type="formattedtext">
+					<p>A sudden loud ringing noise, painfully intense, erupts from a point of your choice within range. Each creature in a 10-foot-radius sphere centered on that point must make a Constitution saving throw. A creature takes 3d8 thunder damage on a failed save, or half as much damage on a successful one. A creature made of inorganic material such as stone, crystal, or metal has disadvantage on this saving throw.</p>
+					<p>A nonmagical object that isn't being worn or carried also takes the damage if it's in the spell's area.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d8 for each slot level above 2nd.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Shatter</name>
+				<prepared type="number">1</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Bard, Cleric Tempest Domain, Eldritch Knight, Monk, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00008>
+			<id-00009>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">wisdom</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, M (a snake's tongue and either a bit of honeycomb or a drop of sweet oil)</components>
+				<description type="formattedtext">
+					<p>You suggest a course of activity (limited to a sentence or two) and magically influence a creature you can see within range that can hear and understand you.</p>
+					<p>Creatures that can't be charmed are immune to this effect. The suggestion must be worded in such a manner as to make the course of action sound reasonable.</p>
+					<p>Asking the creature to stab itself, throw itself onto a spear, immolate itself, or do some other obviously harmful act ends the spell.</p>
+					<p>The target must make a Wisdom saving throw. On a failed save, it pursues the course of action you described to the best of its ability. The suggested course of action can continue for the entire duration. If the suggested activity can be completed in a shorter time, the spell ends when the subject finishes what it was asked to do. You can also specify conditions that will trigger a special activity during the duration. For example, you might suggest that a knight give her warhorse to the first beggar she meets. If the condition isn't met before the spell expires, the activity isn't performed.</p>
+					<p>If you or any of your companions damage the target, the spell ends.</p>
+				</description>
+				<duration type="string">Concentration, up to 8 hours</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Suggestion</name>
+				<prepared type="number">0</prepared>
+				<range type="string">30 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Enchantment</school>
+				<source type="string">Bard, Cleric Knowledge Domain, Eldritch Knight, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00009>
+			<id-00012>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">dexterity</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d8</dice>
+								<type type="string">fire</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You create a bonfire on ground that you can see within range. Until the spell ends, the magic bonfire fills a 5-foot cube. Any creature in the bonfire's space when you cast the spell must succeed on a Dexterity saving throw or take 1d8 fire damage. A creature must also make the saving throw when it moves into the bonfire's space for the first time on a turn or ends its turn there.</p>
+					<p>The bonfire ignites flammable objects in its area that aren't being worn or carried.</p>
+					<p>The spell's damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8).</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Create Bonfire</name>
+				<prepared type="number">0</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Conjuration</school>
+				<source type="string">Druid, Sorcerer, Warlock, Wizard</source>
+			</id-00012>
+		</powers>
+		<profbonus type="number">2</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<name type="string">Weapon: Simple weapon, Martial Weapons</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Armor: Light armor, Medium Armor, Shield</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Tool: One type of gaming set, thieves' tools</name>
+			</id-00003>
+		</proficiencylist>
+		<race type="string">Human-Variant</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>reference.racedata.human_variant@DD PHB Deluxe</recordname>
+		</racelink>
+		<size type="string">Medium</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">0</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">1</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">5</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">0</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">3</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">0</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">0</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">0</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">3</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">0</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">1</prof>
+				<stat type="string">strength</stat>
+				<total type="number">4</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">0</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">1</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">5</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">1</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">4</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">0</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">0</total>
+			</id-00018>
+			<id-00020>
+				<misc type="number">0</misc>
+				<name type="string">Thieving&#180;s Tools</name>
+				<prof type="number">1</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">4</total>
+			</id-00020>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">30</base>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">30</total>
+		</speed>
+		<temp>
+		</temp>
+		<token type="token">portrait_id-00010_token</token>
+		<traitlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Skills</name>
+				<source type="string">Human-Variant</source>
+				<text type="formattedtext">
+					<p>You gain proficiency in one skill of your choice.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00001>
+			<id-00002>
+				<locked type="number">1</locked>
+				<name type="string">Feat</name>
+				<source type="string">Human-Variant</source>
+				<text type="formattedtext">
+					<p>You gain one feat of your choice.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00002>
+		</traitlist>
+		<weapon>
+			<critdicebonus>
+				<melee type="number">0</melee>
+				<ranged type="number">0</ranged>
+			</critdicebonus>
+			<critrange>
+				<melee type="number">20</melee>
+				<ranged type="number">20</ranged>
+			</critrange>
+		</weapon>
+		<weaponlist>
+			<id-00001>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d8</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">20</maxammo>
+				<name type="string">Crossbow, Light</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00017</recordname>
+				</shortcut>
+				<type type="number">1</type>
+			</id-00001>
+			<id-00002>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<statmult type="number">1</statmult>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Dagger</name>
+				<prof type="number">1</prof>
+				<properties type="string">Finesse, light, thrown (range 20/60)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00002</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00002>
+			<id-00004>
+				<attackbonus type="number">1</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">1</bonus>
+						<dice type="dice">d8</dice>
+						<stat type="string">base</stat>
+						<statmult type="number">1</statmult>
+						<type type="string">slashing,magic</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Improved pact weapon (longsword)</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00008</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00004>
+			<id-00005>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Dagger</name>
+				<prof type="number">1</prof>
+				<properties type="string">Finesse, light, thrown (range 20/60)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00002</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00005>
+		</weaponlist>
+	</character>
+</root>
