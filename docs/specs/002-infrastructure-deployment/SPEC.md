@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: archived
 title: "Infrastructure & Deployment Architecture"
 author: "sdelrio"
 date: "2026-09-12"
