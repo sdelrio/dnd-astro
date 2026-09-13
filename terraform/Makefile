@@ -38,9 +38,15 @@ help:
 	@echo "  CUSTOM_DOMAIN     Custom domain name"
 
 plan/%:
+	@echo "Planning $* resources..."
+	@echo "Resources: $($(*)_RESOURCES)"
+	@echo "---"
 	terraform plan $(foreach r,$($(*)_RESOURCES),-target=$(r))
 
 apply/%:
+	@echo "Applying $* resources..."
+	@echo "Resources: $($(*)_RESOURCES)"
+	@echo "---"
 	terraform apply $(foreach r,$($(*)_RESOURCES),-target=$(r))
 
 import-worker:
