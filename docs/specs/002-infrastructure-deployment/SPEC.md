@@ -110,6 +110,26 @@ Configure custom domain `dnd-companion.lorien.cloud` for the Worker.
 3. Update Access policy to cover new domain
 4. Verify SSL/TLS is active
 
+**Importing existing custom domain (if configured via dashboard):**
+
+If the custom domain was already added via the dashboard, import the resources into Terraform state:
+
+```bash
+# Import Workers domain binding
+terraform import 'cloudflare_workers_domain.custom[0]' <account_id>/<hostname>
+
+# Import DNS CNAME record
+terraform import 'cloudflare_record.custom_domain[0]' <zone_id>/<record_id>
+```
+
+Example:
+```bash
+terraform import 'cloudflare_workers_domain.custom[0]' b0dc01c04d8d5399bc5d06c4bebb7509/dnd-companion.lorien.cloud
+terraform import 'cloudflare_record.custom_domain[0]' e88cfc8197afaa3350144dce80293e37/<record_id>
+```
+
+Note: The quotes around the resource address are required because of the `[0]` index. Use `terraform state show` to find the record ID after importing the Workers domain.
+
 **DNS Configuration:**
 - CNAME record: `dnd-companion` → `dnd-astro.oftheriver.workers.dev`
 - Proxied through Cloudflare (orange cloud enabled)
