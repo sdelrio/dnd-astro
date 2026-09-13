@@ -92,6 +92,8 @@ Create an Access application for the Worker domain with path-based policies for 
 
 **Terraform:**
 - Define `cloudflare_zero_trust_access_application` for the Worker domain
+  - `domain` must include the path suffix (e.g. `dnd-astro.oftheriver.workers.dev/reference/*`) — Cloudflare requires the domain to match the first destination URI
+  - `destinations.uri` must be the full domain+path without scheme (e.g. `dnd-astro.oftheriver.workers.dev/reference/*`), NOT `https://...`
 - Define two `cloudflare_zero_trust_access_policy` resources with Email OTP provider:
   - Policy 1: Path matcher `/reference/*`
   - Policy 2: Path matcher `/private/*`
