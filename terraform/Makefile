@@ -4,10 +4,10 @@
 ZEROTRUST_RESOURCES = cloudflare_zero_trust_access_application.dnd_astro cloudflare_zero_trust_access_policy.protected_paths
 
 # Read from terraform.tfvars if env vars not set
-CF_API_TOKEN   ?= $(shell [ -f terraform.tfvars ] && grep -oP 'cloudflare_api_token\s*=\s*"\K[^"]+' terraform.tfvars || echo "")
-CF_ACCOUNT_ID  ?= $(shell [ -f terraform.tfvars ] && grep -oP 'cloudflare_account_id\s*=\s*"\K[^"]+' terraform.tfvars || echo "")
-CF_ZONE_ID     ?= $(shell [ -f terraform.tfvars ] && grep -oP 'custom_domain_zone_id\s*=\s*"\K[^"]+' terraform.tfvars || echo "")
-CUSTOM_DOMAIN  ?= $(shell [ -f terraform.tfvars ] && grep -oP 'custom_domain\s*=\s*"\K[^"]+' terraform.tfvars || echo "")
+CF_API_TOKEN   ?= $(shell [ -f terraform.tfvars ] && grep 'cloudflare_api_token' terraform.tfvars | sed 's/.*"\(.*\)".*/\1/' || echo "")
+CF_ACCOUNT_ID  ?= $(shell [ -f terraform.tfvars ] && grep 'cloudflare_account_id' terraform.tfvars | sed 's/.*"\(.*\)".*/\1/' || echo "")
+CF_ZONE_ID     ?= $(shell [ -f terraform.tfvars ] && grep 'custom_domain_zone_id' terraform.tfvars | sed 's/.*"\(.*\)".*/\1/' || echo "")
+CUSTOM_DOMAIN  ?= $(shell [ -f terraform.tfvars ] && grep '^custom_domain' terraform.tfvars | grep -v zone | sed 's/.*"\(.*\)".*/\1/' || echo "")
 
 help:
 	@echo "Usage: make <target>"
