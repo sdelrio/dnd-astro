@@ -1,0 +1,1302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root version="4.3" dataversion="20220901" release="8.1|CoreRPG:6">
+	<character>
+		<abilities>
+			<charisma>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">3</bonus>
+				<save type="number">6</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">17</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">0</bonus>
+				<save type="number">0</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">10</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">8</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">3</bonus>
+				<save type="number">6</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">16</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">9</score>
+			</wisdom>
+		</abilities>
+		<adventurelist />
+		<alignment type="string">Neutral Good</alignment>
+		<backgroundlink type="windowreference">
+			<class />
+			<recordname />
+		</backgroundlink>
+		<check_ignoreFood type="number">0</check_ignoreFood>
+		<check_ignoreWater type="number">0</check_ignoreWater>
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">0</casterlevelinvmult>
+				<casterpactmagic type="number">0</casterpactmagic>
+				<hddie type="dice">d10</hddie>
+				<hdused type="number">5</hdused>
+				<level type="number">5</level>
+				<name type="string">Fighter</name>
+				<rolls>
+					<lvl-001 type="number">10</lvl-001>
+					<lvl-002 type="number">5</lvl-002>
+					<lvl-003 type="number">3</lvl-003>
+					<lvl-004 type="number">4</lvl-004>
+					<lvl-005 type="number">5</lvl-005>
+				</rolls>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>reference.classdata.fighter@DD PHB Deluxe</recordname>
+				</shortcut>
+			</id-00001>
+		</classes>
+		<coinamountmanager1 type="number">0</coinamountmanager1>
+		<coinamountmanager2 type="number">0</coinamountmanager2>
+		<coinamountmanager3 type="number">0</coinamountmanager3>
+		<coinamountmanager4 type="number">0</coinamountmanager4>
+		<coinamountmanager5 type="number">0</coinamountmanager5>
+		<coinnamemanager1 type="string">PP</coinnamemanager1>
+		<coinnamemanager2 type="string">GP</coinnamemanager2>
+		<coinnamemanager3 type="string">EP</coinnamemanager3>
+		<coinnamemanager4 type="string">SP</coinnamemanager4>
+		<coinnamemanager5 type="string">CP</coinnamemanager5>
+		<coins>
+			<slot1>
+				<amount type="number">0</amount>
+				<name type="string">PP</name>
+			</slot1>
+			<slot2>
+				<amount type="number">24</amount>
+				<name type="string">GP</name>
+			</slot2>
+			<slot3>
+				<amount type="number">0</amount>
+				<name type="string">EP</name>
+			</slot3>
+			<slot4>
+				<amount type="number">9</amount>
+				<name type="string">SP</name>
+			</slot4>
+			<slot5>
+				<amount type="number">55</amount>
+				<name type="string">CP</name>
+			</slot5>
+			<slot6>
+				<amount type="number">0</amount>
+			</slot6>
+		</coins>
+		<ConsumablesMNM />
+		<currentConditions type="string">poisoned,</currentConditions>
+		<defenses>
+			<ac>
+				<armor type="number">7</armor>
+				<dexbonus type="string">no</dexbonus>
+				<disstealth type="number">1</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">0</shield>
+				<temporary type="number">0</temporary>
+				<total type="number">17</total>
+			</ac>
+		</defenses>
+		<deity type="string">Moradin</deity>
+		<effectlist />
+		<encumbrance>
+			<encumbered type="number">80</encumbered>
+			<encumberedheavy type="number">160</encumberedheavy>
+			<liftpushdrag type="number">480</liftpushdrag>
+			<load type="number">65</load>
+			<max type="number">240</max>
+		</encumbrance>
+		<exp type="number">11071</exp>
+		<expneeded type="number">14000</expneeded>
+		<featlist>
+			<id-00001>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Heavy Armor Master</name>
+				<prepared type="number">0</prepared>
+				<prerequisite type="string">Proficiency with heavy armor</prerequisite>
+				<text type="formattedtext">
+					<p>
+						<i>Prerequisite: Proficiency with heavy armor</i>
+					</p>
+					<p>You can use your armor to deflect strikes that would kill others. You gain the following benefits:</p>
+					<list>
+						<li>Increase your Strength score by 1, to a maximum of 20.</li>
+						<li>While you are wearing heavy armor, bludgeoning, piercing, and slashing damage that you take from non magical attacks is reduced by 3.</li>
+					</list>
+				</text>
+			</id-00001>
+			<id-00002>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Shield Bearer</name>
+				<prepared type="number">0</prepared>
+				<text type="formattedtext">
+					<p>You are a fearsome foe with a shield, capable of skillfully protecting yourself and striking back at your enemies.</p>
+					<p>As long as you are equipped with a shield, you gain the following benefits:</p>
+					<p>-If you do not move during your turn, you gain half cover (see the Combat chapter: Cover) until the start of your next turn.</p>
+					<p>This benefit does not apply if you are incapacitated.</p>
+					<p>-Whenever a creature misses you with a melee attack, you can use your reaction to retaliate against your attacker.</p>
+					<p>Make an shield bash attack against your attacker that deals bludgeoning damage equal to 1d4 + your Strength/Dexterity modifier (your choice).</p>
+				</text>
+			</id-00002>
+		</featlist>
+		<featurelist>
+			<id-00001>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Second Wind</name>
+				<source type="string">Fighter</source>
+				<text type="formattedtext">
+					<p>You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level.</p>
+					<p>Once you use this feature, you must finish a short or long rest before you can use it again.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<hpadd type="number">0</hpadd>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Fighting Style (Great Weapon Fighting)</name>
+				<source type="string">Fighter</source>
+				<text type="formattedtext">
+					<p>You adopt a particular style of fighting as your specialty. Choose one of the following options. You can't take a Fighting Style option more than once, even if you later get to choose again.</p>
+					<p>
+						<b>Archery</b>
+					</p>
+					<p>You gain a +2 bonus to attack rolls you make with ranged weapons.</p>
+					<p>
+						<b>Defense</b>
+					</p>
+					<p>While you are wearing armor, you gain a +1 bonus to AC.</p>
+					<p>
+						<b>Dueling</b>
+					</p>
+					<p>When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.</p>
+					<p>
+						<b>Great Weapon Fighting</b>
+					</p>
+					<p>When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2. The weapon must have the two-handed or versatile property for you to gain this benefit.</p>
+					<p>
+						<b>Protection</b>
+					</p>
+					<p>When a creature you can see attacks a target other than you that is within 5 feet of you, you can use your reaction to impose disadvantage on the attack roll. You must be wielding a shield.</p>
+					<p>
+						<b>Two-Weapon Fighting</b>
+					</p>
+					<p>When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<hpadd type="number">0</hpadd>
+				<level type="number">4</level>
+				<locked type="number">1</locked>
+				<name type="string">Ability Score Improvement</name>
+				<prepared type="number">0</prepared>
+				<source type="string">Fighter</source>
+				<text type="formattedtext">
+					<p>When you reach 4th level, and again at 6th, 8th, 12th, 14th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.</p>
+				</text>
+			</id-00003>
+			<id-00004>
+				<hpadd type="number">0</hpadd>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Action Surge</name>
+				<source type="string">Fighter</source>
+				<text type="formattedtext">
+					<p>Starting at 2nd level, you can push yourself beyond your normal limits for a moment. On your turn, you can take one additional action.</p>
+					<p>Once you use this feature, you must finish a short or long rest before you can use it again. Starting at 17th level, you can use it twice before a rest, but only once on the same turn.</p>
+				</text>
+			</id-00004>
+			<id-00005>
+				<hpadd type="number">0</hpadd>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Champion</name>
+				<prepared type="number">0</prepared>
+				<source type="string">Fighter</source>
+				<text type="formattedtext">
+					<p>The archetypal Champion focuses on the development of raw physical power honed to deadly perfection. Those who model themselves on this archetype combine rigorous training with physical excellence to deal devastating blows.</p>
+					<h>Features</h>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.fighter.features.improvedcritical3@DD PHB Deluxe">Improved Critical</link>
+						<link class="reference_classfeature" recordname="reference.classdata.fighter.features.remarkableathlete7@DD PHB Deluxe">Remarkable Athlete</link>
+						<link class="reference_classfeature" recordname="reference.classdata.fighter.features.additionalfightingstyle10@DD PHB Deluxe">Additional Fighting Style</link>
+						<link class="reference_classfeature" recordname="reference.classdata.fighter.features.superiorcritical15@DD PHB Deluxe">Superior Critical</link>
+						<link class="reference_classfeature" recordname="reference.classdata.fighter.features.survivor18@DD PHB Deluxe">Survivor</link>
+					</linklist>
+				</text>
+			</id-00005>
+			<id-00006>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Martial Archetype</name>
+				<source type="string">Fighter</source>
+				<specializationchoice type="number">1</specializationchoice>
+				<text type="formattedtext">
+					<p>At 3rd level, you choose an archetype that you strive to emulate in your combat styles and techniques. Choose Champion, Battle Master or Eldritch Knight, all detailed at the end of the class description. The archetype you choose grants you features at 3rd level and again at 7th, 10th, 15th, and 18th level.</p>
+				</text>
+			</id-00006>
+			<id-00007>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Improved Critical</name>
+				<source type="string">Fighter</source>
+				<specialization type="string">Champion</specialization>
+				<text type="formattedtext">
+					<p>Beginning when you choose this archetype at 3rd level, your weapon attacks score a critical hit on a roll of 19 or 20.</p>
+				</text>
+			</id-00007>
+			<id-00008>
+				<level type="number">4</level>
+				<locked type="number">1</locked>
+				<name type="string">Martial Versatility (Option)</name>
+				<source type="string">Fighter</source>
+				<text type="formattedtext">
+					<p>
+						<i>4th-level fighter feature</i>
+					</p>
+					<p>Whenever you reach a level in this class that grants the Ability Score Improvement feature, you can do one of the following, as you shift the focus of your martial practice:</p>
+					<list>
+						<li>Replace a fighting style you know with another fighting style available to fighters.</li>
+						<li>If you know any maneuvers from the Battle Master archetype, you can replace one maneuver you know with a different maneuver.</li>
+					</list>
+				</text>
+			</id-00008>
+			<id-00009>
+				<level type="number">5</level>
+				<locked type="number">1</locked>
+				<name type="string">Extra Attack</name>
+				<source type="string">Fighter</source>
+				<text type="formattedtext">
+					<p>Beginning at 5th level, you can attack twice, instead of once, whenever you take the Attack action on your turn. The number of attacks increases to three when you reach 11th level in this class and to four when you reach 20th level in this class.</p>
+				</text>
+			</id-00009>
+		</featurelist>
+		<hp>
+			<adjust type="number">0</adjust>
+			<base type="number">47</base>
+			<deathsavefail type="number">3</deathsavefail>
+			<deathsavesuccess type="number">2</deathsavesuccess>
+			<temporary type="number">0</temporary>
+			<total type="number">47</total>
+			<wounds type="number">47</wounds>
+		</hp>
+		<initiative>
+			<misc type="number">0</misc>
+			<temporary type="number">2</temporary>
+			<total type="number">2</total>
+		</initiative>
+		<inspiration type="number">0</inspiration>
+		<inventorylist>
+			<id-00001>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">75 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d6 piercing</damage>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Crossbow, Hand</name>
+				<powers />
+				<properties type="string">Ammunition (range 30/120), light, loading</properties>
+				<subtype type="string">Martial Ranged Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">3</weight>
+			</id-00001>
+			<id-00002>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<location type="string">quiver</location>
+				<locked type="number">1</locked>
+				<name type="string">Crossbow Bolts (20)</name>
+				<powers />
+				<subtype type="string">Ammunition</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1.5</weight>
+			</id-00002>
+			<id-00006>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">4</count>
+				<damage type="string">1d6 piercing</damage>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<location type="string">quiver javelin</location>
+				<locked type="number">1</locked>
+				<name type="string">Javelin</name>
+				<properties type="string">Thrown (range 30/120)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">2</weight>
+			</id-00006>
+			<id-00007>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A quiver can hold up to 20 arrows.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Quiver</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00007>
+			<id-00008>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A waterskin holds 4 pints of liquid.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Waterskin</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00008>
+			<id-00009>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">2</count>
+				<description type="formattedtext">
+					<p>Rope, made of hemp, has 2 hit points and can be burst with a DC 17 Strength check. There is 50 feet in this coil.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Rope, Hempen</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">10</weight>
+			</id-00009>
+			<id-00010>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Bedroll</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">7</weight>
+			</id-00010>
+			<id-00011>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 cp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A sack holds 1 cubic foot/30 pounds of gear.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Sack</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">0.5</weight>
+			</id-00011>
+			<id-00012>
+				<attune type="number">0</attune>
+				<carried type="number">0</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A backpack holds 1 cubic foot/30 lbs. of gear. You can also strap items such as a bedroll or coil of rope to the outside of a backpack.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Backpack</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00012>
+			<id-00013>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">15 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Cold weather gear includes special boots, gloves, warm padding, and face protection. This gear can be worn over or under any armor and takes 5 minutes to don or remove.</p>
+					<p>While wearing cold weather gear you automatically succeed on saving throws against effects caused by an environment of extreme cold, but have disadvantage on saving throws against effects from environments of extreme heat and spells or effects that deal fire damage.</p>
+					<p>This gear can also be worn to provide warmth while resting in cold environments.</p>
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Cold Weather Gear</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">12</weight>
+			</id-00013>
+			<id-00017>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">50 gp</cost>
+				<count type="number">0</count>
+				<description type="formattedtext">
+					<p>A character who drinks the magical red fluid in this vial regains 2d4 + 2 hit points. Drinking or administering a potion takes an action.</p>
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Potion Of Healing</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">0.5</weight>
+			</id-00017>
+			<id-00021>
+				<ac type="number">17</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">200 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Of all the armor categories, heavy armor offers the best protection. These suits of armor cover the entire body and are designed to stop a wide range of attacks. Only proficient warriors can manage their weight and bulk.</p>
+					<p>This armor is made of narrow vertical strips of metal riveted to a backing of leather that is worn over cloth padding. Flexible chain mail protects the joints.</p>
+				</description>
+				<dexbonus type="string">-</dexbonus>
+				<effectlist>
+					<id-00001>
+						<ability_modifier type="number">0</ability_modifier>
+						<actiononly type="number">0</actiononly>
+						<durdice type="dice"></durdice>
+						<durmod type="number">0</durmod>
+						<effect type="string">Heavy Armor Master; RESIST: 3 bludgeoning, piercing, slashing, !magic</effect>
+						<effect_description type="string">[Heavy Armor Master; RESIST: 3 bludgeoning, piercing, slashing, !magic]</effect_description>
+						<misc_modifier type="number">0</misc_modifier>
+						<name type="string">Splint</name>
+						<save_modifier type="number">0</save_modifier>
+						<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+					</id-00001>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Splint</name>
+				<stealth type="string">Disadvantage</stealth>
+				<strength type="string">Str 15</strength>
+				<subtype type="string">Heavy Armor</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">0</weight>
+			</id-00021>
+			<id-00022>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">400 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d12 slashing</damage>
+				<dc type="number">1</dc>
+				<description type="formattedtext">
+					<h>Description</h>
+					<linklist>
+						<link class="imagewindow" recordname="reference.imagedata.img_vicious_weapon_jpg@*">
+							<b>Image: </b>Vicious Weapon</link>
+					</linklist>
+					<p>When you roll critical on your attack roll with this magic weapon, your critical hit deals an extra 1d12 damage of the weapon's type.</p>
+				</description>
+				<effectlist>
+					<id-00001>
+						<ability_modifier type="number">0</ability_modifier>
+						<actiononly type="number">0</actiononly>
+						<durdice type="dice"></durdice>
+						<durmod type="number">0</durmod>
+						<effect type="string">DMG: 2d12 slashing, critical</effect>
+						<effect_description type="string">[DMG: 2d12 slashing, critical]</effect_description>
+						<misc_modifier type="number">0</misc_modifier>
+						<name type="string">Vicious Greataxe</name>
+						<save_modifier type="number">0</save_modifier>
+						<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+					</id-00001>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Vicious Greataxe</name>
+				<nonid_name type="string">Majestic Greataxe</nonid_name>
+				<nonidentified type="string">This weapon is clearly of far superior craftsmanship than any ordinary one.</nonidentified>
+				<properties type="string">Heavy, two-handed, magic</properties>
+				<rarity type="string">Rare</rarity>
+				<spells>
+					<id-00001>
+						<link type="windowreference">
+							<class />
+							<recordname />
+						</link>
+						<name type="string">Vicious Weapon</name>
+					</id-00001>
+					<id-00002>
+						<link type="windowreference">
+							<class />
+							<recordname />
+						</link>
+						<name type="string">Greataxe</name>
+					</id-00002>
+				</spells>
+				<subtype type="string">Martial Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">7</weight>
+			</id-00022>
+		</inventorylist>
+		<itemgroups>
+			<id-00001>
+				<name type="string">Cold Weather Gear</name>
+			</id-00001>
+			<id-00003>
+				<name type="string">Waterskin</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Sack</name>
+			</id-00004>
+			<id-00006>
+				<name type="string">Bedroll</name>
+			</id-00006>
+			<id-00007>
+				<name type="string">Crossbow Bolts (20)</name>
+			</id-00007>
+			<id-00008>
+				<name type="string">Backpack</name>
+			</id-00008>
+			<id-00009>
+				<name type="string">Rope, Hempen</name>
+			</id-00009>
+			<id-00011>
+				<name type="string">&lt;&lt; Unnamed Items &gt;&gt;</name>
+			</id-00011>
+			<id-00012>
+				<name type="string">Javelin</name>
+			</id-00012>
+			<id-00013>
+				<name type="string">Potion Of Healing</name>
+			</id-00013>
+			<id-00014>
+				<name type="string">Splint</name>
+			</id-00014>
+			<id-00015>
+				<name type="string">Quiver</name>
+			</id-00015>
+			<id-00016>
+				<name type="string">Crossbow, Hand</name>
+			</id-00016>
+			<id-00018>
+				<name type="string">Vicious Greataxe</name>
+			</id-00018>
+		</itemgroups>
+		<languagelist>
+			<id-00001>
+				<name type="string">Common </name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Dwarvish</name>
+			</id-00002>
+		</languagelist>
+		<level type="number">5</level>
+		<MNMChecks>
+			<CoinCheck type="string">checked</CoinCheck>
+		</MNMChecks>
+		<name type="string">Yargul Perrota</name>
+		<num_days_withouteating type="number">0</num_days_withouteating>
+		<num_gallons_carried type="number">16</num_gallons_carried>
+		<num_gallons_drank type="number">4</num_gallons_drank>
+		<num_lbs_food_carried type="number">16</num_lbs_food_carried>
+		<num_lbs_food_eaten type="number">4</num_lbs_food_eaten>
+		<perception type="number">9</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<powergroup>
+			<id-00001>
+				<name type="string">Standard Items</name>
+			</id-00001>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powers>
+			<id-00001>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<dice type="dice">d10</dice>
+								<stat type="string">fighter</stat>
+							</id-00001>
+						</heallist>
+						<healtargeting type="string">self</healtargeting>
+						<order type="number">1</order>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">heal</type>
+					</id-00001>
+				</actions>
+				<cast type="number">1</cast>
+				<description type="formattedtext">
+					<p>You have a limited well of stamina that you can draw on to protect yourself from harm. On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level.</p>
+					<p>Once you use this feature, you must finish a short or long rest before you can use it again.</p>
+				</description>
+				<hpadd type="number">0</hpadd>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Second Wind</name>
+				<powertknbutton type="token"></powertknbutton>
+				<prepared type="number">1</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<source type="string">Fighter</source>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00001>
+			<id-00002>
+				<actions />
+				<cast type="number">1</cast>
+				<description type="formattedtext">
+					<p>Starting at 2nd level, you can push yourself beyond your normal limits for a moment. On your turn, you can take one additional action.</p>
+					<p>Once you use this feature, you must finish a short or long rest before you can use it again. Starting at 17th level, you can use it twice before a rest, but only once on the same turn.</p>
+				</description>
+				<hpadd type="number">0</hpadd>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Action Surge</name>
+				<powertknbutton type="token"></powertknbutton>
+				<prepared type="number">1</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<source type="string">Fighter</source>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00002>
+			<id-00003>
+				<actions>
+					<id-00001>
+						<durmod type="number">0</durmod>
+						<label type="string">ADVCOND: poisoned; RESIST: poison</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>You have advantage on saving throws against poison, and you have resistance against poison damage (explained in chapter 9).</p>
+				</description>
+				<hpadd type="number">0</hpadd>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Dwarven Resilience</name>
+				<powertknbutton type="token"></powertknbutton>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<source type="string">Dwarf</source>
+				<type type="string">racial</type>
+			</id-00003>
+			<id-00004>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">COVER</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<level type="number">0</level>
+				<name type="string">Plantar Escudo</name>
+				<powertknbutton type="token"></powertknbutton>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<shortdescription type="string">-If you dont move during your turn, you gain half cover until the start of your next turn. It doesnt apply if you are incapacit\n-Whenever a creaure misses you with a melee attack, you can use your reaction to retaliate against your attacker. Make an shield bash attack against your attacker that deals bludgeoning damage equal to 1d4+your Strength/Dexterity modifier (your choice)</shortdescription>
+				<showAlways type="number">0</showAlways>
+			</id-00004>
+			<id-00005>
+				<actions>
+					<id-00001>
+						<apply type="string">action</apply>
+						<durmod type="number">0</durmod>
+						<label type="string">Brutal Critical; DMG: 1d10 slashing, critical</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<level type="number">0</level>
+				<name type="string">Battleaxe Critical</name>
+				<powertknbutton type="token"></powertknbutton>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+			</id-00005>
+			<id-00006>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Consume Torch</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<group type="string">Standard Items</group>
+				<level type="number">0</level>
+				<name type="string">Torch</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+			</id-00006>
+			<id-00007>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Consume Rations</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<group type="string">Standard Items</group>
+				<level type="number">0</level>
+				<name type="string">Rations</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+			</id-00007>
+		</powers>
+		<profbonus type="number">3</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<name type="string">Weapon: Simple weapons, martial weapons</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Armor: All armor, shields</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Expertise: Shields, Battleaxe, handaxe, warhammer, light hammer</name>
+			</id-00003>
+		</proficiencylist>
+		<race type="string">Hill Dwarf</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>reference.racedata.dwarf@DD PHB Deluxe</recordname>
+		</racelink>
+		<senses type="string">Darkvision 60</senses>
+		<shifttoken type="token"></shifttoken>
+		<size type="string">Medium</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">-1</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">1</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">5</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">-1</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">-1</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">2</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">0</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">1</prof>
+				<stat type="string">strength</stat>
+				<total type="number">6</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">0</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">-1</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">1</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">5</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">2</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">0</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">2</total>
+			</id-00018>
+			<id-00019>
+				<misc type="number">0</misc>
+				<name type="string">Smith's Tools</name>
+				<prof type="number">1</prof>
+				<stat type="string">strength</stat>
+				<total type="number">6</total>
+			</id-00019>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">25</base>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">25</total>
+		</speed>
+		<Spell_Tokens>
+			<DwarvenResilience>
+				<circle_token type="number">0</circle_token>
+				<cone_token type="number">0</cone_token>
+				<ID type="number">0</ID>
+				<measurenumber type="number">0</measurenumber>
+				<targettoken type="number">0</targettoken>
+			</DwarvenResilience>
+			<PlantarEscudo>
+				<circle_token type="number">0</circle_token>
+				<cone_token type="number">0</cone_token>
+				<ID type="number">0</ID>
+				<measurenumber type="number">0</measurenumber>
+				<targettoken type="number">0</targettoken>
+			</PlantarEscudo>
+			<SecondWind>
+				<circle_token type="number">0</circle_token>
+				<cone_token type="number">0</cone_token>
+				<ID type="number">0</ID>
+				<measurenumber type="number">0</measurenumber>
+				<targettoken type="number">0</targettoken>
+			</SecondWind>
+		</Spell_Tokens>
+		<spelllist />
+		<stats>
+			<bigFoeCR type="number">3</bigFoeCR>
+			<bigFoeName type="string">Yellow Sign Thrall Pack 22</bigFoeName>
+			<biggestDamage type="number">25</biggestDamage>
+			<crits type="number">9</crits>
+			<damage type="number">771</damage>
+			<damageReceived type="number">667</damageReceived>
+			<fumbles type="number">8</fumbles>
+			<healing type="number">87</healing>
+			<healingReceived type="number">315</healingReceived>
+			<hits type="number">98</hits>
+			<kills type="number">10</kills>
+			<kos type="number">8</kos>
+			<misses type="number">52</misses>
+			<name type="string">Yargul EvilDead</name>
+			<savesFailed type="number">4</savesFailed>
+			<savesMade type="number">41</savesMade>
+			<sessionbigFoeCR type="number">0</sessionbigFoeCR>
+			<sessionbiggestDamage type="number">0</sessionbiggestDamage>
+			<sessioncrits type="number">0</sessioncrits>
+			<sessiondamage type="number">0</sessiondamage>
+			<sessiondamageReceived type="number">0</sessiondamageReceived>
+			<sessionfumbles type="number">0</sessionfumbles>
+			<sessionhealing type="number">0</sessionhealing>
+			<sessionhealingReceived type="number">0</sessionhealingReceived>
+			<sessionhits type="number">0</sessionhits>
+			<sessionkills type="number">0</sessionkills>
+			<sessionkos type="number">0</sessionkos>
+			<sessionmisses type="number">0</sessionmisses>
+			<sessionsavesFailed type="number">0</sessionsavesFailed>
+			<sessionsavesMade type="number">0</sessionsavesMade>
+			<sessionspellsLanded type="number">0</sessionspellsLanded>
+			<sessionspellsMissed type="number">0</sessionspellsMissed>
+			<spellsLanded type="number">0</spellsLanded>
+			<spellsMissed type="number">0</spellsMissed>
+		</stats>
+		<subracelink type="windowreference">
+			<class />
+			<recordname />
+		</subracelink>
+		<temp />
+		<token type="token">portrait_id-00019_token</token>
+		<traitlist>
+			<id-00001>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Dwarven Resilience</name>
+				<source type="string">Dwarf</source>
+				<text type="formattedtext">
+					<p>You have advantage on saving throws against poison, and you have resistance against poison damage (explained in chapter 9).</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00001>
+			<id-00002>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Stonecunning</name>
+				<source type="string">Dwarf</source>
+				<text type="formattedtext">
+					<p>Whenever you make an Intelligence (History) check related to the origin of stonework, you are considered proficient in the History skill and add double your proficiency bonus to the check, instead of your normal proficiency bonus.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00002>
+			<id-00003>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Dwarven Combat Training</name>
+				<source type="string">Dwarf</source>
+				<text type="formattedtext">
+					<p>You have proficiency with the battleaxe, handaxe, light hammer, and warhammer.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00003>
+			<id-00004>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Tool Proficiency</name>
+				<source type="string">Dwarf</source>
+				<text type="formattedtext">
+					<p>You gain proficiency with the artisan's tools of your choice: smith's tools, brewer's supplies, or mason's tools.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00004>
+			<id-00005>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Dwarven Toughness</name>
+				<source type="string">Hill Dwarf</source>
+				<text type="formattedtext">
+					<p>Your hit point maximum increases by 1, and it increases by 1 every time you gain a level.</p>
+				</text>
+				<type type="string">subracial</type>
+			</id-00005>
+		</traitlist>
+		<weapon>
+			<critdicebonus>
+				<melee type="number">0</melee>
+				<ranged type="number">0</ranged>
+			</critdicebonus>
+			<critrange>
+				<melee type="number">19</melee>
+				<ranged type="number">19</ranged>
+			</critrange>
+			<twoweaponfighting type="number">0</twoweaponfighting>
+		</weapon>
+		<weaponlist>
+			<id-00003>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<statmult type="number">1</statmult>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Javelin</name>
+				<prof type="number">1</prof>
+				<properties type="string">Thrown (range 30/120)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00006</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00003>
+			<id-00004>
+				<ammo type="number">1</ammo>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">5</maxammo>
+				<name type="string">Javelin</name>
+				<prof type="number">1</prof>
+				<properties type="string">Thrown (range 30/120)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00006</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00004>
+			<id-00005>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Crossbow, Hand</name>
+				<prof type="number">1</prof>
+				<properties type="string">Ammunition (range 30/120), light, loading</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00001</recordname>
+				</shortcut>
+				<type type="number">1</type>
+			</id-00005>
+			<id-00008>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<statmult type="number">1</statmult>
+						<type type="string">bludgeoning</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Shield Bash</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class />
+					<recordname />
+				</shortcut>
+				<type type="number">0</type>
+			</id-00008>
+			<id-00013>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d12</dice>
+						<stat type="string">base</stat>
+						<statmult type="number">1</statmult>
+						<type type="string">slashing,magic</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">1</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Vicious Greataxe</name>
+				<prof type="number">1</prof>
+				<properties type="string">Heavy, two-handed, magic, reroll 2</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00022</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00013>
+		</weaponlist>
+	</character>
+</root>

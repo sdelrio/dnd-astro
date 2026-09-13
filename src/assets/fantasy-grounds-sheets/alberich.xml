@@ -1,0 +1,1093 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root version="3.3" release="7|CoreRPG:3">
+	<character>
+		<abilities>
+			<charisma>
+				<bonus type="number">1</bonus>
+				<save type="number">1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">12</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">3</bonus>
+				<save type="number">3</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">17</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">1</bonus>
+				<save type="number">1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">12</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">4</bonus>
+				<save type="number">6</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">18</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">3</bonus>
+				<save type="number">5</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">16</score>
+			</wisdom>
+		</abilities>
+		<adventurelist>
+		</adventurelist>
+		<age type="string">30 years</age>
+		<alignment type="string">Lawful Neutral</alignment>
+		<background type="string">Urban Bounty Hunter</background>
+		<backgroundlink type="windowreference">
+			<class>reference_background</class>
+			<recordname>reference.backgrounddata.urbanbountyhunter@DD Sword Coast Adventurer's Guide - Player's Guide</recordname>
+		</backgroundlink>
+		<bonds type="string">I'm guilty of a terrible crime. I hope I can redeem myself for it.</bonds>
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">0</casterlevelinvmult>
+				<casterpactmagic type="number">0</casterpactmagic>
+				<hddie type="dice">d10</hddie>
+				<hdused type="number">3</hdused>
+				<level type="number">3</level>
+				<name type="string">Blood Hunter</name>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>reference.classdata.bloodhunter@Blood Hunter</recordname>
+				</shortcut>
+			</id-00001>
+		</classes>
+		<coins>
+			<slot1>
+				<amount type="number">92</amount>
+				<name type="string">CP</name>
+			</slot1>
+			<slot2>
+				<amount type="number">57</amount>
+				<name type="string">GP</name>
+			</slot2>
+			<slot3>
+				<amount type="number">0</amount>
+			</slot3>
+			<slot4>
+				<amount type="number">28</amount>
+				<name type="string">SP</name>
+			</slot4>
+			<slot5>
+				<amount type="number">0</amount>
+			</slot5>
+			<slot6>
+				<amount type="number">0</amount>
+			</slot6>
+		</coins>
+		<defenses>
+			<ac>
+				<armor type="number">4</armor>
+				<dexbonus type="string">max2</dexbonus>
+				<disstealth type="number">1</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">0</shield>
+				<temporary type="number">0</temporary>
+				<total type="number">16</total>
+			</ac>
+			<special type="string">Mandoble y nada</special>
+		</defenses>
+		<deity type="string">Shangalar The Black</deity>
+		<encumbrance>
+			<encumbered type="number">90</encumbered>
+			<encumberedheavy type="number">180</encumberedheavy>
+			<liftpushdrag type="number">540</liftpushdrag>
+			<load type="number">68.53</load>
+			<max type="number">270</max>
+		</encumbrance>
+		<exp type="number">1971</exp>
+		<expneeded type="number">2700</expneeded>
+		<featlist>
+		</featlist>
+		<featurelist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Ear to the Ground</name>
+				<source type="string">Urban Bounty Hunter</source>
+				<text type="formattedtext">
+					<p>You are in frequent contact with people in the segment of society that your chosen quarries move through. These people might be associated with the criminal underworld, the rough-and-tumble folk of the streets, or members of high society. This connection comes in the form of a contact in any city you visit, a person who provides information about the people and places of the local area.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Hunter's Bane</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>Beginning at lst level, you have survived the imbibing ofthc Hunter's Bane, a poisonous alchemical concoction that alters your life's blood, forever binding you to the darkness and honing your senses against it.</p>
+					<p>You have advantage on Wisdom (Survival) checks to track Fey, fiends, and Undead, as well as on Intelligence checks to recall information about them. If you are actively tracking one of these creature types, you cannot be surprised by any creatures of that type. You can only be tracking one type of creature at a time.</p>
+					<p>Upon reaching 11th level, you can flare the internal toxic scars from the ritual, using the pain to give clarity, or promote anger. You can choose to suffer damage equal to your crimson rite damage die to gain advantage on a Wisdom (Insight) check or Charisma (Intimidation) check.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Crimson Rite: Cold</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>At lst level. you learn to invoke a rite of blood magic within your weapon at the cost of your own vitality. Choose to learn one rite from the Primal Rites listed below. You cannot change this choice.</p>
+					<p>As a bonus action. you imbue a single weapon with the elemental energy of a known rite for up to 8 hours. While active, attacks from this weapon deal an additional 1d4 rite damage of the chosen elemental type. Rite damage is considered magical. The rite damage die changes as you gain blood hunter levels, as shown in the crimson rite damage die column of the blood hunter table. Should your weapon leave your grip, the rite fades immediately. An active rite on a weapon thrown fades directly after the attack is completed.</p>
+					<p>When a crimson rite is activated, it reduces your maximum hit points by a number equal to your character level. These lost maximum hit points return once the rite fades and cannot be restored by other means. When a rite fades, no hit points are regained as part of the restoration of maximum hit points.</p>
+					<p>Crimson rite can be used on multiple weapons. costing additional hit point loss. Most weapons can only be subject to a single rite at any given time. Each end of a polearm or quarterstaff is treated as a seperate weapon for the purposes of this feature. A rite can be allowed to fade at any time with no action required.</p>
+					<p>You gain access to an additional Primal Rite at 6th level and 11th level. You may learn one Esoteric Rite from the list below at 14th level.</p>
+					<p><b>Primal Rites</b></p>
+					<p>Choose from the following:</p>
+					<list>
+						<li><b>Rite of the Flame: </b>Your rite damage is fire type.</li>
+						<li><b>Rite of the Frozen: </b>Your rite damage is cold type.</li>
+						<li><b>Rite of the Storm: </b>Your rite damage is lightning type.</li>
+					</list>
+					<p><b>Esoteric Rites</b></p>
+					<p>Choose from the following:</p>
+					<list>
+						<li><b>Rite of the Roar: </b>Your rite damage is thunder type.</li>
+						<li><b>Rite of the Oracle: </b>Your rite damage is psychic type.</li>
+						<li><b>Rite of the Dead: </b>Your rite damage is necrotic type.</li>
+					</list>
+				</text>
+			</id-00003>
+			<id-00004>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Fighting Style: Great Weapon Fighting</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p><b>fighting Style</b></p>
+					<p>At 2nd level, you adopt a style of fighting as your specialty. Choose one of the following options. You can't take a fighting Style option more than once. even if you later get to choose again.</p>
+					<p><b>Archery</b></p>
+					<p>You gain a +2 bonus to attack rolls you make with ranged weapons.</p>
+					<p><b>Dueling</b></p>
+					<p>When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.</p>
+					<p><b>Great Weapon Fighting</b></p>
+					<p>When you roll a 1 or 2 on a damage die for an attack you make with a melee weapon that you are wielding with two hands, you can reroll the die and must use the new roll. The weapon must have the two~handed or versatile property for you to gain this benfit.</p>
+					<p><b>Two-Weapon Fighting</b></p>
+					<p>When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack.</p>
+				</text>
+			</id-00004>
+			<id-00005>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Blood Maledict: Fending Rite</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<p>At 2nd level, you gain the knowledge to further channel, and sacrifice a part of your vital essence to curse and manipulate your enemies. You gain two blood curses of your choice. detailed in the &#34;blood curses&#34; section below. You learn one additional blood curse of your choice at 6th, 10th, 14th, and 18th level.</p>
+					<p>When you use your Blood Maledict, you choose which curse to invoke. While invoking a blood curse, but before it affects the target, you may choose to <i>amplify </i>the curse by suffering damage equal to your crimson rite damage die. An amplified curse gains an addition effect, noted in the curse's description. Creatures that do not have blood are immune to blood curses (At GM's discretion). You can use this feature twice. You regain expended uses when you finish a short or long rest. Beginning at 6th level, you can use your Blood Maledict twice between rests. At 11th level, you can use your Blood Maledict three times between rests, and at 17th level you can use it four times between rests.</p>
+					<p><b>Blood Curses</b></p>
+					<p>The Blood Curses are presented in alphabetical order.</p>
+					<list>
+						<li>Blood Curse of Binding. As a bonus action, you can attempt to bind an enemy no more than one size larger than you within 30 feet. The target must succeed on a Strength saving throw (DC equal to 8 + your proficiency bonus + your Wisdom modifier) or have their speed be reduced to 0 until the beginning of your next turn.</li>
+					</list>
+					<p><i>Amplify: </i>This curse becomes ongoing, and can affect a creature up to no more than two sizes larger than you. At the end of each of its turns, the target can make another Strength saving throw. On a success, this curse ends. You can end the curse whenever you like (no action required).</p>
+					<list>
+						<li>Blood Curse of the Eyeless. When an enemy with eyes within 30 feet makes a weapon attack against you, you can use your reaction to impose disadvantage on the attack.</li>
+					</list>
+					<p><i>Amplify: </i>The triggering attack can be targeting a creature other than yourself.</p>
+					<list>
+						<li>Blood Curse of the Fallen Puppet. The moment a creature falls unconscious or dies within 30 feet of you, you can use your reaction to give that creature a final act of aggression. That creature can immediately make a single weapon attack against a target of your choice within its attack range. After the attack. the creature returns to being unconscious or dead.</li>
+					</list>
+					<p><i>Amplify: </i>You grant a bonus to the attack roll and damage of the cursed creatures attack equal to your Wisdom modifier (minimum of 1).</p>
+					<list>
+						<li>Blood Curse of the Fending Rite. When an enemy casts a spell, you can use your reaction to deflect the spell with your crimson rite. You gain a bonus to the inital saving throw against that spell equal to your Wisdom Modifier (minimum of 1). This curse is invoked before the saving throw is made.</li>
+					</list>
+					<p><i>Amplify: </i>You grant all allies within 5 feet of you to also gain this bonus to their saving throw against the triggering spell.</p>
+					<list>
+						<li>Blood Curse of the Marked. As a bonus action. you can mark an enemy within 30 feet. Until the end of your turn, all crimson rite damage you deal to the target is doubled.</li>
+					</list>
+					<p><i>Amplify: </i>You cause the marked target to lose resistance to your rite damage type until the beginning of your next turn.</p>
+					<list>
+						<li>Blood Curse of Mutual Suffering. As a bonus action, you can link to a creature within 30 feet for up to 1 minute, forcing them to share in any pain they inflict upon you. Each time you suffer any damage from the cursed creature, this curse deals necrotic damage equal to half of the damage you suffered. This curse then ends.</li>
+					</list>
+					<p><i>Amplify: </i>This curse instead deals necrotic damage equal to the damage you suffered and it ignores Necrotic resistance.</p>
+					<list>
+						<li>Blood Curse of Spell Sunder: When an enemy casts a spell within 30 feet that requires a spell attack roll and targets you, you can use your reaction to to rend the spell from the air, imposing disadvantage on the spell attack roll.</li>
+					</list>
+					<p><i>Amplify: </i>You make a Wisdom ability check. The DC equals 10 + the spells level. On a success. the creatures spell misses you automatically.</p>
+					<list>
+						<li>Blood Curse of Purgation. As a bonus action, you can manipulate the vitality of a creature within 30 feet to expunge a corruption in their blood. The target creature can immediately make a saving throw against a poisoned condition afflicting it.</li>
+					</list>
+					<p><i>Amplify: </i>Your target can instead immediately make a saving throw against one other condition afflicting it. This condition can be blinded, deafened, or paralyzed.</p>
+				</text>
+			</id-00005>
+			<id-00006>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Order of the Lycan</name>
+				<source type="string">Blood Hunter</source>
+				<text type="formattedtext">
+					<linklist>
+						<link class="imagewindow" recordname="image.img_lycanorder_jpg@Blood Hunter">Order of the Lycan</link>
+					</linklist>
+					<p>Of the many terrible curses that plague the realm, few are as ancient or as feared as Lycanthropy. Passed through blood, this affliction seeds a host with the savage strength and hunger for violence of a wild beast. Those that shun the curse spend their lives burying their wild, bestial urges deep inside. However, the power of a rising full moon makes the curse too strong to resist, and the host transforms into a terrifying animal-humanoid hybrid controlled by murderous impulse. Those that embrace the dark nature of their curse learn to harness their bestial gifts, but also succumb to the evil, vicious temperament that drives the beast within.</p>
+					<p>The Order of the Lycan is a proud order of blood hunters who undergo &#34; The Taming&#34;, a ceremonial inflicting of lycanthropy from a senior member. These hunters then use their abilities to harness the power of the monster they harbor without losing themselves to it. Through intense honing of one's own willpower, combined with the secrets of the order's blood magic rituals, members learn to control and unleash their hybrid form for short periods of time. Enhanced physical prowess, unnatural resilience, and razor sharp claws make these warriors a terrible foe to any evil that crosses their path. Yet, no training is perfect, and without care and complete focus, even the greatest of blood hunters can temporarily lose themselves to the bloodlust.</p>
+					<h>The Onus of Lycanthropy</h>
+					<p>Those inducted into the Order of the Lycan choose this path with conviction, udnerstanding the terrible burden it is and the challenge it brings. Where most who embrace this curse grow wicked, mad , even murderous, these blood hunters accept the gifts of the beast while maintaining control through intense training and blood magic. These factors enable a member of the Order of the Lycan to prevent the spread of their curse through blood, should they wish to. One of the most sacred oaths of this order is to never infect another without the order's sanction.</p>
+					<p>Should a member of the Order of the Lycan be cured of the Lycanthropic curse, it is a terrible shameon their name, the order and those who carry the curse still. There have been passages written about members being cleansed against their will, but those brothers and sisters readily return to the order to udnergo a renewed initiation of The Taming, reintroducing the curse to their bodies and restoring their hono.</p>
+					<p>Lycanthropy comes in many forms, each version of the curse is bound to a specific beast: wolf, bear, tiger, boar, and rat are a few of the more well-known variation. The strain of the curse defines the beast a hybrid form will share, but the features the burse bestows remain relatively uniform across strains.</p>
+					<h>Features</h>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.heightenedsenses3@Blood Hunter">Heightened Senses</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.hybridtransformation3@Blood Hunter">Hybrid Transformation</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.stalker_sprowess7@Blood Hunter">Stalker's Prowess</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.advancedtransformation11@Blood Hunter">Advanced Transformation</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.ironvolition15@Blood Hunter">Iron Volition</link>
+						<link class="reference_classfeature" recordname="reference.classdata.bloodhunter.features.hybridtransformationmastery18@Blood Hunter">Hybrid Transformation Mastery</link>
+					</linklist>
+				</text>
+			</id-00006>
+			<id-00007>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Heightened Senses</name>
+				<source type="string">Blood Hunter</source>
+				<specialization type="string">Order of the Lycan</specialization>
+				<text type="formattedtext">
+					<p>Starting when you choose this archetype at 3rd level, you begin to adopt the improved abilities of a natural predator. You gain advantage on any Wisdom (Perception) checks that rely on hearing or smell.</p>
+				</text>
+			</id-00007>
+			<id-00008>
+				<level type="number">3</level>
+				<locked type="number">0</locked>
+				<name type="string">Hybrid Transformation</name>
+				<source type="string">Blood Hunter</source>
+				<specialization type="string">Order of the Lycan</specialization>
+				<text type="formattedtext">
+					<p>Upon choosing this archetype at 3rd level, you begin to learn to control the lycanthropic curse that now lives in your blood. As an action, you can transform into your Hybrid form. This form lasts for 1 minute. You can speak, use equipment, and wear armor in this form. You can revert to your normal form earlier by using an action on your turn. You automatically revert to your normal form if you fall unconscious, drop to 0 hit points, or die.</p>
+					<p>You can use this feature twice. You regain expended uses when you finish a short or long rest. While you are transformed, you gain the following features:</p>
+					<p><b>Feral Might. </b>You gain a bonus to melee damage rolls equal to half your proficiency bonus (rounded down). You also have advantage on Strength checks and Strength saving throws.</p>
+					<p><b>Resilient Hide. </b>You have resistance to bludgeoning, piercing, and slashing damage from nonmagical weapons that aren't silvered. While you are not wearing heavy armor, you gain a +1 bonus to your AC</p>
+					<p><b>Predatory Strikes. </b>Your unarmed strikes are considered a single weapon in regards to your crimson rite feature. You can use Dexterity instead of Strength for the attack and damage rolls of your unarmed strikes.</p>
+					<p>When you use the Attack action with an unarmed strike, you can make another unarmed strike as a bonus action.</p>
+					<p>Your unarmed strikes deal 1d6 slashing damage. This die increases to ld8 at 11th level, and 1d10 at 18th level.</p>
+					<p><b>Cursed Weakness. </b>Your have vulnerability to damage from silvered weapons.</p>
+					<p><b>Bloodlust. </b>At the start of your turn, if you've taken any damage since the beginning of your last turn, you must make a Wisdom saving throw to maintain control. The DC equals 10, or 15 if you have no more than half of your hit points left. On a failed save, you must move directly towards the nearest creature to you and use the Attack action against that creature. If there is more than one possible target, the DM chooses the target. Your turn immediately ends, and you regain control.</p>
+					<p>If you are under an effect that prevents you from concentrating (like the Barbarian's rage feature), you automatically fail this saving throw.</p>
+				</text>
+			</id-00008>
+		</featurelist>
+		<flaws type="string">When I see something valuable, I an't think about anything but how to steal it.</flaws>
+		<gender type="string">Male</gender>
+		<height type="string">5&#180;4&#180;&#180;</height>
+		<hero type="number">0</hero>
+		<hp>
+			<deathsavefail type="number">3</deathsavefail>
+			<deathsavesuccess type="number">1</deathsavesuccess>
+			<temporary type="number">0</temporary>
+			<total type="number">31</total>
+			<wounds type="number">31</wounds>
+		</hp>
+		<ideals type="string">Redemption. There's a spark of good in everyone. (Good)</ideals>
+		<initiative>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">2</total>
+		</initiative>
+		<inventorylist>
+			<id-00001>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">50 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">2d6 slashing</damage>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Greatsword</name>
+				<properties type="string">Heavy, two-handed</properties>
+				<subtype type="string">Martial Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">6</weight>
+			</id-00001>
+			<id-00002>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">5 gp</cost>
+				<count type="number">2</count>
+				<damage type="string">1d6 slashing</damage>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Handaxe</name>
+				<properties type="string">Light, thrown (range 20/60)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">2</weight>
+			</id-00002>
+			<id-00003>
+				<ac type="number">14</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">50 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Medium armor offers more protection than light armor, but it also impairs movement more. If you wear medium armor, you add your Dexterity modifier, to a maximum of +2, to the base number from your armor type to determine your Armor Class.</p>
+					<p>This armor consists of a coat and leggings (and perhaps a separate skirt) of leather covered with overlapping pieces of metal, much like the scales of a fish. The suit includes gauntlets.</p>
+				</description>
+				<dexbonus type="string">Yes (max 2)</dexbonus>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Scale Mail</name>
+				<stealth type="string">Disadvantage</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Medium Armor</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">45</weight>
+			</id-00003>
+			<id-00004>
+				<carried type="number">1</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This gemstone is opaque light pink in color.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Rhodochrosite</name>
+				<subtype type="string">Gemstones (10 Gp)</subtype>
+				<type type="string">Treasure</type>
+				<weight type="number">0.01</weight>
+			</id-00004>
+			<id-00005>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">50 - 100 gp</cost>
+				<count type="number">0</count>
+				<description type="formattedtext">
+					<h>Description</h>
+					<p>You regain 2d4 + 2 hit points when you drink this potion. The potion's red liquid glimmers when agitated.</p>
+					<p><b>Potion Notes</b></p>
+					<p>Drinking or administering a potion takes an action.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Potion of Healing</name>
+				<nonid_name type="string">Potion</nonid_name>
+				<nonidentified type="string">A vial of red liquid that shimmers when agitated.</nonidentified>
+				<properties type="string">Magic</properties>
+				<rarity type="string">Common</rarity>
+				<spells>
+					<id-00001>
+						<link type="windowreference">
+							<class></class>
+							<recordname></recordname>
+						</link>
+						<name type="string">Potion of Healing</name>
+					</id-00001>
+					<id-00002>
+						<link type="windowreference">
+							<class></class>
+							<recordname></recordname>
+						</link>
+						<name type="string">Potion</name>
+					</id-00002>
+				</spells>
+				<type type="string">Potion</type>
+				<weight type="number">0.5</weight>
+			</id-00005>
+			<id-00006>
+				<ac type="number">14</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Made from supple and thin materials, light armor favors agile adventurers since it offers some protection without sacrificing mobility. If you wear light armor, you add your Dexterity modifier to the base number from your armor type to determine your Armor Class.</p>
+					<p>Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.</p>
+					<p>The armor function as a +1 armor when not below earth.</p>
+					<p>If this magic armor is exposed to even the tiniest amount of sunlight for 1 hour it is destroyed</p>
+				</description>
+				<dexbonus type="string">Yes</dexbonus>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">+2 Drowcraft Studded Leather</name>
+				<nonid_name type="string">Studded Leather Armor</nonid_name>
+				<nonidentified type="string">Armor made from tough but flexible spidersilk fabrics, reinforced with layers of light metal</nonidentified>
+				<properties type="string">Magic</properties>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Light Armor</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">13</weight>
+			</id-00006>
+			<id-00007>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This gemstone is opaque mottled deep blue in color.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Azurite</name>
+				<subtype type="string">Gemstones (10 Gp)</subtype>
+				<type type="string">Treasure</type>
+				<weight type="number">0.01</weight>
+			</id-00007>
+			<id-00008>
+				<carried type="number">1</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This gemstone is opaque striated light and dark green in color.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Malachite</name>
+				<subtype type="string">Gemstones (10 Gp)</subtype>
+				<type type="string">Treasure</type>
+				<weight type="number">0.01</weight>
+			</id-00008>
+		</inventorylist>
+		<languagelist>
+			<id-00001>
+				<name type="string">Common</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Sylvan</name>
+			</id-00002>
+		</languagelist>
+		<level type="number">3</level>
+		<name type="string">Alberich de Megrez</name>
+		<notes type="string">N&#186;33</notes>
+		<pc_label_hero type="string">Sanity</pc_label_hero>
+		<perception type="number">13</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<personalitytraits type="string">I am incredibly slow to trust. Those who seem the fairest often have the most to hide.</personalitytraits>
+		<powergroup>
+			<id-00001>
+				<atkmod type="number">0</atkmod>
+				<atkprof type="number">1</atkprof>
+				<name type="string">Blood Curse</name>
+				<prepared type="number">0</prepared>
+				<savemod type="number">0</savemod>
+				<saveprof type="number">1</saveprof>
+				<uses type="number">1</uses>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00001>
+			<id-00002>
+				<name type="string">Shifting</name>
+			</id-00002>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powers>
+			<id-00001>
+				<actions>
+					<id-00001>
+						<durmod type="number">0</durmod>
+						<label type="string">Crimson Rite; DMG: 1d4 cold</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>At lst level. you learn to invoke a rite of blood magic within your weapon at the cost of your own vitality. Choose to learn one rite from the Primal Rites listed below. You cannot change this choice.</p>
+					<p>As a bonus action. you imbue a single weapon with the elemental energy of a known rite for up to 8 hours. While active, attacks from this weapon deal an additional 1d4 rite damage of the chosen elemental type. Rite damage is considered magical. The rite damage die changes as you gain blood hunter levels, as shown in the crimson rite damage die column of the blood hunter table. Should your weapon leave your grip, the rite fades immediately. An active rite on a weapon thrown fades directly after the attack is completed.</p>
+					<p>When a crimson rite is activated, it reduces your maximum hit points by a number equal to your character level. These lost maximum hit points return once the rite fades and cannot be restored by other means. When a rite fades, no hit points are regained as part of the restoration of maximum hit points.</p>
+					<p>Crimson rite can be used on multiple weapons. costing additional hit point loss. Most weapons can only be subject to a single rite at any given time. Each end of a polearm or quarterstaff is treated as a seperate weapon for the purposes of this feature. A rite can be allowed to fade at any time with no action required.</p>
+					<p>You gain access to an additional Primal Rite at 6th level and 11th level. You may learn one Esoteric Rite from the list below at 14th level.</p>
+					<p>Primal Rites</p>
+					<p>Choose from the following:</p>
+					<p>Rite of the Flame:</p>
+					<p>Your rite damage is fire type.Rite of the Frozen:</p>
+					<p>Your rite damage is cold type.Rite of the Storm:</p>
+					<p>Your rite damage is lightning type.Esoteric Rites</p>
+					<p>Choose from the following:</p>
+					<p>Rite of the Roar:</p>
+					<p>Your rite damage is thunder type.Rite of the Oracle:</p>
+					<p>Your rite damage is psychic type.Rite of the Dead:</p>
+					<p>Your rite damage is necrotic type.</p>
+				</description>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Crimson Rite (bonus action)</name>
+				<prepared type="number">0</prepared>
+				<ritual type="number">0</ritual>
+			</id-00001>
+			<id-00002>
+				<actions>
+					<id-00001>
+						<apply type="string">roll</apply>
+						<durmod type="number">1</durmod>
+						<label type="string">Senses; ADVSKILL: perception</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>Starting when you choose this archetype at 3rd level, you begin to adopt the improved abilities of a natural predator. You gain advantage on any Wisdom (Perception) checks that rely on hearing or smell.</p>
+				</description>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Heightened senses (passive)</name>
+				<prepared type="number">0</prepared>
+				<ritual type="number">0</ritual>
+			</id-00002>
+			<id-00003>
+				<actions>
+					<id-00001>
+						<apply type="string">roll</apply>
+						<durmod type="number">1</durmod>
+						<label type="string">Hunter Lore; ADVCHK: intelligence; ADVSKILL: survival</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>Beginning at lst level, you have survived the imbibing ofthc Hunter's Bane, a poisonous alchemical concoction that alters your life's blood, forever binding you to the darkness and honing your senses against it.</p>
+					<p>You have advantage on Wisdom (Survival) checks to track Fey, fiends, and Undead, as well as on Intelligence checks to recall information about them. If you are actively tracking one of these creature types, you cannot be surprised by any creatures of that type. You can only be tracking one type of creature at a time.</p>
+					<p>Upon reaching 11th level, you can flare the internal toxic scars from the ritual, using the pain to give clarity, or promote anger. You can choose to suffer damage equal to your crimson rite damage die to gain advantage on a Wisdom (Insight) check or Charisma (Intimidation) check.</p>
+				</description>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Hunter's bane (passive)</name>
+				<prepared type="number">0</prepared>
+				<ritual type="number">0</ritual>
+			</id-00003>
+			<id-00004>
+				<actions>
+					<id-00001>
+						<apply type="string">roll</apply>
+						<durmod type="number">1</durmod>
+						<label type="string">Fending Rite; SAVE: 3</label>
+						<order type="number">1</order>
+						<type type="string">effect</type>
+					</id-00001>
+					<id-00004>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d4</dice>
+								<type type="string">magic</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00004>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>At 2nd level, you gain the knowledge to further channel, and sacrifice a part of your vital essence to curse and manipulate your enemies. You gain two blood curses of your choice. detailed in the &#34;blood curses&#34; section below. You learn one additional blood curse of your choice at 6th, 10th, 14th, and 18th level.</p>
+					<p>When you use your Blood Maledict, you choose which curse to invoke. While invoking a blood curse, but before it affects the target, you may choose to</p>
+					<p>amplify the curse by suffering damage equal to your crimson rite damage die. An amplified curse gains an addition effect, noted in the curse's description. Creatures that do not have blood are immune to blood curses (At GM's discretion). You can use this feature twice. You regain expended uses when you finish a short or long rest. Beginning at 6th level, you can use your Blood Maledict twice between rests. At 11th level, you can use your Blood Maledict three times between rests, and at 17th level you can use it four times between rests.Blood Curses</p>
+					<p>The Blood Curses are presented in alphabetical order.</p>
+					<p><b>Blood Curse of the Fending Rite. </b>When an enemy casts a spell, you can use your reaction to deflect the spell with your crimson rite. You gain a bonus to the inital saving throw against that spell equal to your Wisdom Modifier (minimum of 1). This curse is invoked before the saving throw is made.</p>
+					<p><b>Amplify:</b></p>
+					<p>You grant all allies within 5 feet of you to also gain this bonus to their saving throw against the triggering spell</p>
+				</description>
+				<group type="string">Blood Curse</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Fending Rite(reaction)</name>
+				<prepared type="number">0</prepared>
+				<ritual type="number">0</ritual>
+			</id-00004>
+			<id-00005>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Shifting (1st stage); ADVSAV: wisdom; ADVCHK: wisdom</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+					<id-00003>
+						<heallist>
+							<id-00001>
+								<bonus type="number">3</bonus>
+								<dice type="dice"></dice>
+								<stat type="string">level</stat>
+							</id-00001>
+						</heallist>
+						<healtargeting type="string">self</healtargeting>
+						<healtype type="string">temp</healtype>
+						<order type="number">2</order>
+						<type type="string">heal</type>
+					</id-00003>
+				</actions>
+				<cast type="number">1</cast>
+				<description type="formattedtext">
+					<p>On your turn, you can shift as a bonus action. Shifting lasts for 1 minute or until you end it on your turn as a bonus action.</p>
+					<p>While shifting, you gain temporary hit points equal to your level + your Constitution bonus (minimum of 1). You also gain a feature that depends on your shifter subrace.</p>
+					<p>You must finish a short or long rest before you can shift again.</p>
+				</description>
+				<group type="string">Shifting</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Shifting (bonus action)</name>
+				<prepared type="number">1</prepared>
+				<ritual type="number">0</ritual>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00005>
+			<id-00006>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Feral Might; DMG: 1; ADVSAV: strength; ADVCHK: strength</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Resilent Hide; AC: 1; RESIST: bludgeoning, slashing, piercing, !silver, !magic; VULN: silver</label>
+						<order type="number">2</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00002>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Brink of bloodlust; IF: Bloodied; DMGO: 1, bludgeoning</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00003>
+				</actions>
+				<cast type="number">1</cast>
+				<description type="formattedtext">
+					<p>Upon choosing this archetype at 3rd level, you begin to learn to control the lycanthropic curse that now lives in your blood. As an action, you can transform into your Hybrid form. This form lasts for 1 minute. You can speak, use equipment, and wear armor in this form. You can revert to your normal form earlier by using an action on your turn. You automatically revert to your normal form if you fall unconscious, drop to 0 hit points, or die.</p>
+					<p>You can use this feature twice. You regain expended uses when you finish a short or long rest. While you are transformed, you gain the following features:</p>
+					<p>Feral Might.</p>
+					<p>You gain a bonus to melee damage rolls equal to half your proficiency bonus (rounded down). You also have advantage on Strength checks and Strength saving throws.</p>
+					<p>Resilient Hide.</p>
+					<p>You have resistance to bludgeoning, piercing, and slashing damage from nonmagical weapons that aren't silvered. While you are not wearing heavy armor, you gain a +1 bonus to your AC</p>
+					<p>Predatory Strikes.</p>
+					<p>Your unarmed strikes are considered a single weapon in regards to your crimson rite feature. You can use Dexterity instead of Strength for the attack and damage rolls of your unarmed strikes.When you use the Attack action with an unarmed strike, you can make another unarmed strike as a bonus action.</p>
+					<p>Your unarmed strikes deal 1d6 slashing damage. This die increases to 1d8 at 11th level, and 1d10 at 18th level.</p>
+					<p>Cursed Weakness.</p>
+					<p>Your have vulnerability to damage from silvered weapons.</p>
+					<p>Bloodlust.</p>
+					<p>At the start of your turn, if you've taken any damage since the beginning of your last turn, you must make a Wisdom saving throw to maintain control. The DC equals 10, or 15 if you have no more than half of your hit points left. On a failed save, you must move directly towards the nearest creature to you and use the Attack action against that creature. If there is more than one possible target, the DM chooses the target. Your turn immediately ends, and you regain control.If you are under an effect that prevents you from concentrating (like the Barbarian's rage feature), you automatically fail this saving throw.</p>
+				</description>
+				<group type="string">Shifting</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Hybrid Transformation (action)</name>
+				<prepared type="number">2</prepared>
+				<ritual type="number">0</ritual>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00006>
+		</powers>
+		<profbonus type="number">2</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<name type="string">Tool: Choose two from among one type of gaming set, one musical instrument, and thieves' tools</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Weapon: Simple Weapons, Martial Weapons</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Tool: Alchemist's Supplies</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Armor: Light Armor, Medium Armor</name>
+			</id-00004>
+		</proficiencylist>
+		<race type="string">Shifter (Wildhunt)</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>reference.racedata.UAshifter@Unearthed Arcana</recordname>
+		</racelink>
+		<senses type="string">Darkvision 60</senses>
+		<size type="string">Medium</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">3</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">1</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">3</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">1</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">1</prof>
+				<stat type="string">strength</stat>
+				<total type="number">6</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">5</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">1</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">1</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00018>
+			<id-00019>
+				<misc type="number">0</misc>
+				<name type="string">Thieves Tools: Pick Locks</name>
+				<prof type="number">1</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">4</total>
+			</id-00019>
+			<id-00020>
+				<misc type="number">0</misc>
+				<name type="string">Thieves Tools: Disarm Traps</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">3</total>
+			</id-00020>
+			<id-00021>
+				<misc type="number">0</misc>
+				<name type="string">Gaming Set: Poker Gaming Deck</name>
+				<prof type="number">1</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">3</total>
+			</id-00021>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">30</base>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">30</total>
+		</speed>
+		<temp>
+		</temp>
+		<token type="token">portrait_id-00013_token</token>
+		<traitlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Subraces: Wildhunt</name>
+				<source type="string">Shifter</source>
+				<text type="formattedtext">
+					<p>Several subraces of shifter exist, each with its own animalistic features. Choose one of the options below.</p>
+					<linklist>
+						<link class="reference_subrace" recordname="reference.racedata.UAshifter.subraces.beasthide@Unearthed Arcana">Beasthide</link>
+						<link class="reference_subrace" recordname="reference.racedata.UAshifter.subraces.cliffwalk@Unearthed Arcana">Cliffwalk</link>
+						<link class="reference_subrace" recordname="reference.racedata.UAshifter.subraces.longstride@Unearthed Arcana">Longstride</link>
+						<link class="reference_subrace" recordname="reference.racedata.UAshifter.subraces.longtooth@Unearthed Arcana">Longtooth</link>
+						<link class="reference_subrace" recordname="reference.racedata.UAshifter.subraces.razorclaw@Unearthed Arcana">Razorclaw</link>
+						<link class="reference_subrace" recordname="reference.racedata.UAshifter.subraces.wildhunt@Unearthed Arcana">Wildhunt</link>
+					</linklist>
+				</text>
+				<type type="string">racial</type>
+			</id-00001>
+			<id-00002>
+				<locked type="number">0</locked>
+				<name type="string">Shifting</name>
+				<source type="string">Shifter</source>
+				<text type="formattedtext">
+					<p>On your turn, you can shift as a bonus action. Shifting lasts for 1 minute or until you end it on your turn as a bonus action.</p>
+					<p>While shifting, you gain temporary hit points equal to your level + your Constitution bonus (minimum of 1). You also gain a feature that depends on your shifter subrace.</p>
+					<p>You must finish a short or long rest before you can shift again.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00002>
+			<id-00003>
+				<locked type="number">1</locked>
+				<name type="string">Shifting Feature</name>
+				<source type="string">Wildhunt</source>
+				<text type="formattedtext">
+					<p>While shifting, you gain advantage on all Wisdom-based checks and saving throws.</p>
+				</text>
+				<type type="string">subracial</type>
+			</id-00003>
+		</traitlist>
+		<weaponlist>
+			<id-00001>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6,d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Greatsword</name>
+				<prof type="number">1</prof>
+				<properties type="string">reroll 2</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00001</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00001>
+			<id-00002>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Handaxe</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00002</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00002>
+			<id-00003>
+				<ammo type="number">0</ammo>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">2</maxammo>
+				<name type="string">Handaxe</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00002</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00003>
+			<id-00005>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Claw (hybrid transformation)</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class></class>
+					<recordname></recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00005>
+		</weaponlist>
+		<weight type="string">150 lbs</weight>
+	</character>
+</root>

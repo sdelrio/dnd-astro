@@ -1,0 +1,1671 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root version="3.3" release="8|CoreRPG:3">
+	<character>
+		<abilities>
+			<charisma>
+				<bonus type="number">-1</bonus>
+				<save type="number">1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">9</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">8</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">4</bonus>
+				<save type="number">6</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">18</score>
+			</wisdom>
+		</abilities>
+		<adventurelist>
+		</adventurelist>
+		<alignment type="string">Chaotic Good</alignment>
+		<background type="string">Acolyte</background>
+		<backgroundlink type="windowreference">
+			<class>reference_background</class>
+			<recordname>reference.backgrounddata.acolyte@DD PHB Deluxe</recordname>
+		</backgroundlink>
+		<bonds type="string">I seek to preserve a sacred text that my enemies consider heretical and seek to destroy.</bonds>
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">1</casterlevelinvmult>
+				<casterpactmagic type="number">0</casterpactmagic>
+				<hddie type="dice">d8</hddie>
+				<hdused type="number">3</hdused>
+				<level type="number">3</level>
+				<name type="string">Cleric</name>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>reference.classdata.cleric@DD PHB Deluxe</recordname>
+				</shortcut>
+			</id-00001>
+		</classes>
+		<coins>
+			<slot1>
+				<amount type="number">58</amount>
+				<name type="string">GP</name>
+			</slot1>
+			<slot2>
+				<amount type="number">261</amount>
+				<name type="string">SP</name>
+			</slot2>
+			<slot3>
+				<amount type="number">283</amount>
+				<name type="string">CP</name>
+			</slot3>
+			<slot4>
+				<amount type="number">0</amount>
+				<name type="string">ep</name>
+			</slot4>
+			<slot5>
+				<amount type="number">0</amount>
+				<name type="string">pp</name>
+			</slot5>
+			<slot6>
+				<amount type="number">0</amount>
+			</slot6>
+		</coins>
+		<defenses>
+			<ac>
+				<armor type="number">4</armor>
+				<dexbonus type="string">max2</dexbonus>
+				<disstealth type="number">1</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">0</shield>
+				<temporary type="number">0</temporary>
+				<total type="number">16</total>
+			</ac>
+			<special type="string">Escudo y nada</special>
+		</defenses>
+		<deity type="string">Solonor Thelandira</deity>
+		<effectlist>
+		</effectlist>
+		<encumbrance>
+			<encumbered type="number">70</encumbered>
+			<encumberedheavy type="number">140</encumberedheavy>
+			<liftpushdrag type="number">420</liftpushdrag>
+			<load type="number">69.28</load>
+			<max type="number">210</max>
+		</encumbrance>
+		<exp type="number">2324</exp>
+		<expneeded type="number">2700</expneeded>
+		<featlist>
+		</featlist>
+		<featurelist>
+			<id-00001>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">War Domain</name>
+				<source type="string">Cleric</source>
+				<text type="formattedtext">
+					<p>War has many manifestations. It can make heroes of ordinary people. It can be desperate and horrific, with acts of cruelty and cowardice eclipsing instances of excellence and courage. In either case, the gods of war watch over warriors and reward them for their great deeds. The clerics of such gods excel in battle, inspiring others to fight the good fight or offering acts of violence as prayers. Gods of war include champions of honor and chivalry (such as Torm, Heironeous, and Kiri-Jolith) as well as gods of destruction and pillage (such as Erythnul, the Fury, Gruumsh, and Ares) and gods of conquest and domination (such as Bane, Hextor, and Maglubiyet). Other war gods (such as Tempus, Nike, and Nuada) take a more neutral stance, promoting war in all its manifestations and supporting warriors in any circumstance.</p>
+					<h>War Domain Spells</h>
+					<p><b>Cleric Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.divinefavor@DD PHB Deluxe"><b>Spell: </b></link>1st - Divine Favor</linklist>
+						<link class="reference_spell" recordname="reference.spelldata.shieldoffaith@DD PHB Deluxe"><b>Spell: </b></link>1st - Shield of Faith
+						<link class="reference_spell" recordname="reference.spelldata.magicweapon@DD PHB Deluxe"><b>Spell: </b></link>3rd - Magic Weapon
+						<link class="reference_spell" recordname="reference.spelldata.spiritualweapon@DD PHB Deluxe"><b>Spell: </b></link>3rd - Spiritual Weapon
+						<link class="reference_spell" recordname="reference.spelldata.crusader_smantle@DD PHB Deluxe"><b>Spell: </b></link>5th - Crusader's Mantle
+						<link class="reference_spell" recordname="reference.spelldata.spiritguardians@DD PHB Deluxe"><b>Spell: </b></link>5th - Spirit Guardians
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe"><b>Spell: </b></link>7th - Freedom of Movement
+						<link class="reference_spell" recordname="reference.spelldata.stoneskin@DD PHB Deluxe"><b>Spell: </b></link>7th - Stoneskin
+						<link class="reference_spell" recordname="reference.spelldata.flamestrike@DD PHB Deluxe"><b>Spell: </b></link>9th - Flame Strike
+						<link class="reference_spell" recordname="reference.spelldata.holdmonster@DD PHB Deluxe"><b>Spell: </b></link>9th - Hold Monster
+					<h>Features</h>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.cleric.features.bonusproficiencies_war_1@DD PHB Deluxe">Bonus Proficiencies (War)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.cleric.features.warpriest1@DD PHB Deluxe">War Priest</link>
+						<link class="reference_classfeature" recordname="reference.classdata.cleric.features.channeldivinity_guidedstrike2@DD PHB Deluxe"><b>Channel Divinity: </b></link>Guided Strike</linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.cleric.features.channeldivinity_wargod_sblessing6@DD PHB Deluxe"><b>Channel Divinity: </b></link>War God's Blessing
+						<link class="reference_classfeature" recordname="reference.classdata.cleric.features.divinestrike_war_8@DD PHB Deluxe">Divine Strike (War)</link>
+						<link class="reference_classfeature" recordname="reference.classdata.cleric.features.avatarofbattle17@DD PHB Deluxe">Avatar of Battle</link>
+				</text>
+			</id-00001>
+			<id-00002>
+				<level type="number">1</level>
+				<locked type="number">0</locked>
+				<name type="string">War Priest</name>
+				<source type="string">Cleric</source>
+				<specialization type="string">War Domain</specialization>
+				<specializationchoice type="number">0</specializationchoice>
+				<text type="formattedtext">
+					<p>From 1st level, your god delivers bolts of inspiration to you while you are engaged in battle. When you use the Attack action, you can make one weapon attack as a bonus action.</p>
+					<p>You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Spellcasting</name>
+				<source type="string">Cleric</source>
+				<text type="formattedtext">
+					<p>As a conduit for divine power, you can cast cleric spells. See chapter 10 for the general rules of spellcasting and chapter 11 for a selection of cleric spells.</p>
+					<linklist>
+						<link class="reference_colindex" recordname="reference.spelllists.cleric@DD PHB Deluxe">Cleric Spells</link>
+					</linklist>
+					<p><b>Cantrips</b></p>
+					<p>At 1st level, you know three cantrips of your choice from the cleric spell list. You learn additional cleric cantrips of your choice at higher levels, as shown in the Cantrips Known column of the Cleric table.</p>
+					<p><b>Preparing and Casting Spells</b></p>
+					<p>The Cleric table shows how many spell slots you have to cast your spells of 1st level and higher. To cast one of these spells, you must expend a slot of the spell's level or higher. You regain all expended spell slots when you finish a long rest.</p>
+					<p>You prepare the list of cleric spells that are available for you to cast, choosing from the cleric spell list. When you do so, choose a number of cleric spells equal to your Wisdom modifier + your cleric level (minimum of one spell). The spells must be of a level for which you have spell slots.</p>
+					<p>For example, if you are a 3rd-level cleric, you have four 1st-level and two 2nd-level spell slots. With a Wisdom of 16, your list of prepared spells can include six spells of 1st or 2nd level, in any combination. If you prepare the 1st-level spell cure wounds, you can cast it using a 1st-level or 2nd-level slot. Casting the spell doesn't remove it from your list of prepared spells.</p>
+					<p>You can change your list of prepared spells when you finish a long rest. Preparing a new list of cleric spells requires time spent in prayer and meditation: at least 1 minute per spell level for each spell on your list.</p>
+					<p><b>Spellcasting Ability</b></p>
+					<p>Wisdom is your spellcasting ability for your cleric spells. The power of your spells comes from your devotion to your deity. You use your Wisdom whenever a cleric spell refers to your spellcasting ability. In addition, you use your Wisdom modifier when setting the saving throw DC for a cleric spell you cast and when making an attack roll with one.</p>
+					<p><b>Spell save DC </b>= 8 + your proficiency bonus + your Wisdom modifier</p>
+					<p><b>Spell attack modifier </b>= your proficiency bonus + your Wisdom modifier</p>
+					<p><b>Ritual Casting</b></p>
+					<p>You can cast a cleric spell as a ritual if that spell has the ritual tag and you have the spell prepared.</p>
+					<p><b>Spellcasting Focus</b></p>
+					<p>You can use a holy symbol (found in chapter 5) as a spellcasting focus for your cleric spells.</p>
+				</text>
+			</id-00003>
+			<id-00004>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Bonus Proficiencies (War)</name>
+				<source type="string">Cleric</source>
+				<specialization type="string">War Domain</specialization>
+				<specializationchoice type="number">0</specializationchoice>
+				<text type="formattedtext">
+					<p>At 1st level, you gain proficiency with martial weapons and heavy armor.</p>
+				</text>
+			</id-00004>
+			<id-00005>
+				<locked type="number">1</locked>
+				<name type="string">Shelter of the Faithful</name>
+				<source type="string">Acolyte</source>
+				<text type="formattedtext">
+					<p>As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle.</p>
+					<p>You might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple.</p>
+				</text>
+			</id-00005>
+			<id-00006>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Channel Divinity</name>
+				<source type="string">Cleric</source>
+				<text type="formattedtext">
+					<p>At 2nd level, you gain the ability to channel divine energy directly from your deity, using that energy to fuel magical effects. You start with two such effects - Turn Undead and an effect determined by your domain. Some domains grant you additional effects as you advance in levels, as noted in the domain description.</p>
+					<p>When you use your Channel Divinity, you choose which effect to create. You must then finish a short or long rest to use your Channel Divinity again.</p>
+					<p>Some Channel Divinity effects require saving throws. When you use such an effect from this class, the DC equals your cleric spell save DC.</p>
+					<p>Beginning at 6th level, you can use your Channel Divinity twice between rests, and beginning at 18th level, you can use it three times between rests. When you finish a short or long rest, you regain your expended uses.</p>
+					<p><b>Channel Divinity: </b>Turn Undead</p>
+					<p>As an action, you present your holy symbol and speak a prayer censuring the undead. Each undead that can see or hear you within 30 feet of you must make a Wisdom saving throw. If the creature fails its saving throw, it is turned for 1 minute or until it takes any damage.</p>
+					<p>A turned creature must spend its turns trying to move as far away from you as it can, and it can't willingly move to a space within 30 feet of you. It also can't take reactions. For its action, it can use only the Dash action or try to escape from an effect that prevents it from moving. If there's nowhere to move, the creature can use the Dodge action.</p>
+				</text>
+			</id-00006>
+			<id-00007>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Channel Divinity: Guided Strike</name>
+				<source type="string">Cleric</source>
+				<specialization type="string">War Domain</specialization>
+				<text type="formattedtext">
+					<p>Starting at 2nd level, you can use your Channel Divinity to strike with supernatural accuracy. When you make an attack roll, you can use your Channel Divinity to gain a +10 bonus to the roll. You make this choice after you see the roll, but before the DM says whether the attack hits or misses.</p>
+				</text>
+			</id-00007>
+		</featurelist>
+		<flaws type="string">I am suspicious of strangers and expect the worst of them.</flaws>
+		<hero type="number">0</hero>
+		<hp>
+			<deathsavefail type="number">0</deathsavefail>
+			<deathsavesuccess type="number">0</deathsavesuccess>
+			<temporary type="number">0</temporary>
+			<total type="number">24</total>
+			<wounds type="number">23</wounds>
+		</hp>
+		<ideals type="string">Tradition. The ancient traditions of worship and sacrifice must be preserved and upheld. (Lawful)</ideals>
+		<initiative>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">2</total>
+		</initiative>
+		<inspiration type="number">0</inspiration>
+		<inventorylist>
+			<id-00001>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<location type="string">Cuello</location>
+				<name type="string">Holy Symbol Amulet</name>
+				<weight type="number">1</weight>
+			</id-00001>
+			<id-00002>
+				<carried type="number">1</carried>
+				<count type="number">0</count>
+				<isidentified type="number">1</isidentified>
+				<name type="string">Prayer Book</name>
+				<weight type="number">0</weight>
+			</id-00002>
+			<id-00003>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">0</count>
+				<description type="formattedtext">
+					<h>Description</h>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.curewounds@*"><b>Spell: </b></link>Cure Wounds</linklist>
+						<link class="imagewindow" recordname="reference.imagedata.img_spell_scroll_jpg@*"><b>Image: </b></link>Spell Scrolls
+					<p>This spell scroll bears the words of a single spell, <i>Cure Wounds </i>, written in a mystical cipher. If the spell is on your class's spell list, you can read the scroll and cast its spell without providing any material components. Otherwise, the scroll is unintelligible. Casting the spell by reading the scroll requires the spell's normal casting time. Once the spell is cast, the words on the scroll fade, and it crumbles to dust. If the casting is interrupted, the scroll is not lost.</p>
+					<p>If the spell is on your class's spell list but of a higher level than you can normally cast, you must make an ability check using your spellcasting ability to determine whether you cast it successfully. The DC equals 10 + the spell's level. On a failed check, the spell disappears from the scroll with no other effect.</p>
+					<p>Once the spell is cast, the words on the scroll fade, and the scroll itself crumbles to dust.</p>
+					<p>This spell scroll's saving throw DC 13 and attack bonus +5.</p>
+					<p>A wizard spell on a spell scroll can be copied just as spells in spellbooks can be copied. When a spell is copied from a spell scroll, the copier must succeed on an Intelligence (Arcana) check with a DC equal to 10 + the spell's level. If the check succeeds, the spell is successfully copied. Whether the check succeeds or fails, the spell scroll is destroyed.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Scroll of Cure Wounds</name>
+				<nonid_name type="string">Fine Scroll</nonid_name>
+				<nonidentified type="string">The parchment of this scroll is of the finest quality and the writing is careful and delicate.</nonidentified>
+				<properties type="string">Magic</properties>
+				<rarity type="string">Common</rarity>
+				<spells>
+					<id-00001>
+						<link type="windowreference">
+							<class>reference_spell</class>
+							<recordname>reference.spelldata.curewounds@*</recordname>
+						</link>
+						<name type="string">Cure Wounds</name>
+					</id-00001>
+				</spells>
+				<type type="string">Scroll</type>
+				<weight type="number">0</weight>
+			</id-00003>
+			<id-00004>
+				<ac type="number">2</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your Armor Class by 2. You can benefit from only one shield at a time.</p>
+				</description>
+				<dexbonus type="string">-</dexbonus>
+				<isidentified type="number">1</isidentified>
+				<location type="string">back</location>
+				<locked type="number">1</locked>
+				<name type="string">Shield</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Shield</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">6</weight>
+			</id-00004>
+			<id-00005>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<h>Description</h>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.knock@*">Spell: Knock</link>
+						<link class="imagewindow" recordname="image.id-00012@DD TYP The Sunless Citadel">Image: Spell Scrolls</link>
+					</linklist>
+					<p>This spell scroll bears the words of a single spell, <i>Knock </i>, written in a mystical cipher. If the spell is on your class's spell list, you can read the scroll and cast its spell without providing any material components. Otherwise, the scroll is unintelligible. Casting the spell by reading the scroll requires the spell's normal casting time. Once the spell is cast, the words on the scroll fade, and it crumbles to dust. If the casting is interrupted, the scroll is not lost.</p>
+					<p>If the spell is on your class's spell list but of a higher level than you can normally cast, you must make an ability check using your spellcasting ability to determine whether you cast it successfully. The DC equals 10 + the spell's level. On a failed check, the spell disappears from the scroll with no other effect.</p>
+					<p>Once the spell is cast, the words on the scroll fade, and the scroll itself crumbles to dust.</p>
+					<p>This spell scroll's saving throw DC 13 and attack bonus +5.</p>
+					<p>A wizard spell on a spell scroll can be copied just as spells in spellbooks can be copied. When a spell is copied from a spell scroll, the copier must succeed on an Intelligence (Arcana) check with a DC equal to 10 + the spell's level. If the check succeeds, the spell is successfully copied. Whether the check succeeds or fails, the spell scroll is destroyed.</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">0</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Scroll of Knock</name>
+				<nonid_name type="string">Elegant Scroll (Transmutation)</nonid_name>
+				<nonidentified type="string">The materials used in this scroll are of very high quality and the writing is precise and done with a great deal of care and attention to detail.</nonidentified>
+				<properties type="string">Magic</properties>
+				<rarity type="string">Uncommon</rarity>
+				<spells>
+					<id-00001>
+						<link type="windowreference">
+							<class>reference_spell</class>
+							<recordname>reference.spelldata.knock@*</recordname>
+						</link>
+						<name type="string">Knock</name>
+					</id-00001>
+				</spells>
+				<type type="string">Scroll</type>
+				<weight type="number">0</weight>
+			</id-00005>
+			<id-00006>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A small key which no doubt opens a lock somewhere</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Key</name>
+				<subtype type="string">Key</subtype>
+				<type type="string">Treasure</type>
+				<weight type="number">0.1</weight>
+			</id-00006>
+			<id-00007>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<h>Description</h>
+					<linklist>
+						<link class="power" recordname="reference.spelldata.dragonscales@Book of lost spells"><b>Spell: </b></link>Dragon Scales</linklist>
+					<p></p>
+					<linklist>
+						<link class="imagewindow" recordname="reference.imagedata.img_spell_scroll_jpg@*"><b>Image: </b></link>Spell Scrolls</linklist>
+					<p>This spell scroll bears the words of a single spell, <i>Acid Splash </i>, written in a mystical cipher. If the spell is on your class's spell list, you can read the scroll and cast its spell without providing any material components. Otherwise, the scroll is unintelligible. Casting the spell by reading the scroll requires the spell's normal casting time. Once the spell is cast, the words on the scroll fade, and it crumbles to dust. If the casting is interrupted, the scroll is not lost.</p>
+					<p>If the spell is on your class's spell list but of a higher level than you can normally cast, you must make an ability check using your spellcasting ability to determine whether you cast it successfully. The DC equals 10 + the spell's level. On a failed check, the spell disappears from the scroll with no other effect.</p>
+					<p>Once the spell is cast, the words on the scroll fade, and the scroll itself crumbles to dust.</p>
+					<p>This spell scroll's saving throw DC 13 and attack bonus +5.</p>
+					<p>A wizard spell on a spell scroll can be copied just as spells in spellbooks can be copied. When a spell is copied from a spell scroll, the copier must succeed on an Intelligence (Arcana) check with a DC equal to 10 + the spell's level. If the check succeeds, the spell is successfully copied. Whether the check succeeds or fails, the spell scroll is destroyed.</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">0</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Scroll of Dragon Scales</name>
+				<nonid_name type="string">Scroll (Transmutation)</nonid_name>
+				<nonidentified type="string">The parchment of this scroll is of the finest quality and the penmanship of the words is precise and careful</nonidentified>
+				<properties type="string">Magic</properties>
+				<rarity type="string">Common</rarity>
+				<spells>
+					<id-00001>
+						<link type="windowreference">
+							<class>reference_spell</class>
+							<recordname>reference.spelldata.acidsplash@*</recordname>
+						</link>
+						<name type="string">Acid Splash</name>
+					</id-00001>
+				</spells>
+				<type type="string">Scroll</type>
+				<weight type="number">0</weight>
+			</id-00007>
+			<id-00008>
+				<carried type="number">1</carried>
+				<cost type="string">5 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A holy symbol is a representation of a god or pantheon. It might be an amulet depicting a symbol representing a deity, the same symbol carefully engraved or inlaid as an emblem on a shield, or a tiny box holding a fragment of a sacred relic. The Player's Handbook lists many gods in the multiverse and their typical symbols. A cleric or paladin can use a holy symbol as a spellcasting focus, as described in chapter To use the symbol in this way, the caster must hold it in hand, wear it visibly, or bear it on a shield.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<location type="string">Shield</location>
+				<locked type="number">1</locked>
+				<name type="string">Emblem</name>
+				<subtype type="string">Holy Symbol</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">0.02</weight>
+			</id-00008>
+			<id-00010>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">15 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d8 slashing</damage>
+				<description type="formattedtext">
+					<linklist>
+						<link class="encounter" recordname="encounter.id-00009">Expanded weapon Properties</link>
+					</linklist>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Longsword</name>
+				<properties type="string">Versatile(1d10), off-hand(m)</properties>
+				<subtype type="string">Martial Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">3</weight>
+			</id-00010>
+			<id-00011>
+				<ac type="number">14</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">50 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Medium armor offers more protection than light armor, but it also impairs movement more. If you wear medium armor, you add your Dexterity modifier, to a maximum of +2, to the base number from your armor type to determine your Armor Class.</p>
+					<p>This armor consists of a coat and leggings (and perhaps a separate skirt) of leather covered with overlapping pieces of metal, much like the scales of a fish. The suit includes gauntlets.</p>
+				</description>
+				<dexbonus type="string">Yes (max 2)</dexbonus>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Scale Mail</name>
+				<stealth type="string">Disadvantage</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Medium Armor</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">45</weight>
+			</id-00011>
+			<id-00012>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">0</count>
+				<description type="formattedtext">
+					<p>Rations consist of dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Rations (1 Day)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">2</weight>
+			</id-00012>
+			<id-00013>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<h>Description</h>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.spiderclimb@*">Spell: Spider Climb</link>
+						<link class="imagewindow" recordname="image.id-00012@DD TYP The Sunless Citadel">Image: Spell Scrolls</link>
+					</linklist>
+					<p>This spell scroll bears the words of a single spell, <i>Spider Climb </i>, written in a mystical cipher. If the spell is on your class's spell list, you can read the scroll and cast its spell without providing any material components. Otherwise, the scroll is unintelligible. Casting the spell by reading the scroll requires the spell's normal casting time. Once the spell is cast, the words on the scroll fade, and it crumbles to dust. If the casting is interrupted, the scroll is not lost.</p>
+					<p>If the spell is on your class's spell list but of a higher level than you can normally cast, you must make an ability check using your spellcasting ability to determine whether you cast it successfully. The DC equals 10 + the spell's level. On a failed check, the spell disappears from the scroll with no other effect.</p>
+					<p>Once the spell is cast, the words on the scroll fade, and the scroll itself crumbles to dust.</p>
+					<p>This spell scroll's saving throw DC 13 and attack bonus +5.</p>
+					<p>A wizard spell on a spell scroll can be copied just as spells in spellbooks can be copied. When a spell is copied from a spell scroll, the copier must succeed on an Intelligence (Arcana) check with a DC equal to 10 + the spell's level. If the check succeeds, the spell is successfully copied. Whether the check succeeds or fails, the spell scroll is destroyed.</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">0</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">0</locked>
+				<name type="string">Scroll of Spider Climb</name>
+				<nonid_name type="string">Elegant Scroll (Transmutation)</nonid_name>
+				<nonidentified type="string">The materials used in this scroll are of very high quality and the writing is precise and done with a great deal of care and attention to detail.</nonidentified>
+				<properties type="string">Magic</properties>
+				<rarity type="string">Uncommon</rarity>
+				<spells>
+					<id-00001>
+						<link type="windowreference">
+							<class>reference_spell</class>
+							<recordname>reference.spelldata.spiderclimb@*</recordname>
+						</link>
+						<name type="string">Spider Climb</name>
+					</id-00001>
+				</spells>
+				<type type="string">Scroll</type>
+				<weight type="number">0</weight>
+			</id-00013>
+			<id-00014>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">3</count>
+				<description type="formattedtext">
+					<h>Description</h>
+					<p>You have a bonus to attack and damage rolls made with this piece of magic ammunition. Once it hits a target, the ammunition is no longer magical.</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">0</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Arrow, +1</name>
+				<nonid_name type="string">Splendid Arrow</nonid_name>
+				<nonidentified type="string">Finely crafted ammunition.</nonidentified>
+				<properties type="string">Magic</properties>
+				<rarity type="string">Uncommon</rarity>
+				<spells>
+					<id-00001>
+						<link type="windowreference">
+							<class></class>
+							<recordname></recordname>
+						</link>
+						<name type="string">Ammunition, +1</name>
+					</id-00001>
+					<id-00002>
+						<link type="windowreference">
+							<class></class>
+							<recordname></recordname>
+						</link>
+						<name type="string">Arrow</name>
+					</id-00002>
+				</spells>
+				<subtype type="string">Arrow</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">0.05</weight>
+			</id-00014>
+			<id-00015>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Arrows (20)</name>
+				<subtype type="string">Ammunition</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00015>
+			<id-00016>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<location type="string">back</location>
+				<locked type="number">1</locked>
+				<name type="string">Blanket</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">3</weight>
+			</id-00016>
+			<id-00017>
+				<carried type="number">1</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Waterskin</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00017>
+			<id-00018>
+				<carried type="number">1</carried>
+				<cost type="string">50 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d8 piercing</damage>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Longbow</name>
+				<properties type="string">Ammunition (range 150/600), heavy, two-handed</properties>
+				<subtype type="string">Martial Ranged Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">2</weight>
+			</id-00018>
+			<id-00019>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d4 piercing</damage>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<effectlist>
+					<id-00001>
+						<ability_modifier type="number">0</ability_modifier>
+						<actiononly type="number">0</actiononly>
+						<durdice type="dice"></durdice>
+						<durmod type="number">0</durmod>
+						<effect type="string">Off Hand; AC:1</effect>
+						<effect_description type="string">[Off Hand; AC:1]</effect_description>
+						<misc_modifier type="number">0</misc_modifier>
+						<name type="string">Dagger</name>
+						<save_modifier type="number">0</save_modifier>
+						<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+					</id-00001>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Dagger</name>
+				<properties type="string">Finesse, light, thrown (range 20/60)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">1</weight>
+			</id-00019>
+			<id-00020>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">25 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Small Gold Bracelet</name>
+				<subtype type="string">Art Objects (25 Gp)</subtype>
+				<type type="string">Treasure</type>
+				<weight type="number">0.01</weight>
+			</id-00020>
+		</inventorylist>
+		<languagelist>
+			<id-00001>
+				<name type="string">Common</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Elvish</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Draconic</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Undercommon</name>
+			</id-00004>
+		</languagelist>
+		<level type="number">3</level>
+		<name type="string">Taldarin</name>
+		<notes type="string">Symbols Silver arrow with green fletching. Nivel + wis en hechizos\nAlignment Chaotic good\nSymbol Silver arrow with green fletching\nDomains War\nWorshipers Elves, half-elves, rangers\n</notes>
+		<pc_label_hero type="string">Hero Point</pc_label_hero>
+		<perception type="number">16</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<personalitytraits type="string">I idolize a particular hero of my faith, and constantly refer to that person's deeds and example.</personalitytraits>
+		<powergroup>
+			<id-00001>
+				<atkmod type="number">0</atkmod>
+				<atkprof type="number">1</atkprof>
+				<castertype type="string">memorization</castertype>
+				<name type="string">Spells</name>
+				<prepared type="number">5</prepared>
+				<savemod type="number">0</savemod>
+				<saveprof type="number">1</saveprof>
+				<stat type="string">wisdom</stat>
+				<uses type="number">0</uses>
+			</id-00001>
+			<id-00002>
+				<name type="string">War Domain</name>
+			</id-00002>
+			<id-00003>
+				<atkmod type="number">0</atkmod>
+				<atkprof type="number">1</atkprof>
+				<name type="string">Channel Divinity</name>
+				<prepared type="number">0</prepared>
+				<savemod type="number">0</savemod>
+				<saveprof type="number">1</saveprof>
+				<stat type="string">wisdom</stat>
+				<uses type="number">1</uses>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00003>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">4</max>
+				<used type="number">4</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">2</max>
+				<used type="number">2</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powermode type="string">standard</powermode>
+		<powers>
+			<id-00001>
+				<actions>
+				</actions>
+				<cast type="number">4</cast>
+				<description type="formattedtext">
+					<p>From 1st level, your god delivers bolts of inspiration to you while you are engaged in battle. When you use the Attack action, you can make one weapon attack as a bonus action.</p>
+					<p>You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest.</p>
+				</description>
+				<group type="string">War Domain</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Extra attack</name>
+				<prepared type="number">4</prepared>
+				<ritual type="number">0</ritual>
+			</id-00001>
+			<id-00002>
+				<actions>
+					<id-00001>
+						<apply type="string">roll</apply>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">DMG: 1d4 radiant; (C)</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>Your prayer empowers you with divine radiance. Until the spell ends, your weapon attacks deal an extra 1d4 radiant damage on a hit.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Divine Favor (domain) (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Cleric War Domain, Paladin</source>
+			</id-00002>
+			<id-00003>
+				<actions>
+					<id-00001>
+						<durmod type="number">10</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">AC: 2; (C)</label>
+						<order type="number">1</order>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V, S, M (a small parchment with a bit of holy text written on it)</components>
+				<description type="formattedtext">
+					<p>A shimmering field appears and surrounds a creature of your choice within range, granting it a +2 bonus to AC for the duration.</p>
+				</description>
+				<duration type="string">Concentration, up to 10 minutes</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Shield of Faith (domain) (mano al cuello)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Cleric, Cleric War Domain, Paladin</source>
+			</id-00003>
+			<id-00004>
+				<actions>
+					<id-00001>
+						<apply type="string">single</apply>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Guidance; CHECK: 1d4</label>
+						<order type="number">1</order>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You touch one willing creature. Once before the spell ends, the target can roll a d4 and add the number rolled to one ability check of its choice. It can roll the die before or after making the ability check. The spell then ends.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Guidance (mano libre)</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Divination</school>
+				<source type="string">Cleric, Druid</source>
+			</id-00004>
+			<id-00005>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">ATK: 1d4; SAVE: 1d4; (C)</label>
+						<order type="number">1</order>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a sprinkling of holy water)</components>
+				<description type="formattedtext">
+					<p>You bless up to three creatures of your choice within range. Whenever a target makes an attack roll or a saving throw before the spell ends, the target can roll a d4 and add the number rolled to the attack roll or saving throw.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, you can target one additional creature for each slot level above 1st.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Bless</name>
+				<prepared type="number">1</prepared>
+				<range type="string">30 feet</range>
+				<school type="string">Enchantment</school>
+				<source type="string">Cleric, Cleric Life Domain, Paladin</source>
+			</id-00005>
+			<id-00006>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>Starting at 2nd level, you can use your Channel Divinity to strike with supernatural accuracy. When you make an attack roll, you can use your Channel Divinity to gain a +10 bonus to the roll. You make this choice after you see the roll, but before the DM says whether the attack hits or misses.</p>
+				</description>
+				<group type="string">Channel Divinity</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Guided Strike</name>
+				<prepared type="number">0</prepared>
+				<ritual type="number">0</ritual>
+				<specialization type="string">War Domain</specialization>
+				<specializationchoice type="number">0</specializationchoice>
+			</id-00006>
+			<id-00007>
+				<actions>
+					<id-00001>
+						<atkmod type="number">0</atkmod>
+						<atkprof type="number">1</atkprof>
+						<order type="number">1</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savetype type="string">base</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Turned</label>
+						<order type="number">2</order>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>When you use your Channel Divinity, you choose which effect to create. You must then finish a short or long rest to use your Channel Divinity again.</p>
+					<p>Some Channel Divinity effects require saving throws. When you use such an effect from this class, the DC equals your cleric spell save DC.</p>
+					<p>Beginning at 6th level, you can use your Channel Divinity twice between rests, and beginning at 18th level, you can use it three times between rests. When you finish a short or long rest, you regain your expended uses.</p>
+					<p><b>Channel Divinity: </b>Turn Undead</p>
+					<p>As an action, you present your holy symbol and speak a prayer censuring the undead. Each undead that can see or hear you within 30 feet of you must make a Wisdom saving throw. If the creature fails its saving throw, it is turned for 1 minute or until it takes any damage.</p>
+					<p>A turned creature must spend its turns trying to move as far away from you as it can, and it can't willingly move to a space within 30 feet of you. It also can't take reactions. For its action, it can use only the Dash action or try to escape from an effect that prevents it from moving. If there's nowhere to move, the creature can use the Dodge action.</p>
+				</description>
+				<group type="string">Channel Divinity</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Turn Undead</name>
+				<prepared type="number">0</prepared>
+				<ritual type="number">0</ritual>
+				<specializationchoice type="number">0</specializationchoice>
+			</id-00007>
+			<id-00008>
+				<actions>
+					<id-00001>
+						<atktype type="string">ranged</atktype>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d6,d6,d6,d6</dice>
+								<type type="string">radiant</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+					<id-00003>
+						<apply type="string">roll</apply>
+						<durmod type="number">1</durmod>
+						<label type="string">GRANTADVATK</label>
+						<order type="number">3</order>
+						<type type="string">effect</type>
+					</id-00003>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>A flash of light streaks toward a creature of your choice within range. Make a ranged spell attack against the target. On a hit, the target takes 4d6 radiant damage, and the next attack roll made against this target before the end of your next turn has advantage, thanks to the mystical dim light glittering on the target until then.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, the damage increases by</p>
+					<p>1d6 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">1 round</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Guiding Bolt</name>
+				<prepared type="number">0</prepared>
+				<range type="string">120 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Cleric</source>
+			</id-00008>
+			<id-00009>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d8</dice>
+								<stat type="string">base</stat>
+							</id-00001>
+						</heallist>
+						<order type="number">1</order>
+						<type type="string">heal</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>A creature you touch regains a number of hit points equal to 1d8 + your spellcasting ability modifier. This spell has no effect on undead or constructs.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, the healing increases by 1d8 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Cure Wounds (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Bard, Cleric, Cleric Life Domain, Druid, Paladin, Ranger</source>
+			</id-00009>
+			<id-00010>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>For the duration, you sense the presence of magic within 30 feet of you. If you sense magic in this way, you can use your action to see a faint aura around any visible creature or object in the area that bears magic, and you learn its school of magic, if any.</p>
+					<p>The spell can penetrate most barriers, but it is blocked by 1 foot of stone, 1 inch of common metal, a thin sheet of lead, or 3 feet of wood or dirt.</p>
+				</description>
+				<duration type="string">Concentration, up to 10 minutes</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Detect Magic (R)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self</range>
+				<ritual type="number">1</ritual>
+				<school type="string">Divination</school>
+				<source type="string">Bard, Cleric, Druid, Eldritch Knight, Eldritch Invocations, Paladin, Ranger, Sorcerer, Wizard, Arcane Trickster</source>
+			</id-00010>
+			<id-00011>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">ATK: 1; DMG: 1; DMGTYPE: magic; (C)</label>
+						<order type="number">1</order>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You touch a nonmagical weapon. Until the spell ends, that weapon becomes a magic weapon with a +1 bonus to attack rolls and damage rolls.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 4th level or higher, the bonus increases to +2. When you use a spell slot of 6th level or higher, the bonus increases to +3.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Magic Weapon (domain)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Touch</range>
+				<school type="string">Transmutation</school>
+				<source type="string">Cleric War Domain, Eldritch Knight, Paladin, Wizard, Arcane Trickster</source>
+			</id-00011>
+			<id-00012>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<dice type="dice">d4</dice>
+								<stat type="string">base</stat>
+							</id-00001>
+						</heallist>
+						<order type="number">1</order>
+						<type type="string">heal</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V</components>
+				<description type="formattedtext">
+					<p>A creature of your choice that you can see within range regains hit points equal to 1d4 + your spellcasting ability modifier. This spell has no effect on undead or constructs.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, the healing increases by 1d4 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Healing Word</name>
+				<prepared type="number">1</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Bard, Cleric, Druid</source>
+			</id-00012>
+			<id-00013>
+				<actions>
+					<id-00001>
+						<atkmod type="number">0</atkmod>
+						<atkprof type="number">1</atkprof>
+						<order type="number">1</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">dexterity</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d8</dice>
+								<type type="string">necrotic</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+					<id-00003>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d12</dice>
+								<type type="string">necrotic</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">3</order>
+						<type type="string">damage</type>
+					</id-00003>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You point at one creature you can see within range, and the sound of a dolorous bell fills the air around it for a moment. The target must succeed on a Wisdom saving throw or take 1d8 necrotic damage. If the target is missing any of its hit points, it instead takes 1d12 necrotic damage.</p>
+					<p>The spell's damage increases by one die when you reach 5th level (2d8 or 2d12), 11th level (3d8 or 3d12), and 17th level (4d8 or 4d12).</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Toll the Dead (mano libre)</name>
+				<prepared type="number">0</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Necromancy</school>
+				<source type="string">Cleric, Warlock, Wizard</source>
+			</id-00013>
+			<id-00014>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">constitution</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d6</dice>
+								<type type="string">radiant</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You raise your hand, and burning radiance erupts from it. Each creature of your choice that you can see within 5 feet of you must succeed on a Constitution saving throw or take 1d6 radiant damage.</p>
+					<p>The spell's damage increases by 1d6 when you reach 5th level (2d6), 11th level (3d6), and 17th level (4d8).</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Hand of Radiance (mano libre)</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Self (5-foot radius)</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Cleric</source>
+			</id-00014>
+			<id-00015>
+				<actions>
+					<id-00001>
+						<atktype type="string">melee</atktype>
+						<order type="number">1</order>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d8</dice>
+								<stat type="string">base</stat>
+								<type type="string">force</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You create a floating, spectral weapon within range that lasts for the duration or until you cast this spell again. When you cast the spell, you can make a melee spell attack against a creature within 5 feet of the weapon. On a hit, the target takes force damage equal to 1d8 + your spellcasting ability modifier.</p>
+					<p>As a bonus action on your turn, you can move the weapon up to 20 feet and repeat the attack against a creature within 5 feet of it.</p>
+					<p>The weapon can take whatever form you choose. Clerics of deities who are associated with a particular weapon (as St. Cuthbert is known for his mace and Thor for his hammer) make this spell's effect resemble that weapon.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d8 for every two slot levels above the 2nd.</p>
+				</description>
+				<duration type="string">1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Spiritual Weapon (domain)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">60 feet</range>
+				<school type="string">Evocation</school>
+				<source type="string">Cleric, Cleric Life Domain, Cleric War Domain</source>
+			</id-00015>
+			<id-00017>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<dice type="dice">d8,d8</dice>
+								<stat type="string">base</stat>
+							</id-00001>
+						</heallist>
+						<order type="number">1</order>
+						<type type="string">heal</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">10 minutes</castingtime>
+				<components type="string">V</components>
+				<description type="formattedtext">
+					<p>Up to six creatures of your choice that you can see within range each regain hit points equal to 2d8 + your spellcasting ability modifier. This spell has no effect on undead or constructs.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 3rd level or higher, the healing increases by 1d8 for each slot level above 2nd.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Prayer of Healing</name>
+				<prepared type="number">1</prepared>
+				<range type="string">30 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Cleric</source>
+			</id-00017>
+			<id-00018>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You touch a creature and can end either one disease or one condition afflicting it. The condition can be blinded, deafened, paralyzed, or poisoned.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Lesser Restoration</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Touch</range>
+				<school type="string">Abjuration</school>
+				<source type="string">Bard, Cleric, Cleric Life Domain, Druid, Paladin, Ranger</source>
+			</id-00018>
+			<id-00019>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">ADVSAV: poisoned; RESIST: poison</label>
+						<order type="number">1</order>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You touch a creature. If it is poisoned, you neutralize the poison. If more than one poison afflicts the target, you neutralize one poison that you know is present, or you neutralize one at random.</p>
+					<p>For the duration, the target has advantage on saving throws against being poisoned, and it has resistance to poison damage.</p>
+				</description>
+				<duration type="string">1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Protection from Poison</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Cleric, Druid, Paladin, Ranger</source>
+			</id-00019>
+		</powers>
+		<profbonus type="number">2</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<name type="string">Weapon: All simple weapons, martial weapons</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Armor: Light armor, medium armor, heavy armor, shields</name>
+			</id-00002>
+		</proficiencylist>
+		<race type="string">Wood Elf</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>reference.racedata.elf@DD PHB Deluxe</recordname>
+		</racelink>
+		<senses type="string">Darkvision 60</senses>
+		<size type="string">Medium</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">6</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">6</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">4</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">0</prof>
+				<stat type="string">strength</stat>
+				<total type="number">2</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">6</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">4</total>
+			</id-00018>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">35</base>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">35</total>
+		</speed>
+		<temp>
+		</temp>
+		<token type="token">portrait_id-00001_token</token>
+		<traitlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Trance</name>
+				<source type="string">Elf</source>
+				<text type="formattedtext">
+					<p>Elves don't need to sleep. Instead, they meditate deeply, remaining semiconscious, for 4 hours a day. (The Common word for such meditation is &#34;trance.&#34;) While meditating, you can dream after a fashion; such dreams are actually mental exercises that have become reflexive through years of practice. After resting in this way, you gain the same benefit that a human does from 8 hours of sleep.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00001>
+			<id-00002>
+				<locked type="number">1</locked>
+				<name type="string">Keen Senses</name>
+				<source type="string">Elf</source>
+				<text type="formattedtext">
+					<p>You have proficiency in the Perception skill.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00002>
+			<id-00003>
+				<locked type="number">1</locked>
+				<name type="string">Fey Ancestry</name>
+				<source type="string">Elf</source>
+				<text type="formattedtext">
+					<p>You have advantage on saving throws against being charmed, and magic can't put you to sleep.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00003>
+			<id-00004>
+				<locked type="number">1</locked>
+				<name type="string">Mask of the Wild</name>
+				<source type="string">Wood Elf</source>
+				<text type="formattedtext">
+					<p>You can attempt to hide even when you are only lightly obscured by foliage, heavy rain, falling snow, mist, and other natural phenomena.</p>
+				</text>
+				<type type="string">subracial</type>
+			</id-00004>
+			<id-00005>
+				<locked type="number">1</locked>
+				<name type="string">Elf Weapon Training</name>
+				<source type="string">Wood Elf</source>
+				<text type="formattedtext">
+					<p>You have proficiency with the longsword, shortsword, shortbow, and longbow.</p>
+				</text>
+				<type type="string">subracial</type>
+			</id-00005>
+		</traitlist>
+		<weapon>
+			<critdicebonus>
+			</critdicebonus>
+			<critrange>
+				<melee type="number">20</melee>
+				<ranged type="number">20</ranged>
+			</critrange>
+		</weapon>
+		<weaponlist>
+			<id-00001>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+				</damagelist>
+				<isidentified type="number">0</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">** Splendid Arrow **</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00014</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00001>
+			<id-00002>
+				<ammo type="number">1</ammo>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d8</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">19</maxammo>
+				<name type="string">Longbow</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00018</recordname>
+				</shortcut>
+				<type type="number">1</type>
+			</id-00002>
+			<id-00004>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d8</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Longsword</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00010</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00004>
+			<id-00005>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Dagger</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00019</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00005>
+			<id-00006>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d10</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Longsword (2H)</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class></class>
+					<recordname></recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00006>
+			<id-00007>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Dagger</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00019</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00007>
+		</weaponlist>
+	</character>
+</root>

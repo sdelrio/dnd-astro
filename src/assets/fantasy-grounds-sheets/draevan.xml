@@ -1,0 +1,3689 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root version="4.6" dataversion="20241002" release="8.1|CoreRPG:6">
+	<character>
+		<abilities>
+			<charisma>
+				<bonus type="number">0</bonus>
+				<save type="number">0</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">10</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">3</bonus>
+				<save type="number">3</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">16</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">4</bonus>
+				<save type="number">7</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">18</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">1</bonus>
+				<save type="number">4</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">13</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">8</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">1</bonus>
+				<save type="number">1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">12</score>
+			</wisdom>
+		</abilities>
+		<adventurelist />
+		<age type="string">23</age>
+		<alignment type="string">Neutral - Neutral</alignment>
+		<background type="string">Criminal</background>
+		<backgroundlink type="windowreference">
+			<class>reference_background</class>
+			<recordname>background.id-00004@WOTC50PHB</recordname>
+		</backgroundlink>
+		<backgroundversion type="string">2024</backgroundversion>
+		<cards />
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">0</casterlevelinvmult>
+				<casterpactmagic type="number">0</casterpactmagic>
+				<hddie type="dice">1d8</hddie>
+				<hdused type="number">5</hdused>
+				<level type="number">5</level>
+				<name type="string">Rogue</name>
+				<rolls>
+					<lvl-001 type="number">8</lvl-001>
+					<lvl-002 type="number">2</lvl-002>
+					<lvl-003 type="number">8</lvl-003>
+					<lvl-004 type="number">8</lvl-004>
+					<lvl-005 type="number">3</lvl-005>
+				</rolls>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>class.id-00009@WOTC50PHB</recordname>
+				</shortcut>
+				<specialization type="string">Soulknife</specialization>
+				<specializationlink type="windowreference">
+					<class>reference_class_specialization</class>
+					<recordname>reference.class_specializationdata.id-00024@DD Tashas Cauldron of Everything - Players</recordname>
+				</specializationlink>
+				<specializationversion type="string">2024</specializationversion>
+				<version type="string">2024</version>
+			</id-00001>
+		</classes>
+		<coins>
+			<id-00001>
+				<amount type="number">75</amount>
+				<name type="string">GP</name>
+			</id-00001>
+			<id-00002>
+				<amount type="number">0</amount>
+				<name type="string">CP</name>
+			</id-00002>
+			<id-00003>
+				<amount type="number">0</amount>
+				<name type="string">SP</name>
+			</id-00003>
+			<id-00004>
+				<amount type="number">12</amount>
+				<name type="string">EP</name>
+			</id-00004>
+		</coins>
+		<defenses>
+			<ac>
+				<armor type="number">2</armor>
+				<disstealth type="number">0</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">0</shield>
+				<temporary type="number">0</temporary>
+				<total type="number">16</total>
+			</ac>
+		</defenses>
+		<deity type="string">Oar</deity>
+		<effectlist />
+		<encumbrance>
+			<encumbered type="number">40</encumbered>
+			<encumberedheavy type="number">80</encumberedheavy>
+			<liftpushdrag type="number">240</liftpushdrag>
+			<load type="number">23</load>
+			<max type="number">120</max>
+		</encumbrance>
+		<exp type="number">7500</exp>
+		<expneeded type="number">14000</expneeded>
+		<featlist>
+			<id-00001>
+				<category type="string">Origin</category>
+				<hpadd type="number">0</hpadd>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Alert</name>
+				<repeatable type="number">0</repeatable>
+				<text type="formattedtext">
+					<p>You gain the following benefits.</p>
+					<p>
+						<b>Initiative Proficiency. </b>When you roll Initiative, you can add your Proficiency Bonus to the roll.</p>
+					<p>
+						<b>Initiative Swap. </b>Immediately after you roll Initiative, you can swap your Initiative with the Initiative of one willing ally in the same combat. You can't make this swap if you or the ally has the Incapacitated condition.</p>
+				</text>
+				<version type="string">2024</version>
+			</id-00001>
+			<id-00002>
+				<category type="string">Origin</category>
+				<hpadd type="number">0</hpadd>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Skilled</name>
+				<repeatable type="number">1</repeatable>
+				<text type="formattedtext">
+					<p>You gain proficiency in any combination of three skills or tools of your choice.</p>
+				</text>
+				<version type="string">2024</version>
+			</id-00002>
+		</featlist>
+		<featurelist>
+			<id-00001>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Sneak Attack</name>
+				<text type="formattedtext">
+					<p>You know how to strike subtly and exploit a foe's distraction. Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack roll if you have Advantage on the roll and the attack uses a Finesse or a Ranged weapon. The extra damage's type is the same as the weapon's type.</p>
+					<p>You don't need Advantage on the attack roll if at least one of your allies is within 5 feet of the target, the ally doesn't have the Incapacitated condition, and you don't have Disadvantage on the attack roll.</p>
+					<p>The extra damage increases as you gain Rogue levels, as shown in the Sneak Attack column of the Rogue Features table.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Thieves' Cant</name>
+				<text type="formattedtext">
+					<p>You picked up various languages in the communities where you plied your roguish talents. You know Thieves' Cant and one other language of your choice, which you choose from the language tables in chapter 2.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Weapon Mastery</name>
+				<text type="formattedtext">
+					<p>Your training with weapons allows you to use the mastery properties of two kinds of weapons of your choice with which you have proficiency, such as Daggers and Shortbows.</p>
+					<p>Whenever you finish a Long Rest, you can change the kinds of weapons you chose. For example, you could switch to using the mastery properties of Scimitars and Shortswords.</p>
+				</text>
+			</id-00003>
+			<id-00004>
+				<hpadd type="number">0</hpadd>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Cunning Action</name>
+				<text type="formattedtext">
+					<p>Your quick thinking and agility allow you to move and act quickly. On your turn, you can take one of the following actions as a Bonus Action: Dash, Disengage, or Hide.</p>
+				</text>
+			</id-00004>
+			<id-00005>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Rogue Subclass</name>
+				<text type="formattedtext">
+					<p>You gain a Rogue subclass of your choice. The Arcane Trickster, Assassin, Soulknife, and Thief subclasses are detailed after this class's description. A subclass is a specialization that grants you features at certain Rogue levels. For the rest of your career, you gain each of your subclass's features that are of your Rogue level or lower.</p>
+				</text>
+			</id-00005>
+			<id-00006>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Steady Aim</name>
+				<text type="formattedtext">
+					<p>As a Bonus Action, you give yourself Advantage on your next attack roll on the current turn. You can use this feature only if you haven't moved during this turn, and after you use it, your Speed is 0 until the end of the current turn.</p>
+				</text>
+			</id-00006>
+			<id-00007>
+				<effectlist />
+				<hpadd type="number">0</hpadd>
+				<level type="number">3</level>
+				<locked type="number">0</locked>
+				<name type="string">Psionic Power</name>
+				<text type="formattedtext">
+					<p>
+						<i>3rd-level Soulknife feature</i>
+					</p>
+					<p>You harbor a wellspring of psionic energy within yourself. This energy is represented by your Psionic Energy dice, which are each a d6. You have a number of these dice equal to twice your proficiency bonus, and they fuel various psionic powers you have, which are detailed below.</p>
+					<p>Some of your powers expend the Psionic Energy die they use, as specified in a power's description, and you can't use a power if it requires you to use a die when your dice are all expended. You regain all your expended Psionic Energy dice when you finish a long rest. In addition, as a bonus action, you can regain one expended Psionic Energy die, but you can't do so again until you finish a short or long rest.</p>
+					<p>When you reach certain levels in this class, the size of your Psionic Energy dice increases: at 5th level (d8), 11th level (d10), and 17th level (d12).</p>
+					<p>The powers below use your Psionic Energy dice.</p>
+					<p>
+						<b>
+							<i>Psi-Bolstered Knack. </i>
+						</b>When your nonpsionic training fails you, your psionic power can help: if you fail an ability check using a skill or tool with which you have proficiency, you can roll one Psionic Energy die and add the number rolled to the check, potentially turning failure into success. You expend the die only if the roll succeeds.</p>
+					<p>
+						<b>
+							<i>Psychic Whispers. </i>
+						</b>You can establish telepathic communication between yourself and others-perfect for quiet infiltration. As an action, choose one or more creatures you can see, up to a number of creatures equal to your proficiency bonus, and then roll one Psionic Energy die. For a number of hours equal to the number rolled, the chosen creatures can speak telepathically with you, and you can speak telepathically with them. To send or receive a message (no action required), you and the other creature must be within 1 mile of each other. A creature can't use this telepathy if it can't speak any languages, and a creature can end the telepathic connection at any time (no action required). You and the creature don't need to speak a common language to understand each other.</p>
+					<p>The first time you use this power after each long rest, you don't expend the Psionic Energy die. All other times you use the power, you expend the die.</p>
+				</text>
+			</id-00007>
+			<id-00008>
+				<effectlist />
+				<hpadd type="number">0</hpadd>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Psychic Blades</name>
+				<text type="formattedtext">
+					<p>
+						<i>3rd-level Soulknife feature</i>
+					</p>
+					<p>You can manifest your psionic power as shimmering blades of psychic energy. Whenever you take the Attack action, you can manifest a psychic blade from your free hand and make the attack with that blade. This magic blade is a simple melee weapon with the finesse and thrown properties. It has a normal range of 60 feet and no long range, and on a hit, it deals psychic damage equal to 1d6 plus the ability modifier you used for the attack roll. The blade vanishes immediately after it hits or misses its target, and it leaves no mark on its target if it deals damage.</p>
+					<p>After you attack with the blade, you can make a melee or ranged weapon attack with a second psychic blade as a bonus action on the same turn, provided your other hand is free to create it. The damage die of this bonus attack is 1d4, instead of 1d6.</p>
+				</text>
+			</id-00008>
+			<id-00009>
+				<level type="number">5</level>
+				<locked type="number">1</locked>
+				<name type="string">Cunning Strike</name>
+				<text type="formattedtext">
+					<p>You've developed cunning ways to use your Sneak Attack. When you deal Sneak Attack damage, you can add one of the following Cunning Strike effects. Each effect has a die cost, which is the number of Sneak Attack damage dice you must forgo to add the effect. You remove the die before rolling, and the effect occurs immediately after the attack's damage is dealt. For example, if you add the Poison effect, remove 1d6 from the Sneak Attack's damage before rolling.</p>
+					<p>If a Cunning Strike effect requires a saving throw, the DC equals 8 plus your Dexterity modifier and Proficiency Bonus.</p>
+					<p>
+						<b>
+							<i>Poison (Cost: 1d6). </i>
+						</b>You add a toxin to your strike, forcing the target to make a Constitution saving throw. On a failed save, the target has the Poisoned condition for 1 minute. At the end of each of its turns, the Poisoned target repeats the save, ending the effect on itself on a success.</p>
+					<p>To use this effect, you must have a Poisoner's Kit on your person.</p>
+					<p>
+						<b>
+							<i>Trip (Cost: 1d6). </i>
+						</b>If the target is Large or smaller, it must succeed on a Dexterity saving throw or have the Prone condition.</p>
+					<p>
+						<b>
+							<i>Withdraw (Cost: 1d6). </i>
+						</b>Immediately after the attack, you move up to half your Speed without provoking Opportunity Attacks.</p>
+				</text>
+			</id-00009>
+			<id-00010>
+				<level type="number">5</level>
+				<locked type="number">1</locked>
+				<name type="string">Uncanny Dodge</name>
+				<text type="formattedtext">
+					<p>When an attacker that you can see hits you with an attack roll, you can take a Reaction to halve the attack's damage against you (round down).</p>
+				</text>
+			</id-00010>
+			<id-00011>
+				<level type="number">5</level>
+				<locked type="number">1</locked>
+				<name type="string">Psionic Power</name>
+				<text type="formattedtext">
+					<p>
+						<i>3rd-level Soulknife feature</i>
+					</p>
+					<p>You harbor a wellspring of psionic energy within yourself. This energy is represented by your Psionic Energy dice, which are each a d6. You have a number of these dice equal to twice your proficiency bonus, and they fuel various psionic powers you have, which are detailed below.</p>
+					<p>Some of your powers expend the Psionic Energy die they use, as specified in a power's description, and you can't use a power if it requires you to use a die when your dice are all expended. You regain all your expended Psionic Energy dice when you finish a long rest. In addition, as a bonus action, you can regain one expended Psionic Energy die, but you can't do so again until you finish a short or long rest.</p>
+					<p>When you reach certain levels in this class, the size of your Psionic Energy dice increases: at 5th level (d8), 11th level (d10), and 17th level (d12).</p>
+					<p>The powers below use your Psionic Energy dice.</p>
+					<p>
+						<b>
+							<i>Psi-Bolstered Knack. </i>
+						</b>When your nonpsionic training fails you, your psionic power can help: if you fail an ability check using a skill or tool with which you have proficiency, you can roll one Psionic Energy die and add the number rolled to the check, potentially turning failure into success. You expend the die only if the roll succeeds.</p>
+					<p>
+						<b>
+							<i>Psychic Whispers. </i>
+						</b>You can establish telepathic communication between yourself and others-perfect for quiet infiltration. As an action, choose one or more creatures you can see, up to a number of creatures equal to your proficiency bonus, and then roll one Psionic Energy die. For a number of hours equal to the number rolled, the chosen creatures can speak telepathically with you, and you can speak telepathically with them. To send or receive a message (no action required), you and the other creature must be within 1 mile of each other. A creature can't use this telepathy if it can't speak any languages, and a creature can end the telepathic connection at any time (no action required). You and the creature don't need to speak a common language to understand each other.</p>
+					<p>The first time you use this power after each long rest, you don't expend the Psionic Energy die. All other times you use the power, you expend the die.</p>
+				</text>
+			</id-00011>
+		</featurelist>
+		<gender type="string">Male</gender>
+		<height type="string">181</height>
+		<hero type="number">0</hero>
+		<hp>
+			<adjust type="number">0</adjust>
+			<base type="number">44</base>
+			<deathsavefail type="number">0</deathsavefail>
+			<deathsavesuccess type="number">0</deathsavesuccess>
+			<temporary type="number">0</temporary>
+			<total type="number">44</total>
+			<wounds type="number">0</wounds>
+		</hp>
+		<initiative>
+			<misc type="number">0</misc>
+			<prof type="number">1</prof>
+			<temporary type="number">0</temporary>
+			<total type="number">6</total>
+		</initiative>
+		<inspiration type="number">1</inspiration>
+		<inventorylist>
+			<id-00001>
+				<abilities>
+					<charisma>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</charisma>
+					<constitution>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</constitution>
+					<dexterity>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</dexterity>
+					<intelligence>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</intelligence>
+					<strength>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</strength>
+					<wisdom>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</wisdom>
+				</abilities>
+				<ac type="number">12</ac>
+				<actions />
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<bonusactions />
+				<carried type="number">2</carried>
+				<classes />
+				<cost type="string">45 GP</cost>
+				<count type="number">1</count>
+				<damagethreshold type="number">0</damagethreshold>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<dexbonus type="string">Yes</dexbonus>
+				<fragile type="number">0</fragile>
+				<hd type="string">(3d6)</hd>
+				<hp type="number">10</hp>
+				<hpadjust type="number">0</hpadjust>
+				<hptemp type="number">0</hptemp>
+				<hptotal type="number">10</hptotal>
+				<initiative>
+					<misc type="number">0</misc>
+				</initiative>
+				<innatespells />
+				<lairactions />
+				<legendaryactions />
+				<locked type="number">1</locked>
+				<name type="string">Studded Leather Armor</name>
+				<picture type="token">images/Light Armor Studded Leather Armor.webp@WOTC50PHB</picture>
+				<rarity type="string">common</rarity>
+				<reactions />
+				<size type="string">Small</size>
+				<spells />
+				<spellslots>
+					<level1 type="number">0</level1>
+					<level2 type="number">0</level2>
+					<level3 type="number">0</level3>
+					<level4 type="number">0</level4>
+					<level5 type="number">0</level5>
+					<level6 type="number">0</level6>
+					<level7 type="number">0</level7>
+					<level8 type="number">0</level8>
+					<level9 type="number">0</level9>
+				</spellslots>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Light Armor</subtype>
+				<traits />
+				<type type="string">Armor</type>
+				<version type="string">2024</version>
+				<weight type="number">13</weight>
+				<xp type="number">0</xp>
+			</id-00001>
+			<id-00002>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<name type="string">zExtra encumbrance</name>
+				<weight type="number">-5</weight>
+			</id-00002>
+			<id-00003>
+				<attune type="number">0</attune>
+				<carried type="number">0</carried>
+				<cost type="string">2 GP</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A Backpack holds up to 30 pounds within 1 cubic foot. It can also serve as a saddlebag.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Backpack</name>
+				<rarity type="string">common</rarity>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<version type="string">2024</version>
+				<weight type="number">5</weight>
+			</id-00003>
+			<id-00004>
+				<abilities>
+					<charisma>
+						<score type="number">10</score>
+					</charisma>
+					<constitution>
+						<score type="number">10</score>
+					</constitution>
+					<dexterity>
+						<score type="number">10</score>
+					</dexterity>
+					<intelligence>
+						<score type="number">10</score>
+					</intelligence>
+					<strength>
+						<score type="number">10</score>
+					</strength>
+					<wisdom>
+						<score type="number">10</score>
+					</wisdom>
+				</abilities>
+				<ac type="number">10</ac>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 GP</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>As a Utilize action, you can spill Ball Bearings from their pouch. They spread to cover a level, 10-foot-square area within 10 feet of yourself. A creature that enters this area for the first time on a turn must succeed on a DC 10 Dexterity saving throw or have the Prone condition. It takes 10 minutes to recover the Ball Bearings.</p>
+				</description>
+				<hd type="string">(2d4)</hd>
+				<hp type="number">5</hp>
+				<hptotal type="number">5</hptotal>
+				<initiative />
+				<locked type="number">1</locked>
+				<name type="string">Ball Bearings</name>
+				<rarity type="string">common</rarity>
+				<size type="string">Tiny</size>
+				<spellslots />
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<version type="string">2024</version>
+				<weight type="number">2</weight>
+			</id-00004>
+			<id-00005>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 GP</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>When rung as a Utilize action, a Bell produces a sound that can be heard up to 60 feet away.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Bell</name>
+				<rarity type="string">common</rarity>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<version type="string">2024</version>
+				<weight type="number">0</weight>
+			</id-00005>
+			<id-00006>
+				<abilities>
+					<charisma>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</charisma>
+					<constitution>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</constitution>
+					<dexterity>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</dexterity>
+					<intelligence>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</intelligence>
+					<strength>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</strength>
+					<wisdom>
+						<savemodifier type="number">0</savemodifier>
+						<score type="number">10</score>
+					</wisdom>
+				</abilities>
+				<ac type="number">10</ac>
+				<actions />
+				<attune type="number">0</attune>
+				<bonusactions />
+				<carried type="number">1</carried>
+				<classes />
+				<cost type="string">25 GP</cost>
+				<count type="number">1</count>
+				<damagethreshold type="number">0</damagethreshold>
+				<description type="formattedtext">
+					<p>
+						<b>Ability: </b>Dexterity</p>
+					<p>
+						<b>Weight: </b>1 lb.</p>
+					<p>
+						<b>Utilize: </b>Pick a lock (DC 15), or disarm a trap (DC 15)</p>
+				</description>
+				<fragile type="number">0</fragile>
+				<hd type="string">(2d4)</hd>
+				<hp type="number">5</hp>
+				<hpadjust type="number">0</hpadjust>
+				<hptemp type="number">0</hptemp>
+				<hptotal type="number">5</hptotal>
+				<initiative>
+					<misc type="number">0</misc>
+				</initiative>
+				<innatespells />
+				<lairactions />
+				<legendaryactions />
+				<locked type="number">1</locked>
+				<name type="string">Thieves' Tools</name>
+				<rarity type="string">common</rarity>
+				<reactions />
+				<size type="string">Tiny</size>
+				<spells />
+				<spellslots>
+					<level1 type="number">0</level1>
+					<level2 type="number">0</level2>
+					<level3 type="number">0</level3>
+					<level4 type="number">0</level4>
+					<level5 type="number">0</level5>
+					<level6 type="number">0</level6>
+					<level7 type="number">0</level7>
+					<level8 type="number">0</level8>
+					<level9 type="number">0</level9>
+				</spellslots>
+				<subtype type="string">Kits / Sets</subtype>
+				<summon type="number">0</summon>
+				<summon_ac_base type="number">0</summon_ac_base>
+				<summon_ac_mod type="number">0</summon_ac_mod>
+				<summon_attack type="number">0</summon_attack>
+				<summon_dc type="number">0</summon_dc>
+				<summon_hp_base type="number">0</summon_hp_base>
+				<summon_hp_mod type="number">0</summon_hp_mod>
+				<summon_hp_mod_threshold type="number">0</summon_hp_mod_threshold>
+				<summon_level type="number">0</summon_level>
+				<summon_mod type="number">0</summon_mod>
+				<summon_pb type="number">0</summon_pb>
+				<traits />
+				<type type="string">Tools</type>
+				<value type="string">25 GP</value>
+				<version type="string">2024</version>
+				<weight type="number">1</weight>
+				<xp type="number">0</xp>
+			</id-00006>
+			<id-00007>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">50 - 100 gp</cost>
+				<count type="number">0</count>
+				<description type="formattedtext">
+					<h>Description</h>
+					<p>You regain 2d4 + 2 hit points when you drink this potion. The potion's red liquid glimmers when agitated.</p>
+					<p>
+						<b>Potion Notes</b>
+					</p>
+					<p>Drinking or administering a potion takes an action.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Potion of Healing</name>
+				<nonid_name type="string">Potion</nonid_name>
+				<nonidentified type="string">A vial of red liquid that shimmers when agitated.</nonidentified>
+				<properties type="string">Magic</properties>
+				<rarity type="string">Common</rarity>
+				<spells>
+					<id-00001>
+						<link type="windowreference">
+							<class />
+							<recordname />
+						</link>
+						<name type="string">Potion of Healing</name>
+					</id-00001>
+					<id-00002>
+						<link type="windowreference">
+							<class />
+							<recordname />
+						</link>
+						<name type="string">Potion</name>
+					</id-00002>
+				</spells>
+				<type type="string">Potion</type>
+				<weight type="number">0.5</weight>
+			</id-00007>
+			<id-00008>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">2 GP</cost>
+				<count type="number">2</count>
+				<damage type="string">1d4 Piercing</damage>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<locked type="number">1</locked>
+				<mastery type="string">Nick</mastery>
+				<name type="string">Dagger</name>
+				<picture type="token">images/Weapon Dagger.webp@WOTC50PHB</picture>
+				<properties type="string">Finesse, Light, Thrown (Range 20/60)</properties>
+				<rarity type="string">common</rarity>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<version type="string">2024</version>
+				<weight type="number">1</weight>
+			</id-00008>
+			<id-00010>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">5 SP</cost>
+				<count type="number">3</count>
+				<description type="formattedtext">
+					<p>Rations consist of travel-ready food, including jerky, dried fruit, hardtack, and nuts. See &#34;Malnutrition&#34; in the rules glossary for the risks of not eating.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Rations (1 day)</name>
+				<rarity type="string">common</rarity>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<version type="string">2024</version>
+				<weight type="number">1</weight>
+			</id-00010>
+			<id-00011>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<damage type="string">1d6 Psychic</damage>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<locked type="number">1</locked>
+				<mastery type="string">Vex</mastery>
+				<name type="string">Psychic Blade</name>
+				<properties type="string">Finesse, Thrown (range 60/120)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<version type="string">2024</version>
+				<weight type="number">0</weight>
+			</id-00011>
+			<id-00012>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">5 SP</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A Tinderbox is a small container holding flint, fire steel, and tinder (usually dry cloth soaked in light oil) used to kindle a fire. Using it to light a Candle, Lamp, Lantern, or Torch-or anything else with exposed fuel-takes a Bonus Action. Lighting any other fire takes 1 minute.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Tinderbox</name>
+				<rarity type="string">common</rarity>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<version type="string">2024</version>
+				<weight type="number">1</weight>
+			</id-00012>
+			<id-00013>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">2 SP</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A Waterskin holds up to 4 pints. If you don't drink sufficient water, you risk dehydration (see the rules glossary).</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Waterskin</name>
+				<rarity type="string">common</rarity>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<version type="string">2024</version>
+				<weight type="number">5</weight>
+			</id-00013>
+			<id-00014>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<damage type="string">1d4 Psychic</damage>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<locked type="number">1</locked>
+				<mastery type="string">Vex</mastery>
+				<name type="string">Psychic Blade (Off-Hand)</name>
+				<properties type="string">Finesse, Thrown (range 60/120)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<version type="string">2024</version>
+				<weight type="number">0</weight>
+			</id-00014>
+			<id-00015>
+				<attune type="number">0</attune>
+				<carried type="number">0</carried>
+				<cost type="string">2 GP</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Traveler's Clothes are resilient garments designed for travel in various environments.</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Clothes, Traveler's</name>
+				<rarity type="string">common</rarity>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<version type="string">2024</version>
+				<weight type="number">4</weight>
+			</id-00015>
+			<id-00018>
+				<ac type="number">10</ac>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 CP</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A Torch burns for 1 hour, casting Bright Light in a 20-foot radius and Dim Light for an additional 20 feet. When you take the Attack action, you can attack with the Torch, using it as a Simple Melee weapon. On a hit, the target takes 1 Fire damage.</p>
+				</description>
+				<hd type="string">(2d4)</hd>
+				<hp type="number">5</hp>
+				<hptotal type="number">5</hptotal>
+				<locked type="number">1</locked>
+				<name type="string">Torch</name>
+				<rarity type="string">common</rarity>
+				<size type="string">Tiny</size>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<version type="string">2024</version>
+				<weight type="number">1</weight>
+			</id-00018>
+		</inventorylist>
+		<itemgroups>
+			<id-00001>
+				<name type="string">&lt;&lt; Unnamed Items &gt;&gt;</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Studded Leather Armor</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">zExtra encumbrance</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Backpack</name>
+			</id-00004>
+			<id-00005>
+				<name type="string">Ball Bearings</name>
+			</id-00005>
+			<id-00006>
+				<name type="string">Bell</name>
+			</id-00006>
+			<id-00007>
+				<name type="string">Candle</name>
+			</id-00007>
+			<id-00008>
+				<name type="string">Potion of Healing</name>
+			</id-00008>
+			<id-00009>
+				<name type="string">Lantern, Hooded</name>
+			</id-00009>
+			<id-00010>
+				<name type="string">Oil (Flask)</name>
+			</id-00010>
+			<id-00011>
+				<name type="string">Rations (1 day)</name>
+			</id-00011>
+			<id-00012>
+				<name type="string">Psychic Blade</name>
+			</id-00012>
+			<id-00013>
+				<name type="string">Tinderbox</name>
+			</id-00013>
+			<id-00014>
+				<name type="string">Waterskin</name>
+			</id-00014>
+			<id-00015>
+				<name type="string">Psychic Blade (Off-Hand)</name>
+			</id-00015>
+			<id-00016>
+				<name type="string">Blanket</name>
+			</id-00016>
+			<id-00017>
+				<name type="string">Torch</name>
+			</id-00017>
+			<id-00018>
+				<name type="string">Clothes, Traveler's</name>
+			</id-00018>
+			<id-00019>
+				<name type="string">Thieves' Tools</name>
+			</id-00019>
+			<id-00020>
+				<name type="string">Dagger</name>
+			</id-00020>
+		</itemgroups>
+		<languagelist>
+			<id-00001>
+				<name type="string">Thieves' Cant</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Common</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Draconic</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Goblin</name>
+			</id-00004>
+		</languagelist>
+		<level type="number">5</level>
+		<MNMLastClass type="string">Rogue</MNMLastClass>
+		<MNMLastClassLevel type="number">5</MNMLastClassLevel>
+		<MNMLevelHistory type="string">2:Rogue-1,3:Rogue-2,4:Rogue-3,5:Rogue-4,6:Rogue-5,</MNMLevelHistory>
+		<MNMStats>
+			<abilityStats>
+				<charismachecks>
+					<label type="string">Charisma Checks</label>
+					<name type="string">charismachecks</name>
+					<order type="number">10</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</charismachecks>
+				<charismafails>
+					<label type="string">Charisma Check Fails</label>
+					<name type="string">charismafails</name>
+					<order type="number">30</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</charismafails>
+				<charismasavechecks>
+					<label type="string">Charisma Saves</label>
+					<name type="string">charismasavechecks</name>
+					<order type="number">40</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</charismasavechecks>
+				<charismasavefails>
+					<label type="string">Charisma Save Fails</label>
+					<name type="string">charismasavefails</name>
+					<order type="number">60</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</charismasavefails>
+				<charismasavesuccesses>
+					<label type="string">Charisma Save Successes</label>
+					<name type="string">charismasavesuccesses</name>
+					<order type="number">50</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</charismasavesuccesses>
+				<charismasuccesses>
+					<label type="string">Charisma Check Successes</label>
+					<name type="string">charismasuccesses</name>
+					<order type="number">20</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</charismasuccesses>
+				<constitutionchecks>
+					<label type="string">Consitution Checks</label>
+					<name type="string">constitutionchecks</name>
+					<order type="number">70</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</constitutionchecks>
+				<constitutionfails>
+					<label type="string">Consitution Checks Fails</label>
+					<name type="string">constitutionfails</name>
+					<order type="number">90</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</constitutionfails>
+				<constitutionsavechecks>
+					<label type="string">Consitution Saves</label>
+					<name type="string">constitutionsavechecks</name>
+					<order type="number">100</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">3</value>
+				</constitutionsavechecks>
+				<constitutionsavefails>
+					<label type="string">Consitution Save Fails</label>
+					<name type="string">constitutionsavefails</name>
+					<order type="number">120</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</constitutionsavefails>
+				<constitutionsavesuccesses>
+					<label type="string">Consitution Save Successes</label>
+					<name type="string">constitutionsavesuccesses</name>
+					<order type="number">110</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">1</value>
+				</constitutionsavesuccesses>
+				<constitutionsuccesses>
+					<label type="string">Consitution Check Successes</label>
+					<name type="string">constitutionsuccesses</name>
+					<order type="number">80</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</constitutionsuccesses>
+				<dexteritychecks>
+					<label type="string">Dexterity Checks</label>
+					<name type="string">dexteritychecks</name>
+					<order type="number">130</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</dexteritychecks>
+				<dexterityfails>
+					<label type="string">Dexterity Check Fails</label>
+					<name type="string">dexterityfails</name>
+					<order type="number">150</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</dexterityfails>
+				<dexteritysavechecks>
+					<label type="string">Dexterity Saves</label>
+					<name type="string">dexteritysavechecks</name>
+					<order type="number">160</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</dexteritysavechecks>
+				<dexteritysavefails>
+					<label type="string">Dexterity Save Fails</label>
+					<name type="string">dexteritysavefails</name>
+					<order type="number">180</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</dexteritysavefails>
+				<dexteritysavesuccesses>
+					<label type="string">Dexterity Save Successes</label>
+					<name type="string">dexteritysavesuccesses</name>
+					<order type="number">170</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</dexteritysavesuccesses>
+				<dexteritysuccesses>
+					<label type="string">Dexterity Check Successes</label>
+					<name type="string">dexteritysuccesses</name>
+					<order type="number">140</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</dexteritysuccesses>
+				<intelligencechecks>
+					<label type="string">Intelligence Checks</label>
+					<name type="string">intelligencechecks</name>
+					<order type="number">190</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</intelligencechecks>
+				<intelligencefails>
+					<label type="string">Intelligence Check Fails</label>
+					<name type="string">intelligencefails</name>
+					<order type="number">210</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</intelligencefails>
+				<intelligencesavechecks>
+					<label type="string">Intelligence Saves</label>
+					<name type="string">intelligencesavechecks</name>
+					<order type="number">220</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</intelligencesavechecks>
+				<intelligencesavefails>
+					<label type="string">Intelligence Save Fails</label>
+					<name type="string">intelligencesavefails</name>
+					<order type="number">240</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</intelligencesavefails>
+				<intelligencesavesuccesses>
+					<label type="string">Intelligence Save Successes</label>
+					<name type="string">intelligencesavesuccesses</name>
+					<order type="number">230</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</intelligencesavesuccesses>
+				<intelligencesuccesses>
+					<label type="string">Intelligence Check Successes</label>
+					<name type="string">intelligencesuccesses</name>
+					<order type="number">200</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</intelligencesuccesses>
+				<sessioncharismachecks>
+					<label type="string">Session Charisma Checks</label>
+					<name type="string">sessioncharismachecks</name>
+					<order type="number">11</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioncharismachecks>
+				<sessioncharismafails>
+					<label type="string">Session Charisma Check Fails</label>
+					<name type="string">sessioncharismafails</name>
+					<order type="number">31</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioncharismafails>
+				<sessioncharismasavechecks>
+					<label type="string">Session Charisma Saves</label>
+					<name type="string">sessioncharismasavechecks</name>
+					<order type="number">41</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioncharismasavechecks>
+				<sessioncharismasavefails>
+					<label type="string">Session Charisma Save Fails</label>
+					<name type="string">sessioncharismasavefails</name>
+					<order type="number">61</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioncharismasavefails>
+				<sessioncharismasavesuccesses>
+					<label type="string">Session Charisma Save Successes</label>
+					<name type="string">sessioncharismasavesuccesses</name>
+					<order type="number">51</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioncharismasavesuccesses>
+				<sessioncharismasuccesses>
+					<label type="string">Session Charisma Check Successes</label>
+					<name type="string">sessioncharismasuccesses</name>
+					<order type="number">21</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioncharismasuccesses>
+				<sessionconstitutionchecks>
+					<label type="string">Session Consitution Checks</label>
+					<name type="string">sessionconstitutionchecks</name>
+					<order type="number">71</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionconstitutionchecks>
+				<sessionconstitutionfails>
+					<label type="string">Session Consitution Checks Fails</label>
+					<name type="string">sessionconstitutionfails</name>
+					<order type="number">91</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionconstitutionfails>
+				<sessionconstitutionsavechecks>
+					<label type="string">Session Consitution Saves</label>
+					<name type="string">sessionconstitutionsavechecks</name>
+					<order type="number">101</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionconstitutionsavechecks>
+				<sessionconstitutionsavefails>
+					<label type="string">Session Consitution Save Fails</label>
+					<name type="string">sessionconstitutionsavefails</name>
+					<order type="number">121</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionconstitutionsavefails>
+				<sessionconstitutionsavesuccesses>
+					<label type="string">Session Consitution Save Successes</label>
+					<name type="string">sessionconstitutionsavesuccesses</name>
+					<order type="number">111</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionconstitutionsavesuccesses>
+				<sessionconstitutionsuccesses>
+					<label type="string">Session Consitution Check Successes</label>
+					<name type="string">sessionconstitutionsuccesses</name>
+					<order type="number">81</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionconstitutionsuccesses>
+				<sessiondexteritychecks>
+					<label type="string">Session Dexterity Checks</label>
+					<name type="string">sessiondexteritychecks</name>
+					<order type="number">131</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondexteritychecks>
+				<sessiondexterityfails>
+					<label type="string">Session Dexterity Check Fails</label>
+					<name type="string">sessiondexterityfails</name>
+					<order type="number">151</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondexterityfails>
+				<sessiondexteritysavechecks>
+					<label type="string">Session Dexterity Saves</label>
+					<name type="string">sessiondexteritysavechecks</name>
+					<order type="number">161</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondexteritysavechecks>
+				<sessiondexteritysavefails>
+					<label type="string">Session Dexterity Save Fails</label>
+					<name type="string">sessiondexteritysavefails</name>
+					<order type="number">181</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondexteritysavefails>
+				<sessiondexteritysavesuccesses>
+					<label type="string">Session Dexterity Save Successes</label>
+					<name type="string">sessiondexteritysavesuccesses</name>
+					<order type="number">171</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondexteritysavesuccesses>
+				<sessiondexteritysuccesses>
+					<label type="string">Session Dexterity Check Successes</label>
+					<name type="string">sessiondexteritysuccesses</name>
+					<order type="number">141</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondexteritysuccesses>
+				<sessionintelligencechecks>
+					<label type="string">Session Intelligence Checks</label>
+					<name type="string">sessionintelligencechecks</name>
+					<order type="number">191</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionintelligencechecks>
+				<sessionintelligencefails>
+					<label type="string">Session Intelligence Check Fails</label>
+					<name type="string">sessionintelligencefails</name>
+					<order type="number">211</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionintelligencefails>
+				<sessionintelligencesavechecks>
+					<label type="string">Session Intelligence Saves</label>
+					<name type="string">sessionintelligencesavechecks</name>
+					<order type="number">221</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionintelligencesavechecks>
+				<sessionintelligencesavefails>
+					<label type="string">Session Intelligence Save Fails</label>
+					<name type="string">sessionintelligencesavefails</name>
+					<order type="number">241</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionintelligencesavefails>
+				<sessionintelligencesavesuccesses>
+					<label type="string">Session Intelligence Save Successes</label>
+					<name type="string">sessionintelligencesavesuccesses</name>
+					<order type="number">231</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionintelligencesavesuccesses>
+				<sessionintelligencesuccesses>
+					<label type="string">Session Intelligence Check Successes</label>
+					<name type="string">sessionintelligencesuccesses</name>
+					<order type="number">201</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionintelligencesuccesses>
+				<sessionstrengthchecks>
+					<label type="string">Session Strength Checks</label>
+					<name type="string">sessionstrengthchecks</name>
+					<order type="number">251</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionstrengthchecks>
+				<sessionstrengthfails>
+					<label type="string">Session Strength Check Fails</label>
+					<name type="string">sessionstrengthfails</name>
+					<order type="number">271</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionstrengthfails>
+				<sessionstrengthsavechecks>
+					<label type="string">Session Strength Saves</label>
+					<name type="string">sessionstrengthsavechecks</name>
+					<order type="number">281</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionstrengthsavechecks>
+				<sessionstrengthsavefails>
+					<label type="string">Session Strength Save Fails</label>
+					<name type="string">sessionstrengthsavefails</name>
+					<order type="number">301</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionstrengthsavefails>
+				<sessionstrengthsavesuccesses>
+					<label type="string">Session Strength Save Successes</label>
+					<name type="string">sessionstrengthsavesuccesses</name>
+					<order type="number">291</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionstrengthsavesuccesses>
+				<sessionstrengthsuccesses>
+					<label type="string">Session Strength Check Successes</label>
+					<name type="string">sessionstrengthsuccesses</name>
+					<order type="number">261</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionstrengthsuccesses>
+				<sessionwisdomchecks>
+					<label type="string">Session Wisdom Checks</label>
+					<name type="string">sessionwisdomchecks</name>
+					<order type="number">311</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionwisdomchecks>
+				<sessionwisdomfails>
+					<label type="string">Session Wisdom Check Fails</label>
+					<name type="string">sessionwisdomfails</name>
+					<order type="number">331</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionwisdomfails>
+				<sessionwisdomsavechecks>
+					<label type="string">Session Wisdom Saves</label>
+					<name type="string">sessionwisdomsavechecks</name>
+					<order type="number">341</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionwisdomsavechecks>
+				<sessionwisdomsavefails>
+					<label type="string">Session Wisdom Save Fails</label>
+					<name type="string">sessionwisdomsavefails</name>
+					<order type="number">361</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionwisdomsavefails>
+				<sessionwisdomsavesuccesses>
+					<label type="string">Session Wisdom Save Successes</label>
+					<name type="string">sessionwisdomsavesuccesses</name>
+					<order type="number">351</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionwisdomsavesuccesses>
+				<sessionwisdomsuccesses>
+					<label type="string">Session Wisdom Check Successes</label>
+					<name type="string">sessionwisdomsuccesses</name>
+					<order type="number">321</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionwisdomsuccesses>
+				<strengthchecks>
+					<label type="string">Strength Checks</label>
+					<name type="string">strengthchecks</name>
+					<order type="number">250</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</strengthchecks>
+				<strengthfails>
+					<label type="string">Strength Check Fails</label>
+					<name type="string">strengthfails</name>
+					<order type="number">270</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</strengthfails>
+				<strengthsavechecks>
+					<label type="string">Strength Saves</label>
+					<name type="string">strengthsavechecks</name>
+					<order type="number">280</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</strengthsavechecks>
+				<strengthsavefails>
+					<label type="string">Strength Save Fails</label>
+					<name type="string">strengthsavefails</name>
+					<order type="number">300</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</strengthsavefails>
+				<strengthsavesuccesses>
+					<label type="string">Strength Save Successes</label>
+					<name type="string">strengthsavesuccesses</name>
+					<order type="number">290</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</strengthsavesuccesses>
+				<strengthsuccesses>
+					<label type="string">Strength Check Successes</label>
+					<name type="string">strengthsuccesses</name>
+					<order type="number">260</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</strengthsuccesses>
+				<wisdomchecks>
+					<label type="string">Wisdom Checks</label>
+					<name type="string">wisdomchecks</name>
+					<order type="number">310</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</wisdomchecks>
+				<wisdomfails>
+					<label type="string">Wisdom Check Fails</label>
+					<name type="string">wisdomfails</name>
+					<order type="number">330</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</wisdomfails>
+				<wisdomsavechecks>
+					<label type="string">Wisdom Saves</label>
+					<name type="string">wisdomsavechecks</name>
+					<order type="number">340</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">2</value>
+				</wisdomsavechecks>
+				<wisdomsavefails>
+					<label type="string">Wisdom Save Fails</label>
+					<name type="string">wisdomsavefails</name>
+					<order type="number">360</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</wisdomsavefails>
+				<wisdomsavesuccesses>
+					<label type="string">Wisdom Save Successes</label>
+					<name type="string">wisdomsavesuccesses</name>
+					<order type="number">350</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">1</value>
+				</wisdomsavesuccesses>
+				<wisdomsuccesses>
+					<label type="string">Wisdom Check Successes</label>
+					<name type="string">wisdomsuccesses</name>
+					<order type="number">320</order>
+					<statType type="string">ability</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</wisdomsuccesses>
+			</abilityStats>
+			<combatStats>
+				<bigFoeCR>
+					<bigFoeName type="string">Orc 10</bigFoeName>
+					<label type="string">Biggest Kill CR</label>
+					<name type="string">bigFoeCR</name>
+					<order type="number">100</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">4</value>
+				</bigFoeCR>
+				<biggestDamage>
+					<label type="string">Biggest Damage</label>
+					<name type="string">biggestDamage</name>
+					<order type="number">90</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">37</value>
+				</biggestDamage>
+				<crits>
+					<label type="string">Crits</label>
+					<name type="string">crits</name>
+					<order type="number">20</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">3</value>
+				</crits>
+				<critsOn>
+					<label type="string">Crits Taken</label>
+					<name type="string">critsOn</name>
+					<order type="number">140</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">2</value>
+				</critsOn>
+				<damage>
+					<label type="string">Damage</label>
+					<name type="string">damage</name>
+					<order type="number">70</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">269</value>
+				</damage>
+				<damageReceived>
+					<label type="string">Damage Received</label>
+					<name type="string">damageReceived</name>
+					<order type="number">160</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">103</value>
+				</damageReceived>
+				<deaths>
+					<label type="string">Deaths</label>
+					<name type="string">deaths</name>
+					<order type="number">180</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</deaths>
+				<fumbles>
+					<label type="string">Fumbles</label>
+					<name type="string">fumbles</name>
+					<order type="number">40</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">2</value>
+				</fumbles>
+				<healing>
+					<label type="string">Healing Given</label>
+					<name type="string">healing</name>
+					<order type="number">190</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</healing>
+				<healingReceived>
+					<label type="string">Healing Received</label>
+					<name type="string">healingReceived</name>
+					<order type="number">200</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">54</value>
+				</healingReceived>
+				<hits>
+					<label type="string">Hits</label>
+					<name type="string">hits</name>
+					<order type="number">10</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">36</value>
+				</hits>
+				<hitsOn>
+					<label type="string">Hits Taken</label>
+					<name type="string">hitsOn</name>
+					<order type="number">130</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">8</value>
+				</hitsOn>
+				<kills>
+					<label type="string">Kills</label>
+					<name type="string">kills</name>
+					<order type="number">80</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">9</value>
+				</kills>
+				<kos>
+					<label type="string">Knocked Unconscious</label>
+					<name type="string">kos</name>
+					<order type="number">170</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">3</value>
+				</kos>
+				<misses>
+					<label type="string">Misses</label>
+					<name type="string">misses</name>
+					<order type="number">30</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">28</value>
+				</misses>
+				<missesOn>
+					<label type="string">Attacks Avoided</label>
+					<name type="string">missesOn</name>
+					<order type="number">150</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">4</value>
+				</missesOn>
+				<savesFailed>
+					<label type="string">Saves Failed</label>
+					<name type="string">savesFailed</name>
+					<order type="number">120</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</savesFailed>
+				<savesMade>
+					<label type="string">Saves Made</label>
+					<name type="string">savesMade</name>
+					<order type="number">110</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">2</value>
+				</savesMade>
+				<sessionbigFoeCR>
+					<label type="string">Session Biggest Kill CR</label>
+					<name type="string">sessionbigFoeCR</name>
+					<order type="number">101</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionbigFoeCR>
+				<sessionbiggestDamage>
+					<label type="string">Session Biggest Damage</label>
+					<name type="string">sessionbiggestDamage</name>
+					<order type="number">91</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionbiggestDamage>
+				<sessioncrits>
+					<label type="string">Session Crits</label>
+					<name type="string">sessioncrits</name>
+					<order type="number">21</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessioncrits>
+				<sessioncritsOn>
+					<label type="string">Session Crits Taken</label>
+					<name type="string">sessioncritsOn</name>
+					<order type="number">141</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioncritsOn>
+				<sessiondamage>
+					<label type="string">Session Damage</label>
+					<name type="string">sessiondamage</name>
+					<order type="number">71</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessiondamage>
+				<sessiondamageReceived>
+					<label type="string">Session Damage Received</label>
+					<name type="string">sessiondamageReceived</name>
+					<order type="number">161</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessiondamageReceived>
+				<sessiondeaths>
+					<label type="string">Session Deaths</label>
+					<name type="string">sessiondeaths</name>
+					<order type="number">181</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondeaths>
+				<sessionfumbles>
+					<label type="string">Session Fumbles</label>
+					<name type="string">sessionfumbles</name>
+					<order type="number">41</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionfumbles>
+				<sessionhealing>
+					<label type="string">Session Healing Given</label>
+					<name type="string">sessionhealing</name>
+					<order type="number">191</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionhealing>
+				<sessionhealingReceived>
+					<label type="string">Session Healing Received</label>
+					<name type="string">sessionhealingReceived</name>
+					<order type="number">201</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionhealingReceived>
+				<sessionhits>
+					<label type="string">Session Hits</label>
+					<name type="string">sessionhits</name>
+					<order type="number">11</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionhits>
+				<sessionhitsOn>
+					<label type="string">Session Hits Taken</label>
+					<name type="string">sessionhitsOn</name>
+					<order type="number">131</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionhitsOn>
+				<sessionkills>
+					<label type="string">Session Kills</label>
+					<name type="string">sessionkills</name>
+					<order type="number">81</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionkills>
+				<sessionkos>
+					<label type="string">Session Knocked Unconscious</label>
+					<name type="string">sessionkos</name>
+					<order type="number">171</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionkos>
+				<sessionmisses>
+					<label type="string">Session Misses</label>
+					<name type="string">sessionmisses</name>
+					<order type="number">31</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionmisses>
+				<sessionmissesOn>
+					<label type="string">Session Attacks Avoided</label>
+					<name type="string">sessionmissesOn</name>
+					<order type="number">151</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionmissesOn>
+				<sessionsavesFailed>
+					<label type="string">Session Saves Failed</label>
+					<name type="string">sessionsavesFailed</name>
+					<order type="number">121</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionsavesFailed>
+				<sessionsavesMade>
+					<label type="string">Session Saves Made</label>
+					<name type="string">sessionsavesMade</name>
+					<order type="number">111</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionsavesMade>
+				<sessionspellsLanded>
+					<label type="string">Session Spells Landed</label>
+					<name type="string">sessionspellsLanded</name>
+					<order type="number">51</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionspellsLanded>
+				<sessionspellsMissed>
+					<label type="string">Session Spells Missed</label>
+					<name type="string">sessionspellsMissed</name>
+					<order type="number">61</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</sessionspellsMissed>
+				<spellsLanded>
+					<label type="string">Spells Landed</label>
+					<name type="string">spellsLanded</name>
+					<order type="number">50</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</spellsLanded>
+				<spellsMissed>
+					<label type="string">Spells Missed</label>
+					<name type="string">spellsMissed</name>
+					<order type="number">60</order>
+					<statType type="string">combat</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v1</upgrade>
+					<value type="number">0</value>
+				</spellsMissed>
+			</combatStats>
+			<name type="string">Draevan Shadowblade</name>
+			<setup type="string">2024-04-13</setup>
+			<skillStats>
+				<acrobaticschecks>
+					<label type="string">Acrobatics Checks</label>
+					<name type="string">acrobaticschecks</name>
+					<order type="number">10</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">2</value>
+				</acrobaticschecks>
+				<acrobaticsfails>
+					<label type="string">Acrobatics Fails</label>
+					<name type="string">acrobaticsfails</name>
+					<order type="number">14</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</acrobaticsfails>
+				<acrobaticssuccesses>
+					<label type="string">Acrobatics Successes</label>
+					<name type="string">acrobaticssuccesses</name>
+					<order type="number">12</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</acrobaticssuccesses>
+				<animalhandlingchecks>
+					<label type="string">Animal Handling Checks</label>
+					<name type="string">animalhandlingchecks</name>
+					<order type="number">20</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</animalhandlingchecks>
+				<animalhandlingfails>
+					<label type="string">Animal Handling Fails</label>
+					<name type="string">animalhandlingfails</name>
+					<order type="number">24</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</animalhandlingfails>
+				<animalhandlingsuccesses>
+					<label type="string">Animal Handling Successes</label>
+					<name type="string">animalhandlingsuccesses</name>
+					<order type="number">22</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</animalhandlingsuccesses>
+				<arcanachecks>
+					<label type="string">Arcana Checks</label>
+					<name type="string">arcanachecks</name>
+					<order type="number">30</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</arcanachecks>
+				<arcanafails>
+					<label type="string">Arcana Fails</label>
+					<name type="string">arcanafails</name>
+					<order type="number">34</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</arcanafails>
+				<arcanasuccesses>
+					<label type="string">Arcana Successes</label>
+					<name type="string">arcanasuccesses</name>
+					<order type="number">32</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</arcanasuccesses>
+				<athleticschecks>
+					<label type="string">Athletics Checks</label>
+					<name type="string">athleticschecks</name>
+					<order type="number">40</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</athleticschecks>
+				<athleticsfails>
+					<label type="string">Athletics Fails</label>
+					<name type="string">athleticsfails</name>
+					<order type="number">44</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</athleticsfails>
+				<athleticssuccesses>
+					<label type="string">Athletics Successes</label>
+					<name type="string">athleticssuccesses</name>
+					<order type="number">42</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</athleticssuccesses>
+				<deceptionchecks>
+					<label type="string">Deception Checks</label>
+					<name type="string">deceptionchecks</name>
+					<order type="number">50</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">12</value>
+				</deceptionchecks>
+				<deceptionfails>
+					<label type="string">Deception Fails</label>
+					<name type="string">deceptionfails</name>
+					<order type="number">54</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</deceptionfails>
+				<deceptionsuccesses>
+					<label type="string">Deception Successes</label>
+					<name type="string">deceptionsuccesses</name>
+					<order type="number">52</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</deceptionsuccesses>
+				<historychecks>
+					<label type="string">History Checks</label>
+					<name type="string">historychecks</name>
+					<order type="number">60</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</historychecks>
+				<historyfails>
+					<label type="string">History Fails</label>
+					<name type="string">historyfails</name>
+					<order type="number">64</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</historyfails>
+				<historysuccesses>
+					<label type="string">History Successes</label>
+					<name type="string">historysuccesses</name>
+					<order type="number">62</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</historysuccesses>
+				<insightchecks>
+					<label type="string">Insight Checks</label>
+					<name type="string">insightchecks</name>
+					<order type="number">70</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">4</value>
+				</insightchecks>
+				<insightfails>
+					<label type="string">Insight Fails</label>
+					<name type="string">insightfails</name>
+					<order type="number">74</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</insightfails>
+				<insightsuccesses>
+					<label type="string">Insight Successes</label>
+					<name type="string">insightsuccesses</name>
+					<order type="number">72</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</insightsuccesses>
+				<intimidationchecks>
+					<label type="string">Intimidation Checks</label>
+					<name type="string">intimidationchecks</name>
+					<order type="number">80</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">2</value>
+				</intimidationchecks>
+				<intimidationfails>
+					<label type="string">Intimidation Fails</label>
+					<name type="string">intimidationfails</name>
+					<order type="number">84</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</intimidationfails>
+				<intimidationsuccesses>
+					<label type="string">Intimidation Successes</label>
+					<name type="string">intimidationsuccesses</name>
+					<order type="number">82</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</intimidationsuccesses>
+				<investigationchecks>
+					<label type="string">Investigation Checks</label>
+					<name type="string">investigationchecks</name>
+					<order type="number">90</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">5</value>
+				</investigationchecks>
+				<investigationfails>
+					<label type="string">Investigation Fails</label>
+					<name type="string">investigationfails</name>
+					<order type="number">94</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</investigationfails>
+				<investigationsuccesses>
+					<label type="string">Investigation Successes</label>
+					<name type="string">investigationsuccesses</name>
+					<order type="number">92</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</investigationsuccesses>
+				<medicinechecks>
+					<label type="string">Medicine Checks</label>
+					<name type="string">medicinechecks</name>
+					<order type="number">100</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</medicinechecks>
+				<medicinefails>
+					<label type="string">Medicine Fails</label>
+					<name type="string">medicinefails</name>
+					<order type="number">104</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</medicinefails>
+				<medicinesuccesses>
+					<label type="string">Medicine Successes</label>
+					<name type="string">medicinesuccesses</name>
+					<order type="number">102</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</medicinesuccesses>
+				<naturechecks>
+					<label type="string">Nature Checks</label>
+					<name type="string">naturechecks</name>
+					<order type="number">110</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</naturechecks>
+				<naturefails>
+					<label type="string">Nature Fails</label>
+					<name type="string">naturefails</name>
+					<order type="number">114</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</naturefails>
+				<naturesuccesses>
+					<label type="string">Nature Successes</label>
+					<name type="string">naturesuccesses</name>
+					<order type="number">112</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</naturesuccesses>
+				<perceptionchecks>
+					<label type="string">Perception Checks</label>
+					<name type="string">perceptionchecks</name>
+					<order type="number">120</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">19</value>
+				</perceptionchecks>
+				<perceptionfails>
+					<label type="string">Perception Fails</label>
+					<name type="string">perceptionfails</name>
+					<order type="number">124</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">1</value>
+				</perceptionfails>
+				<perceptionsuccesses>
+					<label type="string">Perception Successes</label>
+					<name type="string">perceptionsuccesses</name>
+					<order type="number">122</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">1</value>
+				</perceptionsuccesses>
+				<performancechecks>
+					<label type="string">Performance Checks</label>
+					<name type="string">performancechecks</name>
+					<order type="number">130</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">1</value>
+				</performancechecks>
+				<performancefails>
+					<label type="string">Performance Fails</label>
+					<name type="string">performancefails</name>
+					<order type="number">134</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</performancefails>
+				<performancesuccesses>
+					<label type="string">Performance Successes</label>
+					<name type="string">performancesuccesses</name>
+					<order type="number">132</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</performancesuccesses>
+				<persuasionchecks>
+					<label type="string">Persuasion Checks</label>
+					<name type="string">persuasionchecks</name>
+					<order type="number">140</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">7</value>
+				</persuasionchecks>
+				<persuasionfails>
+					<label type="string">Persuasion Fails</label>
+					<name type="string">persuasionfails</name>
+					<order type="number">144</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</persuasionfails>
+				<persuasionsuccesses>
+					<label type="string">Persuasion Successes</label>
+					<name type="string">persuasionsuccesses</name>
+					<order type="number">142</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</persuasionsuccesses>
+				<religionchecks>
+					<label type="string">Religion Checks</label>
+					<name type="string">religionchecks</name>
+					<order type="number">150</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</religionchecks>
+				<religionfails>
+					<label type="string">Religion Fails</label>
+					<name type="string">religionfails</name>
+					<order type="number">154</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</religionfails>
+				<religionsuccesses>
+					<label type="string">Religion Successes</label>
+					<name type="string">religionsuccesses</name>
+					<order type="number">152</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</religionsuccesses>
+				<sessionacrobaticschecks>
+					<label type="string">Session Acrobatics Checks</label>
+					<name type="string">sessionacrobaticschecks</name>
+					<order type="number">11</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionacrobaticschecks>
+				<sessionacrobaticsfails>
+					<label type="string">Session Acrobatics Fails</label>
+					<name type="string">sessionacrobaticsfails</name>
+					<order type="number">15</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionacrobaticsfails>
+				<sessionacrobaticssuccesses>
+					<label type="string">Session Acrobatics Successes</label>
+					<name type="string">sessionacrobaticssuccesses</name>
+					<order type="number">13</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionacrobaticssuccesses>
+				<sessionanimalhandlingchecks>
+					<label type="string">Session Animal Handling Checks</label>
+					<name type="string">sessionanimalhandlingchecks</name>
+					<order type="number">21</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionanimalhandlingchecks>
+				<sessionanimalhandlingfails>
+					<label type="string">Session Animal Handling Fails</label>
+					<name type="string">sessionanimalhandlingfails</name>
+					<order type="number">25</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionanimalhandlingfails>
+				<sessionanimalhandlingsuccesses>
+					<label type="string">Session Animal Handling Successes</label>
+					<name type="string">sessionanimalhandlingsuccesses</name>
+					<order type="number">23</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionanimalhandlingsuccesses>
+				<sessionarcanachecks>
+					<label type="string">Session Arcana Checks</label>
+					<name type="string">sessionarcanachecks</name>
+					<order type="number">31</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionarcanachecks>
+				<sessionarcanafails>
+					<label type="string">Session Arcana Fails</label>
+					<name type="string">sessionarcanafails</name>
+					<order type="number">35</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionarcanafails>
+				<sessionarcanasuccesses>
+					<label type="string">Session Arcana Successes</label>
+					<name type="string">sessionarcanasuccesses</name>
+					<order type="number">33</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionarcanasuccesses>
+				<sessionathleticschecks>
+					<label type="string">Session Athletics Checks</label>
+					<name type="string">sessionathleticschecks</name>
+					<order type="number">41</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionathleticschecks>
+				<sessionathleticsfails>
+					<label type="string">Session Athletics Fails</label>
+					<name type="string">sessionathleticsfails</name>
+					<order type="number">45</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionathleticsfails>
+				<sessionathleticssuccesses>
+					<label type="string">Session Athletics Successes</label>
+					<name type="string">sessionathleticssuccesses</name>
+					<order type="number">43</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionathleticssuccesses>
+				<sessiondeceptionchecks>
+					<label type="string">Session Deception Checks</label>
+					<name type="string">sessiondeceptionchecks</name>
+					<order type="number">51</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondeceptionchecks>
+				<sessiondeceptionfails>
+					<label type="string">Session Deception Fails</label>
+					<name type="string">sessiondeceptionfails</name>
+					<order type="number">55</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondeceptionfails>
+				<sessiondeceptionsuccesses>
+					<label type="string">Session Deception Successes</label>
+					<name type="string">sessiondeceptionsuccesses</name>
+					<order type="number">53</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessiondeceptionsuccesses>
+				<sessionhistorychecks>
+					<label type="string">Session History Checks</label>
+					<name type="string">sessionhistorychecks</name>
+					<order type="number">61</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionhistorychecks>
+				<sessionhistoryfails>
+					<label type="string">Session History Fails</label>
+					<name type="string">sessionhistoryfails</name>
+					<order type="number">65</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionhistoryfails>
+				<sessionhistorysuccesses>
+					<label type="string">Session History Successes</label>
+					<name type="string">sessionhistorysuccesses</name>
+					<order type="number">63</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionhistorysuccesses>
+				<sessioninsightchecks>
+					<label type="string">Session Insight Checks</label>
+					<name type="string">sessioninsightchecks</name>
+					<order type="number">71</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioninsightchecks>
+				<sessioninsightfails>
+					<label type="string">Session Insight Fails</label>
+					<name type="string">sessioninsightfails</name>
+					<order type="number">75</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioninsightfails>
+				<sessioninsightsuccesses>
+					<label type="string">Session Insight Successes</label>
+					<name type="string">sessioninsightsuccesses</name>
+					<order type="number">73</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioninsightsuccesses>
+				<sessionintimidationchecks>
+					<label type="string">Session Intimidation Checks</label>
+					<name type="string">sessionintimidationchecks</name>
+					<order type="number">81</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">1</value>
+				</sessionintimidationchecks>
+				<sessionintimidationfails>
+					<label type="string">Session Intimidation Fails</label>
+					<name type="string">sessionintimidationfails</name>
+					<order type="number">85</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionintimidationfails>
+				<sessionintimidationsuccesses>
+					<label type="string">Session Intimidation Successes</label>
+					<name type="string">sessionintimidationsuccesses</name>
+					<order type="number">83</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionintimidationsuccesses>
+				<sessioninvestigationchecks>
+					<label type="string">Session Investigation Checks</label>
+					<name type="string">sessioninvestigationchecks</name>
+					<order type="number">91</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioninvestigationchecks>
+				<sessioninvestigationfails>
+					<label type="string">Session Investigation Fails</label>
+					<name type="string">sessioninvestigationfails</name>
+					<order type="number">95</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioninvestigationfails>
+				<sessioninvestigationsuccesses>
+					<label type="string">Session Investigation Successes</label>
+					<name type="string">sessioninvestigationsuccesses</name>
+					<order type="number">93</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessioninvestigationsuccesses>
+				<sessionmedicinechecks>
+					<label type="string">Session Medicine Checks</label>
+					<name type="string">sessionmedicinechecks</name>
+					<order type="number">101</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionmedicinechecks>
+				<sessionmedicinefails>
+					<label type="string">Session Medicine Fails</label>
+					<name type="string">sessionmedicinefails</name>
+					<order type="number">105</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionmedicinefails>
+				<sessionmedicinesuccesses>
+					<label type="string">Session Medicine Successes</label>
+					<name type="string">sessionmedicinesuccesses</name>
+					<order type="number">103</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionmedicinesuccesses>
+				<sessionnaturechecks>
+					<label type="string">Session Nature Checks</label>
+					<name type="string">sessionnaturechecks</name>
+					<order type="number">111</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionnaturechecks>
+				<sessionnaturefails>
+					<label type="string">Session Nature Fails</label>
+					<name type="string">sessionnaturefails</name>
+					<order type="number">115</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionnaturefails>
+				<sessionnaturesuccesses>
+					<label type="string">Session Nature Successes</label>
+					<name type="string">sessionnaturesuccesses</name>
+					<order type="number">113</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionnaturesuccesses>
+				<sessionperceptionchecks>
+					<label type="string">Session Perception Checks</label>
+					<name type="string">sessionperceptionchecks</name>
+					<order type="number">121</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionperceptionchecks>
+				<sessionperceptionfails>
+					<label type="string">Session Perception Fails</label>
+					<name type="string">sessionperceptionfails</name>
+					<order type="number">125</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionperceptionfails>
+				<sessionperceptionsuccesses>
+					<label type="string">Session Perception Successes</label>
+					<name type="string">sessionperceptionsuccesses</name>
+					<order type="number">123</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionperceptionsuccesses>
+				<sessionperformancechecks>
+					<label type="string">Session Performance Checks</label>
+					<name type="string">sessionperformancechecks</name>
+					<order type="number">131</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionperformancechecks>
+				<sessionperformancefails>
+					<label type="string">Session Performance Fails</label>
+					<name type="string">sessionperformancefails</name>
+					<order type="number">135</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionperformancefails>
+				<sessionperformancesuccesses>
+					<label type="string">Session Performance Successes</label>
+					<name type="string">sessionperformancesuccesses</name>
+					<order type="number">133</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionperformancesuccesses>
+				<sessionpersuasionchecks>
+					<label type="string">Session Persuasion Checks</label>
+					<name type="string">sessionpersuasionchecks</name>
+					<order type="number">141</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionpersuasionchecks>
+				<sessionpersuasionfails>
+					<label type="string">Session Persuasion Fails</label>
+					<name type="string">sessionpersuasionfails</name>
+					<order type="number">145</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionpersuasionfails>
+				<sessionpersuasionsuccesses>
+					<label type="string">Session Persuasion Successes</label>
+					<name type="string">sessionpersuasionsuccesses</name>
+					<order type="number">143</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionpersuasionsuccesses>
+				<sessionreligionchecks>
+					<label type="string">Session Religion Checks</label>
+					<name type="string">sessionreligionchecks</name>
+					<order type="number">151</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionreligionchecks>
+				<sessionreligionfails>
+					<label type="string">Session Religion Fails</label>
+					<name type="string">sessionreligionfails</name>
+					<order type="number">155</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionreligionfails>
+				<sessionreligionsuccesses>
+					<label type="string">Session Religion Successes</label>
+					<name type="string">sessionreligionsuccesses</name>
+					<order type="number">153</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionreligionsuccesses>
+				<sessionsleightofhandchecks>
+					<label type="string">Session Sleight of Hand Checks</label>
+					<name type="string">sessionsleightofhandchecks</name>
+					<order type="number">161</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionsleightofhandchecks>
+				<sessionsleightofhandfails>
+					<label type="string">Session Sleight of Hand Fails</label>
+					<name type="string">sessionsleightofhandfails</name>
+					<order type="number">165</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionsleightofhandfails>
+				<sessionsleightofhandsuccesses>
+					<label type="string">Session Sleight of Hand Successes</label>
+					<name type="string">sessionsleightofhandsuccesses</name>
+					<order type="number">163</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionsleightofhandsuccesses>
+				<sessionstealthchecks>
+					<label type="string">Session Stealth Checks</label>
+					<name type="string">sessionstealthchecks</name>
+					<order type="number">171</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionstealthchecks>
+				<sessionstealthfails>
+					<label type="string">Session Stealth Fails</label>
+					<name type="string">sessionstealthfails</name>
+					<order type="number">175</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionstealthfails>
+				<sessionstealthsuccesses>
+					<label type="string">Session Stealth Successes</label>
+					<name type="string">sessionstealthsuccesses</name>
+					<order type="number">173</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionstealthsuccesses>
+				<sessionsurvivalchecks>
+					<label type="string">Session Survival Checks</label>
+					<name type="string">sessionsurvivalchecks</name>
+					<order type="number">181</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionsurvivalchecks>
+				<sessionsurvivalfails>
+					<label type="string">Session Survival Fails</label>
+					<name type="string">sessionsurvivalfails</name>
+					<order type="number">185</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionsurvivalfails>
+				<sessionsurvivalsuccesses>
+					<label type="string">Session Survival Successes</label>
+					<name type="string">sessionsurvivalsuccesses</name>
+					<order type="number">183</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sessionsurvivalsuccesses>
+				<sleightofhandchecks>
+					<label type="string">Sleight of Hand Checks</label>
+					<name type="string">sleightofhandchecks</name>
+					<order type="number">160</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">1</value>
+				</sleightofhandchecks>
+				<sleightofhandfails>
+					<label type="string">Sleight of Hand Fails</label>
+					<name type="string">sleightofhandfails</name>
+					<order type="number">164</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sleightofhandfails>
+				<sleightofhandsuccesses>
+					<label type="string">Sleight of Hand Successes</label>
+					<name type="string">sleightofhandsuccesses</name>
+					<order type="number">162</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</sleightofhandsuccesses>
+				<stealthchecks>
+					<label type="string">Stealth Checks</label>
+					<name type="string">stealthchecks</name>
+					<order type="number">170</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">1</value>
+				</stealthchecks>
+				<stealthfails>
+					<label type="string">Stealth Fails</label>
+					<name type="string">stealthfails</name>
+					<order type="number">174</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</stealthfails>
+				<stealthsuccesses>
+					<label type="string">Stealth Successes</label>
+					<name type="string">stealthsuccesses</name>
+					<order type="number">172</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</stealthsuccesses>
+				<survivalchecks>
+					<label type="string">Survival Checks</label>
+					<name type="string">survivalchecks</name>
+					<order type="number">180</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">4</value>
+				</survivalchecks>
+				<survivalfails>
+					<label type="string">Survival Fails</label>
+					<name type="string">survivalfails</name>
+					<order type="number">184</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</survivalfails>
+				<survivalsuccesses>
+					<label type="string">Survival Successes</label>
+					<name type="string">survivalsuccesses</name>
+					<order type="number">182</order>
+					<statType type="string">skill</statType>
+					<type type="string">number</type>
+					<upgrade type="string">v2</upgrade>
+					<value type="number">0</value>
+				</survivalsuccesses>
+			</skillStats>
+			<token type="token">portrait_id-00015_token</token>
+		</MNMStats>
+		<name type="string">Draevan Shadowblade</name>
+		<notes type="string">Total Score: 77</notes>
+		<pc_label_hero type="string">Hero Point</pc_label_hero>
+		<perception type="number">17</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<portrait type="token">portraits/soulknife.jpg</portrait>
+		<powergroup>
+			<id-00001>
+				<name type="string">Sneak Attack (Rogue)</name>
+				<stat type="string">dexterity</stat>
+			</id-00001>
+			<id-00002>
+				<name type="string">Feats</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Class (Rogue)</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Features</name>
+			</id-00004>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powermode type="string">standard</powermode>
+		<powers>
+			<id-00001>
+				<actions>
+					<id-00001>
+						<apply type="string">roll</apply>
+						<durmod type="number">1</durmod>
+						<label type="string">Sneak Attack; DMG: 3d6</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>You know how to strike subtly and exploit a foe's distraction. Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack roll if you have Advantage on the roll and the attack uses a Finesse or a Ranged weapon. The extra damage's type is the same as the weapon's type.</p>
+					<p>You don't need Advantage on the attack roll if at least one of your allies is within 5 feet of the target, the ally doesn't have the Incapacitated condition, and you don't have Disadvantage on the attack roll.</p>
+					<p>The extra damage increases as you gain Rogue levels, as shown in the Sneak Attack column of the Rogue Features table.</p>
+				</description>
+				<group type="string">Sneak Attack (Rogue)</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Sneak Attack</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00001>
+			<id-00002>
+				<actions />
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>Your training with weapons allows you to use the mastery properties of two kinds of weapons of your choice with which you have proficiency, such as Daggers and Shortbows.</p>
+					<p>Whenever you finish a Long Rest, you can change the kinds of weapons you chose. For example, you could switch to using the mastery properties of Scimitars and Shortswords.</p>
+				</description>
+				<group type="string">Class (Rogue)</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Weapon Mastery</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00002>
+			<id-00003>
+				<actions />
+				<cast type="number">0</cast>
+				<category type="string">Origin</category>
+				<description type="formattedtext">
+					<p>You gain the following benefits.</p>
+					<p>
+						<b>Initiative Proficiency. </b>When you roll Initiative, you can add your Proficiency Bonus to the roll.</p>
+					<p>
+						<b>Initiative Swap. </b>Immediately after you roll Initiative, you can swap your Initiative with the Initiative of one willing ally in the same combat. You can't make this swap if you or the ally has the Incapacitated condition.</p>
+				</description>
+				<group type="string">Feats</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Alert (Initiative Swap)</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<repeatable type="number">0</repeatable>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00003>
+			<id-00004>
+				<actions />
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>Your quick thinking and agility allow you to move and act quickly. On your turn, you can take one of the following actions as a Bonus Action: Dash, Disengage, or Hide.</p>
+				</description>
+				<group type="string">Class (Rogue)</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Cunning Action</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00004>
+			<id-00005>
+				<actions />
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>As a Bonus Action, you give yourself Advantage on your next attack roll on the current turn. You can use this feature only if you haven't moved during this turn, and after you use it, your Speed is 0 until the end of the current turn.</p>
+				</description>
+				<group type="string">Class (Rogue)</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Steady Aim</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00005>
+			<id-00006>
+				<actions>
+					<id-00001>
+						<apply type="string">roll</apply>
+						<durmod type="number">1</durmod>
+						<label type="string">ADVATK</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>
+						<i>3rd-level Soulknife feature</i>
+					</p>
+					<p>You can manifest your psionic power as shimmering blades of psychic energy. Whenever you take the Attack action, you can manifest a psychic blade from your free hand and make the attack with that blade. This magic blade is a simple melee weapon with the finesse and thrown properties. It has a normal range of 60 feet and no long range, and on a hit, it deals psychic damage equal to 1d6 plus the ability modifier you used for the attack roll. The blade vanishes immediately after it hits or misses its target, and it leaves no mark on its target if it deals damage.</p>
+					<p>After you attack with the blade, you can make a melee or ranged weapon attack with a second psychic blade as a bonus action on the same turn, provided your other hand is free to create it. The damage die of this bonus attack is 1d4, instead of 1d6.</p>
+				</description>
+				<group type="string">Class (Rogue)</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Psychic Blades</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00006>
+			<id-00007>
+				<actions>
+					<id-00001>
+						<apply type="string">roll</apply>
+						<durmod type="number">0</durmod>
+						<label type="string">$ Alert (target unseen other than invisible); GRANTDISATK</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">0</durmod>
+						<label type="string">€ Alert; IFT: Invisible; GRANTDISATK; 'cant be surprised</label>
+						<order type="number">2</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<linklist>
+						<link class="reference_feat" recordname="reference.featdata.alert@DD PHB Deluxe">
+							<b>Feat: </b>Alert (PHB)</link>
+					</linklist>
+					<p>
+						<b>
+							<u>Effect note:</u>
+						</b>
+					</p>
+					<list>
+						<li>Initiative +5 is automatically added by FG</li>
+						<li>For invisible attackers you have a custom effect (auto loaded with equipped effects)</li>
+						<li>For other unseen attackers, you need to apply the second $ effect on self.</li>
+					</list>
+				</description>
+				<group type="string">Feats</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Alert</name>
+				<prepared type="number">1</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">initiative +5; cant be surprised, notice the unseen 'note'</shortdescription>
+				<showAlways type="number">0</showAlways>
+				<source type="string">Feat</source>
+			</id-00007>
+			<id-00008>
+				<actions>
+					<id-00001>
+						<durmod type="number">0</durmod>
+						<label type="string">IFT:Custom(Vexed);ADVATK</label>
+						<order type="number">2</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+					<id-00002>
+						<apply type="string">action</apply>
+						<changestate type="string">sre</changestate>
+						<durmod type="number">2</durmod>
+						<label type="string">Vexed; AC:0</label>
+						<order type="number">1</order>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<group type="string">Class (Rogue)</group>
+				<level type="number">0</level>
+				<name type="string">Vex (Mastery)</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<ritual type="number">0</ritual>
+				<showAlways type="number">0</showAlways>
+			</id-00008>
+			<id-00009>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Dodge; Dodge</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<group type="string">Class (Rogue)</group>
+				<level type="number">0</level>
+				<name type="string">Dodge</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+			</id-00009>
+			<id-00010>
+				<actions />
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.rogue.features.psionicpower3@DD Tashas Cauldron of Everything - Players">
+							<b>Feature: </b>Psionic Power (TCoE Player)</link>
+					</linklist>
+					<p>
+						<b>
+							<u>Effect note:</u>
+						</b>
+					</p>
+					<p>All psionic power effects use the base level d6 dice. Change these when levelling up.&#13;Add all psionic powers to a power group and set the daily uses equal to twice your proficiency bonus, starting with 4 at level 3.</p>
+					<linklist>
+						<link class="power" recordname="reference.spelldata.id-00355@5E Automatic Effects .07: Tasha's Cauldron of Everything">Psionic Power: Psi-Bolstered Knack (5eAE TCoE)</link>
+						<link class="power" recordname="reference.spelldata.id-00356@5E Automatic Effects .07: Tasha's Cauldron of Everything">Psionic Power: Psychic Whispers (5eAE TCoE)</link>
+					</linklist>
+				</description>
+				<group type="string">Features</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Psionic Power_Class_Rogue</name>
+				<prepared type="number">4</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">5eAE psionic powers in 'note'</shortdescription>
+				<showAlways type="number">0</showAlways>
+				<source type="string">Rogue '</source>
+				<specialization type="string">Soulknife</specialization>
+			</id-00010>
+			<id-00011>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">dexterity</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<label type="string">Prone</label>
+						<order type="number">2</order>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<description type="formattedtext">
+					<p>You've developed cunning ways to use your Sneak Attack. When you deal Sneak Attack damage, you can add one of the following Cunning Strike effects. Each effect has a die cost, which is the number of Sneak Attack damage dice you must forgo to add the effect. You remove the die before rolling, and the effect occurs immediately after the attack's damage is dealt. For example, if you add the Poison effect, remove 1d6 from the Sneak Attack's damage before rolling.</p>
+					<p>If a Cunning Strike effect requires a saving throw, the DC equals 8 plus your Dexterity modifier and Proficiency Bonus.</p>
+					<p>
+						<b>
+							<i>Poison (Cost: 1d6). </i>
+						</b>You add a toxin to your strike, forcing the target to make a Constitution saving throw. On a failed save, the target has the Poisoned condition for 1 minute. At the end of each of its turns, the Poisoned target repeats the save, ending the effect on itself on a success.</p>
+					<p>To use this effect, you must have a Poisoner's Kit on your person.</p>
+					<p>
+						<b>
+							<i>Trip (Cost: 1d6). </i>
+						</b>If the target is Large or smaller, it must succeed on a Dexterity saving throw or have the Prone condition.</p>
+					<p>
+						<b>
+							<i>Withdraw (Cost: 1d6). </i>
+						</b>Immediately after the attack, you move up to half your Speed without provoking Opportunity Attacks.</p>
+				</description>
+				<group type="string">Sneak Attack (Rogue)</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Trip (Cost 1d6)</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00011>
+			<id-00012>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">constitution</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Poisoned; NOTE: Save on end of round</label>
+						<order type="number">2</order>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<description type="formattedtext">
+					<p>You've developed cunning ways to use your Sneak Attack. When you deal Sneak Attack damage, you can add one of the following Cunning Strike effects. Each effect has a die cost, which is the number of Sneak Attack damage dice you must forgo to add the effect. You remove the die before rolling, and the effect occurs immediately after the attack's damage is dealt. For example, if you add the Poison effect, remove 1d6 from the Sneak Attack's damage before rolling.</p>
+					<p>If a Cunning Strike effect requires a saving throw, the DC equals 8 plus your Dexterity modifier and Proficiency Bonus.</p>
+					<p>
+						<b>
+							<i>Poison (Cost: 1d6). </i>
+						</b>You add a toxin to your strike, forcing the target to make a Constitution saving throw. On a failed save, the target has the Poisoned condition for 1 minute. At the end of each of its turns, the Poisoned target repeats the save, ending the effect on itself on a success.</p>
+					<p>To use this effect, you must have a Poisoner's Kit on your person.</p>
+					<p>
+						<b>
+							<i>Trip (Cost: 1d6). </i>
+						</b>If the target is Large or smaller, it must succeed on a Dexterity saving throw or have the Prone condition.</p>
+					<p>
+						<b>
+							<i>Withdraw (Cost: 1d6). </i>
+						</b>Immediately after the attack, you move up to half your Speed without provoking Opportunity Attacks.</p>
+				</description>
+				<group type="string">Sneak Attack (Rogue)</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Poison (Cost 1d6)</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00012>
+			<id-00013>
+				<actions />
+				<description type="formattedtext">
+					<p>You've developed cunning ways to use your Sneak Attack. When you deal Sneak Attack damage, you can add one of the following Cunning Strike effects. Each effect has a die cost, which is the number of Sneak Attack damage dice you must forgo to add the effect. You remove the die before rolling, and the effect occurs immediately after the attack's damage is dealt. For example, if you add the Poison effect, remove 1d6 from the Sneak Attack's damage before rolling.</p>
+					<p>If a Cunning Strike effect requires a saving throw, the DC equals 8 plus your Dexterity modifier and Proficiency Bonus.</p>
+					<p>
+						<b>
+							<i>Poison (Cost: 1d6). </i>
+						</b>You add a toxin to your strike, forcing the target to make a Constitution saving throw. On a failed save, the target has the Poisoned condition for 1 minute. At the end of each of its turns, the Poisoned target repeats the save, ending the effect on itself on a success.</p>
+					<p>To use this effect, you must have a Poisoner's Kit on your person.</p>
+					<p>
+						<b>
+							<i>Trip (Cost: 1d6). </i>
+						</b>If the target is Large or smaller, it must succeed on a Dexterity saving throw or have the Prone condition.</p>
+					<p>
+						<b>
+							<i>Withdraw (Cost: 1d6). </i>
+						</b>Immediately after the attack, you move up to half your Speed without provoking Opportunity Attacks.</p>
+				</description>
+				<group type="string">Sneak Attack (Rogue)</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Withdraw (Cost 1d6)</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00013>
+			<id-00014>
+				<actions>
+					<id-00001>
+						<apply type="string">roll</apply>
+						<durmod type="number">1</durmod>
+						<label type="string">Uncanny Dodge; RESIST: all</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<description type="formattedtext">
+					<p>When an attacker that you can see hits you with an attack roll, you can take a Reaction to halve the attack's damage against you (round down).</p>
+				</description>
+				<group type="string">Class (Rogue)</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Uncanny Dodge</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+				<version type="string">2024</version>
+			</id-00014>
+		</powers>
+		<profbonus type="number">3</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<name type="string">Armor: Light</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Tool: Thieves' Tools</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Weapon: Simple</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Weapon: Martial weapons that have the Finesse or Light property</name>
+			</id-00004>
+		</proficiencylist>
+		<race type="string">Human</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>race.id-00003@WOTC50PHB</recordname>
+		</racelink>
+		<raceversion type="string">2024</raceversion>
+		<size type="string">Medium</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">2</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">wisdom</stat>
+				<total type="number">7</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">1</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">charisma</stat>
+				<total type="number">3</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">1</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">intelligence</stat>
+				<total type="number">4</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">1</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">dexterity</stat>
+				<total type="number">7</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">2</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">dexterity</stat>
+				<total type="number">10</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">1</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">charisma</stat>
+				<total type="number">3</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">wisdom</stat>
+				<total type="number">1</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">1</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">wisdom</stat>
+				<total type="number">4</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">1</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">dexterity</stat>
+				<total type="number">7</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">strength</stat>
+				<total type="number">-1</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">wisdom</stat>
+				<total type="number">1</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">0</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">wisdom</stat>
+				<total type="number">1</total>
+			</id-00018>
+			<id-00019>
+				<misc type="number">0</misc>
+				<name type="string">Thieves Tools</name>
+				<prof type="number">1</prof>
+				<shortcut type="number">0</shortcut>
+				<stat type="string">dexterity</stat>
+				<total type="number">7</total>
+			</id-00019>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">30</base>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">30</total>
+		</speed>
+		<spelllist />
+		<subracelink type="windowreference">
+			<class />
+			<recordname />
+		</subracelink>
+		<temp />
+		<token type="token">portrait_id-00015_token</token>
+		<token3Dflat type="token">tokens/host/isometric/Color_HeroPack1/Color_HeroPack1/hero_color_rogue_hooded_blades2.png</token3Dflat>
+		<tokenPosition>
+			<tokenNewPosition>
+				<newX type="number">337.5</newX>
+				<newY type="number">-382.494567871094</newY>
+			</tokenNewPosition>
+			<tokenPrevPosition>
+				<prevX type="number">-408.760559082031</prevX>
+				<prevY type="number">-464.097045898438</prevY>
+			</tokenPrevPosition>
+		</tokenPosition>
+		<traitlist>
+			<id-00001>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Resourceful</name>
+				<text type="formattedtext">
+					<p>You gain Heroic Inspiration whenever you finish a Long Rest.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Skillful</name>
+				<text type="formattedtext">
+					<p>You gain proficiency in one skill of your choice.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Versatile</name>
+				<text type="formattedtext">
+					<p>You gain an Origin Feat of your choice (see Chapter 5). Skilled is recommended.</p>
+				</text>
+			</id-00003>
+		</traitlist>
+		<weapon>
+			<critdicebonus />
+			<critrange>
+				<melee type="number">20</melee>
+				<ranged type="number">20</ranged>
+			</critrange>
+		</weapon>
+		<weaponlist>
+			<id-00001>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Dagger</name>
+				<prof type="number">1</prof>
+				<properties type="string">Finesse, Light, Thrown (Range 20/60)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00008</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00001>
+			<id-00002>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">piercing</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Dagger</name>
+				<prof type="number">1</prof>
+				<properties type="string">Finesse, Light, Thrown (Range 20/60)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00008</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00002>
+			<id-00005>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<statmult type="number">1</statmult>
+						<type type="string">psychic</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Psychic Blade</name>
+				<prof type="number">1</prof>
+				<properties type="string">Finesse, Thrown (range 60/120)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00011</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00005>
+			<id-00006>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">psychic</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Psychic Blade</name>
+				<prof type="number">1</prof>
+				<properties type="string">Finesse, Thrown (range 60/120)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00011</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00006>
+			<id-00007>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">psychic</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Psychic Blade (Off-Hand)</name>
+				<prof type="number">1</prof>
+				<properties type="string">Finesse, Thrown (range 60/120)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00014</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00007>
+			<id-00008>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<statmult type="number">1</statmult>
+						<type type="string">psychic</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Psychic Blade (Off-Hand)</name>
+				<prof type="number">1</prof>
+				<properties type="string">Finesse, Thrown (range 60/120)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00014</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00008>
+		</weaponlist>
+		<weight type="string">79</weight>
+	</character>
+</root>

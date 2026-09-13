@@ -1,0 +1,30 @@
+{
+  "partyName": "The Golden Forest",
+  "members": [
+    {
+      "filename": "draknor",
+      "role": "tank",
+      "notes": "Party leader"
+    },
+    {
+      "filename": "elarion",
+      "role": "damage"
+    },
+    {
+      "filename": "melbick",
+      "role": "healer"
+    },
+    {
+      "filename": "valkian",
+      "role": "damage"
+    },
+    {
+      "filename": "vogun",
+      "role": "utility"
+    },
+    {
+      "filename": "zephyrion",
+      "role": "support"
+    }
+  ]
+}

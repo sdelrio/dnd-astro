@@ -1,0 +1,1490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root version="4.5" dataversion="20230911" release="8.1|CoreRPG:6">
+	<character>
+		<abilities>
+			<charisma>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">8</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">3</bonus>
+				<save type="number">6</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">16</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">4</bonus>
+				<save type="number">4</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">18</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">8</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">3</bonus>
+				<save type="number">6</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">16</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">8</score>
+			</wisdom>
+		</abilities>
+		<adventurelist />
+		<alignment type="string">neutral good</alignment>
+		<backgroundlink type="windowreference">
+			<class />
+			<recordname />
+		</backgroundlink>
+		<check_ignoreFood type="number">0</check_ignoreFood>
+		<check_ignoreWater type="number">0</check_ignoreWater>
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">0</casterlevelinvmult>
+				<casterpactmagic type="number">0</casterpactmagic>
+				<hddie type="dice">1d12</hddie>
+				<hdused type="number">0</hdused>
+				<level type="number">6</level>
+				<name type="string">Barbarian</name>
+				<rolls>
+					<lvl-001 type="number">12</lvl-001>
+					<lvl-002 type="number">2</lvl-002>
+					<lvl-003 type="number">3</lvl-003>
+					<lvl-004 type="number">3</lvl-004>
+					<lvl-005 type="number">4</lvl-005>
+					<lvl-006 type="number">3</lvl-006>
+				</rolls>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>reference.classdata.barbarian@DD Xanathar's Guide to Everything Players</recordname>
+				</shortcut>
+				<specialization type="string">Path of the Zealot</specialization>
+				<specializationlink type="windowreference">
+					<class>reference_classability</class>
+					<recordname>reference.classdata.barbarian.abilities.pathofthezealot@DD Xanathar's Guide to Everything Players</recordname>
+				</specializationlink>
+			</id-00001>
+		</classes>
+		<coins>
+			<id-00001>
+				<amount type="number">2</amount>
+				<name type="string">PP</name>
+			</id-00001>
+			<id-00002>
+				<amount type="number">358</amount>
+				<name type="string">GP</name>
+			</id-00002>
+			<id-00003>
+				<amount type="number">38</amount>
+				<name type="string">EP</name>
+			</id-00003>
+			<id-00004>
+				<amount type="number">165</amount>
+				<name type="string">SP</name>
+			</id-00004>
+			<id-00005>
+				<amount type="number">923</amount>
+				<name type="string">CP</name>
+			</id-00005>
+		</coins>
+		<ConsumablesMNM />
+		<defenses>
+			<ac>
+				<armor type="number">0</armor>
+				<disstealth type="number">0</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">2</shield>
+				<stat2 type="string">constitution</stat2>
+				<temporary type="number">0</temporary>
+				<total type="number">19</total>
+			</ac>
+		</defenses>
+		<effectlist>
+			<id-00001>
+				<ability_modifier type="number">0</ability_modifier>
+				<actiononly type="number">0</actiononly>
+				<durdice type="dice"></durdice>
+				<durmod type="number">0</durmod>
+				<effect type="string">Stout Resilience; ADVCOND: poisoned; RESIST: poison</effect>
+				<effect_description type="string">[Stout Resilience; ADVCOND: poisoned; RESIST: poison]</effect_description>
+				<misc_modifier type="number">0</misc_modifier>
+				<name type="string">Kordal Zaplana</name>
+				<save_modifier type="number">0</save_modifier>
+				<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+			</id-00001>
+			<id-00002>
+				<ability_modifier type="number">0</ability_modifier>
+				<actiononly type="number">0</actiononly>
+				<durdice type="dice"></durdice>
+				<durmod type="number">0</durmod>
+				<effect type="string">Danger Sense; ADVSAV: dexterity</effect>
+				<effect_description type="string">[Danger Sense; ADVSAV: dexterity]</effect_description>
+				<misc_modifier type="number">0</misc_modifier>
+				<name type="string">Kordal Zaplana</name>
+				<save_modifier type="number">0</save_modifier>
+				<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+			</id-00002>
+		</effectlist>
+		<encumbrance>
+			<encumbered type="number">80</encumbered>
+			<encumberedheavy type="number">160</encumberedheavy>
+			<liftpushdrag type="number">480</liftpushdrag>
+			<load type="number">68</load>
+			<max type="number">240</max>
+		</encumbrance>
+		<exp type="number">20125</exp>
+		<expneeded type="number">23000</expneeded>
+		<featlist />
+		<featurelist>
+			<id-00001>
+				<hpadd type="number">0</hpadd>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Rage</name>
+				<prepared type="number">0</prepared>
+				<text type="formattedtext">
+					<p>In battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action. While raging, you gain the following benefits if you aren't wearing heavy armor:</p>
+					<list>
+						<li>You have advantage on Strength checks and Strength saving throws.</li>
+						<li>When you make a melee weapon attack using Strength, you gain a bonus to the damage roll that increases as you gain levels as a barbarian, as shown in the Rage Damage column of the Barbarian table.</li>
+						<li>You have resistance to bludgeoning, piercing, and slashing damage.</li>
+					</list>
+					<p>If you are able to cast spells, you can't cast them or concentrate on them while raging.</p>
+					<p>Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you have neither attacked a hostile creature since your last turn nor taken damage since then. You can also end your rage on your turn as a bonus action.</p>
+					<p>Once you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table, you must finish a long rest before you can rage again.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<hpadd type="number">0</hpadd>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Unarmored Defense</name>
+				<prepared type="number">0</prepared>
+				<text type="formattedtext">
+					<p>While you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<hpadd type="number">0</hpadd>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Reckless Attack</name>
+				<prepared type="number">0</prepared>
+				<text type="formattedtext">
+					<p>Starting at 2nd level, you can throw aside all concern for defense and attack with fierce desperation. When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn.</p>
+				</text>
+			</id-00003>
+			<id-00004>
+				<hpadd type="number">0</hpadd>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Danger Sense</name>
+				<prepared type="number">0</prepared>
+				<text type="formattedtext">
+					<p>At 2nd level, you gain an uncanny sense of when things nearby aren't as they should be, giving you an edge when you dodge away from danger.</p>
+					<p>You have advantage on Dexterity saving throws against effects that you can see, such as a traps and spells. To gain this benefit, you cannot be blinded, deafened, or incapacitated.</p>
+				</text>
+			</id-00004>
+			<id-00005>
+				<hpadd type="number">0</hpadd>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Primal Path</name>
+				<prepared type="number">0</prepared>
+				<specializationchoice type="number">1</specializationchoice>
+				<text type="formattedtext">
+					<p>At 3rd level, you choose a path that shapes the nature of your rage. Choose the Path of the Berserker or the Path of the Totem Warrior, both detailed at the end of the class description. Your choice grants you features at 3rd level and then again at 6th, 10th, and 14th levels.</p>
+				</text>
+			</id-00005>
+			<id-00006>
+				<hpadd type="number">0</hpadd>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Primal Knowledge (Optional)</name>
+				<prepared type="number">0</prepared>
+				<text type="formattedtext">
+					<p>
+						<i>3rd-level barbarian feature</i>
+					</p>
+					<p>When you reach 3rd level and again at 10th level, you gain one proficiency of your choice from among Animal Handling, Athletics, Intimidation, Nature, Perception, and Survival.</p>
+				</text>
+			</id-00006>
+			<id-00007>
+				<hpadd type="number">0</hpadd>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Warrior of the Gods</name>
+				<prepared type="number">0</prepared>
+				<specialization type="string">Path of the Zealot</specialization>
+				<text type="formattedtext">
+					<p>At 3rd level, your soul is marked for endless battle. If a spell, such as raise dead, has the sole effect of restoring you to life (but not undeath), the caster doesn't need material components to cast the spell on you.</p>
+				</text>
+			</id-00007>
+			<id-00008>
+				<hpadd type="number">0</hpadd>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Divine Fury</name>
+				<prepared type="number">0</prepared>
+				<specialization type="string">Path of the Zealot</specialization>
+				<text type="formattedtext">
+					<p>Starting when you choose this path at 3rd level, you can channel divine fury into your weapon strikes. While you're raging, the first creature you hit on each of your turns with a weapon attack takes extra damage equal to 1d6 + half your barbarian level. The extra damage is necrotic or radiant; you choose the type of damage when you gain this feature.</p>
+				</text>
+			</id-00008>
+			<id-00009>
+				<level type="number">4</level>
+				<locked type="number">1</locked>
+				<name type="string">Ability Score Improvement</name>
+				<text type="formattedtext">
+					<p>When you reach 4th level, and again at 8th, 12th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.</p>
+				</text>
+			</id-00009>
+			<id-00010>
+				<level type="number">5</level>
+				<locked type="number">1</locked>
+				<name type="string">Extra Attack</name>
+				<text type="formattedtext">
+					<p>Beginning at 5th level, you can attack one extra time whenever you take the Attack action on your turn.</p>
+				</text>
+			</id-00010>
+			<id-00011>
+				<hpadd type="number">0</hpadd>
+				<level type="number">5</level>
+				<locked type="number">1</locked>
+				<name type="string">Fast Movement</name>
+				<text type="formattedtext">
+					<p>Starting at 5th level, your speed increases by 10 feet while you aren't wearing heavy armor.</p>
+				</text>
+			</id-00011>
+			<id-00012>
+				<hpadd type="number">0</hpadd>
+				<level type="number">6</level>
+				<locked type="number">1</locked>
+				<name type="string">Fanatical Focus</name>
+				<specialization type="string">Path of the Zealot</specialization>
+				<text type="formattedtext">
+					<p>Starting at 6th level, the divine power that fuels your rage can protect you. If you fail a saving throw while you're raging, you can reroll it, and you must use the new roll. You can use this ability only once per rage.</p>
+				</text>
+			</id-00012>
+		</featurelist>
+		<hp>
+			<adjust type="number">0</adjust>
+			<base type="number">45</base>
+			<deathsavefail type="number">3</deathsavefail>
+			<deathsavesuccess type="number">1</deathsavesuccess>
+			<hdmod type="number">0</hdmod>
+			<temporary type="number">0</temporary>
+			<total type="number">45</total>
+			<wounds type="number">54</wounds>
+		</hp>
+		<initiative>
+			<misc type="number">2</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">6</total>
+		</initiative>
+		<inventorylist>
+			<id-00001>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d8 slashing</damage>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<destroyon type="number">1</destroyon>
+				<dischargedice type="dice"></dischargedice>
+				<dischargerechargebonus type="number">0</dischargerechargebonus>
+				<dischargerechargedice type="dice"></dischargerechargedice>
+				<effectlist>
+					<id-00001>
+						<ability_modifier type="number">0</ability_modifier>
+						<actiononly type="number">0</actiononly>
+						<durdice type="dice"></durdice>
+						<durmod type="number">0</durmod>
+						<effect type="string">DMG: 1d8 slashing, critical</effect>
+						<effect_description type="string">[DMG: 1d8 slashing, critical]</effect_description>
+						<misc_modifier type="number">0</misc_modifier>
+						<name type="string">Battleaxe</name>
+						<save_modifier type="number">0</save_modifier>
+						<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+					</id-00001>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Battleaxe</name>
+				<powergroup type="string">Spells</powergroup>
+				<powers />
+				<prepared type="number">0</prepared>
+				<rechargebonus type="number">0</rechargebonus>
+				<rechargedice type="dice"></rechargedice>
+				<rechargeon type="number">0</rechargeon>
+				<rechargesingle type="number">0</rechargesingle>
+				<subtype type="string">Martial Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">4</weight>
+			</id-00001>
+			<id-00002>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">1 sp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d4 bludgeoning</damage>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Sling</name>
+				<properties type="string">Ammunition (range 30/120)</properties>
+				<subtype type="string">Simple Ranged Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">0</weight>
+			</id-00002>
+			<id-00003>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">5 gp</cost>
+				<count type="number">2</count>
+				<damage type="string">1d6 slashing</damage>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Handaxe</name>
+				<properties type="string">Light, thrown (range 20/60)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">2</weight>
+			</id-00003>
+			<id-00004>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Bedroll</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">7</weight>
+			</id-00004>
+			<id-00005>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">9</count>
+				<description type="formattedtext">
+					<p>Rations consist of dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Rations (1 Day)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">0</weight>
+			</id-00005>
+			<id-00006>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 cp</cost>
+				<count type="number">8</count>
+				<description type="formattedtext">
+					<p>A torch burns for 1 hour, providing bright light in a 20-foot radius and dim light for an additional 20 feet. If you make a melee attack with a burning torch and hit, it deals 1 fire damage.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Torch</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00006>
+			<id-00007>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This small container holds flint, fire steel, and tinder (usually dry cloth soaked in light oil) used to kindle a fire. Using it to light a torch-or anything else with abundant, exposed fuel-takes an action. Lighting any other fire takes 1 minute.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Tinderbox</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00007>
+			<id-00008>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A waterskin holds 4 pints of liquid.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Waterskin</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00008>
+			<id-00009>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p>Made of wood, this pipe can be used to smoke pipeweed and other substances</p>
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Wooden Pipe</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">0.3</weight>
+			</id-00009>
+			<id-00010>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This tin box contains a cup and simple cutlery. The box clamps together, and one side can be used as a cooking pan and the other as a plate or shallow bowl.</p>
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Mess Kit</name>
+				<subtype type="string">Equipment Kits</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00010>
+			<id-00012>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Clothes, Traveler's</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">4</weight>
+			</id-00012>
+			<id-00015>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">1</bonus>
+				<carried type="number">2</carried>
+				<count type="number">1</count>
+				<damage type="string">1d6 bludgeoning</damage>
+				<description type="formattedtext">
+					<h>Description</h>
+					<p>Magic weapons are unmistakably finer in quality than their ordinary counterparts. You have a +1 bonus to the attack rolls and damage rolls you make with this weapon.</p>
+					<p>
+						<b>
+							<i>Glowing. </i>
+						</b>This mace glows as if the <i>light </i>spell was cast upon it when held.</p>
+				</description>
+				<effectlist>
+					<id-00001>
+						<ability_modifier type="number">0</ability_modifier>
+						<actiononly type="number">0</actiononly>
+						<durdice type="dice"></durdice>
+						<durmod type="number">0</durmod>
+						<effect type="string">LIGHT: 20 torch</effect>
+						<effect_description type="string">[LIGHT: 20 torch]</effect_description>
+						<misc_modifier type="number">0</misc_modifier>
+						<name type="string">Glowing Mace, +1</name>
+						<save_modifier type="number">0</save_modifier>
+						<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+					</id-00001>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Glowing Mace, +1</name>
+				<nonid_name type="string">Refined Mace</nonid_name>
+				<nonidentified type="string">The attention to detail and the materials used mark this weapon out as special.</nonidentified>
+				<powers />
+				<properties type="string">magic</properties>
+				<rarity type="string">Uncommon</rarity>
+				<spells>
+					<id-00001>
+						<link type="windowreference">
+							<class />
+							<recordname />
+						</link>
+						<name type="string">Weapon, +1</name>
+					</id-00001>
+					<id-00002>
+						<link type="windowreference">
+							<class />
+							<recordname />
+						</link>
+						<name type="string">Mace</name>
+					</id-00002>
+				</spells>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">4</weight>
+			</id-00015>
+			<id-00016>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">25 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This set of instruments is used for navigation at sea. Proficiency with navigator's tools lets you chart a ship's course and follow navigation charts. In addition, these tools allow you to add your proficiency bonus to any ability check you make to avoid getting lost at sea.</p>
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Navigator's Tools</name>
+				<powers />
+				<subtype type="string">Kits / Sets</subtype>
+				<type type="string">Tools</type>
+				<weight type="number">2</weight>
+			</id-00016>
+			<id-00017>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">50 gp</cost>
+				<count type="number">1</count>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p>This gemstone is translucent rosy stone with white star-shaped center in color.</p>
+				</description>
+				<effectlist />
+				<locked type="number">1</locked>
+				<name type="string">Star Rose Quartz</name>
+				<subtype type="string">Gemstones (50 Gp)</subtype>
+				<type type="string">Treasure</type>
+				<weight type="number">0.01</weight>
+			</id-00017>
+			<id-00018>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">2</count>
+				<description type="formattedtext">
+					<p>Rope, made of silk, has 2 hit points and can be burst with a DC 17 Strength check. There is 50 feet in this coil.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Rope, Silk (50 Feet)</name>
+				<powers />
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00018>
+			<id-00019>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">5 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This kit is a leather pouch containing bandages, salves, and splints. The kit has ten uses. As an action, you can expend one use of the kit to stabilize a creature that has 0 hit points, without needing to make a Wisdom (Medicine) check.</p>
+				</description>
+				<effectlist />
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Healer's Kit (9 usos)</name>
+				<subtype type="string">Equipment Kits</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">3</weight>
+			</id-00019>
+			<id-00021>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p>This gemstone is opaque light pink in color.</p>
+				</description>
+				<effectlist />
+				<locked type="number">1</locked>
+				<name type="string">Rhodochrosite</name>
+				<subtype type="string">Gemstones (10 Gp)</subtype>
+				<type type="string">Treasure</type>
+				<weight type="number">0.01</weight>
+			</id-00021>
+			<id-00022>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">1 sp</cost>
+				<count type="number">1</count>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<locked type="number">1</locked>
+				<name type="string">Brimstone</name>
+				<rarity type="string">Uncommon</rarity>
+				<subtype type="string">Spell Component</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">0.1</weight>
+			</id-00022>
+			<id-00023>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">750 gp</cost>
+				<count type="number">1</count>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<locked type="number">1</locked>
+				<name type="string">Silver-plated Steel Longsword With Jet Set In Hilt</name>
+				<subtype type="string">Art Objects (750 Gp)</subtype>
+				<type type="string">Treasure</type>
+				<weight type="number">3</weight>
+			</id-00023>
+			<id-00024>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">500 gp</cost>
+				<count type="number">1</count>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p>This gemstone is transparent pale blue-green in color.</p>
+				</description>
+				<effectlist />
+				<locked type="number">1</locked>
+				<name type="string">Aquamarine</name>
+				<subtype type="string">Gemstones (500 Gp)</subtype>
+				<type type="string">Treasure</type>
+				<weight type="number">0.02</weight>
+			</id-00024>
+			<id-00026>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">2</count>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<locked type="number">1</locked>
+				<name type="string">Soil Mixture in a Small Bag</name>
+				<rarity type="string">Uncommon</rarity>
+				<subtype type="string">Spell Component</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00026>
+			<id-00027>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">1 sp</cost>
+				<count type="number">1</count>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<locked type="number">1</locked>
+				<name type="string">Salt</name>
+				<rarity type="string">Uncommon</rarity>
+				<subtype type="string">Spell Component</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">0.25</weight>
+			</id-00027>
+			<id-00028>
+				<attune type="number">0</attune>
+				<carried type="number">1</carried>
+				<cost type="string">100 gp</cost>
+				<count type="number">1</count>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p />
+				</description>
+				<effectlist />
+				<locked type="number">1</locked>
+				<name type="string">Incense (One Block)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00028>
+			<id-00029>
+				<ac type="number">2</ac>
+				<attune type="number">0</attune>
+				<carried type="number">2</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your Armor Class by 2. You can benefit from only one shield at a time.</p>
+				</description>
+				<dexbonus type="string">-</dexbonus>
+				<locked type="number">1</locked>
+				<name type="string">Shield</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Shield</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">6</weight>
+			</id-00029>
+			<id-00030>
+				<ac type="number">0</ac>
+				<attune type="number">0</attune>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">260 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d8 bludgeoning</damage>
+				<dc type="number">10</dc>
+				<description type="formattedtext">
+					<p>This iron, mined deep underground, known for its effectiveness against fey creatures, is forged at a lower temperature to preserve its delicate properties. Items made of cold iron weighs one and one half times as much as the same item made from steel.</p>
+					<p>Cold iron weapons lose the light property.</p>
+					<p>Fey creatures are vulnerable to cold-forged iron weapon damage</p>
+					<p>Cold iron weapons add +250 gp to the base cost of a weapon</p>
+				</description>
+				<effectlist />
+				<locked type="number">1</locked>
+				<name type="string">Flail [cold-forged iron]</name>
+				<properties type="string">-</properties>
+				<subtype type="string">Martial Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">3</weight>
+			</id-00030>
+		</inventorylist>
+		<itemgroups>
+			<id-00001>
+				<name type="string">&lt;&lt; Unnamed Items &gt;&gt;</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Battleaxe</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Sling</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Handaxe</name>
+			</id-00004>
+			<id-00005>
+				<name type="string">Bedroll</name>
+			</id-00005>
+			<id-00006>
+				<name type="string">Rations (1 Day)</name>
+			</id-00006>
+			<id-00007>
+				<name type="string">Torch</name>
+			</id-00007>
+			<id-00008>
+				<name type="string">Tinderbox</name>
+			</id-00008>
+			<id-00009>
+				<name type="string">Waterskin</name>
+			</id-00009>
+			<id-00010>
+				<name type="string">Wooden Pipe</name>
+			</id-00010>
+			<id-00011>
+				<name type="string">Mess Kit</name>
+			</id-00011>
+			<id-00012>
+				<name type="string">Backpack</name>
+			</id-00012>
+			<id-00013>
+				<name type="string">Clothes, Traveler's</name>
+			</id-00013>
+			<id-00014>
+				<name type="string">Oil (Flask)</name>
+			</id-00014>
+			<id-00015>
+				<name type="string">Navigator's Tools</name>
+			</id-00015>
+			<id-00016>
+				<name type="string">Potion Of Healing</name>
+			</id-00016>
+			<id-00017>
+				<name type="string">Star Rose Quartz</name>
+			</id-00017>
+			<id-00018>
+				<name type="string">Healer's Kit (9 usos)</name>
+			</id-00018>
+			<id-00019>
+				<name type="string">Rope, Silk (50 Feet)</name>
+			</id-00019>
+			<id-00020>
+				<name type="string">Glowing Mace, +1</name>
+			</id-00020>
+			<id-00021>
+				<name type="string">Healer's Kit (10 usos)</name>
+			</id-00021>
+			<id-00022>
+				<name type="string">Rhodochrosite</name>
+			</id-00022>
+			<id-00023>
+				<name type="string">Brimstone</name>
+			</id-00023>
+			<id-00024>
+				<name type="string">Alchemist's Fire (Flask)</name>
+			</id-00024>
+			<id-00025>
+				<name type="string">Aquamarine</name>
+			</id-00025>
+			<id-00026>
+				<name type="string">Potion of Healing</name>
+			</id-00026>
+			<id-00027>
+				<name type="string">Soil Mixture in a Small Bag</name>
+			</id-00027>
+			<id-00028>
+				<name type="string">Salt</name>
+			</id-00028>
+			<id-00029>
+				<name type="string">Incense (One Block)</name>
+			</id-00029>
+			<id-00030>
+				<name type="string">Shield</name>
+			</id-00030>
+			<id-00031>
+				<name type="string">Flail [cold-forged iron]</name>
+			</id-00031>
+		</itemgroups>
+		<languagelist>
+			<id-00001>
+				<name type="string">Common </name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Halfling</name>
+			</id-00002>
+		</languagelist>
+		<level type="number">6</level>
+		<MNMStats>
+			<combatStats />
+			<name type="string">new name</name>
+			<token type="token"></token>
+		</MNMStats>
+		<name type="string">Kordal Zaplana</name>
+		<num_days_withouteating type="number">0</num_days_withouteating>
+		<num_gallons_carried type="number">4</num_gallons_carried>
+		<num_gallons_drank type="number">1</num_gallons_drank>
+		<num_lbs_food_carried type="number">4</num_lbs_food_carried>
+		<num_lbs_food_eaten type="number">1</num_lbs_food_eaten>
+		<perception type="number">12</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<powergroup>
+			<id-00001>
+				<atkmod type="number">0</atkmod>
+				<atkprof type="number">1</atkprof>
+				<name type="string">Barbarian Actions/Effects</name>
+				<prepared type="number">0</prepared>
+				<prepareddomaincheck type="number">0</prepareddomaincheck>
+				<savemod type="number">0</savemod>
+				<saveprof type="number">1</saveprof>
+				<showalwayscheck type="number">0</showalwayscheck>
+				<uses type="number">0</uses>
+			</id-00001>
+			<id-00002>
+				<name type="string">Features</name>
+			</id-00002>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powermode type="string">standard</powermode>
+		<powers>
+			<id-00001>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Rage; ADVCHK: strength; ADVSAV: strength; DMG: 2, melee; RESIST: bludgeoning, piercing, slashing; (E)</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>In battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action. While raging, you gain the following benefits if you aren't wearing heavy armor:</p>
+					<list>
+						<li>You have advantage on Strength checks and Strength saving throws.</li>
+						<li>When you make a melee weapon attack using Strength, you gain a bonus to the damage roll that increases as you gain levels as a barbarian, as shown in the Rage Damage column of the Barbarian table.</li>
+						<li>You have resistance to bludgeoning, piercing, and slashing damage.</li>
+					</list>
+					<p>If you are able to cast spells, you can't cast them or concentrate on them while raging.</p>
+					<p>Your rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you have neither attacked a hostile creature since your last turn nor taken damage since then. You can also end your rage on your turn as a bonus action.</p>
+					<p>Once you have raged the number of times shown for your barbarian level in the Rages column of the Barbarian table, you must finish a long rest before you can rage again.</p>
+				</description>
+				<group type="string">Barbarian Actions/Effects</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Rage</name>
+				<prepared type="number">3</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<ritual type="number">0</ritual>
+				<showAlways type="number">0</showAlways>
+			</id-00001>
+			<id-00002>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Reckless Attack; ADVATK: melee; GRANTADVATK:</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>Starting at 2nd level, you can throw aside all concern for defense and attack with fierce desperation. When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn.</p>
+				</description>
+				<group type="string">Barbarian Actions/Effects</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Reckless Attack</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+			</id-00002>
+			<id-00003>
+				<actions>
+					<id-00001>
+						<apply type="string">action</apply>
+						<label type="string">Danger Sense; ADVSAV: dexterity</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>At 2nd level, you gain an uncanny sense of when things nearby aren't as they should be, giving you an edge when you dodge away from danger.</p>
+					<p>You have advantage on Dexterity saving throws against effects that you can see, such as a traps and spells. To gain this benefit, you cannot be blinded, deafened, or incapacitated.</p>
+				</description>
+				<group type="string">Barbarian Actions/Effects</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Danger Sense</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<showAlways type="number">0</showAlways>
+			</id-00003>
+			<id-00004>
+				<actions>
+					<id-00002>
+						<durmod type="number">0</durmod>
+						<label type="string">IF: CUSTOM(Rage); DMG: 1d6+2, radiant; ONTURN</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<p>Starting when you choose this path at 3rd level, you can channel divine fury into your weapon strikes. While you're raging, the first creature you hit on each of your turns with a weapon attack takes extra damage equal to 1d6 + half your barbarian level. The extra damage is necrotic or radiant; you choose the type of damage when you gain this feature.</p>
+				</description>
+				<group type="string">Barbarian Actions/Effects</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Divine Fury</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<ritual type="number">0</ritual>
+				<showAlways type="number">0</showAlways>
+				<specialization type="string">Path of the Zealot</specialization>
+			</id-00004>
+			<id-00005>
+				<actions />
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.barbarian.features.fanaticalfocus6@*" public="true">
+							<b>Feature: </b>Fanatical Focus (XGtE)</link>
+					</linklist>
+				</description>
+				<group type="string">Features</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Fanatical Focus</name>
+				<prepared type="number">0</prepared>
+				<preparedDomain type="number">0</preparedDomain>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">(while raging) reroll saving throw once per rage</shortdescription>
+				<showAlways type="number">0</showAlways>
+				<source type="string">Barbarian '</source>
+				<specialization type="string">Path of the Zealot</specialization>
+			</id-00005>
+			<id-00006>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Consume Torch</label>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<group type="string">Items</group>
+				<name type="string">Torch</name>
+			</id-00006>
+			<id-00007>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Consume Rations</label>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<group type="string">Items</group>
+				<name type="string">Rations</name>
+			</id-00007>
+		</powers>
+		<profbonus type="number">3</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Weapon: Simple weapons, martial weapons</name>
+			</id-00001>
+			<id-00002>
+				<locked type="number">1</locked>
+				<name type="string">Armor: Light armor. medium armor, shields</name>
+			</id-00002>
+		</proficiencylist>
+		<race type="string">Halfling (Stout)</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>reference.racedata.halfling@DD PHB Deluxe</recordname>
+		</racelink>
+		<size type="string">Small</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">2</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">-1</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">2</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">1</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">7</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">1</prof>
+				<stat type="string">strength</stat>
+				<total type="number">6</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">3</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">5</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">-1</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">1</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">7</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">-1</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">-1</total>
+			</id-00018>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">25</base>
+			<misc type="number">10</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">35</total>
+		</speed>
+		<spelllist />
+		<subracelink type="windowreference">
+			<class>reference_subrace</class>
+			<recordname>reference.racedata.halfling.subraces.stout@DD PHB Deluxe</recordname>
+		</subracelink>
+		<temp />
+		<token type="token">tokens/shared/halfling_barbarian.png</token>
+		<tokenPosition>
+			<tokenNewPosition />
+			<tokenPrevPosition>
+				<prevX type="number">-81</prevX>
+				<prevY type="number">-287</prevY>
+			</tokenPrevPosition>
+		</tokenPosition>
+		<traitlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Lucky</name>
+				<text type="formattedtext">
+					<p>When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00001>
+			<id-00002>
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Brave</name>
+				<prepared type="number">0</prepared>
+				<text type="formattedtext">
+					<p>You have advantage on saving throws against being frightened.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00002>
+			<id-00003>
+				<locked type="number">1</locked>
+				<name type="string">Halfling Nimbleness</name>
+				<text type="formattedtext">
+					<p>You can move through the space of any creature that is of a size larger than yours.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00003>
+			<id-00004>
+				<effectlist />
+				<hpadd type="number">0</hpadd>
+				<locked type="number">1</locked>
+				<name type="string">Stout Resilience</name>
+				<prepared type="number">0</prepared>
+				<text type="formattedtext">
+					<p>You have advantage on saving throws against poison, and you have resistance against poison damage.</p>
+				</text>
+				<type type="string">subracial</type>
+			</id-00004>
+		</traitlist>
+		<weaponlist>
+			<id-00001>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d8</dice>
+						<stat type="string">base</stat>
+						<statmult type="number">1</statmult>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Battleaxe</name>
+				<prof type="number">1</prof>
+				<properties type="string">Versatile (1d10)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00001</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00001>
+			<id-00002>
+				<ammo type="number">2</ammo>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">bludgeoning</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">20</maxammo>
+				<name type="string">Sling</name>
+				<prof type="number">1</prof>
+				<properties type="string">Ammunition (range 30/120)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00002</recordname>
+				</shortcut>
+				<type type="number">1</type>
+			</id-00002>
+			<id-00003>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Handaxe</name>
+				<prof type="number">1</prof>
+				<properties type="string">Light, thrown (range 20/60)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00003</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00003>
+			<id-00004>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">slashing</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Handaxe</name>
+				<prof type="number">1</prof>
+				<properties type="string">Light, thrown (range 20/60)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00003</recordname>
+				</shortcut>
+				<type type="number">2</type>
+			</id-00004>
+			<id-00005>
+				<attackbonus type="number">1</attackbonus>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">1</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<statmult type="number">1</statmult>
+						<type type="string">bludgeoning,magic</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Glowing Mace, +1</name>
+				<prof type="number">1</prof>
+				<properties type="string">magic</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00015</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00005>
+			<id-00006>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d8</dice>
+						<stat type="string">base</stat>
+						<type type="string">bludgeoning</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Flail [cold-forged iron]</name>
+				<prof type="number">1</prof>
+				<properties type="string">-</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00030</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00006>
+		</weaponlist>
+	</character>
+</root>
