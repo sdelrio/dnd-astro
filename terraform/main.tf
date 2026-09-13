@@ -30,13 +30,17 @@ resource "cloudflare_workers_domain" "custom" {
   environment = "production"
 }
 
+# Note: workers.dev subdomain is NOT managed via cloudflare_workers_domain
+# It is controlled by the `workers_dev` setting in wrangler.jsonc
+# Run `wrangler deploy` to apply changes to workers_dev
+
 # DNS record for custom domain (optional)
 resource "cloudflare_record" "custom_domain" {
   count   = local.has_custom_domain ? 1 : 0
   zone_id = data.cloudflare_zone.custom_domain[0].id
   type    = "CNAME"
   name    = replace(var.custom_domain, ".${var.custom_domain_zone}", "")
-  content = "${var.project_name}.<your-subdomain>.workers.dev"
+  content = "${var.project_name}.${var.cloudflare_username}.workers.dev"
   proxied = true
   ttl     = 1
 }
