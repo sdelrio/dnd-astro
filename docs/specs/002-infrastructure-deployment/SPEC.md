@@ -59,7 +59,7 @@ Create the Cloudflare Worker with static assets linked to the private GitHub rep
 If the Worker was already created via the dashboard, import it into Terraform state before applying:
 
 **How to get the IDs:**
-- **account_id:** Found in Cloudflare Dashboard → URL bar (`/accounts/<account_id>/...`) or via API:
+- **account_id:** Found in Cloudflare Dashboard → URL bar (`/accounts/<account_id>/...`) or via:
   ```bash
   curl -s "https://api.cloudflare.com/client/v4/accounts" \
     -H "Authorization: Bearer <api_token>" | jq '.result[].id'
@@ -125,11 +125,7 @@ If the custom domain was already added via the dashboard, import the resources i
 
 **How to get the IDs:**
 
-1. **account_id:** Found in Cloudflare Dashboard URL or via:
-   ```bash
-   curl -s "https://api.cloudflare.com/client/v4/accounts" \
-     -H "Authorization: Bearer <api_token>" | jq '.result[].id'
-   ```
+1. **account_id:** Same as Step 1 — see [Importing existing Worker](#importing-existing-worker-if-created-via-dashboard).
 
 2. **workers_domain_id:** Get via Workers Domains API:
    ```bash
