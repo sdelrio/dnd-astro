@@ -63,6 +63,12 @@ variable "cloudflare_username" {
   default     = ""
 }
 
+variable "custom_domain_zone_id" {
+  description = "Cloudflare zone ID for the custom domain (optional, auto-resolved if empty)"
+  type        = string
+  default     = ""
+}
+
 locals {
   email_list            = split(",", var.allowed_emails)
   protected_path_list   = split(",", var.protected_paths)
