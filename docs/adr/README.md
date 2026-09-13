@@ -8,6 +8,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 |----|-------|--------|------|
 | 0001 | Icon Component Strategy | accepted | 2026-08-15 |
 | 0002 | Import Existing Cloudflare Resources into Terraform | accepted | 2026-09-13 |
+| 0003 | Use Cloudflare Workers with Static Assets over Pages | accepted | 2026-09-13 |
 
 ## About ADRs
 

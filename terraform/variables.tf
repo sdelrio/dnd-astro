@@ -11,7 +11,7 @@ variable "cloudflare_account_id" {
 }
 
 variable "project_name" {
-  description = "Name of the Cloudflare Pages project"
+  description = "Name of the Cloudflare Worker"
   type        = string
   default     = "dnd-astro"
 }
@@ -28,7 +28,7 @@ variable "github_repo_name" {
 }
 
 variable "production_branch" {
-  description = "Production branch for Cloudflare Pages"
+  description = "Production branch for Cloudflare Workers Builds"
   type        = string
   default     = "main"
 }

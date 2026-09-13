@@ -11,44 +11,23 @@ provider "cloudflare" {
   api_token = var.cloudflare_api_token
 }
 
-# Cloudflare Pages project linked to private GitHub repo
-# Builds the Astro static site to dist/
-#
-# Dashboard fallback:
-# 1. Go to Cloudflare Dashboard → Workers & Pages → Create
-# 2. Connect to GitHub repository
-# 3. Configure build settings:
-#    - Framework preset: Astro
-#    - Build command: npm run build
-#    - Build output directory: dist
-# 4. Set NODE_VERSION=24 in Pages project settings
-resource "cloudflare_pages_project" "dnd_astro" {
-  account_id        = var.cloudflare_account_id
-  name              = var.project_name
-  production_branch = var.production_branch
-
-  build_config {
-    build_command   = "npm run build"
-    destination_dir = "dist"
-    root_dir        = "/"
-  }
-
-  source {
-    type = "github"
-    config {
-      owner             = var.github_owner
-      repo_name         = var.github_repo_name
-      production_branch = var.production_branch
-    }
-  }
+# Cloudflare Worker script with static assets
+# Builds the Astro static site to dist/ and serves via Workers
+resource "cloudflare_workers_script" "dnd_astro" {
+  account_id         = var.cloudflare_account_id
+  name               = var.project_name
+  content            = file("${path.module}/../worker/index.js")
+  compatibility_date = "2026-09-13"
 }
 
-# Custom domain for Pages project (optional)
-resource "cloudflare_pages_domain" "custom" {
-  count        = local.has_custom_domain ? 1 : 0
-  account_id   = var.cloudflare_account_id
-  project_name = var.project_name
-  domain       = var.custom_domain
+# Custom domain for Worker (optional)
+resource "cloudflare_workers_domain" "custom" {
+  count       = local.has_custom_domain ? 1 : 0
+  account_id  = var.cloudflare_account_id
+  zone_id     = data.cloudflare_zone.custom_domain[0].id
+  hostname    = var.custom_domain
+  service     = var.project_name
+  environment = "production"
 }
 
 # DNS record for custom domain (optional)
@@ -57,7 +36,7 @@ resource "cloudflare_record" "custom_domain" {
   zone_id = data.cloudflare_zone.custom_domain[0].id
   type    = "CNAME"
   name    = replace(var.custom_domain, ".${var.custom_domain_zone}", "")
-  content = "${var.project_name}.pages.dev"
+  content = "${var.project_name}.<your-subdomain>.workers.dev"
   proxied = true
   ttl     = 1
 }
