@@ -112,23 +112,30 @@ Configure custom domain `dnd-companion.lorien.cloud` for the Worker.
 
 **Importing existing custom domain (if configured via dashboard):**
 
-If the custom domain was already added via the dashboard, import the resources into Terraform state:
+If the custom domain was already added via the dashboard, import the resources into Terraform state.
 
+First, get the Workers domain ID via API:
 ```bash
-# Import Workers domain binding
-terraform import 'cloudflare_workers_domain.custom[0]' <account_id>/<hostname>
+curl -s "https://api.cloudflare.com/client/v4/accounts/<account_id>/workers/domains" \
+  -H "Authorization: Bearer <api_token>" | jq '.result[] | {id, hostname}'
+```
 
-# Import DNS CNAME record
+Then import using the format `account_id/workersDomainID`:
+```bash
+# Import Workers domain binding (format: account_id/workersDomainID)
+terraform import 'cloudflare_workers_domain.custom[0]' <account_id>/<workers_domain_id>
+
+# Import DNS CNAME record (format: zone_id/record_id)
 terraform import 'cloudflare_record.custom_domain[0]' <zone_id>/<record_id>
 ```
 
 Example:
 ```bash
-terraform import 'cloudflare_workers_domain.custom[0]' b0dc01c04d8d5399bc5d06c4bebb7509/dnd-companion.lorien.cloud
+terraform import 'cloudflare_workers_domain.custom[0]' b0dc01c04d8d5399bc5d06c4bebb7509/4c77869efce4fa5bd77542ade1204bad898c34cc
 terraform import 'cloudflare_record.custom_domain[0]' e88cfc8197afaa3350144dce80293e37/<record_id>
 ```
 
-Note: The quotes around the resource address are required because of the `[0]` index. Use `terraform state show` to find the record ID after importing the Workers domain.
+Note: The quotes around the resource address are required because of the `[0]` index. Use `terraform state show` to find the DNS record ID after importing the Workers domain.
 
 **DNS Configuration:**
 - CNAME record: `dnd-companion` → `dnd-astro.oftheriver.workers.dev`
