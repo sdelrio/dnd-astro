@@ -39,15 +39,15 @@ help:
 
 plan/%:
 	@echo "Planning $* resources..."
-	@echo "Resources: $($(*)_RESOURCES)"
+	@echo "Resources: $($(shell echo '$*' | tr '[:lower:]' '[:upper:]')_RESOURCES)"
 	@echo "---"
-	terraform plan $(foreach r,$($(*)_RESOURCES),-target=$(r))
+	terraform plan $(foreach r,$($(shell echo '$*' | tr '[:lower:]' '[:upper:]')_RESOURCES),-target=$(r))
 
 apply/%:
 	@echo "Applying $* resources..."
-	@echo "Resources: $($(*)_RESOURCES)"
+	@echo "Resources: $($(shell echo '$*' | tr '[:lower:]' '[:upper:]')_RESOURCES)"
 	@echo "---"
-	terraform apply $(foreach r,$($(*)_RESOURCES),-target=$(r))
+	terraform apply $(foreach r,$($(shell echo '$*' | tr '[:lower:]' '[:upper:]')_RESOURCES),-target=$(r))
 
 import-worker:
 	terraform import cloudflare_workers_script.dnd_astro $(CF_ACCOUNT_ID)/dnd-astro
