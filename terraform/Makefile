@@ -1,4 +1,4 @@
-.PHONY: plan/% apply/% import-worker import-domain import-dns get-domain-id get-dns-id env
+.PHONY: help plan/% apply/% import-worker import-domain import-dns get-domain-id get-dns-id env
 
 # Resource targets
 ZEROTRUST_RESOURCES = cloudflare_zero_trust_access_application.dnd_astro cloudflare_zero_trust_access_policy.protected_paths
@@ -8,6 +8,34 @@ CF_API_TOKEN   ?= $(shell [ -f terraform.tfvars ] && grep -oP 'cloudflare_api_to
 CF_ACCOUNT_ID  ?= $(shell [ -f terraform.tfvars ] && grep -oP 'cloudflare_account_id\s*=\s*"\K[^"]+' terraform.tfvars || echo "")
 CF_ZONE_ID     ?= $(shell [ -f terraform.tfvars ] && grep -oP 'custom_domain_zone_id\s*=\s*"\K[^"]+' terraform.tfvars || echo "")
 CUSTOM_DOMAIN  ?= $(shell [ -f terraform.tfvars ] && grep -oP 'custom_domain\s*=\s*"\K[^"]+' terraform.tfvars || echo "")
+
+help:
+	@echo "Usage: make <target>"
+	@echo ""
+	@echo "Targets:"
+	@echo "  help              Show this help"
+	@echo "  env               Show current environment variables"
+	@echo "  plan/<group>      Plan resources for a group"
+	@echo "  apply/<group>     Apply resources for a group"
+	@echo "  import-worker     Import Worker script into state"
+	@echo "  import-domain     Import Workers domain binding"
+	@echo "  import-dns        Import DNS CNAME record"
+	@echo ""
+	@echo "Resource groups:"
+	@echo "  zerotrust         Zero Trust Access applications and policies"
+	@echo ""
+	@echo "Examples:"
+	@echo "  make plan/zerotrust"
+	@echo "  make apply/zerotrust"
+	@echo "  make import-worker"
+	@echo "  make import-domain"
+	@echo "  make import-dns"
+	@echo ""
+	@echo "Environment variables (or set in terraform.tfvars):"
+	@echo "  CF_API_TOKEN      Cloudflare API token"
+	@echo "  CF_ACCOUNT_ID     Cloudflare account ID"
+	@echo "  CF_ZONE_ID        Cloudflare zone ID"
+	@echo "  CUSTOM_DOMAIN     Custom domain name"
 
 plan/%:
 	terraform plan $(foreach r,$($(*)_RESOURCES),-target=$(r))
