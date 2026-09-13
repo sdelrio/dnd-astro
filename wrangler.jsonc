@@ -4,6 +4,7 @@
   "main": "./worker/index.js",
   "workers_dev": false,
   "preview_urls": true,
+  "preview_branches": true,
   "assets": {
     "directory": "./dist"
   }
