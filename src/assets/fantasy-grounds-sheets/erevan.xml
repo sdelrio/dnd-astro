@@ -1,0 +1,1613 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root version="3.2" release="7|CoreRPG:3">
+	<character>
+		<abilities>
+			<charisma>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">8</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">1</bonus>
+				<save type="number">4</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">12</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">0</bonus>
+				<save type="number">0</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">10</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">4</bonus>
+				<save type="number">7</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">18</score>
+			</wisdom>
+		</abilities>
+		<adventurelist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<text type="formattedtext">
+					<p></p>
+				</text>
+			</id-00001>
+			<id-00002>
+			</id-00002>
+		</adventurelist>
+		<age type="string">25</age>
+		<alignment type="string">True Neutral</alignment>
+		<background type="string">Outlander</background>
+		<backgroundlink type="windowreference">
+			<class>reference_background</class>
+			<recordname>reference.backgrounddata.outlander@DD PHB Deluxe</recordname>
+		</backgroundlink>
+		<bonds type="string">It is my duty to provide children to sustain my tribe.</bonds>
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">1</casterlevelinvmult>
+				<casterpactmagic type="number">0</casterpactmagic>
+				<hddie type="dice">d8</hddie>
+				<hdused type="number">4</hdused>
+				<level type="number">5</level>
+				<name type="string">Druid</name>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>reference.classdata.druid@DD PHB Deluxe</recordname>
+				</shortcut>
+			</id-00001>
+		</classes>
+		<coins>
+			<slot1>
+				<amount type="number">35</amount>
+				<name type="string">GP</name>
+			</slot1>
+			<slot2>
+				<amount type="number">52</amount>
+				<name type="string">SP</name>
+			</slot2>
+			<slot3>
+				<amount type="number">41</amount>
+				<name type="string">CP</name>
+			</slot3>
+			<slot4>
+				<amount type="number">4</amount>
+				<name type="string">EP</name>
+			</slot4>
+			<slot5>
+				<amount type="number">0</amount>
+				<name type="string">PP</name>
+			</slot5>
+			<slot6>
+				<amount type="number">0</amount>
+			</slot6>
+		</coins>
+		<dci type="string">41074073</dci>
+		<defenses>
+			<ac>
+				<armor type="number">2</armor>
+				<disstealth type="number">0</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">0</shield>
+				<temporary type="number">0</temporary>
+				<total type="number">14</total>
+			</ac>
+		</defenses>
+		<deity type="string">Sylvanus</deity>
+		<encumbrance>
+			<encumbered type="number">50</encumbered>
+			<encumberedheavy type="number">100</encumberedheavy>
+			<liftpushdrag type="number">300</liftpushdrag>
+			<load type="number">43.5</load>
+			<max type="number">150</max>
+		</encumbrance>
+		<exp type="number">7064</exp>
+		<expneeded type="number">14000</expneeded>
+		<featlist>
+		</featlist>
+		<featurelist>
+			<id-00001>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Spellcasting</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>Drawing on the divine essence of nature itself, you can cast spells to shape that essence to your will. See chapter 10 for the general rules of spellcasting and chapter 11 for the druid spell list.</p>
+					<linklist>
+						<link class="reference_colindex" recordname="reference.spelllists.druid@DD PHB Deluxe">Druid Spells</link>
+					</linklist>
+					<p><b>Cantrips</b></p>
+					<p>At 1st level, you know two cantrips of your choice from the druid spell list. You learn additional druid cantrips of your choice at higher levels, as shown in the Cantrips Known column of the Druid table.</p>
+					<p><b>Preparing and Casting Spells</b></p>
+					<p>The Druid table shows how many spell slots you have to cast your spells of 1st level and higher. To cast one of these druid spells, you must expend a slot of the spell's level or higher. You regain all expended spell slots when you finish a long rest.</p>
+					<p>You prepare the list of druid spells that are available for you to cast, choosing from the druid spelllist. When you do so, choose a number of druid spells equal to your Wisdom modifier + your druid level (minumum of one spell). The spells must be of a level for which you have spell slots.</p>
+					<p>For example, if you are, a 3rd level druid, you have four 1st-level and two 2nd-level spell slots. With a Wisdom of 16, your list of prepared spells can include six spells of 1st or 2nd level, in any combination. If you prepare the 1st-Level spell cure wounds, you can cast it using a 1st-level or 2nd-level slot. Casting the spell doesn't remove it from your list of prepared spells.</p>
+					<p>You can also change your list of prepared spells when you finish a long rest. Preparing a new list of druid spells requires time spent in prayer and meditation: at least 1 minute per spell level for each spell on your list.</p>
+					<p><b>Spellcasting Ability</b></p>
+					<p>Wisdom is your spellcasting ability for your druid spells, since your magic draws upon your devotion and attunement to nature. You use your Wisdom whenever a spell refers to your spellcasting ability. In addition, you use your Wisdom modifier when setting the saving throw DC for a druid spell you cast and when making an attack roll with one.</p>
+					<p><b>Spell Save DC </b>= 8 + your Wisdom modifier + your proficiency bonus</p>
+					<p><b>Spell Attack Bonus </b>= your Wisdom modifier + your proficiency bonus</p>
+					<p><b>Ritual Casting</b></p>
+					<p>You can cast a druid spell as a ritual if that spell has the ritual tag and you have the spell prepared. To cast a spell as a ritual, you must add 10 minutes to the spell's casting time, as normal.</p>
+					<p><b>Spellcasting Focus</b></p>
+					<p>You can use a druidic focus, such as a yew wand or a sprig of mistletoe, as the material component for a druid spell, as described in chapter 10.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Druidic</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>You know Druidic, the secret language of druids. You can speak the language and use it to leave hidden messages. You and others who know this language automatically spot such a message. Others spot the message's presence with a successful DC 15 Wisdom (Perception) check but can't decipher it without magic.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<locked type="number">1</locked>
+				<name type="string">Wanderer</name>
+				<source type="string">Outlander</source>
+				<text type="formattedtext">
+					<p>You have an excellent memory for maps and geography, and you can always recall the general layout of terrain, settlements, and other features around you. In addition, you can find food and fresh water for yourself and up to five other people each day, provided that the land offers berries, small game, water, and so forth.</p>
+				</text>
+			</id-00003>
+			<id-00004>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Circle of the Land</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>The Circle of the Land is made up of mystics and sages who safeguard ancient knowledge and rites through a vast oral tradition. These druids meet within sacred circles of trees or stone to whisper primal secrets in Druidic. The circle's wisest members serve as the chief priests of communities that hold to the Old Faith and as advisors to the rulers of those folk.</p>
+					<p>As a member of this circle, your magic is influenced by the land where you were initiated into the circle's mysteries.</p>
+					<h>Features</h>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.bonuscantrip2@DD PHB Deluxe">Bonus Cantrip</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.naturalrecovery2@DD PHB Deluxe">Natural Recovery</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.circlespells3@DD PHB Deluxe">Circle Spells</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.land_sstride6@DD PHB Deluxe">Land's Stride</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.nature_sward10@DD PHB Deluxe">Nature's Ward</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.nature_ssanctuary14@DD PHB Deluxe">Nature's Sanctuary</link>
+					</linklist>
+				</text>
+			</id-00004>
+			<id-00005>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Wild Shape</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>Starting at 2nd level, you can use your action to magically assume the shape of a beast. You can use this feature twice, and you regain expended uses when you finish a short or long rest.</p>
+					<p>Your druid level determines the beasts you can transform into, as shown in the Beast Shapes table. At 2nd level, for example, you can transform into any beast that has a Challenge Rating of 1/4 or lower that doesn't have a fly or swim speed.</p>
+					<p><b>Beast Shapes</b></p>
+					<table>
+						<tr>
+							<td><b>Level</b></td>
+							<td><b>Max. CR</b></td>
+							<td><b>Limitations</b></td>
+							<td><b>Example</b></td>
+						</tr>
+						<tr>
+							<td>2nd</td>
+							<td>1/4</td>
+							<td>No flying or swimming speed</td>
+							<td>Wolf</td>
+						</tr>
+						<tr>
+							<td>4th</td>
+							<td>1/2</td>
+							<td>No fying speed</td>
+							<td>Crocodile</td>
+						</tr>
+						<tr>
+							<td>8th</td>
+							<td>1</td>
+							<td>-</td>
+							<td>Giant eagle</td>
+						</tr>
+					</table>
+					<p>You can stay in a beast shape for a number of hours equal to half your druid level (rounded down). You then revert to your normal form unless you expend another use of this feature.</p>
+					<p>You can revert to your normal form earlier by using a bonus action on your turn. You automatically revert to your normal form if you fall unconscious, drop to 0 hit points, or die.</p>
+					<p>While you are transformed, the following rules apply:</p>
+					<list>
+						<li>Your game statistics are replaced by the statistics of the beast, but you retain your alignment and your Intelligence, Wisdom, and Charisma scores. You also retain all of your skill and saving throw proficiencies, in addition to gaining those of the creature. If both you and the creature have the same proficiency, use only the higher bonus.</li>
+						<li>When you transform, you assume the beast's hit points. When you revert to your normal form, you return to the number of hit points you had before you transformed. If you revert as a result of dropping to 0 hit points, however, any excess damage carries over to your normal form. For example, if you take 10 damage in animal form and have only 1 hit point left, you revert to your normal form and take 9 damage.</li>
+						<li>You can't cast spells, speak, or take any action that requires hands. Transforming doesn't break your concentration on a spell you've already cast, however, or prevent you from taking actions that are part of a spell you've already cast, such as call lightning.</li>
+						<li>You retain the benefit of any feature from your class, race, or other source and can use them if the new form is physically capable of doing so. However, you can't use any of your special senses, such as darkvision, unless your new form also has that sense.</li>
+						<li>You choose whether your equipment falls to the ground in your space, merges into your new form, or is worn by it. Worn equipment functions as normal, but the DM decides whether it is practical for the new form to wear a piece of equioment, based on the creature's shape or size. Your equipment doesn't change size or shape to match the new form, and any equipment that the new form can't wear must either fall to the ground or merge with it. Equipment that merges with the form has no effect until you leave the form.</li>
+					</list>
+				</text>
+			</id-00005>
+			<id-00006>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Bonus Cantrip</name>
+				<source type="string">Druid</source>
+				<specialization type="string">Circle of the Land</specialization>
+				<text type="formattedtext">
+					<p>When you choose this circle at 2nd level, you learn one additional druid cantrip of your choice.</p>
+				</text>
+			</id-00006>
+			<id-00007>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Natural Recovery</name>
+				<source type="string">Druid</source>
+				<specialization type="string">Circle of the Land</specialization>
+				<text type="formattedtext">
+					<p>Starting at 2nd level, you can regain some of your magical energy by sitting in meditation and communing with nature. Once per day during a short rest, you choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your druid level (rounded up), and none of the slots can be 6th level or higher.</p>
+					<p>For example, when you area 4th-level druid, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level spell slot or two 1st-level spell slots.</p>
+				</text>
+			</id-00007>
+			<id-00008>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Circle Spells</name>
+				<source type="string">Druid</source>
+				<specialization type="string">Circle of the Land</specialization>
+				<text type="formattedtext">
+					<p>Your mystical connection to the land infuses you with the ability to cast certain spells. At 3rd, 5th, 7th, and 9th level you gain access to circle spells connected to the land where you became a druid. Choose that land-arctic, coast, desert, forest, grassland, mountain, or swamp-and consult the associated list of spells.</p>
+					<p>Once you gain access to a circle spell, you always have it prepared, and it doesn't count against the number of spells you can prepare each day. If you gain access to a spell that doesn't appear on the druid spell list, the spell is nonetheless a druid spell for you.</p>
+					<h>Arctic</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.holdperson@DD PHB Deluxe">Spell: 3rd - Hold Person</link>
+						<link class="reference_spell" recordname="reference.spelldata.spikegrowth@DD PHB Deluxe">Spell: 3rd - Spike Growth</link>
+						<link class="reference_spell" recordname="reference.spelldata.sleetstorm@DD PHB Deluxe">Spell: 5th - Sleet Storm</link>
+						<link class="reference_spell" recordname="reference.spelldata.slow@DD PHB Deluxe">Spell: 5th - Slow</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe">Spell: 7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.icestorm@DD PHB Deluxe">Spell: 7th - Ice Storm</link>
+						<link class="reference_spell" recordname="reference.spelldata.communewithnature@DD PHB Deluxe">Spell: 9th - Commune with Nature</link>
+						<link class="reference_spell" recordname="reference.spelldata.coneofcold@DD PHB Deluxe">Spell: 9th - Cone of Cold</link>
+					</linklist>
+					<h>Coast</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.mirrorimage@DD PHB Deluxe">Spell: 3rd - Mirror Image</link>
+						<link class="reference_spell" recordname="reference.spelldata.mistystep@DD PHB Deluxe">Spell: 3rd - Misty Step</link>
+						<link class="reference_spell" recordname="reference.spelldata.waterbreathing@DD PHB Deluxe">Spell: 5th - Water Breathing</link>
+						<link class="reference_spell" recordname="reference.spelldata.waterwalk@DD PHB Deluxe">Spell: 5th - Water Walk</link>
+						<link class="reference_spell" recordname="reference.spelldata.controlwater@DD PHB Deluxe">Spell: 7th - Control Water</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe">Spell: 7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.conjureelemental@DD PHB Deluxe">Spell: 9th - Conjure Elemental</link>
+						<link class="reference_spell" recordname="reference.spelldata.scrying@DD PHB Deluxe">Spell: 9th - Scrying</link>
+					</linklist>
+					<h>Desert</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.blur@DD PHB Deluxe">Spell: 3rd - Blur</link>
+						<link class="reference_spell" recordname="reference.spelldata.silence@DD PHB Deluxe">Spell: 3rd - Silence</link>
+						<link class="reference_spell" recordname="reference.spelldata.createfoodandwater@DD PHB Deluxe">Spell: 5th - Create Food and Water</link>
+						<link class="reference_spell" recordname="reference.spelldata.protectionfromenergy@DD PHB Deluxe">Spell: 5th - Protection from Energy</link>
+						<link class="reference_spell" recordname="reference.spelldata.blight@DD PHB Deluxe">Spell: 7th - Blight</link>
+						<link class="reference_spell" recordname="reference.spelldata.hallucinatoryterrain@DD PHB Deluxe">Spell: 7th - Hallucinatory Terrain</link>
+						<link class="reference_spell" recordname="reference.spelldata.insectplague@DD PHB Deluxe">Spell: 9th - Insect Plague</link>
+						<link class="reference_spell" recordname="reference.spelldata.wallofstone@DD PHB Deluxe">Spell: 9th - Wall of Stone</link>
+					</linklist>
+					<h>Forest</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.barkskin@DD PHB Deluxe">3rd - Barkskin</link>
+						<link class="reference_spell" recordname="reference.spelldata.spiderclimb@DD PHB Deluxe">Spell: 3rd - Spider Climb</link>
+						<link class="reference_spell" recordname="reference.spelldata.calllightning@DD PHB Deluxe">Spell: 5th - Call Lightning</link>
+						<link class="reference_spell" recordname="reference.spelldata.plantgrowth@DD PHB Deluxe">Spell: 5th - Plant Growth</link>
+						<link class="reference_spell" recordname="reference.spelldata.divination@DD PHB Deluxe">Spell: 7th - Divination</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe">Spell: 7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.communewithnature@DD PHB Deluxe">Spell: 9th - Commune with Nature</link>
+						<link class="reference_spell" recordname="reference.spelldata.treestride@DD PHB Deluxe">Spell: 9th - Tree Stride</link>
+					</linklist>
+					<h>Grassland</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.invisibility@DD PHB Deluxe">Spell: 3rd - Invisibility</link>
+						<link class="reference_spell" recordname="reference.spelldata.passwithouttrace@DD PHB Deluxe">Spell: 3rd - Pass without Trace</link>
+						<link class="reference_spell" recordname="reference.spelldata.daylight@DD PHB Deluxe">Spell: 5th - Daylight</link>
+						<link class="reference_spell" recordname="reference.spelldata.haste@DD PHB Deluxe">Spell: 5th - Haste</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe">Spell: 7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.divination@DD PHB Deluxe">Spell: 7th - Divination</link>
+						<link class="reference_spell" recordname="reference.spelldata.dream@DD PHB Deluxe">Spell: 9th - Dream</link>
+						<link class="reference_spell" recordname="reference.spelldata.insectplague@DD PHB Deluxe">Spell: 9th - Insect Plague</link>
+					</linklist>
+					<h>Mountain</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.spiderclimb@DD PHB Deluxe">Spell: 3rd - Spider Climb</link>
+						<link class="reference_spell" recordname="reference.spelldata.spikegrowth@DD PHB Deluxe">Spell: 3rd - Spike Growth</link>
+						<link class="reference_spell" recordname="reference.spelldata.lightningbolt@DD PHB Deluxe">Spell: 5th - Lightning Bolt</link>
+						<link class="reference_spell" recordname="reference.spelldata.meldintostone@DD PHB Deluxe">Spell: 5th - Meld into Stone</link>
+						<link class="reference_spell" recordname="reference.spelldata.stoneshape@DD PHB Deluxe">Spell: 7th - Stone Shape</link>
+						<link class="reference_spell" recordname="reference.spelldata.stoneskin@DD PHB Deluxe">Spell: 7th - Stoneskin</link>
+						<link class="reference_spell" recordname="reference.spelldata.passwall@DD PHB Deluxe">Spell: 9th - Passwall</link>
+						<link class="reference_spell" recordname="reference.spelldata.wallofstone@DD PHB Deluxe">Spell: 9th - Wall of Stone</link>
+					</linklist>
+					<h>Swamp</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.darkness@DD PHB Deluxe">Spell: 3rd - Darkness</link>
+						<link class="reference_spell" recordname="reference.spelldata.melf_sacidarrow@DD PHB Deluxe">Spell: 3rd - Melf's Acid Arrow</link>
+						<link class="reference_spell" recordname="reference.spelldata.waterwalk@DD PHB Deluxe">Spell: 5th - Water Walk</link>
+						<link class="reference_spell" recordname="reference.spelldata.stinkingcloud@DD PHB Deluxe">Spell: 5th - Stinking Cloud</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe">Spell: 7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.locatecreature@DD PHB Deluxe">Spell: 7th - Locate Creature</link>
+						<link class="reference_spell" recordname="reference.spelldata.insectplague@DD PHB Deluxe">Spell: 9th - Insect Plague</link>
+						<link class="reference_spell" recordname="reference.spelldata.scrying@DD PHB Deluxe">Spell: 9th - Scrying</link>
+					</linklist>
+					<h>Underdark</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.spiderclimb@DD PHB Deluxe">Spell: 3rd - Spider Climb</link>
+						<link class="reference_spell" recordname="reference.spelldata.web@DD PHB Deluxe">Spell: 3rd - Web</link>
+						<link class="reference_spell" recordname="reference.spelldata.gaseousform@DD PHB Deluxe">Spell: 5th - Gaseous Form</link>
+						<link class="reference_spell" recordname="reference.spelldata.stinkingcloud@DD PHB Deluxe">Spell: 5th - Stinking Cloud</link>
+						<link class="reference_spell" recordname="reference.spelldata.greaterinvisibility@DD PHB Deluxe">Spell: 7th - Greater Invisibility</link>
+						<link class="reference_spell" recordname="reference.spelldata.stoneshape@DD PHB Deluxe">Spell: 7th - Stone Shape</link>
+						<link class="reference_spell" recordname="reference.spelldata.cloudkill@DD PHB Deluxe">Spell: 9th - Cloudkill</link>
+						<link class="reference_spell" recordname="reference.spelldata.insectplague@DD PHB Deluxe">Spell: 9th - Insect Plague</link>
+					</linklist>
+				</text>
+			</id-00008>
+			<id-00009>
+				<level type="number">4</level>
+				<locked type="number">1</locked>
+				<name type="string">Ability Score Improvement</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>When you reach 4th level, and again at 8th, 12th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.</p>
+				</text>
+			</id-00009>
+		</featurelist>
+		<flaws type="string">Don't expect me to save those who can't save themselves. It is nature's way that the strong thrive and the weak perish.</flaws>
+		<gender type="string">MALE</gender>
+		<height type="string">5' 11&#34;</height>
+		<hp>
+			<deathsavefail type="number">3</deathsavefail>
+			<deathsavesuccess type="number">2</deathsavesuccess>
+			<temporary type="number">0</temporary>
+			<total type="number">38</total>
+			<wounds type="number">38</wounds>
+		</hp>
+		<ideals type="string">Nature. The natural world is more important than all the constructs of civilization. (Neutral)</ideals>
+		<initiative>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">2</total>
+		</initiative>
+		<inspiration type="number">0</inspiration>
+		<inventorylist>
+			<id-00002>
+				<carried type="number">1</carried>
+				<cost type="string">5 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This kit contains a variety of instruments such as clippers, mortar and pestle, and pouches and vials used by herbalists to create remedies and potions. Proficiency with this kit lets you add your proficiency bonus to any ability checks you make to identify or apply herbs. Also, proficiency with this kit is required to create antitoxin and potions of healing.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Herbalism kit</name>
+				<subtype type="string">Kits / Sets</subtype>
+				<type type="string">Tools</type>
+				<weight type="number">3</weight>
+			</id-00002>
+			<id-00003>
+				<ac type="number">12</ac>
+				<carried type="number">1</carried>
+				<cost type="string">45 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Made from supple and thin materials, light armor favors agile adventurers since it offers some protection without sacrificing mobility. If you wear light armor, you add your Dexterity modifier to the base number from your armor type to determine your Armor Class.</p>
+					<p>Made from tough but flexible leather, studded leather is reinforced with close-set rivets or spikes.</p>
+				</description>
+				<dexbonus type="string">Yes</dexbonus>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Studded Leather (dragonclaw)</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Light Armor</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">13</weight>
+			</id-00003>
+			<id-00004>
+				<ac type="number">2</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>A shield is made from wood or metal and is carried in one hand. Wielding a shield increases your Armor Class by 2. You can benefit from only one shield at a time.</p>
+				</description>
+				<dexbonus type="string">-</dexbonus>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Shield</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Shield</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">6</weight>
+			</id-00004>
+			<id-00005>
+				<carried type="number">1</carried>
+				<cost type="string">5 sp</cost>
+				<count type="number">2</count>
+				<description type="formattedtext">
+					<p>Rations consist of dry foods suitable for extended travel, including jerky, dried fruit, hardtack, and nuts.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Rations (1 Day)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">2</weight>
+			</id-00005>
+			<id-00008>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>Encontrado nigromante cinco millas oeste Conyberry. Est&#225; debil sin provisiones pero he errado atac&#225;ndole. Me ha neutralizado con un artilugio. Es mi final. Vuela pajarito...</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Twitter</name>
+				<type type="string">Twitter</type>
+				<weight type="number">0</weight>
+			</id-00008>
+			<id-00009>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Bedroll</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">4</weight>
+			</id-00009>
+			<id-00010>
+				<carried type="number">1</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Waterskin</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00010>
+			<id-00011>
+				<carried type="number">1</carried>
+				<cost type="string">2 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Backpack (Empty)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">3</weight>
+			</id-00011>
+			<id-00012>
+				<carried type="number">1</carried>
+				<cost type="string">1 sp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d4 bludgeoning</damage>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Sling</name>
+				<properties type="string">Ammunition (range 30/120)</properties>
+				<subtype type="string">Simple Ranged Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">0</weight>
+			</id-00012>
+			<id-00013>
+				<carried type="number">1</carried>
+				<cost type="string">4 cp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Sling Bullets (20)</name>
+				<subtype type="string">Ammunition</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1.5</weight>
+			</id-00013>
+			<id-00015>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">5 gp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d6 bludgeoning</damage>
+				<description type="formattedtext">
+					<p>A druidic focus might be a sprig of mistletoe or holly, a wand or scepter made of yew or another special wood, a staff drawn whole out of a living tree, or a totem object incorporating feathers, fur, bones, and teeth from sacred animals. A druid (see chapter 3 of the Player's Handbook) can use such an object as a spellcasting focus, as described in chapter 10.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<istemplate type="number">0</istemplate>
+				<locked type="number">1</locked>
+				<name type="string">Quarterstaff</name>
+				<properties type="string">Versatile (1d8)</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">4</weight>
+			</id-00015>
+		</inventorylist>
+		<languagelist>
+			<id-00001>
+				<name type="string">Common</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Elvish</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Sylvan</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Halfling</name>
+			</id-00004>
+			<id-00005>
+				<name type="string">Druidic</name>
+			</id-00005>
+		</languagelist>
+		<level type="number">5</level>
+		<name type="string">Erevan the DragonClaw</name>
+		<notes type="string">Joven druida de tan s&#243;lo 25 a&#241;os.\n\nNacido en Waterdeep ciudad de Faerun. Su padre, Xilos, era un elfo de los bosques, su madre Loreen, humana boticaria y comerciante perteneciente a un importante gremio dentro de Aguasprofundas. \n\nAmbos se conocieron en Waterdeep por sus respectivos trabajos y las inquietudes de Loreen por temas relacionados con los bosques y su belleza fue lo que cautiv&#243; a Xilos.\n\nLoreen sol&#237;a acudir al bosque de Ardeep para recoger algunas mercanc&#237;as que necesitaba y que le facilitaba Tarsis un druida de la zona. Tras muchos a&#241;os tratando Loreen y Tarsis entablaron una buena amistad.\n\nCuando Erevan ten&#237;a tan solo 5 a&#241;os ocurri&#243; algo que le marcar&#237;a para el resto de su vida; Xilos y otros elfos con los que trabajaba desaparecieron en extra&#241;as circunstancias durante el transporte de una misteriosa mercanc&#237;a desde los bosques de Etten hasta Aguasprofundas.\n\nFueron muchas las teor&#237;as que se manejaron pero con el paso de los meses se les dio por muertos sin encontrar rastro de ellos.\n\nLoreen no quiso darse por vencida y utilizo todos los recursos que estaban a su alcance para encontrar a su esposo. \nPara ello confi&#243; a su amigo Tarsis el cuidado su negocio asi como el del joven Erevan. \nLoreen sol&#237;a ausentarse un par de semanas cada mes y a espaldas de su hijo avanzaba paso a paso hacia lo que pod&#237;a haber provocado la muerte/desaparici&#243;n de su esposo. \nSus ausencias fueron muy cuestionadas por la gente de su gremio y algunos afirmaban haberla visto en compa&#241;&#237;as de dudosa reputaci&#243;n relacionadas con artes m&#225;gicas.\n\nTras 2 a&#241;os Loreen se lleg&#243; a enfrentar a gente importante en Waterdeep y llegaron a acusarla de la muerte de su marido.\n\nFue entonces cuando decidi&#243; abandonar la cuidad que la vio nacer donde creci&#243; en su negocio, conoci&#243; al amor de su vida y tuvo a su &#250;nico hijo.\n\nFue su amigo Tarsis el que la procur&#243; cobijo para ella y su hijo en el bosque que el cuidaba: Ardeep.\n\nErevan recibi&#243; parte de su educaci&#243;n en estos bosques y eran pocas las veces que ve&#237;a a su madre. Cuando Erevan ten&#237;a 15 a&#241;os su madre, tras una de sus expediciones, cay&#243; enferma misteriosamente y ni los ung&#252;entos ni medicinas que ella misma preparaba ni la magia de la naturaleza que conoc&#237;a Tarsis pudieron evitar el fatal desenlace.\n\nErevan era un joven espabilado y se adaptaba muy bien a los cambios. Se torno muy solitario desde que fue a vivir al bosque y la muerte de su madre hizo que algo cambiase en el.\n\nSeg&#250;n Tarsis, Loreen hab&#237;a descubierto que la supuesta desaparici&#243;n de Xilos no fue accidental y que algo oscuro y tenebroso se encontraba detr&#225;s de todo.\n\nEsto la oblig&#243; a contactar con gente que conoc&#237;a artes oscuras... gente que pod&#237;a dar algo de luz a sus investigaciones.\n\nAcabo por descubrir que algo antinatural fue lo que le arrebat&#243; a su esposo y posteriormente tb seria lo que termin&#243; por arrebatar su vida a trav&#233;s de esa misteriosa enfermedad.\n\nSe quedaron muchas inc&#243;gnitas por despejar... que ser antinatural provoc&#243; estos sucesos y por qu&#233;? Buscaba algo en la mercanc&#237;a q transportaba? \n\nTodo esto hizo despertar a Erevan de la situaci&#243;n en la que viv&#237;a. Erevan quer&#237;a terminar el trabajo de su madre y encontrar al que le arrebato a sus progenitores.\n\nErevan solo tenia a Tarsis y fue el druida el que ayud&#243; al joven. \nEn un primer momento Tarsis quiso q Erevan volviese a Waterdeep, pero el joven medio elfo se neg&#243; a volver a la ciudad que hab&#237;a obligado a su madre a salir de all&#237;. (Este es el motivo por el que Erevan no se siente muy c&#243;modo en las grandes ciudades y en la medida de lo posible intentar&#225; evitar entrar en una de ellas)\n\nFinalmente se quedo en el bosque con Tarsis y el joven aprend&#237;a muy r&#225;pido las labores del druida. \nErevan solo tenia una cosa en mente encontrar y destruir a ese ser antinatural que le arrebato su infancia y para ello encontr&#243; en la Naturaleza a su mejor aliado.\n\nPronto se inici&#243; en las artes druidicas, conociendo su lengua y aprendiendo a hablar con la naturaleza a trav&#233;s de Silvanus. Tarsis no pod&#237;a ense&#241;arle m&#225;s y le explico que la &#250;nica forma de hacerse poderoso seria entrar dentro de alguna orden.\nY as&#237; lo hizo, pero claro, esto tiene una serie de condiciones que Erevan deb&#237;a cumplir; aunque no le importaba el precio a pagar.\n\nEn cierto modo, Erevan no es un druida por vocaci&#243;n ... sino que para el ser druida comenz&#243; como un medio para un fin, lo que hace que su forma de actuar no llegue al fanatismo de algunos de sus iguales.\nCierto es que todo tiene un precio y Erevan sabe q para hacerse poderoso debe estar en comuni&#243;n con Silvanus con todo lo que eso conlleva. \n\nTras su iniciaci&#243;n en la Orden, Erevan deb&#237;a hacer trabajos para la Orden y cual fue su fortuna cuando fue destinado a vigilar parte del bosque de Etten, cerca de donde desapareci&#243; su padre.\n\nErevan aprovechar&#225; para cualquier ocasi&#243;n para seguir cualquier pista que le lleve a conseguir su fin.</notes>
+		<perception type="number">17</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<personalitytraits type="string">I watch over my friends as if they were a litter of newborn pups.</personalitytraits>
+		<powergroup>
+			<id-00001>
+				<atkprof type="number">1</atkprof>
+				<castertype type="string">memorization</castertype>
+				<name type="string">Spells</name>
+				<prepared type="number">0</prepared>
+				<saveprof type="number">1</saveprof>
+				<stat type="string">wisdom</stat>
+				<uses type="number">0</uses>
+			</id-00001>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">4</max>
+				<used type="number">1</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">3</max>
+				<used type="number">2</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">2</max>
+				<used type="number">2</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powers>
+			<id-00001>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Shillelagh; ATK: 4, melee</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V, S, M (mistletoe, a shamrock leaf, and a club or quarterstaff)</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/a3lyYS1mZW1hbGUtY2xlcmljOjptYWdpYy13ZWFwb24/play/">Sound: Magic weapon</link>
+					</linklist>
+					<p>The wood of a club or quarterstaff you are holding is imbued with nature's power. For the duration, you can use your spellcasting ability instead of Strength for the attack and damage rolls of melee attacks using that weapon, and the weapon's damage die becomes a d8. The weapon also becomes magical, if it isn't already. The spell ends if you cast it again or if you let go of the weapon.</p>
+				</description>
+				<duration type="string">1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">CACHIPORRA</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Druid</source>
+			</id-00001>
+			<id-00002>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>Whispering to the spirits of nature, you create one of the following effects within range:</p>
+					<list>
+						<li>You create a tiny, harmless sensory effect that predicts what the weather will be at your location for the next 24 hours. The effect might manifest as a golden orb for clear skies, a cloud for rain, falling snowflakes for snow, and so on. This effect persists for 1 round.</li>
+						<li>You instantly make a flower blossom, a seed pod open, or a leaf bud bloom.</li>
+						<li>You create an instantaneous, harmless sensory effect, such as falling leaves, a puff of wind, the sound of a small animal, or the faint odor of skunk. The effect must fit in a5-foot cube.</li>
+						<li>You instantly light or snuff out a candle, a torch, or a small campfire.</li>
+					</list>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Druidcraft</name>
+				<prepared type="number">0</prepared>
+				<range type="string">30 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Druid</source>
+			</id-00002>
+			<id-00003>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/bHljYW50aHJvcGUtc3RhbGtlci1jYWxkZXRoOjp0cmFuc2Zvcm0/play/">Sound: Transformation</link>
+					</linklist>
+					<p>Starting at 2nd level, you can use your action to magically assume the shape of a beast. You can use this feature twice, and you regain expended uses when you finish a short or long rest.</p>
+					<p>Your druid level determines the beasts you can transform into, as shown in the Beast Shapes table. At 2nd level, for example, you can transform into any beast that has a Challenge Rating of 1/4 or lower that doesn't have a fly or swim speed.</p>
+					<p><b>Beast Shapes</b></p>
+					<table>
+						<tr>
+							<td><b>Level</b></td>
+							<td><b>Max. CR</b></td>
+							<td><b>Limitations</b></td>
+							<td><b>Example</b></td>
+						</tr>
+						<tr>
+							<td>2nd</td>
+							<td>1/4</td>
+							<td>No flying or swimming speed</td>
+							<td>Wolf</td>
+						</tr>
+						<tr>
+							<td>4th</td>
+							<td>1/2</td>
+							<td>No fying speed</td>
+							<td>Crocodile</td>
+						</tr>
+						<tr>
+							<td>8th</td>
+							<td>1</td>
+							<td>-</td>
+							<td>Giant eagle</td>
+						</tr>
+					</table>
+					<p>You can stay in a beast shape for a number of hours equal to half your druid level (rounded down). You then revert to your normal form unless you expend another use of this feature.</p>
+					<p>You can revert to your normal form earlier by using a bonus action on your turn. You automatically revert to your normal form if you fall unconscious, drop to 0 hit points, or die.</p>
+					<p>While you are transformed, the following rules apply:</p>
+					<list>
+						<li>Your game statistics are replaced by the statistics of the beast, but you retain your alignment and your Intelligence, Wisdom, and Charisma scores. You also retain all of your skill and saving throw proficiencies, in addition to gaining those of the creature. If both you and the creature have the same proficiency, use only the higher bonus.</li>
+						<li>When you transform, you assume the beast's hit points. When you revert to your normal form, you return to the number of hit points you had before you transformed. If you revert as a result of dropping to 0 hit points, however, any excess damage carries over to your normal form. For example, if you take 10 damage in animal form and have only 1 hit point left, you revert to your normal form and take 9 damage.</li>
+						<li>You can't cast spells, speak, or take any action that requires hands. Transforming doesn't break your concentration on a spell you've already cast, however, or prevent you from taking actions that are part of a spell you've already cast, such as call lightning.</li>
+						<li>You retain the benefit of any feature from your class, race, or other source and can use them if the new form is physically capable of doing so. However, you can't use any of your special senses, such as darkvision, unless your new form also has that sense.</li>
+						<li>You choose whether your equipment falls to the ground in your space, merges into your new form, or is worn by it. Worn equipment functions as normal, but the DM decides whether it is practical for the new form to wear a piece of equioment, based on the creature's shape or size. Your equipment doesn't change size or shape to match the new form, and any equipment that the new form can't wear must either fall to the ground or merge with it. Equipment that merges with the form has no effect until you leave the form.</li>
+					</list>
+				</description>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wild Shape</name>
+				<prepared type="number">2</prepared>
+				<ritual type="number">0</ritual>
+				<source type="string">Druid</source>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00003>
+			<id-00004>
+				<actions>
+					<id-00001>
+						<atktype type="string">ranged</atktype>
+						<order type="number">1</order>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d8,d8</dice>
+								<type type="string">fire</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/ZXpyZW4tbWFsZS13aXphcmQ6OmJ1cm5pbmctaGFuZHM/play/">Sound: low level flame</link>
+					</linklist>
+					<p>A flickering flame appears in your hand. The flame remains there for the duration and harms neither you nor your equipment. The flame sheds bright light in a 10-foot radius and dim light for an additional 10 feet. The spell ends if you dismiss it as an action or if you cast it again.</p>
+					<p>You can also attack with the flame, although doing so ends the spell. When you cast this spell, or as an action on a later turn, you can hurl the flame at a creature within 30 feet of you. Make a ranged spell attack. On a hit, the target takes 1d8 fire damage.</p>
+					<p>This spell's damage increases by 1d8 when you reach 5th level (2d8), 11th level (3d8), and 17th level (4d8).</p>
+				</description>
+				<duration type="string">10 minutes</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Produce Flame (mano libre)</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Self</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Conjuration</school>
+				<source type="string">Druid</source>
+			</id-00004>
+			<id-00005>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a handful of oak bark)</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/ZXpyZW4tbWFsZS13aXphcmQ6Om1hZ2UtYXJtb3ItYQ/play/">Sound: Mage Armor</link>
+					</linklist>
+					<p>You touch a willing creature. Until the spell ends, the target's skin has a rough, bark-like appearance, and the target's AC can't be less than 16, regardless of what kind of armor it is wearing.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Barkskin (circle)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Cleric Nature Domain, Druid, Druid Forest Circle, Ranger</source>
+			</id-00005>
+			<id-00006>
+				<actions>
+					<id-00001>
+						<onmissdamage type="string">half</onmissdamage>
+						<order type="number">1</order>
+						<savetype type="string">constitution</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d8,d8</dice>
+								<type type="string">thunder</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+					<id-00003>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d8,d8,d8</dice>
+								<type type="string">thunder</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">3</order>
+						<type type="string">damage</type>
+					</id-00003>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/ZXpyZW4tbWFsZS13aXphcmQ6OnNob2NraW5nLWdyYXNw/play/">Sound: Electricity spell</link>
+					</linklist>
+					<p>A wave of thunderous force sweeps out from you. Each creature in a 15-foot cube originating from you must make a Constitution saving throw. On a failed save, a creature takes 2d8 thunder damage and is pushed 10 feet away from you. On a successful save, the creature takes half as much damage and isn't pushed.</p>
+					<p>In addition, unsecured objects that are completely within the area of effect are automatically pushed 10 feet away from you by the spell's effect, and the spell emits a thunderous boom audible out to 300 feet.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d8 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Thunderwave (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self (15-foot cube)</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Bard, Cleric Tempest Domain, Druid, Eldritch Knight, Monk, Sorcerer, Wizard, Arcane Trickster</source>
+			</id-00006>
+			<id-00007>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d4</dice>
+								<stat type="string">base</stat>
+							</id-00001>
+						</heallist>
+						<order type="number">1</order>
+						<type type="string">heal</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/a3lyYS1mZW1hbGUtY2xlcmljOjpjdXJlLWxpZ2h0LXdvdW5kcy0x/play/">Sound: Cure Wounds</link>
+					</linklist>
+					<p>A creature of your choice that you can see within range regains hit points equal to 1d4 + your spellcasting ability modifier. This spell has no effect on undead or constructs.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, the healing increases by 1d4 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Healing Word</name>
+				<prepared type="number">1</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Bard, Cleric, Druid</source>
+			</id-00007>
+			<id-00008>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/ZXpyZW4tbWFsZS13aXphcmQ6OmNvbXByZWhlbmQtbGFuZ3VhZ2Vz/play/">Sound: languages</link>
+					</linklist>
+					<p>You gain the ability to comprehend and verbally communicate with beasts for the duration. The knowledge and awareness of many beasts is limited by their intelligence, but at minimum, beasts can give you information about nearby locations and monsters, including whatever they can perceive or have perceived within the past day. You might be able to persuade a beast to perform a small favor for you, at the DM's discretion.</p>
+				</description>
+				<duration type="string">10 minutes</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Speak with Animals (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self</range>
+				<ritual type="number">1</ritual>
+				<school type="string">Divination</school>
+				<source type="string">Bard, Cleric Nature Domain, Druid, Eldritch Invocations, Ranger</source>
+			</id-00008>
+			<id-00009>
+				<actions>
+					<id-00001>
+						<onmissdamage type="string">half</onmissdamage>
+						<order type="number">1</order>
+						<savetype type="string">dexterity</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d10,d10,d10</dice>
+								<type type="string">lightning</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>A storm cloud appears in the shape of a cylinder that is 10 feet tall with a 60-foot radius, centered on a point you can see 100 feet directly above you. The spell fails if you can't see a point in the air where the storm cloud could appear (for example, if you are in a room that can't accommodate the cloud).</p>
+					<p>When you cast the spell, choose a point you can see within range. A bolt of lightning flashes down from the cloud to that point. Each creature within 5 feet of that point must make a Dexterity saving throw. A creature takes 3d10 lightning damage on a failed save, or half as much damage on a successful one. On each of your turns until the spell ends, you can use your action to call down lightning in this way again, targeting the same point or a different one.</p>
+					<p>If you are outdoors in stormy conditions when you cast this spell, the spell gives you control over the existing storm instead of creating a new one. Under such conditions, the spell's damage increases by 1d10.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 4th or higher level, the damage increases by 1d10 for each slot level above 3rd.</p>
+				</description>
+				<duration type="string">Concentration, up to 10 minutes</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Call Lightning (circle) - (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">120 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Conjuration</school>
+				<source type="string">Cleric Tempest Domain, Druid, Druid Forest Circle</source>
+			</id-00009>
+			<id-00010>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savetype type="string">constitution</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d6,d6</dice>
+								<type type="string">cold</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/ZXpyZW4tbWFsZS13aXphcmQ6OnJheS1vZi1mcm9zdA/play/">Sound: frost spell</link>
+					</linklist>
+					<p>You cause numbing frost to form on one creature that you can see within range. The target must make a Constitution saving throw. On a failed save, the target takes 1d6 cold damage, and it has disadvantage on the next weapon attack roll it makes before the end of its next turn.</p>
+					<p>The spell's damage increases by 1d6 when you reach 5th level (2d6), 11th level (3d6), and 17th level (4d6).</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Frostbite (mano libre)</name>
+				<prepared type="number">0</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Druid, Sorcerer, Warlock, Wizard</source>
+			</id-00010>
+			<id-00011>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a drop of bitumen and a spider)</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/ZXpyZW4tbWFsZS13aXphcmQ6Omp1bXAtMQ/play/">Sound: Magical movement</link>
+					</linklist>
+					<p>Until the spell ends, one willing creature you touch gains the ability to move up, down, and across vertical surfaces and upside down along ceilings, while leaving its hands free. The target also gains a climbing speed equal to its walking speed.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Spider Climb (circle)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Druid Forest Circle, Druid Mountain Circle, Druid Underdark Circle, Eldritch Knight, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00011>
+			<id-00012>
+				<actions>
+					<id-00001>
+						<apply type="string">roll</apply>
+						<durmod type="number">1</durmod>
+						<label type="string">DMG: 1d6</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 reaction, which you take when you take acid, cold, fire, lightning, or thunder damage</castingtime>
+				<components type="string">S</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/ZXpyZW4tbWFsZS13aXphcmQ6OmVuZHVyZS1lbGVtZW50cw/play/">Sound: Protect from elements</link>
+					</linklist>
+					<p>The spell captures some of the incoming energy, lessening its effect on you and storing it for your next melee attack. You have resistance to the triggering damage type until the start of your next turn. Also, the first time you hit with a melee attack on your next turn, the target takes an extra 1d6 damage of the triggering type, and the spell ends.</p>
+					<p>At Higher Levels. When you cast this spell using a spell slot of 2nd level or higher, the extra damage increases by 1d6 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">1 round</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Absorb Elements (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Druid, Ranger, Wizard</source>
+			</id-00012>
+			<id-00013>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/a3lyYS1mZW1hbGUtY2xlcmljOjpyZW1vdmUtZGlzZWFzZQ/play/">Sound: Restoration</link>
+					</linklist>
+					<p>You touch a creature and can end either one disease or one condition afflicting it. The condition can be blinded, deafened, paralyzed, or poisoned.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Lesser Restoration (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Bard, Cleric, Cleric Life Domain, Druid, Paladin, Ranger</source>
+			</id-00013>
+			<id-00014>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<dice type="dice">d8</dice>
+								<stat type="string">base</stat>
+							</id-00001>
+						</heallist>
+						<order type="number">1</order>
+						<type type="string">heal</type>
+					</id-00001>
+					<id-00002>
+						<heallist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d8,d8</dice>
+								<stat type="string">wisdom</stat>
+							</id-00001>
+						</heallist>
+						<order type="number">2</order>
+						<type type="string">heal</type>
+					</id-00002>
+					<id-00003>
+						<heallist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d8,d8,d8</dice>
+								<stat type="string">wisdom</stat>
+							</id-00001>
+						</heallist>
+						<order type="number">3</order>
+						<type type="string">heal</type>
+					</id-00003>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/a3lyYS1mZW1hbGUtY2xlcmljOjpjdXJlLWxpZ2h0LXdvdW5kcy0x/play/">Sound: Cure Wounds</link>
+					</linklist>
+					<p>A creature you touch regains a number of hit points equal to 1d8 + your spellcasting ability modifier. This spell has no effect on undead or constructs.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, the healing increases by 1d8 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Cure Wounds(mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Bard, Cleric, Cleric Life Domain, Druid, Paladin, Ranger</source>
+			</id-00014>
+			<id-00015>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savetype type="string">strength</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Restrained; (C)</label>
+						<order type="number">2</order>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/a3lyYS1mZW1hbGUtY2xlcmljOjpob2xkLXBlcnNvbi0x/play/">Sound: Hold spell</link>
+					</linklist>
+					<p>Grasping weeds and vines sprout from the ground in a 20-foot square starting from a point within range. For the duration, these plants turn the ground in the area into difficult terrain.</p>
+					<p>A creature in the area when you cast the spell must succeed on a Strength saving throw or be restrained by the entangling plants until the spell ends. A creature restrained by the plants can use its action to make a Strength check against your spell save DC. On a success, it frees itself.</p>
+					<p>When the spell ends, the conjured plants wilt away.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Entangle (mano libre)</name>
+				<prepared type="number">0</prepared>
+				<range type="string">90 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Conjuration</school>
+				<source type="string">Druid</source>
+			</id-00015>
+			<id-00016>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action or 8 hours</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>This spell channels vitality into plants within a specific area. There are two possible uses for the spell, granting either immediate or long-term benefits.</p>
+					<p>If you cast this spell using 1 action, choose a point within range. All normal plants in a 100-foot radius centered on that point become thick and overgrown. A creature moving through the area must spend 4 feet of movement for every 1 foot it moves.</p>
+					<p>You can exclude one or more areas of any size within the spell's area from being affected.</p>
+					<p>If you cast this spell over 8 hours, you enrich the land. All plants in a half-mile radius centered on a point within range become enriched for 1 year. The plants yield twice the normal amount of food when harvested.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Plant Growth (circle) - (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">150 feet</range>
+				<school type="string">Transmutation</school>
+				<source type="string">Bard, Cleric Nature Domain, Druid, Druid Forest Circle, Eldritch-Master-(Archfey), Ranger</source>
+			</id-00016>
+			<id-00017>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>Choose one creature, object, or magical effect within range. Any spell of 3rd level or lower on the target ends. For each spell of 4th level or higher on the target, make an ability check using your spellcasting ability. The DC equals 10 + the spell's level. On a successful check, the spell ends.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 4th level or higher, you automatically end the effects of a spell on the target if the spell's level is equal to or less than the level of the spell slot you used.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Dispel Magic (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">120 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Bard, Cleric, Cleric Trickery Domain, Druid, Eldritch Knight, Paladin, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00017>
+			<id-00018>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You summon fey spirits that take the form of beasts and appear in unoccupied spaces that you can see within range. Choose one of the following options for what appears:</p>
+					<list>
+						<li>One beast of challenge rating 2 or lower</li>
+						<li>Two beasts of challenge rating 1 or lower</li>
+						<li>Four beasts of challenge rating 1/2 or lower</li>
+						<li>Eight beasts of challenge rating 1/4 or lower</li>
+					</list>
+					<p>Each beast is also considered fey, and it disappears when it drops to 0 hit points or when the spell ends.</p>
+					<p>The summoned creatures are friendly to you and your companions. Roll initiative for the summoned creatures as a group, which has its own turns. They obey any verbal commands that you issue to them (no action required by you). If you don't issue any commands to them, they defend themselves from hostile creatures, but otherwise take no actions.</p>
+					<p>The DM has the creatures' statistics.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using certain higher-level spell slots, you choose one of the summoning options above, and more creatures appear: twice as many with a 5th-level slot, three times as many with a 7th-level slot, and four times as many with a 9th-level slot.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Conjure Animals (mano libre)</name>
+				<prepared type="number">1</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Conjuration</school>
+				<source type="string">Druid, Ranger</source>
+			</id-00018>
+			<id-00019>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>A 60-foot-radius sphere of light spreads out from a point you choose within range. The sphere is bright light and sheds dim light for an additional 60 feet.</p>
+					<p>If you chose a point on an object you are holding or one that isn't being worn or carried, the light shines from the object and moves with it. Completely covering the affected object with an opaque object, such as a bowl or a helm, blocks the light.</p>
+					<p>If any of this spell's area overlaps with an area of darkness created by a spell of 3rd level or lower, the spell that created the darkness is dispelled.</p>
+				</description>
+				<duration type="string">1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Daylight</name>
+				<prepared type="number">0</prepared>
+				<range type="string">60 feet</range>
+				<school type="string">Evocation</school>
+				<source type="string">Cleric, Cleric Light Domain, Druid, Druid Grassland Circle, Paladin, Ranger, Sorcerer</source>
+			</id-00019>
+			<id-00021>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savetype type="string">wisdom</savetype>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Paralyzed; (C)</label>
+						<order type="number">2</order>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a small, straight piece of iron)</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/a3lyYS1mZW1hbGUtY2xlcmljOjpob2xkLXBlcnNvbi0x/play/">Sound: Hold spell</link>
+					</linklist>
+					<p>Choose a humanoid that you can see within range.</p>
+					<p>The target must succeed on a Wisdom saving throw or be paralyzed for the duration. At the end of each of its turns, the target can make another Wisdom saving throw. On a success, the spell ends on the target.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 3rd level or higher, you can target one additional humanoid for each slot level above 2nd. The humanoids must be within 30 feet of each other when you target them.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Hold Person</name>
+				<prepared type="number">0</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Enchantment</school>
+				<source type="string">Bard, Cleric, Druid, Druid Arctic Circle, Eldritch Knight, Monk, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00021>
+			<id-00023>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (ashes from a burned leaf of mistletoe and a sprig of spruce)</components>
+				<description type="formattedtext">
+					<linklist>
+						<link class="url" recordname="syrinscape-fantasy:elements/a3lyYS1mZW1hbGUtY2xlcmljOjpzaWxlbmNl/play/">Sound: Silence</link>
+					</linklist>
+					<p>A veil of shadows and silence radiates from you, masking you and your companions from detection. For the duration, each creature you choose within 30 feet of you (including you) has a +10 bonus to Dexterity (Stealth) checks and can't be tracked except by magical means. A creature that receives this bonus leaves behind no tracks or other traces of its passage.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Pass without Trace</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Abjuration</school>
+				<source type="string">Cleric Trickery Domain, Druid, Druid Grassland Circle, Monk, Ranger</source>
+			</id-00023>
+		</powers>
+		<profbonus type="number">3</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<name type="string">Weapon: Clubs, daggers. darts. javelins, maces, quarterstaffs, scimitars, sickles, slings, spears</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Tool: Herbalism kit</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Armor: light armor, medium armor. shields (druids will not wear armor or use shields made of metal)</name>
+			</id-00003>
+		</proficiencylist>
+		<race type="string">Half-Elf</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>reference.racedata.half_elf@DD PHB Deluxe</recordname>
+		</racelink>
+		<senses type="string">Darkvision 60</senses>
+		<size type="string">Medium</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">7</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">4</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">4</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">7</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">1</prof>
+				<stat type="string">strength</stat>
+				<total type="number">3</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">4</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">-1</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">1</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">5</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">1</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">7</total>
+			</id-00018>
+			<id-00019>
+				<misc type="number">0</misc>
+				<name type="string">Tools: Herbalism Kit</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">7</total>
+			</id-00019>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">30</base>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">30</total>
+		</speed>
+		<temp>
+		</temp>
+		<token type="token">portrait_id-00005_token</token>
+		<traitlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Skill Versatility</name>
+				<source type="string">Half-Elf</source>
+				<text type="formattedtext">
+					<p>You gain proficiency in two skills of your choice.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<locked type="number">1</locked>
+				<name type="string">Fey Ancestry</name>
+				<source type="string">Half-Elf</source>
+				<text type="formattedtext">
+					<p>You have advantage on saving throws against being charmed, and magic can't put you to sleep.</p>
+				</text>
+			</id-00002>
+		</traitlist>
+		<weapon>
+			<critdicebonus>
+			</critdicebonus>
+			<critrange>
+				<melee type="number">20</melee>
+				<ranged type="number">20</ranged>
+			</critrange>
+		</weapon>
+		<weaponlist>
+			<id-00001>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d6</dice>
+						<stat type="string">base</stat>
+						<type type="string">bludgeoning</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Quarterstaff</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00015</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00001>
+			<id-00002>
+				<attackbonus type="number">0</attackbonus>
+				<attackstat type="string">wisdom</attackstat>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d8</dice>
+						<stat type="string">wisdom</stat>
+						<type type="string">bludgeoning, magic</type>
+					</id-00001>
+				</damagelist>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Shillelagh</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class></class>
+					<recordname></recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00002>
+			<id-00005>
+				<attackbonus type="number">0</attackbonus>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<bonus type="number">0</bonus>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">bludgeoning</type>
+					</id-00001>
+				</damagelist>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">20</maxammo>
+				<name type="string">Sling</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00012</recordname>
+				</shortcut>
+				<type type="number">1</type>
+			</id-00005>
+		</weaponlist>
+		<weight type="string">166 pounds</weight>
+	</character>
+</root>

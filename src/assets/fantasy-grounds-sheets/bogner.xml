@@ -1,0 +1,2654 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<root version="3.3" release="8|CoreRPG:4">
+	<character>
+		<Spell_Tokens>
+			<Conjure_Animals>
+				<ID type="number">0</ID>
+				<circle_token type="number">0</circle_token>
+				<cone_token type="number">0</cone_token>
+				<measurenumber type="number">0</measurenumber>
+				<targettoken type="number">0</targettoken>
+			</Conjure_Animals>
+			<Flaming_Sphere>
+				<ID type="number">0</ID>
+				<circle_token type="number">0</circle_token>
+				<cone_token type="number">0</cone_token>
+				<measurenumber type="number">0</measurenumber>
+				<targettoken type="number">0</targettoken>
+			</Flaming_Sphere>
+			<ID type="number">0</ID>
+			<Lightning_Bolt>
+				<ID type="number">0</ID>
+				<circle_token type="number">0</circle_token>
+				<cone_token type="number">0</cone_token>
+				<measurenumber type="number">0</measurenumber>
+				<targettoken type="number">0</targettoken>
+			</Lightning_Bolt>
+			<Meld_into_Stone>
+				<ID type="number">0</ID>
+				<circle_token type="number">0</circle_token>
+				<cone_token type="number">0</cone_token>
+				<measurenumber type="number">0</measurenumber>
+				<targettoken type="number">0</targettoken>
+			</Meld_into_Stone>
+			<circle_token type="number">0</circle_token>
+			<cone_token type="number">0</cone_token>
+			<measurenumber type="number">0</measurenumber>
+			<targettoken type="number">0</targettoken>
+		</Spell_Tokens>
+		<abilities>
+			<charisma>
+				<bonus type="number">0</bonus>
+				<save type="number">0</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">10</score>
+			</charisma>
+			<constitution>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">15</score>
+			</constitution>
+			<dexterity>
+				<bonus type="number">2</bonus>
+				<save type="number">2</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">14</score>
+			</dexterity>
+			<intelligence>
+				<bonus type="number">2</bonus>
+				<save type="number">5</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">15</score>
+			</intelligence>
+			<strength>
+				<bonus type="number">-1</bonus>
+				<save type="number">-1</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">0</saveprof>
+				<score type="number">8</score>
+			</strength>
+			<wisdom>
+				<bonus type="number">3</bonus>
+				<save type="number">6</save>
+				<savemodifier type="number">0</savemodifier>
+				<saveprof type="number">1</saveprof>
+				<score type="number">16</score>
+			</wisdom>
+		</abilities>
+		<adventurelist>
+		</adventurelist>
+		<alignment type="string">Neutral Neutral</alignment>
+		<background type="string">Custom</background>
+		<backgroundlink type="windowreference">
+			<class></class>
+			<recordname></recordname>
+		</backgroundlink>
+		<classes>
+			<id-00001>
+				<casterlevelinvmult type="number">1</casterlevelinvmult>
+				<casterpactmagic type="number">0</casterpactmagic>
+				<hddie type="dice">d8</hddie>
+				<hdused type="number">1</hdused>
+				<level type="number">5</level>
+				<name type="string">Druid</name>
+				<rolls>
+					<lvl-001 type="number">8</lvl-001>
+					<lvl-002 type="number">5</lvl-002>
+					<lvl-003 type="number">5</lvl-003>
+					<lvl-004 type="number">5</lvl-004>
+					<lvl-005 type="number">5</lvl-005>
+				</rolls>
+				<shortcut type="windowreference">
+					<class>reference_class</class>
+					<recordname>reference.classdata.druid@DD Xanathar's Guide to Everything Players</recordname>
+				</shortcut>
+			</id-00001>
+		</classes>
+		<coins>
+			<slot1>
+				<amount type="number">104</amount>
+				<name type="string">GP</name>
+			</slot1>
+			<slot2>
+				<amount type="number">7</amount>
+				<name type="string">SP</name>
+			</slot2>
+			<slot3>
+				<amount type="number">0</amount>
+			</slot3>
+			<slot4>
+				<amount type="number">0</amount>
+			</slot4>
+			<slot5>
+				<amount type="number">0</amount>
+			</slot5>
+			<slot6>
+				<amount type="number">0</amount>
+			</slot6>
+		</coins>
+		<defenses>
+			<ac>
+				<armor type="number">3</armor>
+				<dexbonus type="string">nil</dexbonus>
+				<disstealth type="number">0</disstealth>
+				<misc type="number">0</misc>
+				<prof type="number">1</prof>
+				<shield type="number">2</shield>
+				<temporary type="number">0</temporary>
+				<total type="number">17</total>
+			</ac>
+		</defenses>
+		<deity type="string">Chauntea</deity>
+		<effectlist>
+		</effectlist>
+		<encumbrance>
+			<encumbered type="number">40</encumbered>
+			<encumberedheavy type="number">80</encumberedheavy>
+			<liftpushdrag type="number">240</liftpushdrag>
+			<load type="number">39</load>
+			<max type="number">120</max>
+		</encumbrance>
+		<exp type="number">7681</exp>
+		<expneeded type="number">14000</expneeded>
+		<featlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Linguist</name>
+				<text type="formattedtext">
+					<p>You have studied languages and codes, gaining the following benefits:</p>
+					<list>
+						<li>Increase your Intelligence score by 1, to a maximum of 20.</li>
+						<li>You learn three languages of your choice.</li>
+						<li>You can ably create written ciphers. Others can't decipher a code you create unless you teach them, they succeed on an Intelligence check (DC equal to your Intelligence score + your proficiency bonus), or they use magic to decipher it.</li>
+					</list>
+				</text>
+			</id-00001>
+		</featlist>
+		<featurelist>
+			<id-00001>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Spellcasting</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>Drawing on the divine essence of nature itself, you can cast spells to shape that essence to your will. See chapter 10 for the general rules of spellcasting and chapter 11 for the druid spell list.</p>
+					<linklist>
+						<link class="reference_colindex" recordname="reference.spelllists.druid@DD PHB Deluxe">Druid Spells</link>
+					</linklist>
+					<p><b>Cantrips</b></p>
+					<p>At 1st level, you know two cantrips of your choice from the druid spell list. You learn additional druid cantrips of your choice at higher levels, as shown in the Cantrips Known column of the Druid table.</p>
+					<p><b>Preparing and Casting Spells</b></p>
+					<p>The Druid table shows how many spell slots you have to cast your druid spells of 1st level and higher. To cast one of these druid spells, you must expend a slot of the spell's level or higher. You regain all expended spell slots when you finish a long rest.</p>
+					<p>You prepare the list of druid spells that are available for you to cast, choosing from the druid spell list. When you do so, choose a number of druid spells equal to your Wisdom modifier + your druid level (minimum of one spell). The spells must be of a level for which you have spell slots.</p>
+					<p>For example, if you are, a 3rd level druid, you have four 1st-level and two 2nd-level spell slots. With a Wisdom of 16, your list of prepared spells can include six spells of 1st or 2nd level, in any combination. If you prepare the 1st-Level spell cure wounds, you can cast it using a 1st-level or 2nd-level slot. Casting the spell doesn't remove it from your list of prepared spells.</p>
+					<p>You can also change your list of prepared spells when you finish a long rest. Preparing a new list of druid spells requires time spent in prayer and meditation: at least 1 minute per spell level for each spell on your list.</p>
+					<p><b>Spellcasting Ability</b></p>
+					<p>Wisdom is your spellcasting ability for your druid spells, since your magic draws upon your devotion and attunement to nature. You use your Wisdom whenever a spell refers to your spellcasting ability. In addition, you use your Wisdom modifier when setting the saving throw DC for a druid spell you cast and when making an attack roll with one.</p>
+					<p><b>Spell Save DC </b>= 8 + your Wisdom modifier + your proficiency bonus</p>
+					<p><b>Spell Attack Bonus </b>= your Wisdom modifier + your proficiency bonus</p>
+					<p><b>Ritual Casting</b></p>
+					<p>You can cast a druid spell as a ritual if that spell has the ritual tag and you have the spell prepared. To cast a spell as a ritual, you must add 10 minutes to the spell's casting time, as normal.</p>
+					<p><b>Spellcasting Focus</b></p>
+					<p>You can use a druidic focus, such as a yew wand or a sprig of mistletoe, as the material component for a druid spell, as described in chapter 10.</p>
+				</text>
+			</id-00001>
+			<id-00002>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Druidic</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>You know Druidic, the secret language of druids. You can speak the language and use it to leave hidden messages. You and others who know this language automatically spot such a message. Others spot the message's presence with a successful DC 15 Wisdom (Perception) check but can't decipher it without magic.</p>
+				</text>
+			</id-00002>
+			<id-00003>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Circle of the Land</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>The Circle of the Land is made up of mystics and sages who safeguard ancient knowledge and rites through a vast oral tradition. These druids meet within sacred circles of trees or stone to whisper primal secrets in Druidic. The circle's wisest members serve as the chief priests of communities that hold to the Old Faith and as advisers to the rulers of those folk.</p>
+					<p>As a member of this circle, your magic is influenced by the land where you were initiated into the circle's mysteries.</p>
+					<h>Features</h>
+					<linklist>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.bonuscantrip2@DD PHB Deluxe">Bonus Cantrip</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.naturalrecovery2@DD PHB Deluxe">Natural Recovery</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.circlespells3@DD PHB Deluxe">Circle Spells</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.land_sstride6@DD PHB Deluxe">Land's Stride</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.nature_sward10@DD PHB Deluxe">Nature's Ward</link>
+						<link class="reference_classfeature" recordname="reference.classdata.druid.features.nature_ssanctuary14@DD PHB Deluxe">Nature's Sanctuary</link>
+					</linklist>
+				</text>
+			</id-00003>
+			<id-00004>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Wild Shape</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>Starting at 2nd level, you can use your action to magically assume the shape of a beast that you have seen before. You can use this feature twice, and you regain expended uses when you finish a short or long rest.</p>
+					<p>Your druid level determines the beasts you can transform into, as shown in the Beast Shapes table. At 2nd level, for example, you can transform into any beast that has a Challenge Rating of 1/4 or lower that doesn't have a fly or swim speed.</p>
+					<p><b>Beast Shapes</b></p>
+					<table>
+						<tr>
+							<td><b>Level</b></td>
+							<td><b>Max. CR</b></td>
+							<td><b>Limitations</b></td>
+							<td><b>Example</b></td>
+						</tr>
+						<tr>
+							<td>2nd</td>
+							<td>1/4</td>
+							<td>No flying or swimming speed</td>
+							<td>Wolf</td>
+						</tr>
+						<tr>
+							<td>4th</td>
+							<td>1/2</td>
+							<td>No flying speed</td>
+							<td>Crocodile</td>
+						</tr>
+						<tr>
+							<td>8th</td>
+							<td>1</td>
+							<td>-</td>
+							<td>Giant eagle</td>
+						</tr>
+					</table>
+					<p>You can stay in a beast shape for a number of hours equal to half your druid level (rounded down). You then revert to your normal form unless you expend another use of this feature.</p>
+					<p>You can revert to your normal form earlier by using a bonus action on your turn. You automatically revert to your normal form if you fall unconscious, drop to 0 hit points, or die.</p>
+					<p>While you are transformed, the following rules apply:</p>
+					<list>
+						<li>Your game statistics are replaced by the statistics of the beast, but you retain your alignment and your Intelligence, Wisdom, and Charisma scores. You also retain all of your skill and saving throw proficiencies, in addition to gaining those of the creature. If the creature has the same proficiency as you and the bonus in its stat block is higher than yours, use the creature's bonus instead of yours.</li>
+						<li>When you transform, you assume the beast's hit points. When you revert to your normal form, you return to the number of hit points you had before you transformed. If you revert as a result of dropping to 0 hit points, however, any excess damage carries over to your normal form. For example, if you take 10 damage in animal form and have only 1 hit point left, you revert to your normal form and take 9 damage.</li>
+						<li>You can't cast spells, speak, or take any action that requires hands. Transforming doesn't break your concentration on a spell you've already cast, however, or prevent you from taking actions that are part of a spell you've already cast, such as call lightning.</li>
+						<li>You retain the benefit of any feature from your class, race, or other source and can use them if the new form is physically capable of doing so. However, you can't use any of your special senses, such as darkvision, unless your new form also has that sense.</li>
+						<li>You choose whether your equipment falls to the ground in your space, merges into your new form, or is worn by it. Worn equipment functions as normal, but the DM decides whether it is practical for the new form to wear a piece of equipment, based on the creature's shape or size. Your equipment doesn't change size or shape to match the new form, and any equipment that the new form can't wear must either fall to the ground or merge with it. Equipment that merges with the form has no effect until you leave the form.</li>
+					</list>
+				</text>
+			</id-00004>
+			<id-00005>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Bonus Cantrip</name>
+				<source type="string">Druid</source>
+				<specialization type="string">Circle of the Land</specialization>
+				<specializationchoice type="number">0</specializationchoice>
+				<text type="formattedtext">
+					<p>When you choose this circle at 2nd level, you learn one additional druid cantrip of your choice.</p>
+				</text>
+			</id-00005>
+			<id-00006>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Natural Recovery</name>
+				<source type="string">Druid</source>
+				<specialization type="string">Circle of the Land</specialization>
+				<text type="formattedtext">
+					<p>Starting at 2nd level, you can regain some of your magical energy by sitting in meditation and communing with nature. Once per day during a short rest, you choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your druid level (rounded up), and none of the slots can be 6th level or higher.</p>
+					<p>For example, when you are a 4th-level druid, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level spell slot or two 1st-level spell slots.</p>
+				</text>
+			</id-00006>
+			<id-00007>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Druid Circle</name>
+				<source type="string">Druid</source>
+				<specializationchoice type="number">1</specializationchoice>
+				<text type="formattedtext">
+					<p>At 2nd level, you choose to identify with a circle of druids: the Circle of the Land or the Circle of the Moon, both detailed at the end of the class description.</p>
+					<p>Your choice grants you features at 2nd level, and then again at 6th, 10th, and 14th level.</p>
+				</text>
+			</id-00007>
+			<id-00008>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Circle Spells</name>
+				<source type="string">Druid</source>
+				<specialization type="string">Circle of the Land</specialization>
+				<specializationchoice type="number">0</specializationchoice>
+				<text type="formattedtext">
+					<p>Your mystical connection to the land infuses you with the ability to cast certain spells. At 3rd, 5th, 7th, and 9th level you gain access to circle spells connected to the land where you became a druid. Choose that land-arctic, coast, desert, forest, grassland, mountain, or swamp-and consult the associated list of spells.</p>
+					<p>Once you gain access to a circle spell, you always have it prepared, and it doesn't count against the number of spells you can prepare each day. If you gain access to a spell that doesn't appear on the druid spell list, the spell is nonetheless a druid spell for you.</p>
+					<h>Arctic</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.holdperson@DD PHB Deluxe"><b>Spell: </b>3rd - Hold Person</link>
+						<link class="reference_spell" recordname="reference.spelldata.spikegrowth@DD PHB Deluxe"><b>Spell: </b>3rd - Spike Growth</link>
+						<link class="reference_spell" recordname="reference.spelldata.sleetstorm@DD PHB Deluxe"><b>Spell: </b>5th - Sleet Storm</link>
+						<link class="reference_spell" recordname="reference.spelldata.slow@DD PHB Deluxe"><b>Spell: </b>5th - Slow</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe"><b>Spell: </b>7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.icestorm@DD PHB Deluxe"><b>Spell: </b>7th - Ice Storm</link>
+						<link class="reference_spell" recordname="reference.spelldata.communewithnature@DD PHB Deluxe"><b>Spell: </b>9th - Commune with Nature</link>
+						<link class="reference_spell" recordname="reference.spelldata.coneofcold@DD PHB Deluxe"><b>Spell: </b>9th - Cone of Cold</link>
+					</linklist>
+					<h>Coast</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.mirrorimage@DD PHB Deluxe"><b>Spell: </b>3rd - Mirror Image</link>
+						<link class="reference_spell" recordname="reference.spelldata.mistystep@DD PHB Deluxe"><b>Spell: </b>3rd - Misty Step</link>
+						<link class="reference_spell" recordname="reference.spelldata.waterbreathing@DD PHB Deluxe"><b>Spell: </b>5th - Water Breathing</link>
+						<link class="reference_spell" recordname="reference.spelldata.waterwalk@DD PHB Deluxe"><b>Spell: </b>5th - Water Walk</link>
+						<link class="reference_spell" recordname="reference.spelldata.controlwater@DD PHB Deluxe"><b>Spell: </b>7th - Control Water</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe"><b>Spell: </b>7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.conjureelemental@DD PHB Deluxe"><b>Spell: </b>9th - Conjure Elemental</link>
+						<link class="reference_spell" recordname="reference.spelldata.scrying@DD PHB Deluxe"><b>Spell: </b>9th - Scrying</link>
+					</linklist>
+					<h>Desert</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.blur@DD PHB Deluxe"><b>Spell: </b>3rd - Blur</link>
+						<link class="reference_spell" recordname="reference.spelldata.silence@DD PHB Deluxe"><b>Spell: </b>3rd - Silence</link>
+						<link class="reference_spell" recordname="reference.spelldata.createfoodandwater@DD PHB Deluxe"><b>Spell: </b>5th - Create Food and Water</link>
+						<link class="reference_spell" recordname="reference.spelldata.protectionfromenergy@DD PHB Deluxe"><b>Spell: </b>5th - Protection from Energy</link>
+						<link class="reference_spell" recordname="reference.spelldata.blight@DD PHB Deluxe"><b>Spell: </b>7th - Blight</link>
+						<link class="reference_spell" recordname="reference.spelldata.hallucinatoryterrain@DD PHB Deluxe"><b>Spell: </b>7th - Hallucinatory Terrain</link>
+						<link class="reference_spell" recordname="reference.spelldata.insectplague@DD PHB Deluxe"><b>Spell: </b>9th - Insect Plague</link>
+						<link class="reference_spell" recordname="reference.spelldata.wallofstone@DD PHB Deluxe"><b>Spell: </b>9th - Wall of Stone</link>
+					</linklist>
+					<h>Forest</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.barkskin@DD PHB Deluxe"><b>Spell: </b>3rd - Barkskin</link>
+						<link class="reference_spell" recordname="reference.spelldata.spiderclimb@DD PHB Deluxe"><b>Spell: </b>3rd - Spider Climb</link>
+						<link class="reference_spell" recordname="reference.spelldata.calllightning@DD PHB Deluxe"><b>Spell: </b>5th - Call Lightning</link>
+						<link class="reference_spell" recordname="reference.spelldata.plantgrowth@DD PHB Deluxe"><b>Spell: </b>5th - Plant Growth</link>
+						<link class="reference_spell" recordname="reference.spelldata.divination@DD PHB Deluxe"><b>Spell: </b>7th - Divination</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe"><b>Spell: </b>7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.communewithnature@DD PHB Deluxe"><b>Spell: </b>9th - Commune with Nature</link>
+						<link class="reference_spell" recordname="reference.spelldata.treestride@DD PHB Deluxe"><b>Spell: </b>9th - Tree Stride</link>
+					</linklist>
+					<h>Grassland</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.invisibility@DD PHB Deluxe"><b>Spell: </b>3rd - Invisibility</link>
+						<link class="reference_spell" recordname="reference.spelldata.passwithouttrace@DD PHB Deluxe"><b>Spell: </b>3rd - Pass without Trace</link>
+						<link class="reference_spell" recordname="reference.spelldata.daylight@DD PHB Deluxe"><b>Spell: </b>5th - Daylight</link>
+						<link class="reference_spell" recordname="reference.spelldata.haste@DD PHB Deluxe"><b>Spell: </b>5th - Haste</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe"><b>Spell: </b>7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.divination@DD PHB Deluxe"><b>Spell: </b>7th - Divination</link>
+						<link class="reference_spell" recordname="reference.spelldata.dream@DD PHB Deluxe"><b>Spell: </b>9th - Dream</link>
+						<link class="reference_spell" recordname="reference.spelldata.insectplague@DD PHB Deluxe"><b>Spell: </b>9th - Insect Plague</link>
+					</linklist>
+					<h>Mountain</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.spiderclimb@DD PHB Deluxe"><b>Spell: </b>3rd - Spider Climb</link>
+						<link class="reference_spell" recordname="reference.spelldata.spikegrowth@DD PHB Deluxe"><b>Spell: </b>3rd - Spike Growth</link>
+						<link class="reference_spell" recordname="reference.spelldata.lightningbolt@DD PHB Deluxe"><b>Spell: </b>5th - Lightning Bolt</link>
+						<link class="reference_spell" recordname="reference.spelldata.meldintostone@DD PHB Deluxe"><b>Spell: </b>5th - Meld into Stone</link>
+						<link class="reference_spell" recordname="reference.spelldata.stoneshape@DD PHB Deluxe"><b>Spell: </b>7th - Stone Shape</link>
+						<link class="reference_spell" recordname="reference.spelldata.stoneskin@DD PHB Deluxe"><b>Spell: </b>7th - Stoneskin</link>
+						<link class="reference_spell" recordname="reference.spelldata.passwall@DD PHB Deluxe"><b>Spell: </b>9th - Passwall</link>
+						<link class="reference_spell" recordname="reference.spelldata.wallofstone@DD PHB Deluxe"><b>Spell: </b>9th - Wall of Stone</link>
+					</linklist>
+					<h>Swamp</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.darkness@DD PHB Deluxe"><b>Spell: </b>3rd - Darkness</link>
+						<link class="reference_spell" recordname="reference.spelldata.melf_sacidarrow@DD PHB Deluxe"><b>Spell: </b>3rd - Melf's Acid Arrow</link>
+						<link class="reference_spell" recordname="reference.spelldata.waterwalk@DD PHB Deluxe"><b>Spell: </b>5th - Water Walk</link>
+						<link class="reference_spell" recordname="reference.spelldata.stinkingcloud@DD PHB Deluxe"><b>Spell: </b>5th - Stinking Cloud</link>
+						<link class="reference_spell" recordname="reference.spelldata.freedomofmovement@DD PHB Deluxe"><b>Spell: </b>7th - Freedom of Movement</link>
+						<link class="reference_spell" recordname="reference.spelldata.locatecreature@DD PHB Deluxe"><b>Spell: </b>7th - Locate Creature</link>
+						<link class="reference_spell" recordname="reference.spelldata.insectplague@DD PHB Deluxe"><b>Spell: </b>9th - Insect Plague</link>
+						<link class="reference_spell" recordname="reference.spelldata.scrying@DD PHB Deluxe"><b>Spell: </b>9th - Scrying</link>
+					</linklist>
+					<h>Underdark</h>
+					<p><b>Druid Level - Spell</b></p>
+					<linklist>
+						<link class="reference_spell" recordname="reference.spelldata.spiderclimb@DD PHB Deluxe"><b>Spell: </b>3rd - Spider Climb</link>
+						<link class="reference_spell" recordname="reference.spelldata.web@DD PHB Deluxe"><b>Spell: </b>3rd - Web</link>
+						<link class="reference_spell" recordname="reference.spelldata.gaseousform@DD PHB Deluxe"><b>Spell: </b>5th - Gaseous Form</link>
+						<link class="reference_spell" recordname="reference.spelldata.stinkingcloud@DD PHB Deluxe"><b>Spell: </b>5th - Stinking Cloud</link>
+						<link class="reference_spell" recordname="reference.spelldata.greaterinvisibility@DD PHB Deluxe"><b>Spell: </b>7th - Greater Invisibility</link>
+						<link class="reference_spell" recordname="reference.spelldata.stoneshape@DD PHB Deluxe"><b>Spell: </b>7th - Stone Shape</link>
+						<link class="reference_spell" recordname="reference.spelldata.cloudkill@DD PHB Deluxe"><b>Spell: </b>9th - Cloudkill</link>
+						<link class="reference_spell" recordname="reference.spelldata.insectplague@DD PHB Deluxe"><b>Spell: </b>9th - Insect Plague</link>
+					</linklist>
+				</text>
+			</id-00008>
+			<id-00009>
+				<level type="number">4</level>
+				<locked type="number">1</locked>
+				<name type="string">Ability Score Improvement</name>
+				<source type="string">Druid</source>
+				<text type="formattedtext">
+					<p>When you reach 4th level, and again at 8th, 12th, 16th, and 19th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.</p>
+				</text>
+			</id-00009>
+		</featurelist>
+		<gender type="string">Male</gender>
+		<hero type="number">0</hero>
+		<hp>
+			<adjust type="number">0</adjust>
+			<base type="number">38</base>
+			<deathsavefail type="number">3</deathsavefail>
+			<deathsavesuccess type="number">0</deathsavesuccess>
+			<temporary type="number">0</temporary>
+			<total type="number">38</total>
+			<wounds type="number">38</wounds>
+		</hp>
+		<initiative>
+			<misc type="number">0</misc>
+			<temporary type="number">2</temporary>
+			<total type="number">4</total>
+		</initiative>
+		<inventorylist>
+			<id-00001>
+				<carried type="number">2</carried>
+				<cost type="string">1 sp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d4 bludgeoning</damage>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Club</name>
+				<properties type="string">Light</properties>
+				<subtype type="string">Simple Melee Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">2</weight>
+			</id-00001>
+			<id-00002>
+				<ac type="number">2</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">10 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<linklist>
+						<link class="imagewindow" recordname="image.id-02104">medium_shield</link>
+					</linklist>
+					<p>A shield is made from wood an metal and is carried in one hand. Wielding this shield increases your Armor Class by 2. You can benefit from only one shield at a time.</p>
+				</description>
+				<dexbonus type="string">-</dexbonus>
+				<effectlist>
+					<id-00001>
+						<ability_modifier type="number">0</ability_modifier>
+						<actiononly type="number">0</actiononly>
+						<durdice type="dice"></durdice>
+						<durmod type="number">0</durmod>
+						<effect type="string">CHECK: -2, strength, dexterity</effect>
+						<effect_description type="string">[CHECK: -2, strength, dexterity]</effect_description>
+						<misc_modifier type="number">0</misc_modifier>
+						<name type="string">Medium Shield</name>
+						<save_modifier type="number">0</save_modifier>
+						<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+					</id-00001>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Medium Shield</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Shield</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">10</weight>
+			</id-00002>
+			<id-00003>
+				<ac type="number">13</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">2</carried>
+				<cost type="string">15 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<linklist>
+						<link class="imagewindow" recordname="image.id-02102">hide_armor</link>
+					</linklist>
+					<p>Medium armor offers more protection than light armor, but it also impairs movement more. If you wear medium armor, you add your Dexterity modifier, to a maximum of +2, to the base number from your armor type to determine your Armor Class.</p>
+					<p>This crude armor consists of thick furs and pelts. It is commonly worn by barbarian tribes, evil humanoids, and other folk who lack access to the tools and materials needed to create better armor.</p>
+				</description>
+				<dexbonus type="string">Yes</dexbonus>
+				<effectlist>
+					<id-00001>
+						<ability_modifier type="number">0</ability_modifier>
+						<actiononly type="number">0</actiononly>
+						<durdice type="dice"></durdice>
+						<durmod type="number">0</durmod>
+						<effect type="string">CHECK: -1, strength, dexterity</effect>
+						<effect_description type="string">[CHECK: -1, strength, dexterity] visibility [show]</effect_description>
+						<misc_modifier type="number">0</misc_modifier>
+						<name type="string">Hide armor</name>
+						<save_modifier type="number">0</save_modifier>
+						<susceptiblity_modifier type="number">0</susceptiblity_modifier>
+						<visibility type="string">show</visibility>
+					</id-00001>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Hide armor</name>
+				<stealth type="string">-</stealth>
+				<strength type="string">-</strength>
+				<subtype type="string">Medium Armor</subtype>
+				<type type="string">Armor</type>
+				<weight type="number">12</weight>
+			</id-00003>
+			<id-00004>
+				<carried type="number">1</carried>
+				<cost type="string">1 gp</cost>
+				<count type="number">1</count>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Bedroll</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">4</weight>
+			</id-00004>
+			<id-00005>
+				<carried type="number">1</carried>
+				<cost type="string">2 sp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p></p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Waterskin</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">5</weight>
+			</id-00005>
+			<id-00006>
+				<carried type="number">2</carried>
+				<cost type="string">1 sp</cost>
+				<count type="number">1</count>
+				<damage type="string">1d4 bludgeoning</damage>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Sling</name>
+				<properties type="string">Ammunition (range 30/120)</properties>
+				<subtype type="string">Simple Ranged Weapons</subtype>
+				<type type="string">Weapon</type>
+				<weight type="number">0</weight>
+			</id-00006>
+			<id-00007>
+				<carried type="number">1</carried>
+				<cost type="string">25 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>As an action, you can splash the contents of this flask onto a creature within 5 feet of you or throw it up to 20 feet, shattering it on impact. In either case, make a ranged attack against a target creature, treating the holy water as an improvised weapon. If the target is a fiend or undead, it takes 2d6 radiant damage. A cleric or paladin may create holy water by performing a special ritual. The ritual takes 1 hour to perform, uses 25 gp worth of powdered silver, and requires the caster to expend a 1st-level spell slot.</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Holy Water (Flask)</name>
+				<subtype type="string">Standard</subtype>
+				<type type="string">Adventuring Gear</type>
+				<weight type="number">1</weight>
+			</id-00007>
+			<id-00008>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<name type="string">Lo que cuesten los materiales de druida pendiente restar (restado 1gppero no se cuantno es)</name>
+				<weight type="number">0</weight>
+			</id-00008>
+			<id-00009>
+				<carried type="number">1</carried>
+				<cost type="string">5 gp</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>This kit contains a variety of instruments such as clippers, mortar and pestle, and pouches and vials used by herbalists to create remedies and potions. Proficiency with this kit lets you add your proficiency bonus to any ability checks you make to identify or apply herbs. Also, proficiency with this kit is required to create antitoxin and potions of healing.</p>
+				</description>
+				<isidentified type="number">1</isidentified>
+				<locked type="number">1</locked>
+				<name type="string">Herbalism Kit</name>
+				<subtype type="string">Kits / Sets</subtype>
+				<type type="string">Tools</type>
+				<weight type="number">3</weight>
+			</id-00009>
+			<id-00010>
+				<carried type="number">1</carried>
+				<count type="number">1</count>
+				<name type="string">Hypsoop Dew: Darkvision (30 ft.) for 1hour</name>
+				<weight type="number">0</weight>
+			</id-00010>
+			<id-00011>
+				<ac type="number">0</ac>
+				<bonus type="number">0</bonus>
+				<carried type="number">1</carried>
+				<cost type="string">5</cost>
+				<count type="number">1</count>
+				<description type="formattedtext">
+					<p>+1 vs cold climates</p>
+				</description>
+				<effectlist>
+				</effectlist>
+				<locked type="number">1</locked>
+				<name type="string">Ropas de invierno</name>
+				<weight type="number">2</weight>
+			</id-00011>
+		</inventorylist>
+		<languagelist>
+			<id-00001>
+				<name type="string">Common</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Gnomish</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Deep Speech</name>
+			</id-00003>
+			<id-00004>
+				<name type="string">Sylvan</name>
+			</id-00004>
+			<id-00005>
+				<name type="string">Elvish</name>
+			</id-00005>
+		</languagelist>
+		<level type="number">5</level>
+		<name type="string">Bogner</name>
+		<notes type="string">Wis + lvl = hechizos aprendidos\nHit points: 8+4+2+6\nMax CR 1/2 wild shape, no flying speed, Sample Crocodile\nMountain, Hill -&gt; CR 1/2: Giant Goat\nHill -&gt; CR 1/4: Giant wolf spider, giant badger, Wolf, Elk\nCow, Draft horse, Giant Badger, Giant Poison Snake, Giant Wolf Spider, Phanter, Riding Horse, Wolf\nCR 1/8: Giant Crab\nCR 0: Cat, Crab, Rat, Deer, Frog, Hyena,</notes>
+		<oldReach type="number">0</oldReach>
+		<oldSize type="number">0</oldSize>
+		<pc_label_hero type="string">Hero Point</pc_label_hero>
+		<perception type="number">16</perception>
+		<perceptionmodifier type="number">0</perceptionmodifier>
+		<powergroup>
+			<id-00001>
+				<atkprof type="number">1</atkprof>
+				<castertype type="string">memorization</castertype>
+				<name type="string">Spells</name>
+				<prepared type="number">3</prepared>
+				<saveprof type="number">1</saveprof>
+				<stat type="string">wisdom</stat>
+			</id-00001>
+			<id-00002>
+				<name type="string">Spells (Mountain)</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">ells</name>
+			</id-00003>
+			<id-00005>
+				<atkprof type="number">1</atkprof>
+				<name type="string">Druid powers</name>
+				<saveprof type="number">1</saveprof>
+			</id-00005>
+			<id-00007>
+				<atkprof type="number">1</atkprof>
+				<name type="string">Spells (Cantrips)</name>
+				<saveprof type="number">1</saveprof>
+				<uses type="number">12</uses>
+			</id-00007>
+			<id-00008>
+				<atkprof type="number">1</atkprof>
+				<name type="string">Spells (Level 2) Mountain</name>
+				<saveprof type="number">1</saveprof>
+			</id-00008>
+			<id-00010>
+				<atkmod type="number">0</atkmod>
+				<atkprof type="number">1</atkprof>
+				<name type="string">Wildshape\n</name>
+				<prepared type="number">0</prepared>
+				<savemod type="number">0</savemod>
+				<saveprof type="number">1</saveprof>
+				<uses type="number">0</uses>
+			</id-00010>
+		</powergroup>
+		<powermeta>
+			<pactmagicslots1>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots1>
+			<pactmagicslots2>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots2>
+			<pactmagicslots3>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots3>
+			<pactmagicslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots4>
+			<pactmagicslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots5>
+			<pactmagicslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots6>
+			<pactmagicslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots7>
+			<pactmagicslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots8>
+			<pactmagicslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</pactmagicslots9>
+			<spellslots1>
+				<max type="number">4</max>
+				<used type="number">1</used>
+			</spellslots1>
+			<spellslots2>
+				<max type="number">3</max>
+				<used type="number">3</used>
+			</spellslots2>
+			<spellslots3>
+				<max type="number">2</max>
+				<used type="number">2</used>
+			</spellslots3>
+			<spellslots4>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots4>
+			<spellslots5>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots5>
+			<spellslots6>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots6>
+			<spellslots7>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots7>
+			<spellslots8>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots8>
+			<spellslots9>
+				<max type="number">0</max>
+				<used type="number">0</used>
+			</spellslots9>
+		</powermeta>
+		<powermode type="string">standard</powermode>
+		<powers>
+			<id-00001>
+				<actions>
+					<id-00001>
+						<onmissdamage type="string">half</onmissdamage>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">constitution</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d10,d10</dice>
+								<type type="string">radiant</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00002>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<label type="string">Moonbeam; (C)</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (several seeds of any moonseed plant and a piece of opalescent feldspar)</components>
+				<description type="formattedtext">
+					<p>A silvery beam of pale light shines down in a 5-foot radius, 40-foot-high cylinder centered on a point within range. Until the spell ends, dim light fills the cylinder. When a creature enters the spell's area for the first time on a turn or starts its turn there, it is engulfed in ghostly flames that cause searing pain, and it must make a Constitution saving throw. It takes 2d10 radiant damage on a failed save, or half as much damage on a successful one.</p>
+					<p>A shapechanger makes its saving throw with disadvantage. If it fails, it also instantly reverts to its original form and can't assume a different form until it leaves the spell's light.</p>
+					<p>On each of your turns after you cast this spell, you can use an action to move the beam up to 60 feet in any direction.</p>
+					<p><b>At Higher Levels. </b>when you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d10 for each slot level above 2nd.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Moonbeam</name>
+				<prepared type="number">1</prepared>
+				<range type="string">120 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Druid</source>
+			</id-00001>
+			<id-00002>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Spider Climb; (C)</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a drop of bitumen and a spider)</components>
+				<description type="formattedtext">
+					<p>Until the spell ends, one willing creature you touch gains the ability to move up, down, and across vertical surfaces and upside down along ceilings, while leaving its hands free. The target also gains a climbing speed equal to its walking speed.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 hour</duration>
+				<group type="string">Spells (Level 2) Mountain</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Spider Climb</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Touch</range>
+				<school type="string">Transmutation</school>
+				<source type="string">Druid Forest Circle, Druid Mountain Circle, Druid Underdark Circle, Eldritch Knight, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00002>
+			<id-00003>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Wildshape; SName:GiantGoat; SHealth:19hp; SAC:11; SSTR:17; SDEX:11; SCON:12; SSize:L; NOTE: Speed: 40ft, Charge, Sure-Footed, passive Perception 11</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">effect</type>
+					</id-00001>
+					<id-00002>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">5</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">2</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">cast</type>
+					</id-00002>
+					<id-00003>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Ram Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">3</bonus>
+								<dice type="dice">d4,d4</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">bludgeoning</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">3</order>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">damage</type>
+					</id-00003>
+					<id-00004>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">5</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">4</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">cast</type>
+					</id-00004>
+					<id-00005>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Charge + Ram Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">3</bonus>
+								<dice type="dice">d4,d4,d4,d4</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">bludgeoning</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">5</order>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">damage</type>
+					</id-00005>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 Action</castingtime>
+				<description type="formattedtext">
+					<p><b>Primary Useage: Utility</b></p>
+					<frame>Giant Goat: CR 1/2, HP:19, AC: 13, Size: Large, 1 Attack: +5, STR:17, DEX:11, CON:12, Type: Land Animal, Speed(40ft), Charge, Sure Footed, passive Perception 11</frame>
+					<linklist>
+						<link class="npc" recordname="reference.npcdata.giantgoat@DD MM Monster Manual">Giant Goat</link>
+					</linklist>
+					<p><b><u>Charge: </u></b>Move 20ft straight and succeed in ram attack, attack does an additional 2d4 dmg and target must succeed DC 13 STR save or be knocked prone</p>
+					<p><b><u>Sure-Footed: </u></b>adv on STR and DEX saves against being knocked prone</p>
+				</description>
+				<duration type="string">1 Hour / 2 Druid Levels</duration>
+				<group type="string">Wildshape\n</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wildshape: CR 1/2 Giant Goat</name>
+				<prepared type="number">0</prepared>
+				<range type="string">[SELF]</range>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">CR 1/2 Speed(40ft), Charge, Sure Footed</shortdescription>
+				<source type="string">Druid</source>
+			</id-00003>
+			<id-00004>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">strength</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Restrained; (C)</label>
+						<order type="number">2</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>Grasping weeds and vines sprout from the ground in a 20-foot square starting from a point within range. For the duration, these plants turn the ground in the area into difficult terrain.</p>
+					<p>A creature in the area when you cast the spell must succeed on a Strength saving throw or be restrained by the entangling plants until the spell ends. A creature restrained by the plants can use its action to make a Strength check against your spell save DC. On a success, it frees itself.</p>
+					<p>When the spell ends, the conjured plants wilt away.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Entangle</name>
+				<prepared type="number">1</prepared>
+				<range type="string">90 feet</range>
+				<school type="string">Conjuration</school>
+				<source type="string">Druid</source>
+			</id-00004>
+			<id-00005>
+				<actions>
+					<id-00001>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">dexterity</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">GRANTADVATK; (C)</label>
+						<order type="number">2</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00002>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">minute</durunit>
+						<label type="string">Faerie Fire; (C)</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V</components>
+				<description type="formattedtext">
+					<p>Each object in a 20-foot cube within range is outlined in blue, green, or violet light (your choice). Any creature in the area when the spell is cast is also outlined in light if it fails a Dexterity saving throw. For the duration, objects and affected creatures shed dim light in a 10-foot radius. Any attack roll against an affected creature or object has advantage if the attacker can see it, and the affected creature or object can't benefit from being invisible.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Faerie Fire</name>
+				<prepared type="number">1</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Evocation</school>
+				<source type="string">Bard, Cleric Light Domain, Druid, Warlock (Archfey)</source>
+			</id-00005>
+			<id-00006>
+				<actions>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Wildshape; SName:Mastiff; SHealth:5hp; SAC:14; SSTR:13; SDEX:14; SCON:12; SSize:M; SKILL:3,perception; NOTE: Speed: 40 ft, Keen Hearing and Smell, Bite can knock prone, passive Perception 13</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+					<id-00004>
+						<durmod type="number">0</durmod>
+						<label type="string">Prone; Source: Mastiff</label>
+						<order type="number">6</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00004>
+					<id-00007>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">3</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">4</order>
+						<savedcbase type="string">fixed</savedcbase>
+						<savedcmod type="number">11</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<savetype type="string">strength</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00007>
+					<id-00008>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Bite Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">1</bonus>
+								<dice type="dice">d6</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">piercing</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">5</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00008>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 Action</castingtime>
+				<description type="formattedtext">
+					<p><b>Primary Useage: Utility</b></p>
+					<frame>HP:5, AC: 12, Size: Large, 1 Attack: +3 &amp; DC11 STR or knocked prone, STR:13, DEX:14, CON:12, Type: Land Animal, Speed(40ft), Perception(+3), Keen Hearing and Smell</frame>
+					<linklist>
+						<link class="npc" recordname="reference.npcdata.mastiff@DD MM Monster Manual">Mastiff</link>
+					</linklist>
+					<p><b><u>Keen Hearing and Smell: </u></b>advantage on &quot;hearing&quot; or &quot;smell&quot; perception checks</p>
+					<p><b><u>Bite Attack: </u></b>melee attack: +3 to hit, 1d6+1 dmg, DC 11 STR save or knocked prone</p>
+				</description>
+				<duration type="string">1 Hour / 2 Druid Levels</duration>
+				<group type="string">Wildshape\n</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wildshape: CR 1/8 Mastiff</name>
+				<prepared type="number">0</prepared>
+				<range type="string">[SELF]</range>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">CR 1/8 Speed(40ft), Perception(+3), Keen Hearing and Smell</shortdescription>
+				<source type="string">Druid</source>
+			</id-00006>
+			<id-00007>
+				<actions>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Wildshape; SName:Mule; SHealth:11hp; SAC:12; SSTR:14; SDEX:10; SCON:13; SSize:M; NOTE: Speed: 40 ft, Beast of Burden, Sure-Footed, passive Perception 10</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+					<id-00007>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">2</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">4</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00007>
+					<id-00008>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Hooves Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">2</bonus>
+								<dice type="dice">d4</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">bludgeoning</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">5</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00008>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 Action</castingtime>
+				<description type="formattedtext">
+					<p><b>Primary Useage: Utility - carrier</b></p>
+					<frame>HP:11, AC: 10, Size: Medium, 1 Attack: +2, STR:14, DEX:10, CON:13, Type: Land Animal, Speed(40ft), Beast of Burden, Sure-Footed</frame>
+					<linklist>
+						<link class="npc" recordname="reference.npcdata.mule@DD MM Monster Manual">Mule</link>
+					</linklist>
+					<p><b><u>Beast of Burden: </u></b>Large creature to determine carry weight</p>
+					<p><b><u>Sure-Footed: </u></b>adv on STR and DEX saves against being knocked prone</p>
+				</description>
+				<duration type="string">1 Hour / 2 Druid Levels</duration>
+				<group type="string">Wildshape\n</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wildshape: CR 1/8 Mule</name>
+				<prepared type="number">0</prepared>
+				<range type="string">[SELF]</range>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">CR 1/8, Speed(40ft), Beast of Burden, Sure-Footed</shortdescription>
+				<source type="string">Druid</source>
+			</id-00007>
+			<id-00008>
+				<actions>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Wildshape; SName:AxeBeak; SHealth:19hp; SAC:13; SSTR:14; SDEX:12; SCON:12; SSize:L; NOTE: Speed: 50 ft, passive Perception 10</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+					<id-00007>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">4</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">4</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00007>
+					<id-00008>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Beak Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">2</bonus>
+								<dice type="dice">d8</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">slashing</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">5</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00008>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 Action</castingtime>
+				<description type="formattedtext">
+					<p><b>Primary Useage: Utility</b></p>
+					<frame>Axe Beak: CR 1/4, HP:19, AC: 11, Size: Large, 1 Attack: +4, STR:14, DEX:12, CON:12, Type: Land Animal, Speed(50ft), passive Perception 10</frame>
+					<linklist>
+						<link class="npc" recordname="reference.npcdata.axebeak@DD MM Monster Manual">Axe Beak</link>
+					</linklist>
+				</description>
+				<duration type="string">1 Hour / 2 Druid Levels</duration>
+				<group type="string">Wildshape\n</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wildshape: CR 1/4 Axe Beak</name>
+				<prepared type="number">0</prepared>
+				<range type="string">[SELF]</range>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">CR 1/4 Speed(50ft)</shortdescription>
+				<source type="string">Druid</source>
+			</id-00008>
+			<id-00009>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Guidance; (C)</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You touch one willing creature. Once before the spell ends, the target can roll a d4 and add the number rolled to one ability check of its choice. It can roll the die before or after making the ability check. The spell then ends.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Guidance</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Divination</school>
+				<source type="string">Cleric, Druid</source>
+			</id-00009>
+			<id-00010>
+				<actions>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Wildshape; SName:Boar; SHealth:11hp; SAC:13; SSTR:13; SDEX:11; SCON:12; SSize:M; NOTE: Speed: 40 ft, Charge, Relentless, passive Perception 9</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+					<id-00004>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">3</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">6</order>
+						<savedcbase type="string">fixed</savedcbase>
+						<savedcmod type="number">11</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<savetype type="string">strength</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00004>
+					<id-00005>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Charge Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">1</bonus>
+								<dice type="dice">d6,d6</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">slashing</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">7</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00005>
+					<id-00007>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">3</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">4</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00007>
+					<id-00008>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Tusk Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">1</bonus>
+								<dice type="dice">d6</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">slashng</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">5</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00008>
+					<id-00010>
+						<durmod type="number">0</durmod>
+						<label type="string">Prone; Source: Boar</label>
+						<order type="number">8</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00010>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 Action</castingtime>
+				<description type="formattedtext">
+					<p><b>Primary Useage: Charger</b></p>
+					<frame>Boar: CR 1/4, HP:11, AC: 11, Size: Medium, 1 Attack: +3, STR:13, DEX:11, CON:12, Type: Land Animal, Speed(40ft), Charge, Relentless, passive Perception 9</frame>
+					<linklist>
+						<link class="npc" recordname="reference.npcdata.boar@DD MM Monster Manual">Boar</link>
+					</linklist>
+					<p><b><u>Charge: </u></b>Move 20ft straight and succeed in tusk attack, attack does an additional 1d6 dmg and target must succeed DC 11 STR save or be knocked prone</p>
+					<p><b><u>Relentless (Recharges after short or long rest): </u></b>if 7 dmg or less taken and reduced to 0 HP, reduced to 1 HP instead.</p>
+				</description>
+				<duration type="string">1 Hour / 2 Druid Levels</duration>
+				<group type="string">Wildshape\n</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wildshape: CR 1/4 Boar</name>
+				<prepared type="number">0</prepared>
+				<range type="string">[SELF]</range>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">CR 1/4 Speed(40ft), Charge, Relentless</shortdescription>
+				<source type="string">Druid</source>
+			</id-00010>
+			<id-00011>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Pass without Trace; (C)</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (ashes from a burned leaf of mistletoe and a sprig of spruce)</components>
+				<description type="formattedtext">
+					<p>A veil of shadows and silence radiates from you, masking you and your companions from detection. For the duration, each creature you choose within 30 feet of you (including you) has a +10 bonus to Dexterity (Stealth) checks and can't be tracked except by magical means. A creature that receives this bonus leaves behind no tracks or other traces of its passage.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Pass without Trace</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Self</range>
+				<school type="string">Abjuration</school>
+				<source type="string">Cleric Trickery Domain, Druid, Druid Grassland Circle, Monk, Ranger</source>
+			</id-00011>
+			<id-00012>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You touch a creature and can end either one disease or one condition afflicting it. The condition can be blinded, deafened, paralyzed, or poisoned.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">ells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Lesser Restoration</name>
+				<prepared type="number">1</prepared>
+				<range type="string">Touch</range>
+				<school type="string">Abjuration</school>
+				<source type="string">Bard, Cleric, Cleric Life Domain, Druid, Paladin, Ranger</source>
+			</id-00012>
+			<id-00013>
+				<actions>
+					<id-00001>
+						<heallist>
+							<id-00001>
+								<dice type="dice">d4</dice>
+								<stat type="string">base</stat>
+							</id-00001>
+						</heallist>
+						<order type="number">1</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">heal</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V</components>
+				<description type="formattedtext">
+					<p>A creature of your choice that you can see within range regains hit points equal to 1d4 + your spellcasting ability modifier. This spell has no effect on undead or constructs.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 2nd level or higher, the healing increases by 1d4 for each slot level above 1st.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Healing Word</name>
+				<prepared type="number">1</prepared>
+				<range type="string">60 feet</range>
+				<school type="string">Evocation</school>
+				<source type="string">Bard, Cleric, Druid</source>
+			</id-00013>
+			<id-00014>
+				<actions>
+					<id-00001>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d8,d8</dice>
+								<type type="string">fire</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">1</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00001>
+					<id-00002>
+						<order type="number">2</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">constitution</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00002>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<label type="string">Heat Metal; (C)</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a piece of iron and a flame)</components>
+				<description type="formattedtext">
+					<p>Choose a manufactured metal object, such as a metal weapon or a suit of heavy or medium metal armor, that you can see within range. You cause the object to glow red-hot. Any creature in physical contact with the object takes 2d8 fire damage when you cast the spell. Until the spell ends, you can use a bonus action on each of your subsequent turns to cause this damage again.</p>
+					<p>If a creature is holding or wearing the object and takes the damage from it, the creature must succeed on a Constitution saving throw or drop the object if it can. If it doesn't drop the object, it has disadvantage on attack rolls and ability checks until the start of your next turn.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d8 for each slot level above 2nd.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Heat Metal</name>
+				<prepared type="number">0</prepared>
+				<range type="string">60 feet</range>
+				<school type="string">Transmutation</school>
+				<source type="string">Bard, Druid</source>
+			</id-00014>
+			<id-00015>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a sprig of mistletoe)</components>
+				<description type="formattedtext">
+					<p>Up to ten berries appear in your hand and are infused with magic for the duration. A creature can use its action to eat one berry. Eating a berry restores 1 hit point, and the berry provides enough nourishment to sustain a creature for one day.</p>
+					<p>The berries lose their potency if they have not been consumed within 24 hours of the casting of this spell.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">1</level>
+				<locked type="number">1</locked>
+				<name type="string">Goodberry</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Touch</range>
+				<school type="string">Transmutation</school>
+				<source type="string">Druid, Ranger</source>
+			</id-00015>
+			<id-00016>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V, S, M (mistletoe, a shamrock leaf, and a club or quarterstaff)</components>
+				<description type="formattedtext">
+					<p>The wood of a club or quarterstaff you are holding is imbued with nature's power. For the duration, you can use your spellcasting ability instead of Strength for the attack and damage rolls of melee attacks using that weapon, and the weapon's damage die becomes a d8. The weapon also becomes magical, if it isn't already. The spell ends if you cast it again or if you let go of the weapon.</p>
+				</description>
+				<duration type="string">1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Shillelagh</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Touch</range>
+				<school type="string">Transmutation</school>
+				<source type="string">Druid</source>
+			</id-00016>
+			<id-00017>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>Whispering to the spirits of nature, you create one of the following effects within range:</p>
+					<list>
+						<li>You create a tiny, harmless sensory effect that predicts what the weather will be at your location for the next 24 hours. The effect might manifest as a golden orb for clear skies, a cloud for rain, falling snowflakes for snow, and so on. This effect persists for 1 round.</li>
+						<li>You instantly make a flower blossom, a seed pod open, or a leaf bud bloom.</li>
+						<li>You create an instantaneous, harmless sensory effect, such as falling leaves, a puff of wind, the sound of a small animal, or the faint odor of skunk. The effect must fit in a -foot cube.</li>
+						<li>You instantly light or snuff out a candle, a torch, or a small campfire.</li>
+					</list>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Druidcraft</name>
+				<prepared type="number">0</prepared>
+				<range type="string">30 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Druid</source>
+			</id-00017>
+			<id-00018>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<group type="string">Druid powers</group>
+				<level type="number">0</level>
+				<name type="string">Wild Shape</name>
+				<prepared type="number">2</prepared>
+				<usesperiod type="string">enc</usesperiod>
+			</id-00018>
+			<id-00019>
+				<actions>
+					<id-00001>
+						<atktype type="string">ranged</atktype>
+						<order type="number">1</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d6</dice>
+								<stat type="string">base</stat>
+								<type type="string">bludgeoning,magic</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 bonus action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You touch one to three pebbles and imbue them with magic. You or someone else can make a ranged spell attack with one of the pebbles by throwing it or hurling it with a sling. If thrown, a pebble has a range of 60 feet. If someone else attacks with a pebble, that attacker adds your spellcasting ability modifier, not the attacker's, to the attack roll. On a hit, the target takes bludgeoning damage equal to 1d6 + your spellcasting ability modifier. Whether the attack hits or misses, the spell then ends on the stone.</p>
+					<p>If you cast this spell again, the spell ends on any pebbles still affected by your previous casting.</p>
+				</description>
+				<duration type="string">1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Magic Stone</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Druid, Warlock</source>
+			</id-00019>
+			<id-00020>
+				<actions>
+				</actions>
+				<cast type="number">1</cast>
+				<group type="string">Spells (Cantrips)</group>
+				<level type="number">0</level>
+				<name type="string">Cantrip</name>
+				<prepared type="number">12</prepared>
+			</id-00020>
+			<id-00021>
+				<actions>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Wildshape; SName:Elk; SHealth:13hp; SAC:12; SSTR:16; SDEX:10; SCON:12; SSize:L; NOTE: Speed: 50 ft, Charge, passive Perception 10</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+					<id-00004>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">5</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">6</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00004>
+					<id-00005>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Ram Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">3</bonus>
+								<dice type="dice">d6</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">bludgeoning</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">7</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00005>
+					<id-00006>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">5</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">8</order>
+						<savedcbase type="string">fixed</savedcbase>
+						<savedcmod type="number">13</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<savetype type="string">strength</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00006>
+					<id-00007>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">5</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">4</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00007>
+					<id-00008>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Hooves Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">3</bonus>
+								<dice type="dice">d4,d4</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">bludgeoning</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">5</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00008>
+					<id-00009>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Charge + Ram</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">3</bonus>
+								<dice type="dice">d6,d6,d6</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">bludgeoning</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">9</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00009>
+					<id-00010>
+						<durmod type="number">0</durmod>
+						<label type="string">Prone; Source: Elk</label>
+						<order type="number">10</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00010>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 Action</castingtime>
+				<description type="formattedtext">
+					<p><b>Primary Useage: Charger</b></p>
+					<frame>Elk: CR 1/4, HP:13, AC: 10, Size: Large, 1 Attack: +5, STR:16, DEX:10, CON:12, Type: Land Animal, Speed(50ft), Charge, Ram, Hooves, Passive Perception 10</frame>
+					<linklist>
+						<link class="npc" recordname="reference.npcdata.elk@DD MM Monster Manual">Elk</link>
+					</linklist>
+					<p><b><u>Charge: </u></b>Move 20ft straight and succeed in ram attack, attack does an additional 2d6 dmg and target must succeed DC 13 STR save or be knocked prone</p>
+				</description>
+				<duration type="string">1 Hour / 2 Druid Levels</duration>
+				<group type="string">Wildshape\n</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wildshape: CR 1/4 Elk</name>
+				<prepared type="number">0</prepared>
+				<range type="string">[SELF]</range>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">CR 1/4 Speed(50ft), Charge, Ram, Hooves</shortdescription>
+				<source type="string">Druid</source>
+			</id-00021>
+			<id-00022>
+				<actions>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Wildshape; SName:Panther; SHealth:13hp; SAC:14; SSTR:14; SDEX:15; SCON:10; SSize:M; SKILL:6,stealth; SKILL:4,perception NOTE: Speed: 50 ft, Climb: 40 ft, Keen Smell, Pounce, passive Perception 14</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+					<id-00004>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Claw Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">2</bonus>
+								<dice type="dice">d4</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">slashing</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">6</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00004>
+					<id-00005>
+						<atkmod type="number">0</atkmod>
+						<atkprof type="number">1</atkprof>
+						<order type="number">7</order>
+						<savedcbase type="string">fixed</savedcbase>
+						<savedcmod type="number">12</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<savetype type="string">strength</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00005>
+					<id-00006>
+						<durmod type="number">0</durmod>
+						<label type="string">Prone; Source: Panther</label>
+						<order type="number">8</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00006>
+					<id-00007>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">4</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">4</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00007>
+					<id-00011>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">4</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">9</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00011>
+					<id-00012>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Bite Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">2</bonus>
+								<dice type="dice">d6</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">piercing</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">10</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00012>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 Action</castingtime>
+				<description type="formattedtext">
+					<p><b>Primary Useage: Stealth Charger</b></p>
+					<frame>Panther: CR 1/4, HP:13, AC: 12, Size: Medium, 1 Attack: +42, STR:14, DEX:15, CON:10, Type: Land Animal, Speed(50), Climb(40ft), Keen Smell, Pounce, Perception(+4), Stealth(+6), passive Perception 14</frame>
+					<linklist>
+						<link class="npc" recordname="reference.npcdata.panther@DD MM Monster Manual">Panther</link>
+					</linklist>
+					<p><b><u>Keen Smell: </u></b>advantage on &quot;smell&quot; perception checks</p>
+					<p><b><u>Pounce: </u></b>Move 20ft straight and succeed in a claw attack, target must succeed DC 12 STR save or be knocked prone. If the target is prone, can make one bite attack as a bonus action</p>
+				</description>
+				<duration type="string">1 Hour / 2 Druid Levels</duration>
+				<group type="string">Wildshape\n</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wildshape: CR 1/4 Panther</name>
+				<prepared type="number">0</prepared>
+				<range type="string">[SELF]</range>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">CR 1/4 Speed(50), Climb(40ft), Keen Smell, Pounce, Perception(+4), Stealth(+6)</shortdescription>
+				<source type="string">Druid</source>
+			</id-00022>
+			<id-00023>
+				<actions>
+					<id-00001>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d4,d4</dice>
+								<type type="string">piercing</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">1</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00001>
+					<id-00002>
+						<durmod type="number">10</durmod>
+						<label type="string">Spike Growth; (C)</label>
+						<order type="number">2</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (seven sharp thorns or seven small twigs, each sharpened to a point)</components>
+				<description type="formattedtext">
+					<p>The ground in a 20-foot radius centered on a point within range twists and sprouts hard spikes and thorns. The area becomes difficult terrain for the duration. When a creature moves into or within the area, it takes 2d4 piercing damage for every 5 feet it travels. The transformation of the ground is camouflaged to look natural. Any creature that can't see the area at the time the spell is cast must make a Wisdom (Perception) check against your spell save DC to recognize the terrain as hazardous before entering it.</p>
+				</description>
+				<duration type="string">Concentration, up to 10 minutes</duration>
+				<group type="string">Spells (Level 2) Mountain</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Spike Growth</name>
+				<prepared type="number">0</prepared>
+				<range type="string">150 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Cleric Nature Domain, Druid, Druid Arctic Circle, Druid Mountain Circle, Ranger</source>
+			</id-00023>
+			<id-00024>
+				<actions>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Wildshape; SName:GiantWolfSpider; SHealth:11hp; SAC:15; SSTR:12; SDEX:16; SCON:13; SSize:M; SKILL:7,stealth; SKILL:3,perception; NOTE: Speed: 40 ft, Climb: 40 ft, Blindsight: 10 ft, Darkvision: 60 ft, Spider Climb, Web Sense, Web Walker, Poisonous Bite, passive Perception 13</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+					<id-00004>
+						<atkmod type="number">0</atkmod>
+						<atkprof type="number">1</atkprof>
+						<onmissdamage type="string">half</onmissdamage>
+						<order type="number">6</order>
+						<savedcbase type="string">fixed</savedcbase>
+						<savedcmod type="number">11</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<savetype type="string">constitution</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00004>
+					<id-00005>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Poisonous Bite</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">0</bonus>
+								<dice type="dice">d6,d6</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">poison</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">7</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00005>
+					<id-00007>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">3</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">4</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00007>
+					<id-00008>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Bite Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">1</bonus>
+								<dice type="dice">d6</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">piercing</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">5</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00008>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 Action</castingtime>
+				<description type="formattedtext">
+					<p><b>Primary Useage: Utility</b></p>
+					<frame>Giant Wolf Spider: CR 1/4, HP:11, AC: 13, Size: Medium, 1 Attack: +3 poisonous, STR:12, DEX:16, CON:13, Type: Land Animal, Speed(40ft), Climb(40ft), Blindsight(10ft), Darkvision(60ft), Spider Climb, Web Sense, Web Walker, Poisonous, Perception(+3), Stealth(+7), passive Perception 13</frame>
+					<linklist>
+						<link class="npc" recordname="reference.npcdata.giantwolfspider@DD MM Monster Manual">Giant Wolf Spider</link>
+					</linklist>
+					<p><b><u>Spider Climb: </u></b>The spider can climb difficult surfaces, including upside down on ceilings, without needing to make an ability check.</p>
+					<p><b><u>Web Sense: </u></b>While in contact with a web, the spider knows the exact location of any other creature in contact with the same web.</p>
+					<p><b><u>Web Walker: </u></b>The spider ignores movement restrictions caused by webbing.</p>
+					<p><b><u>Bite: </u></b>melee attack: +3 to hit, 1d6+1 dmg, target must make DC 11 con save or take 2d6 poison, half on save. 1/2 on save. If poison reduces target to 0 HP target is stable but poisoned for 1 hour, paralyzed while poisoned even after regaining HPs.</p>
+				</description>
+				<duration type="string">1 Hour / 2 Druid Levels</duration>
+				<group type="string">Wildshape\n</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wildshape: CR 1/4 Giant Wolf Spider</name>
+				<prepared type="number">0</prepared>
+				<range type="string">[SELF]</range>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">CR 1/4 Speed(40ft), Climb(40ft), Blindsight(10ft), Darkvision(60ft), Spider Climb, Web Sense, Web Walker, Poisonous, Perception(+3), Stealth(+7)</shortdescription>
+				<source type="string">Druid</source>
+			</id-00024>
+			<id-00025>
+				<actions>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<durunit type="string">hour</durunit>
+						<label type="string">Wildshape; SName:Wolf; SHealth:11hp; SAC:15; SSTR:12; SDEX:15; SCON:12; SSize:M; SKILL:4,stealth; SKILL:3,perception; NOTE: Speed: 40 ft, Keen Hearing and Smell, Pack Tactics, Bite Attack can knock prone, passive Perception 13</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00003>
+					<id-00004>
+						<atkmod type="number">0</atkmod>
+						<atkprof type="number">1</atkprof>
+						<order type="number">6</order>
+						<savedcbase type="string">fixed</savedcbase>
+						<savedcmod type="number">11</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<savetype type="string">strength</savetype>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00004>
+					<id-00005>
+						<durmod type="number">0</durmod>
+						<label type="string">Prone; Source: Wolf</label>
+						<order type="number">7</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">effect</type>
+					</id-00005>
+					<id-00007>
+						<atkbase type="string">fixed</atkbase>
+						<atkmod type="number">4</atkmod>
+						<atkprof type="number">1</atkprof>
+						<atktype type="string">melee</atktype>
+						<order type="number">4</order>
+						<savedcmod type="number">0</savedcmod>
+						<savedcprof type="number">1</savedcprof>
+						<savemagic type="number">0</savemagic>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">cast</type>
+					</id-00007>
+					<id-00008>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">0</bonus>
+								<dice type="dice"></dice>
+								<statmult type="number">1</statmult>
+								<type type="string">Bite Attack</type>
+							</id-00001>
+							<id-00002>
+								<bonus type="number">2</bonus>
+								<dice type="dice">d4,d4</dice>
+								<statmult type="number">1</statmult>
+								<type type="string">piercing</type>
+							</id-00002>
+						</damagelist>
+						<order type="number">5</order>
+						<tknbutton type="token"></tknbutton>
+						<type type="string">damage</type>
+					</id-00008>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 Action</castingtime>
+				<description type="formattedtext">
+					<p><b>Primary Useage: Attacker</b></p>
+					<frame>Wolf: CR 1/4, HP:11, AC: 13, Size: Medium, 1 Attack: +4, STR:12, DEX:15, CON:12, Type: Land Animal, Speed(40ft), Keen Hearing and smell, Pack Tactics, Perception(+3), Stealth(+4), Can knock target prone on attack, passive Perception 13</frame>
+					<linklist>
+						<link class="npc" recordname="reference.npcdata.wolf@DD MM Monster Manual">Wolf</link>
+					</linklist>
+					<p><b><u>Keen Hearing and Smell: </u></b>advantage on &quot;hearing&quot; or &quot;smell&quot; perception checks</p>
+					<p><b><u>Pack Tactics: </u></b>advantage on attack if an allie is within 5 ft of target</p>
+					<p><b><u>Bite Attack: </u></b>melee attack: +4 to hit, 2d4+2 dmg, target must make DC 11 STR save or be knocked prone</p>
+				</description>
+				<duration type="string">1 Hour / 2 Druid Levels</duration>
+				<group type="string">Wildshape\n</group>
+				<level type="number">0</level>
+				<locked type="number">1</locked>
+				<name type="string">Wildshape: CR 1/4 Wolf</name>
+				<prepared type="number">0</prepared>
+				<range type="string">[SELF]</range>
+				<ritual type="number">0</ritual>
+				<shortdescription type="string">CR 1/4 Speed(40ft), Keen Hearing and smell, Pack Tactics, Perception(+3), Stealth(+4), Can knock target prone on attack</shortdescription>
+				<source type="string">Druid</source>
+			</id-00025>
+			<id-00026>
+				<actions>
+					<id-00001>
+						<onmissdamage type="string">half</onmissdamage>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">dexterity</savetype>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d6,d6,d6,d6,d6,d6,d6,d6</dice>
+								<type type="string">lightning</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">damage</type>
+					</id-00002>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a bit of fur and a rod of amber, crystal, or glass)</components>
+				<description type="formattedtext">
+					<p>A stroke of lightning forming a line 100 feet long and 5 feet wide blasts out from you in a direction you choose. Each creature in the line must make a Dexterity saving throw. A creature takes 8d6 lightning damage on a failed save, or half as much damage on a successful one. The lightning ignites flammable objects in the area that aren't being worn or carried.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells (Mountain)</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Lightning Bolt</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Self (100-foot line)</range>
+				<school type="string">Evocation</school>
+				<source type="string">Druid Mountain Circle, Eldritch Knight, Sorcerer, Wizard, Arcane Trickster</source>
+			</id-00026>
+			<id-00027>
+				<actions>
+					<id-00001>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d6,d6,d6,d6,d6,d6</dice>
+								<type type="string">bludgeoning,magic</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">1</order>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">damage</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<bonus type="number">50</bonus>
+								<dice type="dice"></dice>
+								<type type="string">bludgeoning,magic</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">damage</type>
+					</id-00002>
+					<id-00003>
+						<label type="string">Prone</label>
+						<order type="number">3</order>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">effect</type>
+					</id-00003>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You step into a stone object or surface large enough to fully contain your body, melding yourself and all the equipment you carry with the stone for the duration. Using your movement, you step into the stone at a point you can touch. Nothing of your presence remains visible or otherwise detectable by nonmagical senses.</p>
+					<p>While merged with the stone, you can't see what occurs outside it, and any Wisdom (Perception) checks you make to hear sounds outside it are made with disadvantage. You remain aware of the passage of time and can cast spells on yourself while merged in the stone. You can use your movement to leave the stone where you entered it, which ends the spell. You otherwise can't move.</p>
+					<p>Minor physical damage to the stone doesn't harm you, but its partial destruction or a change in its shape (to the extent that you no longer fit within it) expels you and deals 6d6 bludgeoning damage to you. The stone's complete destruction (or transmutation into a different substance) expels you and deals 50 bludgeoning damage to you. If expelled, you fall prone in an unoccupied space closest to where you first entered.</p>
+				</description>
+				<duration type="string">8 hours</duration>
+				<group type="string">Spells (Mountain)</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Meld into Stone</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Touch</range>
+				<ritual type="number">1</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Cleric, Druid, Druid Mountain Circle</source>
+			</id-00027>
+			<id-00028>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action or 8 hours</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>This spell channels vitality into plants within a specific area. There are two possible uses for the spell, granting either immediate or long-term benefits.</p>
+					<p>If you cast this spell using 1 action, choose a point within range. All normal plants in a 100-foot radius centered on that point become thick and overgrown. A creature moving through the area must spend 4 feet of movement for every 1 foot it moves.</p>
+					<p>You can exclude one or more areas of any size within the spell's area from being affected.</p>
+					<p>If you cast this spell over 8 hours, you enrich the land. All plants in a half-mile radius centered on a point within range become enriched for 1 year. The plants yield twice the normal amount of food when harvested.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Plant Growth</name>
+				<prepared type="number">1</prepared>
+				<range type="string">150 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Bard, Cleric Nature Domain, Druid, Druid Forest Circle, Warlock (Archfey), Ranger</source>
+			</id-00028>
+			<id-00031>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action or 8 hours</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>This spell channels vitality into plants within a specific area. There are two possible uses for the spell, granting either immediate or long-term benefits.</p>
+					<p>If you cast this spell using 1 action, choose a point within range. All normal plants in a 100-foot radius centered on that point become thick and overgrown. A creature moving through the area must spend 4 feet of movement for every 1 foot it moves.</p>
+					<p>You can exclude one or more areas of any size within the spell's area from being affected.</p>
+					<p>If you cast this spell over 8 hours, you enrich the land. All plants in a half-mile radius centered on a point within range become enriched for 1 year. The plants yield twice the normal amount of food when harvested.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Plant Growth</name>
+				<prepared type="number">1</prepared>
+				<range type="string">150 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Bard, Cleric Nature Domain, Druid, Druid Forest Circle, Warlock (Archfey), Ranger</source>
+			</id-00031>
+			<id-00032>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You imbue plants within 30 feet of you with limited sentience and animation, giving them the ability to communicate with you and follow your simple commands. You can question plants about events in the spell's area within the past day, gaining information about creatures that have passed, weather, and other circumstances.</p>
+					<p>You can also turn difficult terrain caused by plant growth (such as thickets and undergrowth) into ordinary terrain that lasts for the duration. Or you can turn ordinary terrain where plants are present into difficult terrain that lasts for the duration, causing vines and branches to hinder pursuers, for example.</p>
+					<p>Plants might be able to perform other tasks on your behalf, at the DM's discretion. The spell doesn't enable plants to uproot themselves and move about, but they can freely move branches, tendrils, and stalks.</p>
+					<p>If a plant creature is in the area, you can communicate with it as if you shared a common language, but you gain no magical ability to influence it.</p>
+					<p>This spell can cause the plants created by the entangle spell to release a restrained creature.</p>
+				</description>
+				<duration type="string">10 minutes</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Speak with Plants</name>
+				<prepared type="number">0</prepared>
+				<range type="string">Self (30-foot radius)</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Transmutation</school>
+				<source type="string">Bard, Druid, Ranger</source>
+			</id-00032>
+			<id-00033>
+				<actions>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>Choose one creature, object, or magical effect within range. Any spell of 3rd level or lower on the target ends. For each spell of 4th level or higher on the target, make an ability check using your spellcasting ability. The DC equals 10 + the spell's level. On a successful check, the spell ends.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 4th level or higher, you automatically end the effects of a spell on the target if the spell's level is equal to or less than the level of the spell slot you used.</p>
+				</description>
+				<duration type="string">Instantaneous</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Dispel Magic</name>
+				<prepared type="number">0</prepared>
+				<range type="string">120 feet</range>
+				<school type="string">Abjuration</school>
+				<source type="string">Bard, Cleric, Cleric Trickery Domain, Druid, Eldritch Knight, Paladin, Sorcerer, Warlock, Wizard, Arcane Trickster</source>
+			</id-00033>
+			<id-00034>
+				<actions>
+					<id-00001>
+						<durmod type="number">1</durmod>
+						<label type="string">Conjure Animals; (C)</label>
+						<order type="number">1</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">effect</type>
+					</id-00001>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S</components>
+				<description type="formattedtext">
+					<p>You summon fey spirits that take the form of beasts and appear in unoccupied spaces that you can see within range. Choose one of the following options for what appears:</p>
+					<list>
+						<li>One beast of challenge rating 2 or lower</li>
+						<li>Two beasts of challenge rating 1 or lower</li>
+						<li>Four beasts of challenge rating 1/2 or lower</li>
+						<li>Eight beasts of challenge rating 1/4 or lower</li>
+					</list>
+					<p>Each beast is also considered fey, and it disappears when it drops to 0 hit points or when the spell ends.</p>
+					<p>The summoned creatures are friendly to you and your companions. Roll initiative for the summoned creatures as a group, which has its own turns. They obey any verbal commands that you issue to them (no action required by you). If you don't issue any commands to them, they defend themselves from hostile creatures, but otherwise take no actions.</p>
+					<p>The DM has the creatures' statistics.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using certain higher-level spell slots, you choose one of the summoning options above, and more creatures appear: twice as many with a 5th-level slot, three times as many with a 7th-level slot, and four times as many with a 9th-level slot.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 hour</duration>
+				<group type="string">Spells</group>
+				<level type="number">3</level>
+				<locked type="number">1</locked>
+				<name type="string">Conjure Animals</name>
+				<prepared type="number">1</prepared>
+				<range type="string">60 feet</range>
+				<ritual type="number">0</ritual>
+				<school type="string">Conjuration</school>
+				<source type="string">Druid, Ranger</source>
+			</id-00034>
+			<id-00035>
+				<actions>
+					<id-00001>
+						<onmissdamage type="string">half</onmissdamage>
+						<order type="number">1</order>
+						<savemagic type="number">1</savemagic>
+						<savetype type="string">dexterity</savetype>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">cast</type>
+					</id-00001>
+					<id-00002>
+						<damagelist>
+							<id-00001>
+								<dice type="dice">d6,d6</dice>
+								<type type="string">fire</type>
+							</id-00001>
+						</damagelist>
+						<order type="number">2</order>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">damage</type>
+					</id-00002>
+					<id-00003>
+						<durmod type="number">1</durmod>
+						<label type="string">Flaming Sphere; (C)</label>
+						<order type="number">3</order>
+						<targeting type="string">self</targeting>
+						<tknbutton type="token"></tknbutton>
+						<tknimg type="token"></tknimg>
+						<type type="string">effect</type>
+					</id-00003>
+				</actions>
+				<cast type="number">0</cast>
+				<castingtime type="string">1 action</castingtime>
+				<components type="string">V, S, M (a bit of tallow, a pinch of brimstone, and a dusting of powdered iron)</components>
+				<description type="formattedtext">
+					<p>A 5-foot-diameter sphere of fire appears in an unoccupied space of your choice within range and lasts for the duration. Any creature that ends its turn within 5 feet of the sphere must make a Dexterity saving throw.</p>
+					<p>The creature takes 2d6 fire damage on a failed save, or half as much damage on a successful one.</p>
+					<p>As a bonus action, you can move the sphere up to 30 feet. If you ram the sphere into a creature, that creature must make the saving throw against the sphere's damage, and the sphere stops moving this turn.</p>
+					<p>When you move the sphere, you can direct it over barriers up to 5 feet tall and jump it across pits up to 10 feet wide. The sphere ignites flammable objects not being worn or carried, and it sheds bright light in a 20-foot radius and dim light for an additional 20 feet.</p>
+					<p><b>At Higher Levels. </b>When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d6 for each slot level above 2nd.</p>
+				</description>
+				<duration type="string">Concentration, up to 1 minute</duration>
+				<group type="string">Spells</group>
+				<level type="number">2</level>
+				<locked type="number">1</locked>
+				<name type="string">Flaming Sphere</name>
+				<prepared type="number">0</prepared>
+				<range type="string">60 feet</range>
+				<school type="string">Conjuration</school>
+				<source type="string">Cleric Light Domain, Druid, Eldritch Knight, Wizard, Arcane Trickster</source>
+			</id-00035>
+		</powers>
+		<profbonus type="number">3</profbonus>
+		<proficiencylist>
+			<id-00001>
+				<name type="string">Weapon: Clubs, daggers, darts, javelins, maces, quarterstaffs, scimitars, sickles, slings, spears</name>
+			</id-00001>
+			<id-00002>
+				<name type="string">Tool: Herbalism kit</name>
+			</id-00002>
+			<id-00003>
+				<name type="string">Armor: light armor, medium armor, shields (druids will not wear armor or use shields made of metal)</name>
+			</id-00003>
+		</proficiencylist>
+		<race type="string">Rock Gnome</race>
+		<racelink type="windowreference">
+			<class>reference_race</class>
+			<recordname>reference.racedata.gnome@DD PHB Deluxe</recordname>
+		</racelink>
+		<savedACArmor type="number">3</savedACArmor>
+		<savedACDEX type="string">nil</savedACDEX>
+		<savedACShield type="number">2</savedACShield>
+		<savedCHR type="number">10</savedCHR>
+		<savedCON type="number">15</savedCON>
+		<savedDEX type="number">14</savedDEX>
+		<savedINT type="number">15</savedINT>
+		<savedSTR type="number">8</savedSTR>
+		<savedWIS type="number">16</savedWIS>
+		<senses type="string">Darkvision 60</senses>
+		<shifted>
+			<preshifthp type="number">0</preshifthp>
+			<preshiftscale type="number">0</preshiftscale>
+			<preshiftspace type="number">0</preshiftspace>
+			<preshiftwounds type="number">0</preshiftwounds>
+		</shifted>
+		<shifttoken type="token"></shifttoken>
+		<size type="string">Small</size>
+		<skilllist>
+			<id-00001>
+				<misc type="number">0</misc>
+				<name type="string">Perception</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">6</total>
+			</id-00001>
+			<id-00002>
+				<misc type="number">0</misc>
+				<name type="string">Arcana</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00002>
+			<id-00003>
+				<misc type="number">0</misc>
+				<name type="string">Persuasion</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00003>
+			<id-00004>
+				<misc type="number">0</misc>
+				<name type="string">Nature</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">5</total>
+			</id-00004>
+			<id-00005>
+				<misc type="number">0</misc>
+				<name type="string">Medicine</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00005>
+			<id-00006>
+				<misc type="number">0</misc>
+				<name type="string">Survival</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">6</total>
+			</id-00006>
+			<id-00007>
+				<misc type="number">0</misc>
+				<name type="string">Performance</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00007>
+			<id-00008>
+				<misc type="number">0</misc>
+				<name type="string">Acrobatics</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00008>
+			<id-00009>
+				<misc type="number">0</misc>
+				<name type="string">Religion</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00009>
+			<id-00010>
+				<misc type="number">0</misc>
+				<name type="string">Athletics</name>
+				<prof type="number">3</prof>
+				<stat type="string">strength</stat>
+				<total type="number">0</total>
+			</id-00010>
+			<id-00011>
+				<misc type="number">0</misc>
+				<name type="string">Sleight of Hand</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00011>
+			<id-00012>
+				<misc type="number">0</misc>
+				<name type="string">Insight</name>
+				<prof type="number">0</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">3</total>
+			</id-00012>
+			<id-00013>
+				<misc type="number">0</misc>
+				<name type="string">Intimidation</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00013>
+			<id-00014>
+				<misc type="number">0</misc>
+				<name type="string">Deception</name>
+				<prof type="number">0</prof>
+				<stat type="string">charisma</stat>
+				<total type="number">0</total>
+			</id-00014>
+			<id-00015>
+				<misc type="number">0</misc>
+				<name type="string">Investigation</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00015>
+			<id-00016>
+				<misc type="number">0</misc>
+				<name type="string">Stealth</name>
+				<prof type="number">0</prof>
+				<stat type="string">dexterity</stat>
+				<total type="number">2</total>
+			</id-00016>
+			<id-00017>
+				<misc type="number">0</misc>
+				<name type="string">History</name>
+				<prof type="number">0</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">2</total>
+			</id-00017>
+			<id-00018>
+				<misc type="number">0</misc>
+				<name type="string">Animal Handling</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">6</total>
+			</id-00018>
+			<id-00019>
+				<misc type="number">0</misc>
+				<name type="string">Herbalism Kit</name>
+				<prof type="number">1</prof>
+				<stat type="string">wisdom</stat>
+				<total type="number">6</total>
+			</id-00019>
+			<id-00020>
+				<misc type="number">0</misc>
+				<name type="string">Tinker's Tools</name>
+				<prof type="number">1</prof>
+				<stat type="string">intelligence</stat>
+				<total type="number">5</total>
+			</id-00020>
+		</skilllist>
+		<speed>
+			<armor type="number">0</armor>
+			<base type="number">25</base>
+			<misc type="number">0</misc>
+			<temporary type="number">0</temporary>
+			<total type="number">25</total>
+		</speed>
+		<temp>
+		</temp>
+		<token type="token">portrait_id-00025_token</token>
+		<traitlist>
+			<id-00001>
+				<locked type="number">1</locked>
+				<name type="string">Gnome Cunning</name>
+				<source type="string">Gnome</source>
+				<text type="formattedtext">
+					<p>You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.</p>
+				</text>
+				<type type="string">racial</type>
+			</id-00001>
+			<id-00002>
+				<locked type="number">1</locked>
+				<name type="string">Artificer's Lore</name>
+				<source type="string">Rock Gnome</source>
+				<text type="formattedtext">
+					<p>Whenever you make an Intelligence (History) check related to magic items, alchemical objects, or technological devices, you can add twice your proficiency bonus, instead of any proficiency bonus you normally apply.</p>
+				</text>
+				<type type="string">subracial</type>
+			</id-00002>
+			<id-00003>
+				<locked type="number">1</locked>
+				<name type="string">Tinker</name>
+				<source type="string">Rock Gnome</source>
+				<text type="formattedtext">
+					<p>You have proficiency with artisan's tools (tinker's tools). Using those tools, you can spend 1 hour and 10 gp worth of materials to construct a Tiny clockwork device (AC 5, 1 hp). The device ceases to function after 24 hours, or when you use your action to dismantle it; at that time, you can reclaim the materials used to create it. You can have up to three such devices active at a time.</p>
+					<p>When you create a device, choose one of the following options.</p>
+					<p>Clockwork Toy. This toy is a clockwork animal or person, such as a frog, mouse, bird, or soldier. When placed on the ground, the toy moves 5 feet across the ground on each of your turns in a random direction. It makes noises as appropriate to the creature it represents.</p>
+					<p>Fire Starter. The device produces a miniature flame, which you can use to light a candle, torch, or campfire. Using the device requires your action.</p>
+					<p>Music Box. When opened, this music box plays a single song at a moderate volume. The box stops playing when it reaches the song's end or when it is closed.</p>
+				</text>
+				<type type="string">subracial</type>
+			</id-00003>
+		</traitlist>
+		<weaponlist>
+			<id-00001>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d4</dice>
+						<stat type="string">base</stat>
+						<type type="string">bludgeoning</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Club</name>
+				<prof type="number">1</prof>
+				<properties type="string">Light</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00001</recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00001>
+			<id-00002>
+				<ammo type="number">0</ammo>
+				<attackstat type="string">wisdom</attackstat>
+				<carried type="number">2</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d6</dice>
+						<stat type="string">wisdom</stat>
+						<statmult type="number">1</statmult>
+						<type type="string">bludgeoning</type>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<isidentified type="number">1</isidentified>
+				<maxammo type="number">3</maxammo>
+				<name type="string">Sling (magic stone)</name>
+				<prof type="number">1</prof>
+				<properties type="string">Ammunition (range 30/120)</properties>
+				<shortcut type="windowreference">
+					<class>item</class>
+					<recordname>....inventorylist.id-00006</recordname>
+				</shortcut>
+				<type type="number">1</type>
+			</id-00002>
+			<id-00003>
+				<attackstat type="string">wisdom</attackstat>
+				<carried type="number">1</carried>
+				<damagelist>
+					<id-00001>
+						<dice type="dice">d8</dice>
+						<stat type="string">wisdom</stat>
+						<statmult type="number">1</statmult>
+					</id-00001>
+				</damagelist>
+				<handling type="number">0</handling>
+				<maxammo type="number">0</maxammo>
+				<name type="string">Shielag</name>
+				<prof type="number">1</prof>
+				<shortcut type="windowreference">
+					<class></class>
+					<recordname></recordname>
+				</shortcut>
+				<type type="number">0</type>
+			</id-00003>
+		</weaponlist>
+	</character>
+</root>
