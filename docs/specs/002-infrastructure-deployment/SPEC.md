@@ -86,6 +86,8 @@ Ensure `NODE_VERSION=24` is set in the Cloudflare Worker settings (Dashboard →
 
 ### Step 3: Enable Cloudflare Zero Trust Access
 
+> **Prerequisite:** Zero Trust Access must be enabled in the Cloudflare dashboard before Terraform can create Access resources. Go to **Zero Trust** → **Settings** → **Access** and click **Enable Access**. Terraform will fail with `access.api.error.not_enabled` if this is not done.
+
 Create an Access application for the Worker domain with path-based policies for `/reference/*` and `/private/*`.
 
 **Terraform:**
@@ -177,6 +179,7 @@ Note: The quotes around the resource address are required because of the `[0]` i
 
 | Setting | Dashboard Path |
 |---------|----------------|
+| Access enabled | Zero Trust → Settings → Access |
 | Worker script content | Workers & Pages → dnd-astro → Editor |
 | Compatibility date | Workers & Pages → dnd-astro → Settings → Compatibility Flags |
 | Build configuration | Workers & Pages → dnd-astro → Settings → Builds |
