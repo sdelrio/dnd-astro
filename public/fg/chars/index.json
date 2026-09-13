@@ -73,7 +73,7 @@
   },
   {
     "filename": "andre",
-    "name": "Andr\u00e9 Olbrich",
+    "name": "Andr&#233; Olbrich",
     "race": "Human-Variant",
     "classes": [
       "Bard"
@@ -82,7 +82,7 @@
   },
   {
     "filename": "antonidas",
-    "name": "Ant\u00f3nidas C.",
+    "name": "Ant&#243;nidas C.",
     "race": "Human-Variant",
     "classes": [
       "Wizard"
@@ -919,7 +919,7 @@
   },
   {
     "filename": "teoride",
-    "name": "Te\u00f3ride de Evereska",
+    "name": "Teóride de Evereska",
     "race": "High Elf",
     "classes": [
       "Wizard"

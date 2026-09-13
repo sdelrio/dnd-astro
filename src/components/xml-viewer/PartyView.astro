@@ -1,0 +1,274 @@
+---
+import { readFileSync } from 'fs';
+import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
+import XmlCard from './XmlCard.astro';
+import IconifyIcon from '../IconifyIcon.astro';
+
+const __dirname = join(fileURLToPath(import.meta.url), '..');
+
+const partyJsonPath = resolve(__dirname, '../../../public/fg/party.json');
+const charsIndexPath = resolve(__dirname, '../../../public/fg/chars/index.json');
+const charsDir = resolve(__dirname, '../../../.astro/generated');
+
+const partyData = JSON.parse(readFileSync(partyJsonPath, 'utf8'));
+const charsIndex = JSON.parse(readFileSync(charsIndexPath, 'utf8'));
+
+interface CharacterData {
+  name: string;
+  race: string;
+  alignment: string;
+  background: string;
+  deity: string;
+  classes: Array<{ name: string; level: number }>;
+  abilities: Record<string, { score: number; bonus: number; save: number }>;
+  defenses: {
+    ac: number;
+    hp: number;
+    speed: number;
+    initiative: number;
+  };
+  profBonus: number;
+  skills: Array<{ name: string; value: number }>;
+  languages: string[];
+  feats: string[];
+  features: Array<{ level: number; name: string; source: string }>;
+  powers: Array<{ level: number; name: string; group: string }>;
+}
+
+interface PartyMember {
+  filename: string;
+  role: string;
+  notes?: string;
+}
+
+interface PartyJson {
+  partyName: string;
+  members: PartyMember[];
+}
+
+const party = partyData as PartyJson;
+
+const ROLE_CONFIG = {
+  tank: { icon: 'mdi:shield', label: 'Tank', color: '#4a90d9' },
+  healer: { icon: 'mdi:heart-plus', label: 'Healer', color: '#5cb85c' },
+  damage: { icon: 'mdi:sword-cross', label: 'Damage Dealer', color: '#d9534f' },
+  support: { icon: 'mdi:creation', label: 'Support', color: '#f0ad4e' },
+  utility: { icon: 'mdi:hammer-wrench', label: 'Utility', color: '#9b59b6' },
+} as const;
+
+function loadCharacter(filename: string): CharacterData | null {
+  try {
+    const charPath = join(charsDir, `${filename}.json`);
+    return JSON.parse(readFileSync(charPath, 'utf8'));
+  } catch {
+    const indexEntry = charsIndex.find((c: any) => c.filename === filename);
+    if (indexEntry) {
+      return {
+        name: indexEntry.name,
+        race: indexEntry.race,
+        alignment: '',
+        background: '',
+        deity: '',
+        classes: indexEntry.classes.map((c: string) => ({ name: c, level: indexEntry.level })),
+        abilities: {},
+        defenses: { ac: 0, hp: 0, speed: 0, initiative: 0 },
+        profBonus: 0,
+        skills: [],
+        languages: [],
+        feats: [],
+        features: [],
+        powers: [],
+      };
+    }
+    return null;
+  }
+}
+
+const members = party.members.map((member) => ({
+  ...member,
+  character: loadCharacter(member.filename),
+})).filter((m): m is typeof m & { character: CharacterData } => m.character !== null);
+
+const totalHp = members.reduce((sum, m) => sum + m.character.defenses.hp, 0);
+const avgAc = members.length > 0 ? Math.round(members.reduce((sum, m) => sum + m.character.defenses.ac, 0) / members.length) : 0;
+const avgInit = members.length > 0 ? Math.round(members.reduce((sum, m) => sum + m.character.defenses.initiative, 0) / members.length) : 0;
+const totalLevel = members.reduce((sum, m) => sum + m.character.classes.reduce((s, c) => s + c.level, 0), 0);
+
+const allRoles = Object.keys(ROLE_CONFIG);
+const allRolesJson = JSON.stringify(allRoles);
+const roleConfigJson = JSON.stringify(ROLE_CONFIG);
+---
+
+<div
+  class="party-view"
+  x-data="partyView()"
+  :data-all-roles={allRolesJson}
+  :data-role-config={roleConfigJson}
+>
+  <style>
+    .party-view {
+      @apply space-y-6;
+    }
+    .party-header {
+      @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6;
+    }
+    .party-title {
+      @apply text-2xl font-bold text-gray-900 dark:text-white mb-2;
+    }
+    .party-subtitle {
+      @apply text-gray-600 dark:text-gray-400 mb-4;
+    }
+    .stats-grid {
+      @apply grid grid-cols-2 md:grid-cols-5 gap-4;
+    }
+    .stat-card {
+      @apply bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-center;
+    }
+    .stat-label {
+      @apply text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1;
+    }
+    .stat-value {
+      @apply text-2xl font-bold text-gray-900 dark:text-white;
+    }
+    .role-filter {
+      @apply flex flex-wrap gap-2 mb-4;
+    }
+    .role-btn {
+      @apply px-3 py-1.5 rounded-full text-xs font-medium transition-all;
+    }
+    .role-btn.active {
+      @apply text-white shadow-md;
+    }
+    .role-btn.inactive {
+      @apply bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700;
+    }
+    .members-grid {
+      @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+    }
+    .member-card-wrapper {
+      @apply transition-opacity duration-200;
+    }
+    .member-card-wrapper.hidden {
+      @apply opacity-0 pointer-events-none;
+    }
+    .role-icon {
+      @apply inline-block w-4 h-4 mr-1;
+    }
+  </style>
+
+  <section class="party-header">
+    <h1 class="party-title">{party.partyName}</h1>
+    <p class="party-subtitle">{members.length} active members</p>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total HP</div>
+        <div class="stat-value">{totalHp}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average AC</div>
+        <div class="stat-value">{avgAc}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Initiative</div>
+        <div class="stat-value">{avgInit >= 0 ? '+' : ''}{avgInit}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Level</div>
+        <div class="stat-value">{totalLevel}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Members</div>
+        <div class="stat-value">{members.length}</div>
+      </div>
+    </div>
+
+    <div class="role-filter" role="group" aria-label="Filter by role">
+      <template x-for="role in allRoles" :key="role">
+        <button
+          class="role-btn"
+          :class="isRoleActive(role) ? 'active' : 'inactive'"
+          :style="isRoleActive(role) ? `background: ${roleConfig[role].color};` : ''"
+          @click="toggleRole(role)"
+          :aria-pressed="isRoleActive(role)"
+        >
+          <span class="role-icon" x-html="getRoleIcon(role)"></span>
+          <span x-text="roleConfig[role].label"></span>
+        </button>
+      </template>
+      <button
+        class="role-btn"
+        :class="activeRoles.length === allRoles.length ? 'active' : 'inactive'"
+        :style="activeRoles.length === allRoles.length ? 'background: #6366f1;' : ''"
+        @click="activeRoles = activeRoles.length === allRoles.length ? [] : [...allRoles]"
+        :aria-pressed="activeRoles.length === allRoles.length"
+      >
+        All
+      </button>
+    </div>
+  </section>
+
+  <section class="members-grid" role="list" aria-label="Party members">
+    {members.map((member) => {
+      const roleConfig = ROLE_CONFIG[member.role as keyof typeof ROLE_CONFIG];
+      return (
+        <div
+          class="member-card-wrapper"
+          :class="{ hidden: !isRoleActive('{member.role}') }"
+          role="listitem"
+        >
+          <XmlCard
+            character={member.character}
+            display="small"
+            image={member.character.name.toLowerCase().replace(/\s+/g, '')}
+          />
+          <div class="mt-2 flex items-center gap-2">
+            <span
+              class="px-2 py-0.5 text-xs font-medium rounded-full"
+              style="background: {roleConfig.color}20; color: {roleConfig.color};"
+            >
+              <IconifyIcon icon="{roleConfig.icon}" width="0.875em" class="inline mr-1" />
+              {roleConfig.label}
+            </span>
+            {member.notes && (
+              <span class="text-xs text-gray-500 dark:text-gray-400 italic">{member.notes}</span>
+            )}
+          </div>
+        </div>
+      );
+    })}
+  </section>
+
+  <script is:inline>
+    function partyView() {
+      const allRoles = JSON.parse(this.$el.dataset.allRoles);
+      const roleConfig = JSON.parse(this.$el.dataset.roleConfig);
+      return {
+        allRoles,
+        roleConfig,
+        activeRoles: [...allRoles],
+        toggleRole(role) {
+          if (this.activeRoles.includes(role)) {
+            this.activeRoles = this.activeRoles.filter(r => r !== role);
+          } else {
+            this.activeRoles.push(role);
+          }
+        },
+        isRoleActive(role) {
+          return this.activeRoles.includes(role);
+        },
+        getRoleIcon(role) {
+          const icons = {
+            'mdi:shield': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+            'mdi:heart-plus': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3.4.71-4.5 1.86C10.91 3.71 9.27 3 7.5 3 4.42 3 2 5.42 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7L22 9.27l-7-7c0-2.61-2.09-4.5-4.5-4.5a4.5 4.5 0 00-4.5 4.5c0 1.66.89 3.12 2.16 3.87A5.517 5.517 0 002 13.5c0 3.59 4.03 6 9 7.5 4.97-1.5 9-3.91 9-7.5a5.5 5.5 0 00-.5-3.5c0-1-.45-1.95-1.16-2.54-.19-.16-.38-.32-.57-.49l.01-.02a2.5 2.5 0 01-1.11-.26l-.06-.03v-.02c0-.01 0-.02-.01-.03A2.5 2.5 0 018.5 2c1.38 0 2.5 1.12 2.5 2.5 0 .3-.02.6-.07.88l-.02.1-.01.01.03.03.11.11c.3.3.6.64.88.99.28.36.54.75.76 1.16l.02.03.02.01-.02.03-.03.03-.1.09c-.3.28-.63.54-.97.77-.34.23-.7.44-1.07.62l-.03.02-.02.02-.02.02-.01.02-.01.02a4.5 4.5 0 01-2.84.96A4.5 4.5 0 002 13.5c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>',
+            'mdi:sword-cross': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11.5 2L9 11H4.5L8 14.5 5.5 23l7.5-4.5L21.5 23 19 14.5 22.5 11H18L15.5 2 11.5 2zm0 2.5L14 8.5H18L15.5 16 11.5 11.5 7.5 16 5 8.5H9L11.5 4.5z"/></svg>',
+            'mdi:creation': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 10h-2V6c0-1.11-.89-2-2-2s-2 .89-2 2v4H5c-1.11 0-2 .89-2 2s.89 2 2 2h4v4c0 1.11.89 2 2 2s2-.89 2-2v-4h4c1.11 0 2-.89 2-2s-.89-2-2-2zm-7-2c0-.55-.45-1-1-1s-1 .45-1 1 .45 1 1 1 1-.45 1-1z"/></svg>',
+            'mdi:hammer-wrench': '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.06 3.54c.39-.39 1.03-.39 1.41 0l2.12 2.12c.39.39.39 1.03 0 1.41l-1.06 1.06-2.12-2.12 1.06-1.06zM19.12 9.5l-2.12 2.12c-.39.39-1.03.39-1.41 0l-3.54-3.54 2.12-2.12 3.54 3.54c.39.39.39 1.03 0 1.41zm-12.88 1.12l-3.14 3.14c-.39.39-1.03.39-1.41 0l-2.12-2.12c-.39-.39-.39-1.03 0-1.41l2.12-2.12 3.54 3.54-2.12 2.12c-.39.39-.39 1.03 0 1.41zm4.24-4.24l2.12 2.12c.39.39.39 1.03 0 1.41l-1.06 1.06-2.12-2.12 1.06-1.06c.39-.39 1.03-.39 1.41 0z"/></svg>',
+          };
+          return icons[roleConfig[role].icon] || '';
+        }
+      };
+    }
+  </script>
+</div>
