@@ -177,6 +177,18 @@ Note: The quotes around the resource address are required because of the `[0]` i
 - This ensures only the custom domain serves production traffic, while branch previews are still accessible
 - If custom domain is removed later, set `workers_dev: true` to re-enable the production workers.dev URL
 
+**Dashboard verification locations:**
+
+| Setting | Dashboard Path |
+|---------|----------------|
+| Worker script content | Workers & Pages → dnd-astro → Editor |
+| Compatibility date | Workers & Pages → dnd-astro → Settings → Compatibility Flags |
+| Build configuration | Workers & Pages → dnd-astro → Settings → Builds |
+| Worker URL (production) | Workers & Pages → dnd-astro → Domains → Worker URL |
+| Preview URLs | Workers & Pages → dnd-astro → Domains → Preview |
+| Custom domains | Workers & Pages → dnd-astro → Domains → Custom Domains and Routes |
+| Triggers (cron, queues) | Workers & Pages → dnd-astro → Settings → Triggers |
+
 ## Files to Create/Modify
 
 - `terraform/main.tf` — Cloudflare Worker script, Zero Trust Access application, Access policy
