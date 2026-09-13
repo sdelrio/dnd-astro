@@ -73,12 +73,14 @@ React must only be bundled and loaded on the specific pages managing the three h
 
 #### Island 3: Fantasy Grounds XML Character Sheet Viewer
 * **File Location:** `src/components/xml-viewer/`
-* **Hydration Strategy:** Static Layout Pre-rendering (Build-time compilation) OR `client:load` if deep nested state manipulation is present.
+* **Spec:** [SPEC-003: XML Character Sheet Viewer](./docs/specs/003-xml-character-viewer/SPEC.md)
+* **Hydration Strategy:** Static Layout Pre-rendering (Build-time compilation) with Alpine.js for lightweight client interactions (display-mode toggle, expand/collapse, role filtering).
 * **Execution Flow:** 
-  1. During the Astro project compilation phase (`astro build`), Node.js native filesystem routines (`node:fs`) extract raw text payloads from `.xml` schemas stored directly inside `src/assets/fantasy-grounds-sheets/`.
-  2. A secure server-side parser maps the proprietary Fantasy Grounds XML node trees into clean JSON schemas.
-  3. The structural JSON schema is injected directly into the React component via static data attributes (`props`).
-  4. The React component consumes the JSON data to display rich, highly stylized visual character dossiers.
+  1. During the Astro project compilation phase (`astro build`), a build hook reads `.xml` files from `src/assets/fantasy-grounds-sheets/` via Node.js.
+  2. `fast-xml-parser` maps the proprietary Fantasy Grounds XML node trees into clean JSON schemas.
+  3. Avatar image paths are pre-resolved at build time (`.jpg` → `.png` → `faceless.svg` fallback).
+  4. The JSON data is injected into Astro components via static props at build time.
+  5. Alpine.js handles client-side display-mode toggles and interactive filtering — no React runtime required.
 
 ---
 
