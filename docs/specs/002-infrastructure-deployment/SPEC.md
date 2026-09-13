@@ -98,6 +98,11 @@ Create an Access application for the Worker domain with path-based policies for 
   - Policy 1: Path matcher `/reference/*`
   - Policy 2: Path matcher `/private/*`
 - Configure allowed email list (comma-separated via `TF_VAR_allowed_emails`)
+- Define `cloudflare_zero_trust_access_identity_provider` resource with `type = "onetimepin"` for Email OTP
+- Set `allowed_idps` on the access application to restrict login to OTP only
+- Set `auto_redirect_to_identity = true` to skip the IdP selection page and go straight to OTP email entry
+
+**OTP behavior note:** Cloudflare intentionally shows "A code has been emailed to you" for all email addresses, regardless of whether they are in the allowed list. Blocked users never receive the PIN. This prevents email enumeration attacks — users cannot determine if an email is authorized based on the login page response.
 
 **Dashboard fallback:**
 1. Go to Cloudflare Zero Trust → Access → Applications
@@ -192,7 +197,7 @@ Note: The quotes around the resource address are required because of the `[0]` i
 
 ## Files to Create/Modify
 
-- `terraform/main.tf` — Cloudflare Worker script, Zero Trust Access application, Access policy
+- `terraform/main.tf` — Cloudflare Worker script, Zero Trust Access application, Access policy, identity provider
 - `terraform/variables.tf` — Input variables (allowed emails, domain, etc.)
 - `terraform/terraform.tfvars` — Variable values (gitignored)
 - `terraform/.gitignore` — Exclude state files and tfvars
@@ -205,6 +210,7 @@ Required for Terraform execution (`terraform apply`):
 ### Account-level (required for all steps)
 - **Workers Scripts: Edit** — create/manage Worker script (`cloudflare_workers_script`)
 - **Zero Trust: Edit** — create/manage Access application & policy (`cloudflare_zero_trust_access_application`, `cloudflare_zero_trust_access_policy`)
+- **Access: Organizations, Identity Providers, and Groups Write** — create/manage Access identity providers (`cloudflare_zero_trust_access_identity_provider`)
 
 ### Zone-level (required for Step 4: Custom Domain)
 - **DNS: Edit** — create CNAME record for custom domain (`cloudflare_record` on specific zone)
@@ -219,6 +225,7 @@ Required for Terraform execution (`terraform apply`):
 2. Add Account permissions:
    - Workers Scripts: Edit
    - Zero Trust: Edit
+   - Access: Organizations, Identity Providers, and Groups Write
 3. Add Zone permission:
    - DNS: Edit (on your specific zone)
    - Workers Routes: Edit (on your specific zone)

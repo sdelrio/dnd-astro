@@ -45,6 +45,13 @@ resource "cloudflare_record" "custom_domain" {
   ttl     = 1
 }
 
+# Zero Trust Access identity provider: Email OTP
+resource "cloudflare_zero_trust_access_identity_provider" "otp" {
+  account_id = var.cloudflare_account_id
+  name       = "One-time PIN login"
+  type       = "onetimepin"
+}
+
 # Zero Trust Access applications for each protected path
 resource "cloudflare_zero_trust_access_application" "dnd_astro" {
   for_each                  = local.app_destinations
@@ -53,7 +60,8 @@ resource "cloudflare_zero_trust_access_application" "dnd_astro" {
   domain                    = "${local.production_domain}${each.key}"
   type                      = "self_hosted"
   session_duration          = "24h"
-  auto_redirect_to_identity = false
+  auto_redirect_to_identity = true
+  allowed_idps              = [cloudflare_zero_trust_access_identity_provider.otp.id]
 
   dynamic "destinations" {
     for_each = each.value
