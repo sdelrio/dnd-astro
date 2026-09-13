@@ -58,6 +58,15 @@ Create the Cloudflare Worker with static assets linked to the private GitHub rep
 
 If the Worker was already created via the dashboard, import it into Terraform state before applying:
 
+**How to get the IDs:**
+- **account_id:** Found in Cloudflare Dashboard → URL bar (`/accounts/<account_id>/...`) or via API:
+  ```bash
+  curl -s "https://api.cloudflare.com/client/v4/accounts" \
+    -H "Authorization: Bearer <api_token>" | jq '.result[].id'
+  ```
+- **worker_name:** The name shown in Workers & Pages dashboard (e.g., `dnd-astro`)
+
+**Import command:**
 ```bash
 terraform import cloudflare_workers_script.dnd_astro <account_id>/<worker_name>
 ```
@@ -114,18 +123,39 @@ Configure custom domain `dnd-companion.lorien.cloud` for the Worker.
 
 If the custom domain was already added via the dashboard, import the resources into Terraform state.
 
-First, get the Workers domain ID via API:
-```bash
-curl -s "https://api.cloudflare.com/client/v4/accounts/<account_id>/workers/domains" \
-  -H "Authorization: Bearer <api_token>" | jq '.result[] | {id, hostname}'
-```
+**How to get the IDs:**
 
-Then import using the format `account_id/workersDomainID`:
+1. **account_id:** Found in Cloudflare Dashboard URL or via:
+   ```bash
+   curl -s "https://api.cloudflare.com/client/v4/accounts" \
+     -H "Authorization: Bearer <api_token>" | jq '.result[].id'
+   ```
+
+2. **workers_domain_id:** Get via Workers Domains API:
+   ```bash
+   curl -s "https://api.cloudflare.com/client/v4/accounts/<account_id>/workers/domains" \
+     -H "Authorization: Bearer <api_token>" | jq '.result[] | {id, hostname}'
+   ```
+   Returns: `"id": "4c77869efce4fa5bd77542ade1204bad898c34cc"`
+
+3. **zone_id:** Found in Dashboard → lorien.cloud → Overview, or via:
+   ```bash
+   curl -s "https://api.cloudflare.com/client/v4/zones?name=lorien.cloud" \
+     -H "Authorization: Bearer <api_token>" | jq '.result[].id'
+   ```
+
+4. **record_id:** Get DNS record ID after zone_id is known:
+   ```bash
+   curl -s "https://api.cloudflare.com/client/v4/zones/<zone_id>/dns_records?name=dnd-companion.lorien.cloud" \
+     -H "Authorization: Bearer <api_token>" | jq '.result[] | {id, name, type}'
+   ```
+
+**Import commands:**
 ```bash
-# Import Workers domain binding (format: account_id/workersDomainID)
+# Workers domain binding (format: account_id/workersDomainID)
 terraform import 'cloudflare_workers_domain.custom[0]' <account_id>/<workers_domain_id>
 
-# Import DNS CNAME record (format: zone_id/record_id)
+# DNS CNAME record (format: zone_id/record_id)
 terraform import 'cloudflare_record.custom_domain[0]' <zone_id>/<record_id>
 ```
 
@@ -135,7 +165,7 @@ terraform import 'cloudflare_workers_domain.custom[0]' b0dc01c04d8d5399bc5d06c4b
 terraform import 'cloudflare_record.custom_domain[0]' e88cfc8197afaa3350144dce80293e37/<record_id>
 ```
 
-Note: The quotes around the resource address are required because of the `[0]` index. Use `terraform state show` to find the DNS record ID after importing the Workers domain.
+Note: The quotes around the resource address are required because of the `[0]` index.
 
 **DNS Configuration:**
 - CNAME record: `dnd-companion` → `dnd-astro.oftheriver.workers.dev`
