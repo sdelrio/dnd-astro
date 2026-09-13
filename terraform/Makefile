@@ -1,16 +1,15 @@
-.PHONY: plan-zerotrust apply-zerotrust import-worker import-domain import-dns get-domain-id get-dns-id
+.PHONY: plan/% apply/% import-worker import-domain import-dns get-domain-id get-dns-id
 
-# Requires: CF_API_TOKEN, CF_ACCOUNT_ID, CF_ZONE_ID env vars
+# Requires: CF_API_TOKEN, CF_ACCOUNT_ID, CF_ZONE_ID, CUSTOM_DOMAIN env vars
 
-plan-zerotrust:
-	terraform plan \
-		-target=cloudflare_zero_trust_access_application.dnd_astro \
-		-target=cloudflare_zero_trust_access_policy.protected_paths
+# Resource targets
+ZEROTRUST_RESOURCES = cloudflare_zero_trust_access_application.dnd_astro cloudflare_zero_trust_access_policy.protected_paths
 
-apply-zerotrust:
-	terraform apply \
-		-target=cloudflare_zero_trust_access_application.dnd_astro \
-		-target=cloudflare_zero_trust_access_policy.protected_paths
+plan/%:
+	terraform plan $(foreach r,$($(*)_RESOURCES),-target=$(r))
+
+apply/%:
+	terraform apply $(foreach r,$($(*)_RESOURCES),-target=$(r))
 
 import-worker:
 	terraform import cloudflare_workers_script.dnd_astro $(CF_ACCOUNT_ID)/dnd-astro
