@@ -178,7 +178,7 @@ Note: The quotes around the resource address are required because of the `[0]` i
 
 **workers.dev subdomain:**
 - When custom domain is configured, set `workers_dev: false` in `wrangler.jsonc` to disable the production workers.dev URL
-- Preview URLs (`*-dnd-astro.oftheriver.workers.dev`) remain enabled via `preview_urls: true` and `preview_branches: true`
+- Preview URLs (`*-dnd-astro.oftheriver.workers.dev`) remain enabled via `preview_urls: true`
 - This ensures only the custom domain serves production traffic, while branch previews are still accessible
 - If custom domain is removed later, set `workers_dev: true` to re-enable the production workers.dev URL
 
