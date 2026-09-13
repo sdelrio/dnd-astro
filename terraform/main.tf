@@ -50,7 +50,7 @@ resource "cloudflare_zero_trust_access_application" "dnd_astro" {
   for_each                  = local.app_destinations
   account_id                = var.cloudflare_account_id
   name                      = "${var.project_name} Access - ${each.key}"
-  domain                    = local.production_domain
+  domain                    = "${local.production_domain}${each.key}"
   type                      = "self_hosted"
   session_duration          = "24h"
   auto_redirect_to_identity = false

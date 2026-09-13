@@ -82,7 +82,7 @@ locals {
 
   app_destinations = {
     for p in local.protected_path_list : p => [
-      { type = "public", uri = "https://${local.production_domain}${p}" }
+      { type = "public", uri = "${local.production_domain}${p}" }
     ]
   }
 }
