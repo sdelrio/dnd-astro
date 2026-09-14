@@ -48,29 +48,7 @@ const party = partyData as PartyJson;
 function loadCharacter(filename: string): StoredCharacter | null {
   const stored = (storedCharacters as StoredCharacter[]).find((c) => c.filename === filename);
   if (stored) return stored;
-  const indexEntry = charsIndex.find((c: any) => c.filename === filename);
-  if (indexEntry) {
-    return {
-      name: indexEntry.name,
-      race: indexEntry.race,
-      alignment: '',
-      background: '',
-      deity: '',
-      classes: indexEntry.classes.map((c: string) => ({ name: c, level: indexEntry.level })),
-      abilities: {},
-      ac: 0,
-      hp: 0,
-      speed: 0,
-      initiative: 0,
-      profBonus: 0,
-      skills: [],
-      languages: [],
-      feats: [],
-      features: [],
-      powers: [],
-      filename,
-    };
-  }
+  console.warn(`[PartyView] Character data missing for "${filename}" - skipping member`);
   return null;
 }
 
