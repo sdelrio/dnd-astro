@@ -1,0 +1,24 @@
+---
+import IconifyIcon from '@/components/IconifyIcon.astro';
+
+interface Props {
+  title: string;
+  sectionKey: string;
+}
+
+const { title, sectionKey } = Astro.props;
+const ariaLabel = `Toggle ${title.toLowerCase()}`;
+---
+
+<h2 class="mt-0 font-semibold text-gray-900 mb-2 flex items-center gap-2">
+  {title}
+  <button
+    class="ml-auto bg-transparent border-none cursor-pointer p-1 text-gray-400 hover:text-gray-600 transition-all"
+    :class="{ 'rotate-180': isExpanded('{sectionKey}') }"
+    @click="toggleSection('{sectionKey}')"
+    :aria-expanded="isExpanded('{sectionKey}')"
+    aria-label={ariaLabel}
+  >
+    <IconifyIcon icon="game-icons:expand" width="1em" />
+  </button>
+</h2>
