@@ -3,8 +3,7 @@
   "members": [
     {
       "filename": "draknor",
-      "role": "tank",
-      "notes": "Party leader"
+      "role": "tank"
     },
     {
       "filename": "elarion",
