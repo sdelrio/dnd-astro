@@ -14,6 +14,30 @@ interface Props {
 
 const { character, display = 'medium', image } = Astro.props;
 
+// --- Display-mode rank policy -----------------------------------------------
+// Each section declares the minimum display mode required to appear.
+// Rank order: small=0, medium=1, large=2.
+// This single map drives both server-side rendering and Alpine x-show.
+const RANKS: Record<string, number> = { small: 0, medium: 1, large: 2 };
+function rank(mode: string): number {
+  return RANKS[mode] ?? 0;
+}
+const sectionPolicy = {
+  avatar: 'large' as const,
+  tags: 'medium' as const,
+  profBonus: 'medium' as const,
+  saves: 'medium' as const,
+  skills: 'medium' as const,
+  languages: 'medium' as const,
+  feats: 'large' as const,
+  features: 'large' as const,
+  powers: 'large' as const,
+} as const;
+type SectionKey = keyof typeof sectionPolicy;
+function canShow(section: SectionKey): boolean {
+  return rank(display) >= rank(sectionPolicy[section]);
+}
+
 const {
   name,
   race,
@@ -116,7 +140,7 @@ for (const p of sortedPowers) {
   class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
   data-character={JSON.stringify(character)}
-  x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+  x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 2, tags: 1, profBonus: 1, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'max-w-[360px]': displayMode === 'small', 'max-w-[480px]': displayMode === 'medium', 'max-w-[710px]': displayMode === 'large', 'inline-block align-top': displayMode === 'small' }"
 >
   <header class="bg-gray-50 border-b border-gray-200 p-4">
@@ -149,19 +173,19 @@ for (const p of sortedPowers) {
       </div>
     )}
 
-    {display === 'large' && (
+    {canShow('avatar') && (
       <img
         class="float-right ml-4 mb-3 w-36 sm:w-44 rounded object-cover"
         src={avatarSrc}
         alt={`${name} portrait`}
-        x-show="rank(displayMode) >= rank('large')"
+        x-show="canShow('avatar')"
       />
     )}
 
     <h1 class="mt-0 text-xl font-bold text-gray-900">{name}</h1>
     <p class="text-sm text-gray-600 mt-1">{race} — {classString} (Level {totalLevel})</p>
-    {display !== 'small' && (
-      <p class="mt-2 flex flex-wrap gap-1" x-show="rank(displayMode) >= rank('medium')">
+    {canShow('tags') && (
+      <p class="mt-2 flex flex-wrap gap-1" x-show="canShow('tags')">
         {alignment && (
           <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">{alignment}</span>
         )}
@@ -196,10 +220,10 @@ for (const p of sortedPowers) {
           <div class="text-lg font-bold text-gray-900">{signed(initiative)}</div>
         </div>
       </div>
-      {display !== 'small' && (
+      {canShow('profBonus') && (
         <p
           class="mt-3 text-sm font-medium text-gray-700"
-          x-show="rank(displayMode) >= rank('medium')"
+          x-show="canShow('profBonus')"
         >
           Proficiency Bonus: {signed(profBonus)}
         </p>
@@ -234,10 +258,10 @@ for (const p of sortedPowers) {
       </div>
     </section>
 
-    {display !== 'small' && proficientSaves.length > 0 && (
+    {canShow('saves') && proficientSaves.length > 0 && (
       <section
         class="border-t border-gray-100 pt-4"
-        x-show="rank(displayMode) >= rank('medium')"
+        x-show="canShow('saves')"
       >
         <SectionHeader title="Saving Throws" sectionKey="saves" />
         <div class="grid grid-cols-2 gap-1 sm:grid-cols-3" x-show="isExpanded('saves')" x-transition>
@@ -251,10 +275,10 @@ for (const p of sortedPowers) {
       </section>
     )}
 
-    {display !== 'small' && skills.length > 0 && (
+    {canShow('skills') && skills.length > 0 && (
       <section
         class="border-t border-gray-100 pt-4"
-        x-show="rank(displayMode) >= rank('medium')"
+        x-show="canShow('skills')"
       >
         <SectionHeader title="Skills" sectionKey="skills" />
         <div class="grid grid-cols-2 gap-1 sm:grid-cols-3" x-show="isExpanded('skills')" x-transition>
@@ -268,10 +292,10 @@ for (const p of sortedPowers) {
       </section>
     )}
 
-    {display !== 'small' && languages.length > 0 && (
+    {canShow('languages') && languages.length > 0 && (
       <section
         class="border-t border-gray-100 pt-4"
-        x-show="rank(displayMode) >= rank('medium')"
+        x-show="canShow('languages')"
       >
         <SectionHeader title="Languages" sectionKey="languages" />
         <div class="flex flex-wrap gap-2" x-show="isExpanded('languages')" x-transition>
@@ -282,10 +306,10 @@ for (const p of sortedPowers) {
       </section>
     )}
 
-    {display === 'large' && feats.length > 0 && (
+    {canShow('feats') && feats.length > 0 && (
       <section
         class="border-t border-gray-100 pt-4"
-        x-show="rank(displayMode) >= rank('large')"
+        x-show="canShow('feats')"
       >
         <SectionHeader title="Feats" sectionKey="feats" />
         <div class="flex flex-wrap gap-2" x-show="isExpanded('feats')" x-transition>
@@ -296,10 +320,10 @@ for (const p of sortedPowers) {
       </section>
     )}
 
-    {display === 'large' && featuresByLevel.length > 0 && (
+    {canShow('features') && featuresByLevel.length > 0 && (
       <section
         class="border-t border-gray-100 pt-4"
-        x-show="rank(displayMode) >= rank('large')"
+        x-show="canShow('features')"
       >
         <SectionHeader title="Features" sectionKey="features" />
         <div x-show="isExpanded('features')" x-transition>
@@ -336,10 +360,10 @@ for (const p of sortedPowers) {
       </section>
     )}
 
-    {display === 'large' && powersByLevel.length > 0 && (
+    {canShow('powers') && powersByLevel.length > 0 && (
       <section
         class="border-t border-gray-100 pt-4"
-        x-show="rank(displayMode) >= rank('large')"
+        x-show="canShow('powers')"
       >
         <SectionHeader title="Powers" sectionKey="powers" />
         <div x-show="isExpanded('powers')" x-transition>
