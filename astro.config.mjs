@@ -2,35 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import tailwindcss from '@tailwindcss/vite';
-import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
-import { join, resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { parseCharacterXML } from './src/utils/parse-character-xml.ts';
-
-const __dirname = join(fileURLToPath(import.meta.url), '..');
-
-function buildXmlCharacters() {
-  const xmlDir = resolve(__dirname, 'src/assets/fantasy-grounds-sheets');
-  const outputFile = resolve(__dirname, 'src/generated/characters.json');
-
-  mkdirSync(dirname(outputFile), { recursive: true });
-
-  const xmlFiles = readdirSync(xmlDir).filter((f) => f.endsWith('.xml'));
-  const characters = [];
-
-  for (const xmlFile of xmlFiles) {
-    const xmlPath = join(xmlDir, xmlFile);
-    const xml = readFileSync(xmlPath, 'utf8');
-    const parsed = parseCharacterXML(xml);
-
-    if (parsed) {
-      characters.push({ ...parsed, filename: xmlFile.replace('.xml', '') });
-    }
-  }
-
-  writeFileSync(outputFile, JSON.stringify(characters, null, 2));
-  console.log(`[xml-viewer] Parsed ${characters.length} character XML files`);
-}
+import { buildXmlCharacters } from './src/utils/build-xml-characters.ts';
 
 function xmlCharacterViewer() {
   return {
@@ -41,7 +13,6 @@ function xmlCharacterViewer() {
       'astro:config:setup'() {
         buildXmlCharacters();
       },
-
     },
   };
 }

@@ -8,6 +8,8 @@ export interface CharacterData {
   deity: string;
   /** XML base filename (e.g. "milo"). Set by the build hook, not the parser. */
   filename?: string;
+  /** Build-time resolved avatar path (e.g. "/fg/avatar/milo.jpg"). Set by the build hook, not the parser. */
+  avatarPath?: string;
   classes: Array<{ name: string; level: number }>;
   abilities: Record<string, { score: number; bonus: number; save: number; saveprof: number }>;
   ac: number;
