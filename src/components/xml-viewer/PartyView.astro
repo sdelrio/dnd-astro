@@ -1,8 +1,10 @@
 ---
 import type { CharacterData } from '@/utils/parse-character-xml';
-import { readFileSync } from 'fs';
-import { join, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { parseCharacterXML } from '@/utils/parse-character-xml';
+import { partyStats } from '@/utils/party-stats';
+import { existsSync, readFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
 import IconifyIcon from '@/components/IconifyIcon.astro';
 
@@ -10,11 +12,11 @@ const __dirname = join(fileURLToPath(import.meta.url), '..');
 
 const partyJsonPath = resolve(__dirname, '../../../public/fg/party.json');
 const charactersJsonPath = resolve(__dirname, '../../../src/generated/characters.json');
-const charsIndexPath = resolve(__dirname, '../../../public/fg/chars/index.json');
 
 const partyData = JSON.parse(readFileSync(partyJsonPath, 'utf8'));
-const storedCharacters = JSON.parse(readFileSync(charactersJsonPath, 'utf8'));
-const charsIndex = JSON.parse(readFileSync(charsIndexPath, 'utf8'));
+const storedCharacters: StoredCharacter[] = existsSync(charactersJsonPath)
+  ? JSON.parse(readFileSync(charactersJsonPath, 'utf8'))
+  : [];
 
 // Role icons use game-icons equivalents (user-confirmed deviation from the
 // spec's mdi: names; IconifyIcon.astro now ships both sets).
@@ -46,8 +48,18 @@ interface PartyJson {
 const party = partyData as PartyJson;
 
 function loadCharacter(filename: string): StoredCharacter | null {
-  const stored = (storedCharacters as StoredCharacter[]).find((c) => c.filename === filename);
+  const stored = storedCharacters.find((c) => c.filename === filename);
   if (stored) return stored;
+
+  const xmlPath = resolve(__dirname, `../../../src/assets/fantasy-grounds-sheets/${filename}.xml`);
+  if (existsSync(xmlPath)) {
+    const xml = readFileSync(xmlPath, 'utf8');
+    const parsed = parseCharacterXML(xml);
+    if (parsed) {
+      return { ...parsed, filename };
+    }
+  }
+
   console.warn(`[PartyView] Character data missing for "${filename}" - skipping member`);
   return null;
 }
@@ -60,18 +72,6 @@ const members = party.members
     character: loadCharacter(member.filename),
   }))
   .filter((m): m is typeof m & { character: StoredCharacter } => m.character !== null);
-
-function partyStats(members: typeof members) {
-  const totalHp = members.reduce((sum, m) => sum + m.character.hp, 0);
-  const avgAc = members.length > 0 ? Math.round(members.reduce((sum, m) => sum + m.character.ac, 0) / members.length) : 0;
-  const avgInit = members.length > 0 ? Math.round(members.reduce((sum, m) => sum + m.character.initiative, 0) / members.length) : 0;
-  const totalLevel = members.reduce((sum, m) => sum + m.character.classes.reduce((s, c) => s + c.level, 0), 0);
-  const roleCounts: Record<string, number> = {};
-  for (const m of members) {
-    roleCounts[m.role] = (roleCounts[m.role] || 0) + 1;
-  }
-  return { totalHp, avgAc, avgInit, totalLevel, roleCounts };
-}
 
 const stats = partyStats(members);
 

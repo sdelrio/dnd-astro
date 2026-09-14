@@ -121,3 +121,5 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     powers,
   };
 }
+
+export const parseCharacterXml = parseCharacterXML;
