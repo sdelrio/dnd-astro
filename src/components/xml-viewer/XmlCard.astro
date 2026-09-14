@@ -34,9 +34,11 @@ const totalLevel = classes.reduce((sum, c) => sum + c.level, 0);
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
 
 // Build-time avatar resolution: explicit image prop wins when the file exists
-// (missing files fall back to faceless.svg), otherwise probe {slug}.jpg ->
-// {slug}.png -> faceless.svg. Frontmatter runs at build time, so existsSync
-// here costs zero client JavaScript.
+// (missing files fall back to faceless.svg), otherwise probe {base}.jpg ->
+// {base}.png -> faceless.svg, where base is the XML filename when known
+// (golden-forest convention: milo.xml -> milo.jpg) and the name slug
+// otherwise. Frontmatter runs at build time, so existsSync here costs zero
+// client JavaScript.
 function probeAvatar(base: string): string {
   const dir = join(process.cwd(), 'public/fg/avatar');
   if (existsSync(join(dir, `${base}.jpg`))) return `/fg/avatar/${base}.jpg`;
@@ -51,7 +53,7 @@ function resolveAvatar(explicit: string | undefined, slug: string): string {
   }
   return probeAvatar(slug);
 }
-const avatarSrc = resolveAvatar(image, name.toLowerCase().replace(/\s+/g, ''));
+const avatarSrc = resolveAvatar(image, character.filename ?? name.toLowerCase().replace(/\s+/g, ''));
 
 interface AbilityView {
   score: number;
