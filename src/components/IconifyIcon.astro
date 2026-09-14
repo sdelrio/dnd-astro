@@ -1,5 +1,6 @@
 ---
 import { icons as gameIcons } from '@iconify-json/game-icons';
+import { icons as mdiIcons } from '@iconify-json/mdi';
 
 interface Props {
   icon: string;
@@ -12,7 +13,7 @@ const { icon, width = '1em', class: className, label } = Astro.props;
 
 const [prefix, name] = icon.split(':');
 
-const iconSets: Record<string, any> = { 'game-icons': gameIcons };
+const iconSets: Record<string, any> = { 'game-icons': gameIcons, mdi: mdiIcons };
 
 let svg = '';
 const iconSet = iconSets[prefix];

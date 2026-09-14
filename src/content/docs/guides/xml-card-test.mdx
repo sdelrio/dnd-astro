@@ -4,18 +4,21 @@ description: Visual test page for the XmlCard component display modes
 ---
 
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
-import tanadirian from '@/generated/characters/tanadirian.json';
-import murky from '@/generated/characters/murky.json';
-import malfunction from '@/generated/characters/malfunction.json';
-import delizan from '@/generated/characters/delizan.json';
-import dorian from '@/generated/characters/dorian.json';
-import dougal from '@/generated/characters/dougal.json';
-import malagolvir from '@/generated/characters/malagolvir.json';
-import garaele from '@/generated/characters/garaele.json';
-import milo from '@/generated/characters/milo.json';
-import alioth from '@/generated/characters/alioth.json';
-import antonidas from '@/generated/characters/antonidas.json';
-import akinori from '@/generated/characters/akinori.json';
+import characters from '@/generated/characters.json';
+
+export const byFile = (filename) => characters.find((c) => c.filename === filename);
+export const tanadirian = byFile('tanadirian');
+export const murky = byFile('murky');
+export const malfunction = byFile('malfunction');
+export const delizan = byFile('delizan');
+export const dorian = byFile('dorian');
+export const dougal = byFile('dougal');
+export const malagolvir = byFile('malagolvir');
+export const garaele = byFile('garaele');
+export const milo = byFile('milo');
+export const alioth = byFile('alioth');
+export const antonidas = byFile('antonidas');
+export const akinori = byFile('akinori');
 
 This page demonstrates the `XmlCard` component in its display modes and
 configuration options. Unlike golden-forest's `XmlChar` (which takes a
@@ -23,11 +26,14 @@ configuration options. Unlike golden-forest's `XmlChar` (which takes a
 `character` JSON — missing files therefore fail the build instead of
 rendering an error card.
 
-Character JSON is imported from the `src/generated/characters/` build artifacts:
+Character data comes from the `src/generated/characters.json` build artifact
+(a single array; look entries up by `filename`):
 
 ```mdx
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
-import tanadirian from '@/generated/characters/tanadirian.json';
+import characters from '@/generated/characters.json';
+
+export const tanadirian = characters.find((c) => c.filename === 'tanadirian');
 
 <XmlCard character={tanadirian} display="small" />
 ```
@@ -162,11 +168,22 @@ grouping with expand/collapse details.
 
 <XmlCard character={akinori} display="large" />
 
+### Powers Grouping
+
+Dougal has 2 powers, showing the grouping by level and group.
+
+```mdx
+<XmlCard character={dougal} display="large" />
+```
+
+<XmlCard character={dougal} display="large" />
+
 ## Notes
 
-- **Powers:** none of the 111 characters in the current export set has
-  direct-child `<powers>`, so the Powers section stays hidden everywhere.
-  It renders once the source data contains powers.
+- **Powers:** parsed from the direct-child `<powers>` collection
+  (`id-` keys, like every other Fantasy Grounds list); nested `<powers/>`
+  inside inventory items is excluded. 108 of the 111 characters have at
+  least one power.
 - **Multiclass:** no character in the set currently has more than one
   class; the `Class A x / Class B y` rendering is untested against live
   data.

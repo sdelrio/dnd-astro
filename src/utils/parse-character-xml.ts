@@ -10,14 +10,12 @@ export interface CharacterData {
   filename?: string;
   classes: Array<{ name: string; level: number }>;
   abilities: Record<string, { score: number; bonus: number; save: number; saveprof: number }>;
-  defenses: {
-    ac: number;
-    hp: number;
-    speed: number;
-    initiative: number;
-  };
+  ac: number;
+  hp: number;
+  speed: number;
+  initiative: number;
   profBonus: number;
-  skills: Array<{ name: string; value: number }>;
+  skills: Array<{ name: string; total: number }>;
   languages: string[];
   feats: string[];
   features: Array<{ level: number; name: string; source: string }>;
@@ -68,19 +66,17 @@ export function parseCharacterXML(xml: string): CharacterData | null {
       saveprof: Number(getText(s, 'saveprof') || 0),
     };
   }
-  // Defenses
-  const defenses = {
-    ac: Number(getText(root.defenses?.ac, 'total') || 0),
-    hp: Number(getText(root.hp, 'total') || 0),
-    speed: Number(getText(root.speed, 'total') || 0),
-    initiative: Number(getText(root.initiative, 'total') || 0),
-  };
+  // Defenses (flat, per SPEC-003 Step 2 output shape)
+  const ac = Number(getText(root.defenses?.ac, 'total') || 0);
+  const hp = Number(getText(root.hp, 'total') || 0);
+  const speed = Number(getText(root.speed, 'total') || 0);
+  const initiative = Number(getText(root.initiative, 'total') || 0);
   // Prof bonus
   const profBonus = Number(root.profbonus?.['#text'] || 0);
   // Skills (prof only, prof > 0)
   const skills = getCollection(root.skilllist).filter(s => Number(getText(s, 'prof')) > 0).map((s: any) => ({
     name: getText(s, 'name'),
-    value: Number(getText(s, 'total') || 0),
+    total: Number(getText(s, 'total') || 0),
   }));
   // Languages
   const languages = getCollection(root.languagelist).map((l: any) => getText(l, 'name'));
@@ -92,21 +88,18 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     name: getText(f, 'name'),
     source: getText(f, 'source'),
   }));
-  // Only powers direct under character, not nested
-  const powersNode = root.powers;
-  let powersRaw: any = [];
-  if (powersNode) {
-    powersRaw = Array.isArray(powersNode.power)
-      ? powersNode.power
-      : powersNode.power
-        ? [powersNode.power]
-        : [];
-  }
-  const powers = powersRaw.map((p: any) => ({
-    level: Number(getText(p, 'level') || 0),
-    name: getText(p, 'name'),
-    group: getText(p, 'group'),
-  }));
+  // Powers: direct children of <character> only (root.powers is already the
+  // direct node, so nested <powers/> inside inventory items never reach here).
+  // Entries use id-NNNNN keys like every other FG collection.
+  const powersNode = root.powers ?? {};
+  const powers = Object.keys(powersNode)
+    .filter((key) => key.startsWith('id-'))
+    .map((key) => powersNode[key])
+    .map((p: any) => ({
+      level: Number(getText(p, 'level') || 0),
+      name: getText(p, 'name'),
+      group: getText(p, 'group'),
+    }));
 
   return {
     name: getText(root, 'name'),
@@ -116,7 +109,10 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     deity: getText(root, 'deity'),
     classes,
     abilities,
-    defenses,
+    ac,
+    hp,
+    speed,
+    initiative,
     profBonus,
     skills,
     languages,

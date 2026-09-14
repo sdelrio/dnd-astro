@@ -3,35 +3,20 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import tailwindcss from '@tailwindcss/vite';
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
-import { join, resolve } from 'path';
+import { join, resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { parseCharacterXML } from './src/utils/parse-character-xml.ts';
 
 const __dirname = join(fileURLToPath(import.meta.url), '..');
 
-/** Build-time avatar probe: {filename}.jpg -> {filename}.png -> faceless.svg. */
-function resolveAvatar(/** @type {string} */ filename) {
-  const avatarDir = resolve(__dirname, 'public/fg/avatar');
-  const jpgPath = join(avatarDir, `${filename}.jpg`);
-  const pngPath = join(avatarDir, `${filename}.png`);
-
-  if (existsSync(jpgPath)) return `${filename}.jpg`;
-  if (existsSync(pngPath)) return `${filename}.png`;
-  return 'faceless.svg';
-}
-
 function buildXmlCharacters() {
   const xmlDir = resolve(__dirname, 'src/assets/fantasy-grounds-sheets');
-  const outputDir = resolve(__dirname, 'src/generated/characters');
-  const charsIndexPath = resolve(__dirname, 'public/fg/chars/index.json');
+  const outputFile = resolve(__dirname, 'src/generated/characters.json');
 
-  if (!existsSync(outputDir)) {
-    mkdirSync(outputDir, { recursive: true });
-  }
+  mkdirSync(dirname(outputFile), { recursive: true });
 
   const xmlFiles = readdirSync(xmlDir).filter((f) => f.endsWith('.xml'));
   const characters = [];
-  const index = [];
 
   for (const xmlFile of xmlFiles) {
     const xmlPath = join(xmlDir, xmlFile);
@@ -39,30 +24,33 @@ function buildXmlCharacters() {
     const parsed = parseCharacterXML(xml);
 
     if (parsed) {
-      const filename = xmlFile.replace('.xml', '');
-      const avatar = resolveAvatar(filename);
-      const stored = { ...parsed, filename, avatar };
-
-      characters.push(stored);
-
-      index.push({
-        filename,
-        name: parsed.name,
-        race: parsed.race,
-        classes: parsed.classes.map((c) => c.name),
-        level: parsed.classes.reduce((sum, c) => sum + c.level, 0),
-      });
-
-      writeFileSync(join(outputDir, `${filename}.json`), JSON.stringify(stored, null, 2));
+      characters.push({ ...parsed, filename: xmlFile.replace('.xml', '') });
     }
   }
 
-  writeFileSync(charsIndexPath, JSON.stringify(index, null, 2));
+  writeFileSync(outputFile, JSON.stringify(characters, null, 2));
   console.log(`[xml-viewer] Parsed ${characters.length} character XML files`);
+}
+
+function xmlCharacterViewer() {
+  return {
+    name: 'xml-character-viewer',
+    hooks: {
+      // config:setup runs on every Astro startup (dev and build), so the
+      // generated JSON exists before any page renders in both modes.
+      'astro:config:setup'() {
+        buildXmlCharacters();
+      },
+      'astro:build:start'() {
+        buildXmlCharacters();
+      },
+    },
+  };
 }
 
 export default defineConfig({
   integrations: [
+    xmlCharacterViewer(),
     starlight({
       title: 'DnD Companion',
       description: 'D&D rules, Fantasy Grounds xml visualizer.',
@@ -90,21 +78,13 @@ export default defineConfig({
         {
           label: 'Fantasy Grounds',
           items: [
-            { label: 'Current Party', slug: 'fantasy-grounds/current-party' },
+            { label: 'Current Party', slug: 'dnd/fantasy-grounds/current-party' },
           ],
         },
       ],
     }),
   ],
   vite: {
-    plugins: [
-      tailwindcss(),
-      {
-        name: 'xml-character-viewer',
-        buildStart() {
-          buildXmlCharacters();
-        },
-      },
-    ],
+    plugins: [tailwindcss()],
   },
 });

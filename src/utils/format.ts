@@ -1,3 +1,3 @@
-export function signed(number: number): string {
-  return number >= 0 ? `+${number}` : `${number}`;
+export function signed(value: number): string {
+  return value >= 0 ? `+${value}` : `${value}`;
 }
