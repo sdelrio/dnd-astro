@@ -92,7 +92,7 @@ export default defineConfig({
         {
           label: 'Fantasy Grounds',
           items: [
-            { label: 'Current Party', slug: 'dnd/fantasy-grounds/current-party' },
+            { label: 'Current Party', slug: 'fantasy-grounds/current-party' },
           ],
         },
       ],
