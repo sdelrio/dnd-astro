@@ -3,6 +3,7 @@ import type { CharacterData } from '@/utils/parse-character-xml';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { signed } from '@/utils/format';
+import { groupBy } from '@/utils/group-by';
 import SectionHeader from '@/components/xml-viewer/SectionHeader.astro';
 import CompactAbilityGrid from '@/components/xml-viewer/CompactAbilityGrid.astro';
 
@@ -105,35 +106,22 @@ const proficientSaves = abilityNames.filter((a) => lookupAbility(a).saveprof > 0
 const sortedFeatures = [...features].sort(
   (a, b) => a.level - b.level || a.name.localeCompare(b.name)
 );
-const featuresByLevel: { level: number; items: typeof sortedFeatures }[] = [];
-for (const f of sortedFeatures) {
-  const g = featuresByLevel.find((g) => g.level === f.level);
-  if (g) g.items.push(f);
-  else featuresByLevel.push({ level: f.level, items: [f] });
-}
+const featuresByLevel = groupBy(sortedFeatures, (f) => f.level).map((g) => ({
+  level: g.key,
+  items: g.items,
+}));
 
 const sortedPowers = [...powers].sort(
   (a, b) =>
     a.level - b.level || a.group.localeCompare(b.group) || a.name.localeCompare(b.name)
 );
-const powersByLevel: {
-  level: number;
-  groups: { name: string; items: typeof sortedPowers }[];
-}[] = [];
-for (const p of sortedPowers) {
-  let lg = powersByLevel.find((g) => g.level === p.level);
-  if (!lg) {
-    lg = { level: p.level, groups: [] };
-    powersByLevel.push(lg);
-  }
-  const groupName = p.group || 'Other';
-  let gg = lg.groups.find((g) => g.name === groupName);
-  if (!gg) {
-    gg = { name: groupName, items: [] };
-    lg.groups.push(gg);
-  }
-  gg.items.push(p);
-}
+const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
+  level: lg.key,
+  groups: groupBy(lg.items, (p) => p.group || 'Other').map((gg) => ({
+    name: gg.key,
+    items: gg.items,
+  })),
+}));
 ---
 
 <div
