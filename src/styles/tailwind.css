@@ -1,0 +1,5 @@
+/* Tailwind CSS v4 for the XML character viewer components.
+   Theme + utilities only: preflight is deliberately omitted so the
+   global reset cannot restyle Starlight documentation pages. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";

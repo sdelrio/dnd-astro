@@ -1,0 +1,232 @@
+---
+import type { CharacterData } from '@/utils/parse-character-xml';
+import { readFileSync } from 'fs';
+import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
+import XmlCard from '@/components/xml-viewer/XmlCard.astro';
+import IconifyIcon from '@/components/IconifyIcon.astro';
+
+const __dirname = join(fileURLToPath(import.meta.url), '..');
+
+const partyJsonPath = resolve(__dirname, '../../../public/fg/party.json');
+const charactersJsonPath = resolve(__dirname, '../../../src/generated/characters.json');
+const charsIndexPath = resolve(__dirname, '../../../public/fg/chars/index.json');
+
+const partyData = JSON.parse(readFileSync(partyJsonPath, 'utf8'));
+const storedCharacters = JSON.parse(readFileSync(charactersJsonPath, 'utf8'));
+const charsIndex = JSON.parse(readFileSync(charsIndexPath, 'utf8'));
+
+// Role icons use game-icons equivalents (user-confirmed deviation from the
+// spec's mdi: names; IconifyIcon.astro now ships both sets).
+const ROLE_CONFIG = {
+  tank: { icon: 'game-icons:shield', label: 'Tank', color: '#4a90d9' },
+  healer: { icon: 'game-icons:heart-plus', label: 'Healer', color: '#5cb85c' },
+  damage: { icon: 'game-icons:crossed-swords', label: 'Damage Dealer', color: '#d9534f' },
+  support: { icon: 'game-icons:scroll-unfurled', label: 'Support', color: '#f0ad4e' },
+  utility: { icon: 'game-icons:monkey-wrench', label: 'Utility', color: '#9b59b6' },
+} as const;
+
+type Role = keyof typeof ROLE_CONFIG;
+
+interface StoredCharacter extends CharacterData {
+  filename: string;
+}
+
+interface PartyMember {
+  filename: string;
+  role: Role;
+  notes?: string;
+}
+
+interface PartyJson {
+  partyName: string;
+  members: PartyMember[];
+}
+
+const party = partyData as PartyJson;
+
+function loadCharacter(filename: string): StoredCharacter | null {
+  const stored = (storedCharacters as StoredCharacter[]).find((c) => c.filename === filename);
+  if (stored) return stored;
+  const indexEntry = charsIndex.find((c: any) => c.filename === filename);
+  if (indexEntry) {
+    return {
+      name: indexEntry.name,
+      race: indexEntry.race,
+      alignment: '',
+      background: '',
+      deity: '',
+      classes: indexEntry.classes.map((c: string) => ({ name: c, level: indexEntry.level })),
+      abilities: {},
+      ac: 0,
+      hp: 0,
+      speed: 0,
+      initiative: 0,
+      profBonus: 0,
+      skills: [],
+      languages: [],
+      feats: [],
+      features: [],
+      powers: [],
+      filename,
+    };
+  }
+  return null;
+}
+
+const members = party.members
+  .filter((member) => member.role in ROLE_CONFIG)
+  .map((member) => ({
+    ...member,
+    role: member.role as Role,
+    character: loadCharacter(member.filename),
+  }))
+  .filter((m): m is typeof m & { character: StoredCharacter } => m.character !== null);
+
+function partyStats(members: typeof members) {
+  const totalHp = members.reduce((sum, m) => sum + m.character.hp, 0);
+  const avgAc = members.length > 0 ? Math.round(members.reduce((sum, m) => sum + m.character.ac, 0) / members.length) : 0;
+  const avgInit = members.length > 0 ? Math.round(members.reduce((sum, m) => sum + m.character.initiative, 0) / members.length) : 0;
+  const totalLevel = members.reduce((sum, m) => sum + m.character.classes.reduce((s, c) => s + c.level, 0), 0);
+  const roleCounts: Record<string, number> = {};
+  for (const m of members) {
+    roleCounts[m.role] = (roleCounts[m.role] || 0) + 1;
+  }
+  return { totalHp, avgAc, avgInit, totalLevel, roleCounts };
+}
+
+const stats = partyStats(members);
+
+const allRoles = Object.keys(ROLE_CONFIG) as Role[];
+const allRolesJson = JSON.stringify(allRoles);
+const roleConfigJson = JSON.stringify(ROLE_CONFIG);
+---
+
+<div
+  class="space-y-6"
+  x-data="partyView($el)"
+  data-all-roles={allRolesJson}
+  data-role-config={roleConfigJson}
+>
+  <section class="bg-white border border-gray-200 rounded-lg p-6">
+    <h1 class="mt-0 text-2xl font-bold text-gray-900 mb-2">{party.partyName}</h1>
+    <p class="mt-0 text-gray-600 mb-4">{members.length} active members</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div class="bg-gray-50 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total HP</div>
+        <div class="text-2xl font-bold text-gray-900">{stats.totalHp}</div>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Average AC</div>
+        <div class="text-2xl font-bold text-gray-900">{stats.avgAc}</div>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Average Initiative</div>
+        <div class="text-2xl font-bold text-gray-900">{stats.avgInit >= 0 ? '+' : ''}{stats.avgInit}</div>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Level</div>
+        <div class="text-2xl font-bold text-gray-900">{stats.totalLevel}</div>
+      </div>
+      <div class="bg-gray-50 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Members</div>
+        <div class="text-2xl font-bold text-gray-900">{members.length}</div>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-4" aria-label="Role breakdown">
+      {allRoles.map((role) => {
+        const config = ROLE_CONFIG[role];
+        return (
+          <span
+            class="px-2 py-1 text-xs font-medium rounded-full"
+            style={`background: ${config.color}20; color: ${config.color};`}
+          >
+            <IconifyIcon icon={config.icon} width="0.875em" class="inline-block mr-1 align-[-2px]" />
+            {config.label}: {stats.roleCounts[role] ?? 0}
+          </span>
+        );
+      })}
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-4" role="group" aria-label="Filter by role">
+      <button
+        class="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+        :class="activeRoles.length === allRoles.length ? 'active text-white shadow-md' : 'inactive bg-gray-100 text-gray-600 hover:bg-gray-200'"
+        :style="activeRoles.length === allRoles.length ? 'background: #6366f1;' : ''"
+        @click="activeRoles = activeRoles.length === allRoles.length ? [] : [...allRoles]"
+        :aria-pressed="activeRoles.length === allRoles.length"
+      >
+        All
+      </button>
+      {allRoles.map((role) => {
+        const config = ROLE_CONFIG[role];
+        return (
+          <button
+            class="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+            :class={"isRoleActive('" + role + "') ? 'active text-white shadow-md' : 'inactive bg-gray-100 text-gray-600 hover:bg-gray-200'"}
+            :style={"isRoleActive('" + role + "') ? 'background: " + config.color + ";' : ''"}
+            @click={"toggleRole('" + role + "')"}
+            :aria-pressed={"isRoleActive('" + role + "')"}
+          >
+            <IconifyIcon icon={config.icon} width="1em" class="inline-block w-4 h-4 mr-1 align-[-2px]" />
+            {config.label}
+          </button>
+        );
+      })}
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" role="list" aria-label="Party members">
+    {members.map((member) => {
+      const roleConfig = ROLE_CONFIG[member.role];
+      return (
+        <div
+          class="transition-opacity duration-200"
+          :class={"{ hidden: !isRoleActive('" + member.role + "') }"}
+          role="listitem"
+        >
+          <XmlCard
+            character={member.character}
+            display="small"
+          />
+          <div class="mt-2 flex items-center gap-2">
+            <span
+              class="px-2 py-0.5 text-xs font-medium rounded-full"
+              style={`background: ${roleConfig.color}20; color: ${roleConfig.color};`}
+            >
+              <IconifyIcon icon={roleConfig.icon} width="0.875em" class="inline-block mr-1 align-[-2px]" />
+              {roleConfig.label}
+            </span>
+            {member.notes && (
+              <span class="text-xs text-gray-500 italic">{member.notes}</span>
+            )}
+          </div>
+        </div>
+      );
+    })}
+  </section>
+
+  <script is:inline>
+    function partyView(el) {
+      const allRoles = JSON.parse(el.dataset.allRoles);
+      const roleConfig = JSON.parse(el.dataset.roleConfig);
+      return {
+        allRoles,
+        roleConfig,
+        activeRoles: [...allRoles],
+        toggleRole(role) {
+          if (this.activeRoles.includes(role)) {
+            this.activeRoles = this.activeRoles.filter((r) => r !== role);
+          } else {
+            this.activeRoles.push(role);
+          }
+        },
+        isRoleActive(role) {
+          return this.activeRoles.includes(role);
+        },
+      };
+    }
+  </script>
+</div>
