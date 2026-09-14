@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "XML Character Sheet Viewer"
 author: "opencode (grill-with-docs)"
 date: "2026-09-13"
@@ -299,6 +299,6 @@ The spec's MDX import examples use relative paths (`../../../components/...`). T
 
 ## Status
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete (all steps delivered across PRs #27-#46)
+- [x] Tests passing (build verified, no XML parsing errors)
 - [x] ADR updated (if new decision made)

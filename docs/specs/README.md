@@ -8,7 +8,7 @@ This directory contains feature specifications (specs) for the DnD Companion pro
 |----|-------|--------|------|---------|-------------|
 | 001 | Spec-Driven Development Workflow | archived | workflow, docs | `docs/specs/`, `AGENTS.md` | Structured workflow for spec-first development |
 | 002 | Infrastructure & Deployment Architecture | archived | infrastructure, deployment, ci-cd, cloudflare, security, terraform | `wrangler.jsonc`, `terraform/`, `package.json` | Static Astro on Cloudflare Pages with Zero Trust edge security |
-| 003 | XML Character Sheet Viewer | active | xml, fantasy-grounds, character-sheet, alpine-js, build-time, party | `src/components/xml-viewer/`, `src/utils/`, `src/assets/fantasy-grounds-sheets/`, `public/fg/` | Build-time XML parsing + Alpine.js character cards + PartyView |
+| 003 | XML Character Sheet Viewer | archived | xml, fantasy-grounds, character-sheet, alpine-js, build-time, party | `src/components/xml-viewer/`, `src/utils/`, `src/assets/fantasy-grounds-sheets/`, `public/fg/` | Build-time XML parsing + Alpine.js character cards + PartyView |
 
 ## About Specs
 
