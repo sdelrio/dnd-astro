@@ -12,7 +12,7 @@
     },
     {
       "filename": "melbick",
-      "role": "healer"
+      "role": "support"
     },
     {
       "filename": "valkian",
@@ -20,11 +20,11 @@
     },
     {
       "filename": "vogun",
-      "role": "utility"
+      "role": "healer"
     },
     {
       "filename": "zephyrion",
-      "role": "support"
+      "role": "damage"
     }
   ]
 }
