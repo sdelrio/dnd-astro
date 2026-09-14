@@ -82,7 +82,7 @@ interface CharacterData {
   background: string;
   deity: string;
   classes: { name: string; level: number }[];
-  abilities: Record<string, { score: number; bonus: number; save: number }>;
+  abilities: Record<string, { score: number; bonus: number; save: number; saveprof: number }>;
   ac: number;
   hp: number;
   speed: number;
@@ -93,6 +93,7 @@ interface CharacterData {
   feats: string[];
   features: { level: number; name: number; source: string }[];
   powers: { level: number; name: string; group: string }[];
+  filename?: string;
 }
 ```
 
@@ -103,7 +104,7 @@ Add a build hook in `astro.config.mjs` using `astro:build:start` (or `astro:conf
 1. Reads all `.xml` files from `src/assets/fantasy-grounds-sheets/`
 2. Parses each using `parseCharacterXml`
 3. Resolves avatar image paths: probe `public/fg/avatar/{filename}.jpg` → `public/fg/avatar/{filename}.png` → `public/fg/avatar/faceless.svg`
-4. Writes the resulting JSON array to a build artifact (e.g., `.astro/generated/characters.json`)
+4. Writes the resulting JSON array to a build artifact at `src/generated/characters.json`
 
 The JSON is then importable by components during the Astro build.
 
@@ -165,11 +166,11 @@ Role config (ported from golden-forest):
 
 ```typescript
 const ROLE_CONFIG = {
-  tank: { icon: 'mdi:shield', label: 'Tank', color: '#4a90d9' },
-  healer: { icon: 'mdi:heart-plus', label: 'Healer', color: '#5cb85c' },
-  damage: { icon: 'mdi:sword-cross', label: 'Damage Dealer', color: '#d9534f' },
-  support: { icon: 'mdi:creation', label: 'Support', color: '#f0ad4e' },
-  utility: { icon: 'mdi:hammer-wrench', label: 'Utility', color: '#9b59b6' },
+  tank: { icon: 'game-icons:shield', label: 'Tank', color: '#4a90d9' },
+  healer: { icon: 'game-icons:heart-plus', label: 'Healer', color: '#5cb85c' },
+  damage: { icon: 'game-icons:crossed-swords', label: 'Damage Dealer', color: '#d9534f' },
+  support: { icon: 'game-icons:scroll-unfurled', label: 'Support', color: '#f0ad4e' },
+  utility: { icon: 'game-icons:monkey-wrench', label: 'Utility', color: '#9b59b6' },
 };
 ```
 
@@ -191,9 +192,12 @@ Create `src/content/docs/dnd/fantasy-grounds/current-party.mdx`:
 ---
 title: Current Party
 description: Active party character sheets from Fantasy Grounds
+tableOfContents: false
+sidebar:
+  hidden: true
 ---
 
-import PartyView from '../../../components/xml-viewer/PartyView.astro';
+import PartyView from '@/components/xml-viewer/PartyView.astro';
 
 # Current Party
 
@@ -263,8 +267,38 @@ Update `astro.config.mjs` sidebar to include a Fantasy Grounds section:
 - Revert `astro.config.mjs` changes (build hook + sidebar)
 - Remove `src/content/docs/dnd/fantasy-grounds/` directory
 
+## Accepted Deviations
+
+The following deviations from this spec were accepted during implementation (PR #29, code-review rounds 1–3) and are recorded here to prevent re-flagging in future reviews.
+
+### 1. Build artifact path: `src/generated/` not `.astro/generated/`
+
+The original spec called for `.astro/generated/characters.json`. The actual location is `src/generated/characters.json`. Reason: `.astro/` is not module-resolvable by Astro's import system; placing the artifact under `src/` makes it importable during the build without additional configuration.
+
+### 2. Role icons: `game-icons:` not `mdi:`
+
+The original spec's `ROLE_CONFIG` used `mdi:*` icons. The implementation uses `game-icons:*` instead. Reason: `IconifyIcon.astro` ([ADR-0001](../adr/0001-icon-component.md)) ships the `game-icons` set by default; the `mdi` set was added later. The `game-icons` set has broader coverage for the D&D domain (shields, swords, scrolls, etc.) and the icons were already in use across the documentation pages.
+
+### 3. Party page frontmatter: `sidebar.hidden` + `tableOfContents: false`
+
+The original spec's current-party.mdx template omitted sidebar and ToC frontmatter. The implementation adds `sidebar.hidden: true` and `tableOfContents: false`. This commit updates both the spec and the implementation to match. Reason: the page is a showcase component, not a navigation destination; hiding the sidebar avoids a duplicate entry and the page has no headings worth a ToC.
+
+### 4. Parser extensions: `saveprof` and `filename`
+
+The original spec's `CharacterData` interface did not include `saveprof` or `filename`. The implementation adds both, and this commit updates the spec to match:
+- `saveprof: number` on each ability — required by Step 5's proficient-only save filtering.
+- `filename?: string` — set by the build hook as the array lookup key and avatar base name.
+
+### 5. Test page for visual verification
+
+The spec assumes working Tailwind classes but does not mention a test page. The implementation creates `src/content/docs/guides/xml-card-test.mdx` for visual verification of the XmlCard component.
+
+### 6. Tailwind `@/*` path alias
+
+The spec's MDX import examples use relative paths (`../../../components/...`). The implementation uses the `@/components/...` alias provided by Astro's path configuration, which is shorter and resilient to directory restructuring.
+
 ## Status
 
 - [ ] Implementation complete
 - [ ] Tests passing
-- [ ] ADR updated (if new decision made)
+- [x] ADR updated (if new decision made)
