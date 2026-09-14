@@ -75,6 +75,7 @@ export default defineConfig({
           label: 'Guides',
           items: [
             { label: 'Example Guide', slug: 'guides/example' },
+            { label: 'XmlCard Test Page', slug: 'guides/xml-card-test' },
           ],
         },
         {
