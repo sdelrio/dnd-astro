@@ -29,3 +29,6 @@ pnpm-debug.log*
 # matpocock/skills local issues
 .scratch/
 
+# temporary files
+tmp/
+
