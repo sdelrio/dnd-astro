@@ -80,7 +80,7 @@ function resolveAvatar(explicit: string | undefined, slug: string): string {
       ? `/fg/avatar/${explicit}`
       : '/fg/avatar/faceless.svg';
   }
-  return probeAvatar(slug);
+  return character.avatarPath ?? probeAvatar(slug);
 }
 const avatarSrc = resolveAvatar(image, character.filename ?? name.toLowerCase().replace(/\s+/g, ''));
 
