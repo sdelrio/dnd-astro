@@ -3,6 +3,9 @@ dist/
 # generated types
 .astro/
 
+# generated build data (rebuilt by the astro.config.mjs XML hook)
+src/generated/
+
 # dependencies
 node_modules/
 
@@ -11,6 +14,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# test output
+.vitest/
 
 
 # environment variables
