@@ -1,5 +1,7 @@
 ---
-import { CharacterData } from '../../utils/parse-character-xml';
+import type { CharacterData } from '../../utils/parse-character-xml';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { signed } from '../../utils/format';
 import IconifyIcon from '../IconifyIcon.astro';
 
@@ -30,292 +32,246 @@ const {
 
 const totalLevel = classes.reduce((sum, c) => sum + c.level, 0);
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
-const avatarSrc = image ? `/fg/avatar/${image}` : `/fg/avatar/${name.toLowerCase().replace(/\s+/g, '')}.jpg`;
 
-function getAbilityScore(abilityName: string): number {
-  const key = abilityName.toLowerCase().slice(0, 3);
-  return abilities[key]?.score ?? 10;
+// Build-time avatar resolution: explicit image prop wins, otherwise probe
+// {slug}.jpg -> {slug}.png -> faceless.svg. Frontmatter runs at build time,
+// so existsSync here costs zero client JavaScript.
+function probeAvatar(base: string): string {
+  const dir = join(process.cwd(), 'public/fg/avatar');
+  if (existsSync(join(dir, `${base}.jpg`))) return `/fg/avatar/${base}.jpg`;
+  if (existsSync(join(dir, `${base}.png`))) return `/fg/avatar/${base}.png`;
+  return '/fg/avatar/faceless.svg';
 }
+const avatarSrc = image
+  ? `/fg/avatar/${image}`
+  : probeAvatar(name.toLowerCase().replace(/\s+/g, ''));
 
-function getAbilityBonus(abilityName: string): number {
-  const key = abilityName.toLowerCase().slice(0, 3);
-  return abilities[key]?.bonus ?? 0;
-}
-
-function getAbilitySave(abilityName: string): number {
-  const key = abilityName.toLowerCase().slice(0, 3);
-  return abilities[key]?.save ?? 0;
+interface AbilityView {
+  score: number;
+  bonus: number;
+  save: number;
+  saveprof: number;
 }
 
 const abilityNames = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'];
 const abilityShort = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 
-const characterJson = JSON.stringify(character).replace(/"/g, '"');
+function ability(fullName: string): AbilityView {
+  return (
+    abilities[fullName.toLowerCase()] ?? { score: 10, bonus: 0, save: 0, saveprof: 0 }
+  );
+}
+
+const proficientSaves = abilityNames.filter((a) => ability(a).saveprof > 0);
+
+const sortedFeatures = [...features].sort(
+  (a, b) => a.level - b.level || a.name.localeCompare(b.name)
+);
+const featuresByLevel: { level: number; items: typeof sortedFeatures }[] = [];
+for (const f of sortedFeatures) {
+  const g = featuresByLevel.find((g) => g.level === f.level);
+  if (g) g.items.push(f);
+  else featuresByLevel.push({ level: f.level, items: [f] });
+}
+
+const sortedPowers = [...powers].sort(
+  (a, b) =>
+    a.level - b.level || a.group.localeCompare(b.group) || a.name.localeCompare(b.name)
+);
+const powersByLevel: {
+  level: number;
+  groups: { name: string; items: typeof sortedPowers }[];
+}[] = [];
+for (const p of sortedPowers) {
+  let lg = powersByLevel.find((g) => g.level === p.level);
+  if (!lg) {
+    lg = { level: p.level, groups: [] };
+    powersByLevel.push(lg);
+  }
+  const groupName = p.group || 'Other';
+  let gg = lg.groups.find((g) => g.name === groupName);
+  if (!gg) {
+    gg = { name: groupName, items: [] };
+    lg.groups.push(gg);
+  }
+  gg.items.push(p);
+}
 ---
 
 <div
-  class="xml-card"
-  x-data="{
-    displayMode: 'display',
-    expandedSections: {},
-    toggleSection(section) {
-      this.expandedSections[section] = !this.expandedSections[section];
-    },
-    isExpanded(section) {
-      return !!this.expandedSections[section];
-    }
-  }"
-  :data-character={characterJson}
-  :class="{
-    'max-w-[360px]': display === 'small',
-    'max-w-[480px]': display === 'medium',
-    'max-w-[710px]': display === 'large',
-  }"
+  class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
+  data-display={display}
+  data-character={JSON.stringify(character)}
+  x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+  :class="{ 'max-w-[360px]': displayMode === 'small', 'max-w-[480px]': displayMode === 'medium', 'max-w-[710px]': displayMode === 'large', 'inline-block align-top': displayMode === 'small' }"
 >
-  <style>
-    .xml-card {
-      @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm;
-    }
-    .xml-card header {
-      @apply bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4;
-    }
-    .xml-card .card-body {
-      @apply p-4 space-y-4;
-    }
-    .xml-card .section {
-      @apply border-t border-gray-100 dark:border-gray-800 pt-4 first:border-t-0 first:pt-0;
-    }
-    .xml-card .section-title {
-      @apply font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2;
-    }
-    .xml-card .vitals-grid {
-      @apply grid grid-cols-4 gap-2 text-center;
-    }
-    .xml-card .vital-item {
-      @apply p-2 bg-gray-50 dark:bg-gray-900 rounded;
-    }
-    .xml-card .vital-label {
-      @apply text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide;
-    }
-    .xml-card .vital-value {
-      @apply text-lg font-bold text-gray-900 dark:text-white;
-    }
-    .xml-card .abilities-grid {
-      @apply grid grid-cols-6 gap-1;
-    }
-    .xml-card .ability-col {
-      @apply text-center p-2 bg-gray-50 dark:bg-gray-900 rounded;
-    }
-    .xml-card .ability-header {
-      @apply text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase;
-    }
-    .xml-card .ability-score {
-      @apply text-xl font-bold text-gray-900 dark:text-white;
-    }
-    .xml-card .ability-mod {
-      @apply text-sm text-gray-600 dark:text-gray-300;
-    }
-    .xml-card .ability-save {
-      @apply text-xs text-gray-500 dark:text-gray-400;
-    }
-    .xml-card .skills-list {
-      @apply grid grid-cols-2 gap-1 sm:grid-cols-3;
-    }
-    .xml-card .skill-item {
-      @apply flex justify-between py-1 px-2 text-sm;
-    }
-    .xml-card .skill-name {
-      @apply text-gray-700 dark:text-gray-300;
-    }
-    .xml-card .skill-value {
-      @apply font-mono font-semibold text-gray-900 dark:text-white;
-    }
-    .xml-card .languages-list,
-    .xml-card .feats-list {
-      @apply flex flex-wrap gap-2;
-    }
-    .xml-card .tag {
-      @apply px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300;
-    }
-    .xml-card .feature-item,
-    .xml-card .power-item {
-      @apply py-2 border-b border-gray-100 dark:border-gray-800 last:border-b-0;
-    }
-    .xml-card .feature-header,
-    .xml-card .power-header {
-      @apply flex items-center justify-between cursor-pointer;
-    }
-    .xml-card .feature-name,
-    .xml-card .power-name {
-      @apply font-medium text-gray-900 dark:text-white;
-    }
-    .xml-card .feature-source,
-    .xml-card .power-group {
-      @apply text-xs text-gray-500 dark:text-gray-400;
-    }
-    .xml-card .feature-detail,
-    .xml-card .power-detail {
-      @apply mt-2 ml-4 text-sm text-gray-600 dark:text-gray-300 hidden;
-    }
-    .xml-card .feature-detail.open,
-    .xml-card .power-detail.open {
-      @apply block;
-    }
-    .xml-card .avatar-container {
-      @apply relative w-full aspect-[3/4] overflow-hidden;
-    }
-    .xml-card .avatar-img {
-      @apply w-full h-full object-cover;
-    }
-    .xml-card .display-toggle {
-      @apply absolute top-2 right-2 z-10 flex gap-1 bg-white/90 dark:bg-gray-900/90 backdrop-blur rounded p-1 shadow;
-    }
-    .xml-card .display-btn {
-      @apply px-2 py-1 text-xs rounded transition-colors;
-    }
-    .xml-card .display-btn.active {
-      @apply bg-blue-600 text-white;
-    }
-    .xml-card .display-btn:not(.active) {
-      @apply bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700;
-    }
-    .xml-card .expand-toggle {
-      @apply ml-auto text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors;
-    }
-    .xml-card .expand-toggle[aria-expanded="true"] {
-      @apply rotate-180;
-    }
-    .xml-card .class-badge {
-      @apply inline-flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full text-xs font-medium;
-    }
-    .xml-card .alignment-badge {
-      @apply inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs;
-    }
-  </style>
-
-  <header class="relative">
+  <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
     {display === 'large' && (
-      <div class="avatar-container">
-        <img
-          class="avatar-img"
-          src={avatarSrc}
-          alt={`${name} portrait`}
-          onerror="this.onerror=null; this.src='/fg/avatar/faceless.svg';"
-        />
-        <div class="display-toggle" x-show="display === 'large'" x-cloak>
-          <button
-            class="display-btn"
-            :class="{ active: displayMode === 'small' }"
-            @click="displayMode = 'small'"
-            aria-pressed={displayMode === 'small'}
-          >
-            Small
-          </button>
-          <button
-            class="display-btn"
-            :class="{ active: displayMode === 'medium' }"
-            @click="displayMode = 'medium'"
-            aria-pressed={displayMode === 'medium'}
-          >
-            Medium
-          </button>
-          <button
-            class="display-btn"
-            :class="{ active: displayMode === 'large' }"
-            @click="displayMode = 'large'"
-            aria-pressed={displayMode === 'large'}
-          >
-            Large
-          </button>
-        </div>
+      <div class="flex justify-end gap-1 mb-2" role="group" aria-label="Display mode">
+        <button
+          class="px-2 py-1 text-xs rounded transition-colors"
+          :class="displayMode === 'small' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
+          @click="displayMode = 'small'"
+          :aria-pressed="displayMode === 'small'"
+        >
+          Small
+        </button>
+        <button
+          class="px-2 py-1 text-xs rounded transition-colors"
+          :class="displayMode === 'medium' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
+          @click="displayMode = 'medium'"
+          :aria-pressed="displayMode === 'medium'"
+        >
+          Medium
+        </button>
+        <button
+          class="px-2 py-1 text-xs rounded transition-colors"
+          :class="displayMode === 'large' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'"
+          @click="displayMode = 'large'"
+          :aria-pressed="displayMode === 'large'"
+        >
+          Large
+        </button>
       </div>
     )}
 
-    <div class="flex items-start justify-between gap-4 p-4" style="background: inherit;">
-      <div>
-        <h1 class="text-xl font-bold text-gray-900 dark:text-white">{name}</h1>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{race} — {classString} (Level {totalLevel})</p>
-        {display !== 'small' && (
-          <>
-            {alignment && <span class="alignment-badge">{alignment}</span>}
-            {background && <span class="alignment-badge mt-1">{background}</span>}
-            {deity && <span class="alignment-badge mt-1">{deity}</span>}
-          </>
+    {display === 'large' && (
+      <img
+        class="float-right ml-4 mb-3 w-36 sm:w-44 rounded object-cover"
+        src={avatarSrc}
+        alt={`${name} portrait`}
+        x-show="rank(displayMode) >= rank('large')"
+      />
+    )}
+
+    <h1 class="mt-0 text-xl font-bold text-gray-900 dark:text-white">{name}</h1>
+    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{race} — {classString} (Level {totalLevel})</p>
+    {display !== 'small' && (
+      <p class="mt-2 flex flex-wrap gap-1" x-show="rank(displayMode) >= rank('medium')">
+        {alignment && (
+          <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs">{alignment}</span>
         )}
-      </div>
-    </div>
+        {background && (
+          <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs">{background}</span>
+        )}
+        {deity && (
+          <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs">{deity}</span>
+        )}
+      </p>
+    )}
   </header>
 
-  <div class="card-body">
-    <section class="section">
-      <h2 class="section-title">Vitals</h2>
-      <div class="vitals-grid">
-        <div class="vital-item">
-          <div class="vital-label">AC</div>
-          <div class="vital-value">{defenses.ac}</div>
+  <div class="p-4 space-y-4">
+    <section class="border-t border-gray-100 dark:border-gray-800 pt-4 first:border-t-0 first:pt-0">
+      <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Vitals</h2>
+      <div class="grid grid-cols-4 gap-2 text-center">
+        <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
+          <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">AC</div>
+          <div class="text-lg font-bold text-gray-900 dark:text-white">{defenses.ac}</div>
         </div>
-        <div class="vital-item">
-          <div class="vital-label">HP</div>
-          <div class="vital-value">{defenses.hp}</div>
+        <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
+          <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">HP</div>
+          <div class="text-lg font-bold text-gray-900 dark:text-white">{defenses.hp}</div>
         </div>
-        <div class="vital-item">
-          <div class="vital-label">Speed</div>
-          <div class="vital-value">{defenses.speed} ft</div>
+        <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
+          <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Speed</div>
+          <div class="text-lg font-bold text-gray-900 dark:text-white">{defenses.speed} ft</div>
         </div>
-        <div class="vital-item">
-          <div class="vital-label">Init</div>
-          <div class="vital-value">{signed(defenses.initiative)}</div>
+        <div class="p-2 bg-gray-50 dark:bg-gray-900 rounded">
+          <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Init</div>
+          <div class="text-lg font-bold text-gray-900 dark:text-white">{signed(defenses.initiative)}</div>
         </div>
       </div>
       {display !== 'small' && (
-        <div class="mt-3 flex items-center gap-4 text-sm">
-          <span class="font-medium text-gray-700 dark:text-gray-300">Proficiency Bonus: {signed(profBonus)}</span>
-        </div>
+        <p
+          class="mt-3 text-sm font-medium text-gray-700 dark:text-gray-300"
+          x-show="rank(displayMode) >= rank('medium')"
+        >
+          Proficiency Bonus: {signed(profBonus)}
+        </p>
       )}
     </section>
 
-    <section class="section" x-show="displayMode !== 'small' || display === 'small'" x-cloak>
-      <h2 class="section-title flex items-center justify-between">
+    <section class="border-t border-gray-100 dark:border-gray-800 pt-4">
+      <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
         Abilities
         <button
-          class="expand-toggle"
+          class="ml-auto bg-transparent border-none cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+          :class="{ 'rotate-180': isExpanded('abilities') }"
           @click="toggleSection('abilities')"
           :aria-expanded="isExpanded('abilities')"
           aria-label="Toggle abilities"
         >
-          <IconifyIcon icon="game-icons:expansion" width="1em" />
+          <IconifyIcon icon="game-icons:expand" width="1em" />
         </button>
       </h2>
-      <div class="abilities-grid" :class="{ 'hidden': !isExpanded('abilities') && display !== 'small' }" x-show="isExpanded('abilities') || display === 'small'" x-transition>
-        {abilityNames.map((ability, i) => (
-          <div class="ability-col">
-            <div class="ability-header">{abilityShort[i]}</div>
-            <div class="ability-score">{getAbilityScore(ability)}</div>
-            <div class="ability-mod">{signed(getAbilityBonus(ability))}</div>
-            <div class="ability-save">Save: {signed(getAbilitySave(ability))}</div>
+      <div x-show="isExpanded('abilities')" x-transition>
+        {display === 'small' ? (
+          <div class="grid grid-cols-6 gap-1">
+            {abilityNames.map((abilityName, i) => (
+              <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 rounded">
+                <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{abilityShort[i]}</div>
+                <div class="text-sm text-gray-600 dark:text-gray-300">{signed(ability(abilityName).bonus)}</div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">{signed(ability(abilityName).save)}</div>
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          <>
+            <div
+              class="grid grid-cols-6 gap-1"
+              x-show="displayMode !== 'small'"
+            >
+              {abilityNames.map((abilityName, i) => (
+                <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 rounded">
+                  <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{abilityShort[i]}</div>
+                  <div class="text-xl font-bold text-gray-900 dark:text-white">{ability(abilityName).score}</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-300">{signed(ability(abilityName).bonus)}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Save: {signed(ability(abilityName).save)}</div>
+                </div>
+              ))}
+            </div>
+            {display === 'large' && (
+              <div
+                class="grid grid-cols-6 gap-1"
+                x-show="displayMode === 'small'"
+              >
+                {abilityNames.map((abilityName, i) => (
+                  <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 rounded">
+                    <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{abilityShort[i]}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300">{signed(ability(abilityName).bonus)}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">{signed(ability(abilityName).save)}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </section>
 
-    {display !== 'small' && (
-      <section class="section">
-        <h2 class="section-title flex items-center justify-between">
+    {display !== 'small' && proficientSaves.length > 0 && (
+      <section
+        class="border-t border-gray-100 dark:border-gray-800 pt-4"
+        x-show="rank(displayMode) >= rank('medium')"
+      >
+        <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
           Saving Throws
           <button
-            class="expand-toggle"
+            class="ml-auto bg-transparent border-none cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            :class="{ 'rotate-180': isExpanded('saves') }"
             @click="toggleSection('saves')"
             :aria-expanded="isExpanded('saves')"
             aria-label="Toggle saving throws"
           >
-            <IconifyIcon icon="game-icons:expansion" width="1em" />
+            <IconifyIcon icon="game-icons:expand" width="1em" />
           </button>
         </h2>
-        <div class="skills-list" :class="{ 'hidden': !isExpanded('saves') }" x-show="isExpanded('saves')" x-transition>
-          {abilityNames.map((ability) => (
-            <div class="skill-item">
-              <span class="skill-name">{ability}</span>
-              <span class="skill-value">{signed(getAbilitySave(ability))}</span>
+        <div class="grid grid-cols-2 gap-1 sm:grid-cols-3" x-show="isExpanded('saves')" x-transition>
+          {proficientSaves.map((abilityName) => (
+            <div class="flex justify-between py-1 px-2 text-sm">
+              <span class="text-gray-700 dark:text-gray-300">{abilityName}</span>
+              <span class="font-mono font-semibold text-gray-900 dark:text-white">{signed(ability(abilityName).save)}</span>
             </div>
           ))}
         </div>
@@ -323,23 +279,27 @@ const characterJson = JSON.stringify(character).replace(/"/g, '"');
     )}
 
     {display !== 'small' && skills.length > 0 && (
-      <section class="section">
-        <h2 class="section-title flex items-center justify-between">
+      <section
+        class="border-t border-gray-100 dark:border-gray-800 pt-4"
+        x-show="rank(displayMode) >= rank('medium')"
+      >
+        <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
           Skills
           <button
-            class="expand-toggle"
+            class="ml-auto bg-transparent border-none cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            :class="{ 'rotate-180': isExpanded('skills') }"
             @click="toggleSection('skills')"
             :aria-expanded="isExpanded('skills')"
             aria-label="Toggle skills"
           >
-            <IconifyIcon icon="game-icons:expansion" width="1em" />
+            <IconifyIcon icon="game-icons:expand" width="1em" />
           </button>
         </h2>
-        <div class="skills-list" :class="{ 'hidden': !isExpanded('skills') }" x-show="isExpanded('skills')" x-transition>
+        <div class="grid grid-cols-2 gap-1 sm:grid-cols-3" x-show="isExpanded('skills')" x-transition>
           {skills.map((skill) => (
-            <div class="skill-item">
-              <span class="skill-name">{skill.name}</span>
-              <span class="skill-value">{signed(skill.value)}</span>
+            <div class="flex justify-between py-1 px-2 text-sm">
+              <span class="text-gray-700 dark:text-gray-300">{skill.name}</span>
+              <span class="font-mono font-semibold text-gray-900 dark:text-white">{signed(skill.value)}</span>
             </div>
           ))}
         </div>
@@ -347,127 +307,162 @@ const characterJson = JSON.stringify(character).replace(/"/g, '"');
     )}
 
     {display !== 'small' && languages.length > 0 && (
-      <section class="section">
-        <h2 class="section-title flex items-center justify-between">
+      <section
+        class="border-t border-gray-100 dark:border-gray-800 pt-4"
+        x-show="rank(displayMode) >= rank('medium')"
+      >
+        <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
           Languages
           <button
-            class="expand-toggle"
+            class="ml-auto bg-transparent border-none cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            :class="{ 'rotate-180': isExpanded('languages') }"
             @click="toggleSection('languages')"
             :aria-expanded="isExpanded('languages')"
             aria-label="Toggle languages"
           >
-            <IconifyIcon icon="game-icons:expansion" width="1em" />
+            <IconifyIcon icon="game-icons:expand" width="1em" />
           </button>
         </h2>
-        <div class="languages-list" :class="{ 'hidden': !isExpanded('languages') }" x-show="isExpanded('languages')" x-transition>
+        <div class="flex flex-wrap gap-2" x-show="isExpanded('languages')" x-transition>
           {languages.map((lang) => (
-            <span class="tag">{lang}</span>
+            <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
           ))}
         </div>
       </section>
     )}
 
     {display === 'large' && feats.length > 0 && (
-      <section class="section">
-        <h2 class="section-title flex items-center justify-between">
+      <section
+        class="border-t border-gray-100 dark:border-gray-800 pt-4"
+        x-show="rank(displayMode) >= rank('large')"
+      >
+        <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
           Feats
           <button
-            class="expand-toggle"
+            class="ml-auto bg-transparent border-none cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            :class="{ 'rotate-180': isExpanded('feats') }"
             @click="toggleSection('feats')"
             :aria-expanded="isExpanded('feats')"
             aria-label="Toggle feats"
           >
-            <IconifyIcon icon="game-icons:expansion" width="1em" />
+            <IconifyIcon icon="game-icons:expand" width="1em" />
           </button>
         </h2>
-        <div class="feats-list" :class="{ 'hidden': !isExpanded('feats') }" x-show="isExpanded('feats')" x-transition>
+        <div class="flex flex-wrap gap-2" x-show="isExpanded('feats')" x-transition>
           {feats.map((feat) => (
-            <span class="tag">{feat}</span>
+            <span class="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
           ))}
         </div>
       </section>
     )}
 
-    {display === 'large' && features.length > 0 && (
-      <section class="section">
-        <h2 class="section-title flex items-center justify-between">
+    {display === 'large' && featuresByLevel.length > 0 && (
+      <section
+        class="border-t border-gray-100 dark:border-gray-800 pt-4"
+        x-show="rank(displayMode) >= rank('large')"
+      >
+        <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
           Features
           <button
-            class="expand-toggle"
+            class="ml-auto bg-transparent border-none cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            :class="{ 'rotate-180': isExpanded('features') }"
             @click="toggleSection('features')"
             :aria-expanded="isExpanded('features')"
             aria-label="Toggle features"
           >
-            <IconifyIcon icon="game-icons:expansion" width="1em" />
+            <IconifyIcon icon="game-icons:expand" width="1em" />
           </button>
         </h2>
-        <div :class="{ 'hidden': !isExpanded('features') }" x-show="isExpanded('features')" x-transition>
-          {features
-            .sort((a, b) => a.level - b.level)
-            .map((feature) => (
-              <div class="feature-item">
-                <div class="feature-header" @click="toggleSection(`feature-${feature.name}`)">
-                  <span class="feature-name">{feature.name}</span>
-                  <span class="feature-source">Level {feature.level} — {feature.source}</span>
-                  <IconifyIcon icon="game-icons:expansion" width="1em" class="expand-toggle" />
+        <div x-show="isExpanded('features')" x-transition>
+          {featuresByLevel.map((group, gi) => (
+            <div>
+              <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                Level {group.level}
+              </h3>
+              {group.items.map((feature, fi) => (
+                <div class="py-2 border-b border-gray-100 dark:border-gray-800 last:border-b-0">
+                  <div
+                    class="flex items-center justify-between cursor-pointer"
+                    role="button"
+                    tabindex="0"
+                    @click={"toggleSection('feature-" + gi + '-' + fi + "')"}
+                    @keydown.enter={"toggleSection('feature-" + gi + '-' + fi + "')"}
+                  >
+                    <span class="font-medium text-gray-900 dark:text-white">{feature.name}</span>
+                    <span class="text-xs text-gray-500 dark:text-gray-400">{feature.source}</span>
+                  </div>
+                  <div
+                    class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-300"
+                    x-show={"isExpanded('feature-" + gi + '-' + fi + "')"}
+                    x-transition
+                  >
+                    <p class="m-0">Source: {feature.source}</p>
+                    <p class="m-0">Gained at level {feature.level}</p>
+                  </div>
                 </div>
-                <div class="feature-detail" :class="{ open: isExpanded(`feature-${feature.name}`) }" x-show="isExpanded(`feature-${feature.name}`)" x-transition>
-                  <p>Source: {feature.source}</p>
-                  <p>Gained at level {feature.level}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          ))}
         </div>
       </section>
     )}
 
-    {display === 'large' && powers.length > 0 && (
-      <section class="section">
-        <h2 class="section-title flex items-center justify-between">
+    {display === 'large' && powersByLevel.length > 0 && (
+      <section
+        class="border-t border-gray-100 dark:border-gray-800 pt-4"
+        x-show="rank(displayMode) >= rank('large')"
+      >
+        <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
           Powers
           <button
-            class="expand-toggle"
+            class="ml-auto bg-transparent border-none cursor-pointer p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-all"
+            :class="{ 'rotate-180': isExpanded('powers') }"
             @click="toggleSection('powers')"
             :aria-expanded="isExpanded('powers')"
             aria-label="Toggle powers"
           >
-            <IconifyIcon icon="game-icons:expansion" width="1em" />
+            <IconifyIcon icon="game-icons:expand" width="1em" />
           </button>
         </h2>
-        <div :class="{ 'hidden': !isExpanded('powers') }" x-show="isExpanded('powers')" x-transition>
-          {powers
-            .sort((a, b) => a.level - b.level || a.group.localeCompare(b.group))
-            .map((power) => (
-              <div class="power-item">
-                <div class="power-header" @click="toggleSection(`power-${power.name}`)">
-                  <span class="power-name">{power.name}</span>
-                  <span class="power-group">Level {power.level} — {power.group}</span>
-                  <IconifyIcon icon="game-icons:expansion" width="1em" class="expand-toggle" />
+        <div x-show="isExpanded('powers')" x-transition>
+          {powersByLevel.map((levelGroup, li) => (
+            <div>
+              <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                Level {levelGroup.level}
+              </h3>
+              {levelGroup.groups.map((group, gi) => (
+                <div>
+                  <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
+                    {group.name}
+                  </h4>
+                  {group.items.map((power, pi) => (
+                    <div class="py-2 border-b border-gray-100 dark:border-gray-800 last:border-b-0">
+                      <div
+                        class="flex items-center justify-between cursor-pointer"
+                        role="button"
+                        tabindex="0"
+                        @click={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
+                        @keydown.enter={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
+                      >
+                        <span class="font-medium text-gray-900 dark:text-white">{power.name}</span>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">{power.group}</span>
+                      </div>
+                      <div
+                        class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-300"
+                        x-show={"isExpanded('power-" + li + '-' + gi + '-' + pi + "')"}
+                        x-transition
+                      >
+                        <p class="m-0">Level: {power.level}</p>
+                        <p class="m-0">Group: {power.group}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <div class="power-detail" :class="{ open: isExpanded(`power-${power.name}`) }" x-show="isExpanded(`power-${power.name}`)" x-transition>
-                  <p>Level: {power.level}</p>
-                  <p>Group: {power.group}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          ))}
         </div>
       </section>
     )}
   </div>
-
-  <script is:inline>
-    // Initialize Alpine.js component state
-    document.addEventListener('alpine:init', () => {
-      Alpine.data('xmlCard', () => ({
-        displayMode: 'large',
-        expandedSections: {},
-        toggleSection(section) {
-          this.expandedSections[section] = !this.expandedSections[section];
-        },
-        isExpanded(section) {
-          return !!this.expandedSections[section];
-        },
-      }));
-    });
-  </script>
 </div>

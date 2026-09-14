@@ -7,7 +7,7 @@ export interface CharacterData {
   background: string;
   deity: string;
   classes: Array<{ name: string; level: number }>;
-  abilities: Record<string, { score: number; bonus: number; save: number }>;
+  abilities: Record<string, { score: number; bonus: number; save: number; saveprof: number }>;
   defenses: {
     ac: number;
     hp: number;
@@ -56,13 +56,14 @@ export function parseCharacterXML(xml: string): CharacterData | null {
   }
   // Abilities
   const abilitiesObj = root.abilities;
-  const abilities: Record<string, { score: number; bonus: number; save: number }> = {};
+  const abilities: Record<string, { score: number; bonus: number; save: number; saveprof: number }> = {};
   for (const stat of Object.keys(abilitiesObj || {})) {
     const s = abilitiesObj[stat];
     abilities[stat] = {
       score: Number(getText(s, 'score') || 0),
       bonus: Number(getText(s, 'bonus') || 0),
       save: Number(getText(s, 'save') || 0),
+      saveprof: Number(getText(s, 'saveprof') || 0),
     };
   }
   // Defenses

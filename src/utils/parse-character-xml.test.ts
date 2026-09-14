@@ -13,6 +13,14 @@ describe('parseCharacterXML', () => {
     expect(result?.classes.length).toBeGreaterThan(0);
   });
 
+  it('captures save proficiency flags for proficient-only saving throws', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.abilities?.strength?.saveprof).toBe(1);
+    expect(result?.abilities?.constitution?.saveprof).toBe(1);
+    expect(result?.abilities?.dexterity?.saveprof).toBe(0);
+  });
+
   it('parses elarion.xml correctly & yields multiclass info', () => {
     const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/elarion.xml'), 'utf8');
     const result = parseCharacterXML(xml);
