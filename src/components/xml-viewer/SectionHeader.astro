@@ -4,11 +4,10 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
 interface Props {
   title: string;
   sectionKey: string;
-  label?: string;
 }
 
-const { title, sectionKey, label } = Astro.props;
-const ariaLabel = label ?? `Toggle ${title.toLowerCase()}`;
+const { title, sectionKey } = Astro.props;
+const ariaLabel = `Toggle ${title.toLowerCase()}`;
 ---
 
 <h2 class="mt-0 font-semibold text-gray-900 mb-2 flex items-center gap-2">

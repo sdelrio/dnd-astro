@@ -68,14 +68,15 @@ interface AbilityView {
 
 const abilityNames = ['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma'];
 const abilityShort = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+const abilityEntries = abilityNames.map((name, i) => ({ name, short: abilityShort[i] }));
 
-function ability(fullName: string): AbilityView {
+function lookupAbility(fullName: string): AbilityView {
   return (
     abilities[fullName.toLowerCase()] ?? { score: 10, bonus: 0, save: 0, saveprof: 0 }
   );
 }
 
-const proficientSaves = abilityNames.filter((a) => ability(a).saveprof > 0);
+const proficientSaves = abilityNames.filter((a) => lookupAbility(a).saveprof > 0);
 
 const sortedFeatures = [...features].sort(
   (a, b) => a.level - b.level || a.name.localeCompare(b.name)
@@ -209,7 +210,7 @@ for (const p of sortedPowers) {
       <SectionHeader title="Abilities" sectionKey="abilities" />
       <div x-show="isExpanded('abilities')" x-transition>
         {display === 'small' ? (
-          <CompactAbilityGrid abilities={abilities} names={abilityNames} short={abilityShort} />
+          <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
         ) : (
           <>
             <div
@@ -219,14 +220,14 @@ for (const p of sortedPowers) {
               {abilityNames.map((abilityName, i) => (
                 <div class="text-center p-2 bg-gray-50 rounded">
                   <div class="text-xs font-semibold text-gray-500 uppercase">{abilityShort[i]}</div>
-                  <div class="text-xl font-bold text-gray-900">{ability(abilityName).score}</div>
-                  <div class="text-sm text-gray-600">{signed(ability(abilityName).bonus)}</div>
-                  <div class="text-xs text-gray-500">Save: {signed(ability(abilityName).save)}</div>
+                  <div class="text-xl font-bold text-gray-900">{lookupAbility(abilityName).score}</div>
+                  <div class="text-sm text-gray-600">{signed(lookupAbility(abilityName).bonus)}</div>
+                  <div class="text-xs text-gray-500">Save: {signed(lookupAbility(abilityName).save)}</div>
                 </div>
               ))}
             </div>
             {display === 'large' && (
-              <CompactAbilityGrid abilities={abilities} names={abilityNames} short={abilityShort} />
+              <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
             )}
           </>
         )}
@@ -243,7 +244,7 @@ for (const p of sortedPowers) {
           {proficientSaves.map((abilityName) => (
             <div class="flex justify-between py-1 px-2 text-sm">
               <span class="text-gray-700">{abilityName}</span>
-              <span class="font-mono font-semibold text-gray-900">{signed(ability(abilityName).save)}</span>
+              <span class="font-mono font-semibold text-gray-900">{signed(lookupAbility(abilityName).save)}</span>
             </div>
           ))}
         </div>
