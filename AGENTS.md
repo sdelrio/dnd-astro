@@ -33,7 +33,7 @@ Consult these guides before working on related tasks:
 Before implementing any feature:
 
 1. Read `docs/specs/README.md` to find a relevant spec.
-2. Match your task to specs via **tags** and **description** — only load the relevant spec.
+2. Match your task to specs via **tags** and **description** - only load the relevant spec.
 3. Read the ADRs listed in `adr_constraints` front matter.
 4. Implement per the spec's implementation plan.
 5. If a new architectural decision was made, draft an ADR and update the index.
@@ -47,7 +47,7 @@ Template: `docs/specs/_TEMPLATE.md`
 
 GitHub Issues via `gh` CLI. See `docs/agents/issue-tracker.md`.
 
-**Always** read `docs/agents/issue-tracker.md` before publishing tickets. Use `gh issue create`, never write local `.scratch/` files unless the tracker is explicitly set to local markdown. Publish **all** tickets, including blocked ones — blockers indicate ordering, not whether to create the ticket.
+**Always** read `docs/agents/issue-tracker.md` before publishing tickets. Use `gh issue create`, never write local `.scratch/` files unless the tracker is explicitly set to local markdown. Publish **all** tickets, including blocked ones - blockers indicate ordering, not whether to create the ticket.
 
 ### Triage labels
 
@@ -56,3 +56,16 @@ Default labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-huma
 ### Domain docs
 
 Single-context. ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
+
+## Writing Style
+
+- Never use the em dash "—". Use plain dash "-" instead.
+
+## Temporary Files
+
+Write all temporary files (PR bodies, issue bodies, scratch files, etc.) to `<repo-root>/tmp/`, e.g. `tmp/pr-<slug>.md`. This directory is gitignored; never use `/tmp` or other system paths.
+
+### Workflow Steps
+
+1. **Never push to master directly**: Always prepare a Pull Request for review
+2. **Always merge PRs with squash** (`gh pr merge <number> --squash`): this repo does not allow merge commits, and squash keeps history linear with one conventional commit per PR
