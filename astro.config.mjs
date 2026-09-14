@@ -73,10 +73,7 @@ export default defineConfig({
       sidebar: [
         {
           label: 'Guides',
-          items: [
-            { label: 'Example Guide', slug: 'guides/example' },
-            { label: 'XmlCard Test Page', slug: 'guides/xml-card-test' },
-          ],
+          items: [{ autogenerate: { directory: 'guides' } }],
         },
         {
           label: 'D&D rule fixes',
