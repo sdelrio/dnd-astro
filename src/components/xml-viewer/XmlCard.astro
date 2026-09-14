@@ -139,8 +139,7 @@ for (const p of sortedPowers) {
 <div
   class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
-  data-character={JSON.stringify(character)}
-  x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 2, tags: 1, profBonus: 1, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+    x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 2, tags: 1, profBonus: 1, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'max-w-[360px]': displayMode === 'small', 'max-w-[480px]': displayMode === 'medium', 'max-w-[710px]': displayMode === 'large', 'inline-block align-top': displayMode === 'small' }"
 >
   <header class="bg-gray-50 border-b border-gray-200 p-4">
