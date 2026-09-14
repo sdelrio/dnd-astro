@@ -1,9 +1,9 @@
 ---
-import type { CharacterData } from '../../utils/parse-character-xml';
+import type { CharacterData } from '@/utils/parse-character-xml';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { signed } from '../../utils/format';
-import IconifyIcon from '../IconifyIcon.astro';
+import { signed } from '@/utils/format';
+import IconifyIcon from '@/components/IconifyIcon.astro';
 
 interface Props {
   character: CharacterData;

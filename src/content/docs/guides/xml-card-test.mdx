@@ -3,19 +3,19 @@ title: XmlCard Test Page
 description: Visual test page for the XmlCard component display modes
 ---
 
-import XmlCard from '../../../components/xml-viewer/XmlCard.astro';
-import tanadirian from '../../../generated/characters/tanadirian.json';
-import murky from '../../../generated/characters/murky.json';
-import malfunction from '../../../generated/characters/malfunction.json';
-import delizan from '../../../generated/characters/delizan.json';
-import dorian from '../../../generated/characters/dorian.json';
-import dougal from '../../../generated/characters/dougal.json';
-import malagolvir from '../../../generated/characters/malagolvir.json';
-import garaele from '../../../generated/characters/garaele.json';
-import milo from '../../../generated/characters/milo.json';
-import alioth from '../../../generated/characters/alioth.json';
-import antonidas from '../../../generated/characters/antonidas.json';
-import akinori from '../../../generated/characters/akinori.json';
+import XmlCard from '@/components/xml-viewer/XmlCard.astro';
+import tanadirian from '@/generated/characters/tanadirian.json';
+import murky from '@/generated/characters/murky.json';
+import malfunction from '@/generated/characters/malfunction.json';
+import delizan from '@/generated/characters/delizan.json';
+import dorian from '@/generated/characters/dorian.json';
+import dougal from '@/generated/characters/dougal.json';
+import malagolvir from '@/generated/characters/malagolvir.json';
+import garaele from '@/generated/characters/garaele.json';
+import milo from '@/generated/characters/milo.json';
+import alioth from '@/generated/characters/alioth.json';
+import antonidas from '@/generated/characters/antonidas.json';
+import akinori from '@/generated/characters/akinori.json';
 
 # XmlCard Test Page
 
@@ -28,8 +28,8 @@ rendering an error card.
 Character JSON is imported from the `src/generated/characters/` build artifacts:
 
 ```mdx
-import XmlCard from '../../../components/xml-viewer/XmlCard.astro';
-import tanadirian from '../../../generated/characters/tanadirian.json';
+import XmlCard from '@/components/xml-viewer/XmlCard.astro';
+import tanadirian from '@/generated/characters/tanadirian.json';
 
 <XmlCard character={tanadirian} display="small" />
 ```
