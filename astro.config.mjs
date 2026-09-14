@@ -22,7 +22,7 @@ function resolveAvatar(/** @type {string} */ filename) {
 
 function buildXmlCharacters() {
   const xmlDir = resolve(__dirname, 'src/assets/fantasy-grounds-sheets');
-  const outputDir = resolve(__dirname, '.astro/generated');
+  const outputDir = resolve(__dirname, 'src/generated/characters');
   const charsIndexPath = resolve(__dirname, 'public/fg/chars/index.json');
 
   if (!existsSync(outputDir)) {

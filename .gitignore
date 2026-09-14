@@ -3,6 +3,9 @@ dist/
 # generated types
 .astro/
 
+# generated build data (rebuilt by the astro.config.mjs XML hook)
+src/generated/
+
 # dependencies
 node_modules/
 

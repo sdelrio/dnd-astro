@@ -10,7 +10,7 @@ const __dirname = join(fileURLToPath(import.meta.url), '..');
 
 const partyJsonPath = resolve(__dirname, '../../../public/fg/party.json');
 const charsIndexPath = resolve(__dirname, '../../../public/fg/chars/index.json');
-const charsDir = resolve(__dirname, '../../../.astro/generated');
+const charsDir = resolve(__dirname, '../../../src/generated/characters');
 
 const partyData = JSON.parse(readFileSync(partyJsonPath, 'utf8'));
 const charsIndex = JSON.parse(readFileSync(charsIndexPath, 'utf8'));

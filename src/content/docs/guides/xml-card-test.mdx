@@ -1,0 +1,174 @@
+---
+title: XmlCard Test Page
+description: Visual test page for the XmlCard component display modes
+---
+
+import XmlCard from '../../../components/xml-viewer/XmlCard.astro';
+import tanadirian from '../../../generated/characters/tanadirian.json';
+import murky from '../../../generated/characters/murky.json';
+import malfunction from '../../../generated/characters/malfunction.json';
+import delizan from '../../../generated/characters/delizan.json';
+import dorian from '../../../generated/characters/dorian.json';
+import dougal from '../../../generated/characters/dougal.json';
+import malagolvir from '../../../generated/characters/malagolvir.json';
+import garaele from '../../../generated/characters/garaele.json';
+import milo from '../../../generated/characters/milo.json';
+import alioth from '../../../generated/characters/alioth.json';
+import antonidas from '../../../generated/characters/antonidas.json';
+import akinori from '../../../generated/characters/akinori.json';
+
+# XmlCard Test Page
+
+This page demonstrates the `XmlCard` component in its display modes and
+configuration options. Unlike golden-forest's `XmlChar` (which takes a
+`filename` and parses XML in the browser), `XmlCard` takes build-time parsed
+`character` JSON — missing files therefore fail the build instead of
+rendering an error card.
+
+Character JSON is imported from the `src/generated/characters/` build artifacts:
+
+```mdx
+import XmlCard from '../../../components/xml-viewer/XmlCard.astro';
+import tanadirian from '../../../generated/characters/tanadirian.json';
+
+<XmlCard character={tanadirian} display="small" />
+```
+
+## Display: Small
+
+Compact card: name, race/class/level, vitals grid, compact abilities
+(MOD + SAVE). Small cards are `inline-block`, so they flow side by side.
+
+### Single Character
+
+```mdx
+<XmlCard character={tanadirian} display="small" />
+```
+
+<XmlCard character={tanadirian} display="small" />
+
+### Multiple Characters (Default Flow)
+
+Small cards flow naturally side by side without any wrapper.
+
+```mdx
+<XmlCard character={murky} display="small" />
+<XmlCard character={malfunction} display="small" />
+```
+
+<XmlCard character={murky} display="small" />
+<XmlCard character={malfunction} display="small" />
+
+### Multiple Characters (Centered)
+
+Wrap them in a centered container.
+
+```mdx
+<div style={{ textAlign: 'center' }}>
+  <XmlCard character={delizan} display="small" />
+  <XmlCard character={dorian} display="small" />
+  <XmlCard character={dougal} display="small" />
+</div>
+```
+
+<div style={{ textAlign: 'center' }}>
+  <XmlCard character={delizan} display="small" />
+  <XmlCard character={dorian} display="small" />
+  <XmlCard character={dougal} display="small" />
+</div>
+
+## Display: Medium
+
+Everything from small mode, plus alignment/background/deity, full ability
+grid, proficient-only saving throws, skills, languages, and proficiency
+bonus. This is the default size.
+
+### Basic Usage
+
+```mdx
+<XmlCard character={tanadirian} display="medium" />
+```
+
+<XmlCard character={tanadirian} display="medium" />
+
+### Different Character
+
+```mdx
+<XmlCard character={malagolvir} display="medium" />
+```
+
+<XmlCard character={malagolvir} display="medium" />
+
+## Display: Large
+
+The complete card: portrait (floated right), feats, features grouped by
+level, and powers grouped by level and group. Includes S/M/L toggle buttons
+to switch display modes live.
+
+### Fallback Portrait
+
+Garaele has no avatar file, so the build-time probe falls back to
+`faceless.svg`. Forcing a non-existing `image` resolves to the same
+fallback at build time.
+
+```mdx
+<XmlCard character={garaele} image="dontexists.jpg" display="large" />
+```
+
+<XmlCard character={garaele} image="dontexists.jpg" display="large" />
+
+```mdx
+<XmlCard character={garaele} display="large" />
+```
+
+<XmlCard character={garaele} display="large" />
+
+### Default Portrait (JPG, by Character Name)
+
+Milo relies on the default naming convention: no `image` prop, so the
+portrait resolves from the character name (`milo.jpg`).
+
+```mdx
+<XmlCard character={milo} display="large" />
+```
+
+<XmlCard character={milo} display="large" />
+
+### Explicit Portrait (JPG) + Long Deity
+
+Alioth exercises an exceptionally long deity field, and the S/M/L toggle
+above the portrait switches the card between display modes.
+
+```mdx
+<XmlCard character={alioth} display="large" image="alioth.jpg" />
+```
+
+<XmlCard character={alioth} display="large" image="alioth.jpg" />
+
+### Explicit Portrait (PNG)
+
+```mdx
+<XmlCard character={antonidas} display="large" image="antonidas.png" />
+```
+
+<XmlCard character={antonidas} display="large" image="antonidas.png" />
+
+### Feature Grouping
+
+Akinori has 19 features across several levels, showing the per-level
+grouping with expand/collapse details.
+
+```mdx
+<XmlCard character={akinori} display="large" />
+```
+
+<XmlCard character={akinori} display="large" />
+
+## Notes
+
+- **Powers:** none of the 111 characters in the current export set has
+  direct-child `<powers>`, so the Powers section stays hidden everywhere.
+  It renders once the source data contains powers.
+- **Multiclass:** no character in the set currently has more than one
+  class; the `Class A x / Class B y` rendering is untested against live
+  data.
