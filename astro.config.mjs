@@ -41,9 +41,7 @@ function xmlCharacterViewer() {
       'astro:config:setup'() {
         buildXmlCharacters();
       },
-      'astro:build:start'() {
-        buildXmlCharacters();
-      },
+
     },
   };
 }
