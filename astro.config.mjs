@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import alpinejs from '@astrojs/alpinejs';
 import tailwindcss from '@tailwindcss/vite';
 import { buildXmlCharacters } from './src/utils/build-xml-characters.ts';
 
@@ -20,6 +21,7 @@ function xmlCharacterViewer() {
 export default defineConfig({
   integrations: [
     xmlCharacterViewer(),
+    alpinejs(),
     starlight({
       title: 'DnD Companion',
       description: 'D&D rules, Fantasy Grounds xml visualizer.',
@@ -48,6 +50,7 @@ export default defineConfig({
           label: 'Fantasy Grounds',
           items: [
             { label: 'Current Party', slug: 'dnd/fantasy-grounds/current-party' },
+            { label: 'Character Search', slug: 'dnd/fantasy-grounds/character-search' },
           ],
         },
       ],

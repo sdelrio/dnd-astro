@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@astrojs/alpinejs':
         specifier: ^1.0.0
-        version: 1.0.0(@types/alpinejs@3.13.11)(alpinejs@3.17.2)
+        version: 1.0.0(@types/alpinejs@3.13.11)(alpinejs@3.17.3)
       '@astrojs/react':
         specifier: ^6.0.5
         version: 6.0.5(@types/node@26.5.1)(@types/react-dom@19.2.7(@types/react@19.2.18))(@types/react@19.2.18)(esbuild@0.28.2)(jiti@2.7.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -26,6 +26,9 @@ importers:
       '@iconify/react':
         specifier: ^6.0.2
         version: 6.0.2(react@19.2.8)
+      alpinejs:
+        specifier: ^3.17.3
+        version: 3.17.3
       astro:
         specifier: ^7.3.2
         version: 7.3.2(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(@types/node@26.5.1)(jiti@2.7.0)
@@ -1078,8 +1081,8 @@ packages:
   '@vue/shared@3.5.42':
     resolution: {integrity: sha512-2rPxex1jQf4jvl9MOHl6YaXCPcrNqz/FstMOEh3QWY+/OME9nQTvl9WYeCwhW7AFjaR0SnngZGlp/wkR6rkI6g==}
 
-  alpinejs@3.17.2:
-    resolution: {integrity: sha512-xbnG3LlnmFkiNO49C+qhqjEDqOdB0snKqvT48ZVp8TakpZOpsoQbc/jAxpptQRjZi7c9rLeCfvwQ/XOSirIZFQ==}
+  alpinejs@3.17.3:
+    resolution: {integrity: sha512-hIfoRTBBeHMeMu6gXuKwwNoY6pJ7bwpZ91dXVrqRhUhHFOyGr4S21sUYqbxPY5Cnjo0RAmPZVRRZw1becRyV0Q==}
 
   am-i-vibing@0.4.0:
     resolution: {integrity: sha512-MxT4XZL7pzLHpuvhDKdMaQHMGGkJDLluKBLsbstn+8wv9sWcFT6h+0ve9qkml95amVTZtZV83gQe2hY+ojgHLg==}
@@ -2287,10 +2290,10 @@ packages:
 
 snapshots:
 
-  '@astrojs/alpinejs@1.0.0(@types/alpinejs@3.13.11)(alpinejs@3.17.2)':
+  '@astrojs/alpinejs@1.0.0(@types/alpinejs@3.13.11)(alpinejs@3.17.3)':
     dependencies:
       '@types/alpinejs': 3.13.11
-      alpinejs: 3.17.2
+      alpinejs: 3.17.3
 
   '@astrojs/compiler-binding-darwin-arm64@0.4.0':
     optional: true
@@ -3196,7 +3199,7 @@ snapshots:
 
   '@vue/shared@3.5.42': {}
 
-  alpinejs@3.17.2:
+  alpinejs@3.17.3:
     dependencies:
       '@vue/reactivity': 3.5.42
 
