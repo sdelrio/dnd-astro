@@ -1,8 +1,8 @@
 ---
 import type { CharacterData } from '@/utils/parse-character-xml';
-import { parseCharacterXML } from '@/utils/parse-character-xml';
+import type { CharacterArtifactEntry } from '@/utils/build-xml-characters';
 import { partyStats } from '@/utils/party-stats';
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
@@ -11,12 +11,12 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
 const __dirname = join(fileURLToPath(import.meta.url), '..');
 
 const partyJsonPath = resolve(__dirname, '../../../public/fg/party.json');
-const charactersJsonPath = resolve(__dirname, '../../../src/generated/characters.json');
+const charactersJsonPath = resolve(__dirname, '../../../.astro/generated/characters.json');
 
 const partyData = JSON.parse(readFileSync(partyJsonPath, 'utf8'));
-const storedCharacters: StoredCharacter[] = existsSync(charactersJsonPath)
-  ? JSON.parse(readFileSync(charactersJsonPath, 'utf8'))
-  : [];
+const artifactEntries: CharacterArtifactEntry[] = JSON.parse(
+  readFileSync(charactersJsonPath, 'utf8'),
+);
 
 // Role icons use game-icons equivalents (user-confirmed deviation from the
 // spec's mdi: names; IconifyIcon.astro now ships both sets).
@@ -30,9 +30,8 @@ const ROLE_CONFIG = {
 
 type Role = keyof typeof ROLE_CONFIG;
 
-interface StoredCharacter extends CharacterData {
-  filename: string;
-}
+/** CharacterData with the pre-resolved avatarPath from the build artifact merged in. */
+type ResolvedCharacter = CharacterData & { avatarPath: string; filename: string };
 
 interface PartyMember {
   filename: string;
@@ -47,21 +46,13 @@ interface PartyJson {
 
 const party = partyData as PartyJson;
 
-function loadCharacter(filename: string): StoredCharacter | null {
-  const stored = storedCharacters.find((c) => c.filename === filename);
-  if (stored) return stored;
-
-  const xmlPath = resolve(__dirname, `../../../src/assets/fantasy-grounds-sheets/${filename}.xml`);
-  if (existsSync(xmlPath)) {
-    const xml = readFileSync(xmlPath, 'utf8');
-    const parsed = parseCharacterXML(xml);
-    if (parsed) {
-      return { ...parsed, filename };
-    }
+function loadCharacter(filename: string): ResolvedCharacter | null {
+  const entry = artifactEntries.find((e: CharacterArtifactEntry) => e.filename === filename);
+  if (!entry) {
+    console.warn(`[PartyView] Character data missing for "${filename}" - skipping member`);
+    return null;
   }
-
-  console.warn(`[PartyView] Character data missing for "${filename}" - skipping member`);
-  return null;
+  return { ...entry.character, avatarPath: entry.avatarPath, filename: entry.filename };
 }
 
 const members = party.members
@@ -71,7 +62,7 @@ const members = party.members
     role: member.role as Role,
     character: loadCharacter(member.filename),
   }))
-  .filter((m): m is typeof m & { character: StoredCharacter } => m.character !== null);
+  .filter((m): m is typeof m & { character: ResolvedCharacter } => m.character !== null);
 
 const stats = partyStats(members);
 
