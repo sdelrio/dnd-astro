@@ -1,24 +1,5 @@
 ---
 import characters from '@/generated/characters.json';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
-
-interface AvatarResult {
-  name: string;
-  avatar: string;
-}
-
-function probeAvatar(base: string): string {
-  const dir = join(process.cwd(), 'public/fg/avatar');
-  if (existsSync(join(dir, `${base}.jpg`))) return `/fg/avatar/${base}.jpg`;
-  if (existsSync(join(dir, `${base}.png`))) return `/fg/avatar/${base}.png`;
-  return '/fg/avatar/faceless.svg';
-}
-
-const charactersWithAvatars: (typeof characters[number] & { avatar: string })[] = characters.map((char) => ({
-  ...char,
-  avatar: char.avatarPath ?? probeAvatar(char.filename ?? char.name.toLowerCase().replace(/\s+/g, '')),
-}));
 
 const allClasses = [...new Set(characters.flatMap((c) => c.classes.map((cl) => cl.name)))].sort();
 const allRaces = [...new Set(characters.map((c) => c.race))].sort();
@@ -44,7 +25,7 @@ const allRaces = [...new Set(characters.map((c) => c.race))].sort();
       this.selectedRace = '';
     }
   }"
-  data-characters={JSON.stringify(charactersWithAvatars)}
+  data-characters={JSON.stringify(characters)}
   class="space-y-6"
 >
   <div class="flex flex-col sm:flex-row gap-4">
@@ -104,7 +85,7 @@ const allRaces = [...new Set(characters.map((c) => c.race))].sort();
       <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
         <div class="flex items-center p-4 gap-4">
           <img
-            :src="char.avatar"
+            :src="char.avatarPath"
             :alt="char.name + ' portrait'"
             class="w-16 h-16 rounded object-cover"
           />
