@@ -11,7 +11,7 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
 const __dirname = join(fileURLToPath(import.meta.url), '..');
 
 const partyJsonPath = resolve(__dirname, '../../../public/fg/party.json');
-const charactersJsonPath = resolve(__dirname, '../../../src/generated/characters.json');
+const charactersJsonPath = resolve(__dirname, '../../../.astro/generated/characters.json');
 
 const partyData = JSON.parse(readFileSync(partyJsonPath, 'utf8'));
 const artifactEntries: CharacterArtifactEntry[] = JSON.parse(
