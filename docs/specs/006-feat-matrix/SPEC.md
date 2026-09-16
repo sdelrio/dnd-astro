@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "Book-Filtered Feat Matrix"
 author: "opencode"
 date: "2026-09-16"
