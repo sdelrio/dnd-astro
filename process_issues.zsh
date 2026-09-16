@@ -18,9 +18,8 @@ function process_issues() {
         echo "No more issues to process. Exiting..."
         break
 
-        # Clear context at the end of the ticket
-        echo "Clearing context using opencode (end of ticket)..."
-        opencode clear || echo "Context clearing failed, continuing..."
+        # Context is managed by the opencode session - no explicit clear needed
+        # The context remains intact during ticket processing as requested
 
         fi
 
@@ -30,13 +29,19 @@ function process_issues() {
             break
         }
 
-        # Clear context at the start of the ticket
-        echo "Clearing context using opencode (start of ticket)..."
-        opencode clear || echo "Context clearing failed, continuing..."
+        # Context is managed by the opencode session - no explicit clear needed
+        # The context remains intact during ticket processing as requested
 
         # Create a branch for the ticket
         branch_name="issue-$next_issue"
-        git checkout -b "$branch_name"
+        # Check if branch already exists
+        if git rev-parse --verify "$branch_name" >/dev/null 2>&1; then
+            echo "Branch $branch_name already exists. Switching to it..."
+            git checkout "$branch_name"
+        else
+            echo "Creating new branch $branch_name..."
+            git checkout -b "$branch_name"
+        fi
 
         # Start TDD for the issue
         echo "Starting implementation using TDD for issue #$next_issue..."
@@ -49,6 +54,11 @@ function process_issues() {
 
         # Create a pull request (PR)
         echo "Creating a Pull Request for branch: $branch_name..."
+        # Push branch to remote
+        echo "Pushing branch $branch_name to remote..."
+        git push -u origin "$branch_name"
+
+        # Create a pull request (PR)
         pr_url=$(gh pr create --title "Fixes issue #$next_issue" --body "This PR resolves issue #$next_issue and includes the necessary fixes and improvements.")
         echo "Pull Request created: $pr_url"
 
@@ -80,6 +90,14 @@ function process_issues() {
 
         # Finalize and verify all PR checks
         echo "Verifying PR checks for issue #$next_issue..."
+        echo "Fetching PR details for branch: $branch_name..."
+        pr_url=$(gh pr view --json url --jq ".url")
+        if [[ -z "$pr_url" ]]; then
+            echo "No PR found for branch $branch_name. Stopping processing."
+            break
+        fi
+
+        echo "Verifying checks for PR: $pr_url..."
         if gh pr checks; then
             echo "All checks passed. Squash merging the PR for issue #$next_issue..."
             gh pr merge --squash
