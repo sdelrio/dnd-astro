@@ -1,6 +1,6 @@
 ---
 status: archived
-title: "Character Search Page with Alpine.js Filtering"
+title: "Character Browser Page with Alpine.js Filtering"
 author: "opencode"
 date: "2026-09-16"
 tags: [character-search, alpine-js, filtering, fantasy-grounds]
@@ -11,11 +11,11 @@ affects:
 adr_constraints: []
 ---
 
-# SPEC: Character Search Page with Alpine.js Filtering
+# SPEC: Character Browser Page with Alpine.js Filtering
 
 ## Summary
 
-A Character Search page at `/dnd/fantasy-grounds/character-search/` that displays all Fantasy Grounds characters in a filterable grid, supporting text search by name and dropdown filters for class and race.
+A Character Browser page at `/dnd/fantasy-grounds/character-search/` that displays all Fantasy Grounds characters in a filterable grid, supporting text search by name and dropdown filters for class and race.
 
 ## Problem Statement
 
@@ -50,29 +50,30 @@ Create `src/components/xml-viewer/CharSearch.astro` - an Astro component that:
 - Filters characters client-side based on all active filters
 - Renders a responsive grid of character cards with avatar, name, race, class breakdown, and vitals
 
-### Step 2: Create Character Search MDX Page
+### Step 2: Create Character Browser MDX Page
 
 Create `src/content/docs/dnd/fantasy-grounds/character-search.mdx` with:
 - Title: "Character Browser"
 - Table of contents disabled
-- Sidebar visible (linked from Fantasy Grounds section)
+- Sidebar hidden from autogenerate (linked from Fantasy Grounds section)
 - Imports and renders `<CharSearch />`
 
 ### Step 3: Add Sidebar Entry
 
-Update `astro.config.mjs` to include Character Search in the Fantasy Grounds sidebar section.
+Update `astro.config.mjs` to include Character Browser in the Fantasy Grounds sidebar section.
 
 ## Files to Create/Modify
 
 | File | Action | Purpose |
 |------|--------|---------|
 | `src/components/xml-viewer/CharSearch.astro` | create | Character search component with Alpine.js filtering |
-| `src/content/docs/dnd/fantasy-grounds/character-search.mdx` | create | Starlight MDX page for character search |
-| `astro.config.mjs` | modify | Add sidebar entry for Character Search |
+| `src/content/docs/dnd/fantasy-grounds/character-search.mdx` | create | Starlight MDX page for character browser |
+| `astro.config.mjs` | modify | Add sidebar entry for Character Browser |
 
 ## Testing
 
 - Manual verification: Page builds and loads at `/dnd/fantasy-grounds/character-search/`
+- Page not duplicated in "D&D rule fixes" sidebar (hidden from autogenerate)
 - Alpine.js directives present in generated HTML
 - All 111 characters render in the grid
 - Filtering by name, class, and race works in browser
@@ -85,6 +86,7 @@ Update `astro.config.mjs` to include Character Search in the Fantasy Grounds sid
 - Remove `src/components/xml-viewer/CharSearch.astro`
 - Remove `src/content/docs/dnd/fantasy-grounds/character-search.mdx`
 - Remove sidebar entry from `astro.config.mjs`
+- Remove `sidebar.hidden` frontmatter from MDX file
 
 ## Status
 
