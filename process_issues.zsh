@@ -19,7 +19,8 @@ function process_issues() {
         break
 
         # Clear context at the end of the ticket
-        opencode clear
+        echo "Clearing context using opencode (end of ticket)..."
+        opencode clear || echo "Context clearing failed, continuing..."
 
         fi
 
@@ -30,7 +31,8 @@ function process_issues() {
         }
 
         # Clear context at the start of the ticket
-        opencode clear
+        echo "Clearing context using opencode (start of ticket)..."
+        opencode clear || echo "Context clearing failed, continuing..."
 
         # Create a branch for the ticket
         branch_name="issue-$next_issue"
