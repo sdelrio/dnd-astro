@@ -3,3 +3,10 @@
    global reset cannot restyle Starlight documentation pages. */
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css";
+
+/* Remove unwanted top margin from the first child in horizontal list/stack UIs */
+.space-y-6 > *:first-child,
+.space-y-4 > *:first-child,
+.space-y-2 > *:first-child {
+  margin-top: 0 !important;
+}
