@@ -31,7 +31,7 @@ function extractFeats(content) {
     }
     
     // Extract level
-    const levelMatch = propsString.match(/level=(\d+)/);
+    const levelMatch = propsString.match(/level=\{?(\d+)\}?/);
     if (levelMatch) {
       feat.level = parseInt(levelMatch[1], 10);
     }

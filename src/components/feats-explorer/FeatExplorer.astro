@@ -75,8 +75,10 @@ const initialData = {
           class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
         >
           <option value="All">All Levels</option>
-          <option value="0">Origin (0)</option>
-          <option value="4+">General (4+)</option>
+          <option value="0">Level 0</option>
+          <option value="4-18">Level 4-18</option>
+          <option value="19">Level 19</option>
+          <option value="21">Level 21</option>
         </select>
       </div>
     </div>
@@ -186,7 +188,9 @@ const initialData = {
           if (this.selectedLevel !== 'All') {
             const level = Number(this.selectedLevel);
             if (level === 0) matchesLevel = feat.level === 0;
-            else if (level === 4) matchesLevel = feat.level >= 4;
+            else if (level === 19) matchesLevel = feat.level === 19;
+            else if (level === 21) matchesLevel = feat.level === 21;
+            else if (this.selectedLevel === '4-18') matchesLevel = feat.level >= 4 && feat.level <= 18;
           }
           return matchesSearch && matchesAbility && matchesBook && matchesLevel;
         });
