@@ -18,7 +18,7 @@ How should we render Iconify icons in MDX documentation pages without shipping u
 
 - Align with SPEC.md Section 3 "Rule of Least Client-Side JavaScript"
 - Minimize client-side JavaScript payload
-- Keep React reserved for the three defined interactive islands (Dice Roller, Feat Matrix, XML Viewer)
+- Use Alpine.js for all interactive components to minimize bundle size
 - Provide a simple developer experience for documentation authors
 
 ## Considered Options
@@ -33,11 +33,10 @@ Chosen option: **Option A** — Use `src/components/IconifyIcon.astro`
 ### Consequences
 
 - Good, because decorative icons are purely visual with no interactivity, so shipping a React runtime is unnecessary overhead.
-- Good, because React is reserved for the three defined islands per SPEC.md Section 3.
+- Good, because Alpine.js is used for all interactive components, keeping the bundle size minimal.
 - Good, because the Astro component produces identical SVG output at build time with 0 bytes of client JS.
 - Good, because no changes to `astro.config.mjs` integrations are required.
 - Neutral, because Icon availability depends on the Iconify API at build time; offline builds will fail to render icons.
-- Neutral, because `@iconify/react` remains in `package.json` but is not used in documentation pages. It may be used within React island components if needed.
 
 ## Usage
 

@@ -11,16 +11,12 @@
   },
   "dependencies": {
     "@astrojs/alpinejs": "^1.0.0",
-    "@astrojs/react": "^6.0.5",
     "@astrojs/starlight": "^0.42.0",
     "@iconify-json/game-icons": "^1.2.4",
     "@iconify-json/mdi": "^1.2.3",
-    "@iconify/react": "^6.0.2",
     "alpinejs": "^3.17.3",
     "astro": "^7.3.2",
     "fast-xml-parser": "^5.11.1",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
     "sharp": "^0.35.3"
   },
   "devDependencies": {
