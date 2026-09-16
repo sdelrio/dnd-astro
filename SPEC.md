@@ -58,20 +58,22 @@ Standard rule documentation must use built-in Starlight components. These genera
 Used exclusively for local client-side interaction that doesn't rely on remote backend schemas or computational manipulation.
 * **Scope:** Mobile navigation states, UI toggle state (light/dark sync adjustments), and minor aesthetic view changes.
 
-### React Island Breakdown (Targeted Pages)
-React must only be bundled and loaded on the specific pages managing the three high-interactivity mechanics detailed below. If a page does not load these explicit islands, React runtime bundles must be completely omitted from the network payload.
+### Alpine.js Interactive Components
+All interactive components use Alpine.js for client-side behavior. This eliminates React runtime overhead (~40KB) and keeps JavaScript minimal across all pages. Each component is self-contained in its own directory under `src/components/`.
 
-#### Island 1: Dice Roller & Character Sheet Generator
+#### Component 1: Dice Roller & Character Sheet Generator
 * **File Location:** `src/components/dice-roller/`
-* **Hydration Strategy:** `client:load` (Needs immediate responsiveness upon initialization).
-* **Mechanics:** Mathematical randomization models for multi-dice pools, modifier injections, and programmatic output into an ephemeral JSON state representing temporary base statistics.
+* **Hydration Strategy:** Immediate via Alpine.js `x-init` on the component root element.
+* **Mechanics:** Mathematical randomization models for multi-dice pools (4d6-drop-lowest for ability scores), modifier injections, and programmatic output into an ephemeral JSON state representing temporary base statistics.
+* **Events:** `@click` for roll buttons, `x-model` for modifier inputs, `x-show`/`x-transition` for result display.
 
-#### Island 2: Book-Filtered Feat Matrix
+#### Component 2: Book-Filtered Feat Matrix
 * **File Location:** `src/components/feats-explorer/`
-* **Hydration Strategy:** `client:visible` (Deferred execution until the viewport crosses the component boundary).
+* **Hydration Strategy:** Deferred via `x-intersect` plugin (loads only when scrolled into viewport).
 * **Mechanics:** Fuzzy client-side searching, sub-category relational indexing, and multi-select filtering over a matrix of pre-compiled rules.
+* **Events:** `@input` for search field, `@change` for filter dropdowns, `x-for` for dynamic list rendering.
 
-#### Island 3: Fantasy Grounds XML Character Sheet Viewer
+#### Component 3: Fantasy Grounds XML Character Sheet Viewer
 * **File Location:** `src/components/xml-viewer/`
 * **Spec:** [SPEC-003: XML Character Sheet Viewer](./docs/specs/003-xml-character-viewer/SPEC.md)
 * **Hydration Strategy:** Static Layout Pre-rendering (Build-time compilation) with Alpine.js for lightweight client interactions (display-mode toggle, expand/collapse, role filtering).
@@ -80,7 +82,7 @@ React must only be bundled and loaded on the specific pages managing the three h
   2. `fast-xml-parser` maps the proprietary Fantasy Grounds XML node trees into clean JSON schemas.
   3. Avatar image paths are pre-resolved at build time (`.jpg` → `.png` → `faceless.svg` fallback).
   4. The JSON data is injected into Astro components via static props at build time.
-  5. Alpine.js handles client-side display-mode toggles and interactive filtering — no React runtime required.
+  5. Alpine.js handles client-side display-mode toggles and interactive filtering.
 
 ---
 
@@ -97,13 +99,13 @@ Agents executing changes in this repository must maintain the following file sys
 │   │   └── fantasy-grounds-sheets/  # Canonical storage for source .xml dossiers
 │   ├── components/
 │   │   ├── IconifyIcon.astro        # Zero-JS Astro component for Iconify icons in MDX
-│   │   ├── dice-roller/             # Isolated React UI for RNG and sheet generation
-│   │   ├── feats-explorer/          # Isolated React UI for advanced lookup tables
-│   │   └── xml-viewer/              # Isolated React UI for character presentation
+│   │   ├── dice-roller/             # Alpine.js component for RNG and sheet generation
+│   │   ├── feats-explorer/          # Alpine.js component for advanced lookup tables
+│   │   └── xml-viewer/              # Alpine.js component for character presentation
 │   ├── content/
 │   │   └── docs/                    # Starlight MDX files (Standard static rulebooks)
 │   └── pages/                       # Custom Astro routes bypassing default Starlight if needed
-├── astro.config.mjs                 # Main engine setup (Astro + Starlight + React + Alpine integrations)
+├── astro.config.mjs                 # Main engine setup (Astro + Starlight + Alpine integrations)
 ├── package.json                     # Dependency manifests specifying Node 24 baseline
 └── SPEC.md                          # This architectural specification document
 ```
@@ -112,8 +114,8 @@ Agents executing changes in this repository must maintain the following file sys
 
 ## 5. Development Integrity Rules for Agents
 
-1. **Never Anidate React inside Alpine or vice versa:** Keep context scopes entirely isolated to avoid unhandled DOM collisions.
-2. **Prevent Hydration Mismatch:** Ensure that data injected into React components from the static Astro frontmatter matches exactly between server-side pre-rendering and client-side activation.
-3. **No Direct DOM Mutations:** For React islands, let React control the DOM tree. For Starlight documentation pages, rely strictly on declarative HTML attributes.
-4. **Enforce Component Splitting:** Do not cluster all 3 systems into a single monolithic bundle. Treat the Dice Roller, Feat Matrix, and XML Viewer as strictly separate application islands.
+1. **Keep Alpine.js Scopes Isolated:** Each component must define its own `x-data` scope. Never nest Alpine.js components in ways that cause scope leakage or variable shadowing.
+2. **Prevent Hydration Mismatch:** Ensure that data injected into Astro components from static frontmatter matches exactly between server-side pre-rendering and client-side Alpine.js activation.
+3. **No Direct DOM Mutations:** Let Alpine.js control reactive state and DOM updates. For Starlight documentation pages, rely strictly on declarative HTML attributes.
+4. **Enforce Component Splitting:** Do not cluster all 3 systems into a single monolithic bundle. Treat the Dice Roller, Feat Matrix, and XML Viewer as strictly separate Alpine.js components.
 
