@@ -219,7 +219,7 @@ Update `astro.config.mjs` sidebar to include a Fantasy Grounds section:
 {
   label: 'Fantasy Grounds',
   items: [
-    { label: 'Current Party', slug: 'dnd/fantasy-grounds/current-party' },
+    { label: 'Current Party', slug: 'fantasy-grounds/current-party' },
   ],
 }
 ```
@@ -233,7 +233,7 @@ Update `astro.config.mjs` sidebar to include a Fantasy Grounds section:
 | `src/utils/format.ts` | create | `signed()` number formatter |
 | `src/components/xml-viewer/XmlCard.astro` | create | Single character card component |
 | `src/components/xml-viewer/PartyView.astro` | create | Party aggregate + member cards |
-| `src/content/docs/dnd/fantasy-grounds/current-party.mdx` | create | Party page in Starlight |
+| `src/content/docs/fantasy-grounds/current-party.mdx` | create | Party page in Starlight |
 | `src/assets/fantasy-grounds-sheets/` | create | XML source files (112 files) |
 | `public/fg/avatar/` | create | Avatar images |
 | `public/fg/party.json` | create | Party roster config |
@@ -265,7 +265,7 @@ Update `astro.config.mjs` sidebar to include a Fantasy Grounds section:
 - Remove `public/fg/` directory
 - Remove `fast-xml-parser` from `package.json`
 - Revert `astro.config.mjs` changes (build hook + sidebar)
-- Remove `src/content/docs/dnd/fantasy-grounds/` directory
+- Remove `src/content/docs/fantasy-grounds/` directory
 
 ## Accepted Deviations
 

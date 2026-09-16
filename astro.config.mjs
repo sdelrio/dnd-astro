@@ -59,8 +59,8 @@ export default defineConfig({
         {
           label: 'Fantasy Grounds',
           items: [
-            { label: 'Current Party', slug: 'dnd/fantasy-grounds/current-party' },
-            { label: 'Character Search', slug: 'dnd/fantasy-grounds/character-search' },
+            { label: 'Current Party', slug: 'fantasy-grounds/current-party' },
+            { label: 'Character Search', slug: 'fantasy-grounds/character-search' },
           ],
         },
       ],
