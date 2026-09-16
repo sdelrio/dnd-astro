@@ -1,0 +1,224 @@
+---
+import { FEATS, BOOKS, ABILITIES } from './feat-data';
+import { fuzzyMatch } from './search-utils';
+
+interface Feat {
+  name: string;
+  level: number;
+  category: string;
+  book: string;
+  abilityIncrease?: string[];
+  prerequisite?: string;
+  description: string;
+}
+
+// Pass data to client-side via a script tag
+const initialData = {
+  feats: FEATS,
+  books: BOOKS,
+  abilities: ABILITIES
+};
+---
+
+<div
+  x-data="featExplorer()"
+  x-intersect.once="init()"
+  class="space-y-6"
+>
+  <!-- Loading state -->
+  <div x-show="!isInitialized" class="text-center py-12 text-gray-500">
+    Loading feats...
+  </div>
+
+  <!-- Main content -->
+  <div x-show="isInitialized">
+    <!-- Filter controls -->
+    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+      <div class="flex-1">
+        <label for="feat-search" class="block text-sm font-medium text-gray-700 mb-1">Search feats</label>
+        <input
+          id="feat-search"
+          type="text"
+          x-model="searchQuery"
+          @input.debounce.300ms="filterFeats()"
+          placeholder="Type a feat name..."
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+        />
+      </div>
+      
+      <div class="sm:w-48">
+        <label for="ability-filter" class="block text-sm font-medium text-gray-700 mb-1">Ability</label>
+        <select
+          id="ability-filter"
+          x-model="selectedAbility"
+          @change="filterFeats()"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+        >
+          <option value="All">All Abilities</option>
+          <template x-for="ability in abilities" :key="ability">
+            <option :value="ability" x-text="ability"></option>
+          </template>
+        </select>
+      </div>
+      
+      <div class="sm:w-48">
+        <label for="book-filter" class="block text-sm font-medium text-gray-700 mb-1">Book</label>
+        <select
+          id="book-filter"
+          x-model="selectedBook"
+          @change="filterFeats()"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+        >
+          <option value="All">All Books</option>
+          <template x-for="(code, name) in books" :key="code">
+            <option :value="code" x-text="name"></option>
+          </template>
+        </select>
+      </div>
+      
+      <div class="sm:w-48">
+        <label for="level-filter" class="block text-sm font-medium text-gray-700 mb-1">Level</label>
+        <select
+          id="level-filter"
+          x-model="selectedLevel"
+          @change="filterFeats()"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+        >
+          <option value="All">All Levels</option>
+          <option value="0">Origin (0)</option>
+          <option value="4+">General (4+)</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Clear filters and result count -->
+    <div class="flex items-center justify-between mb-6">
+      <p class="text-sm text-gray-600">
+        <span x-text="filteredFeats.length"></span> feat<span x-show="filteredFeats.length !== 1">s</span> found
+      </p>
+      <button
+        x-show="hasActiveFilters()"
+        @click="clearFilters()"
+        class="text-sm text-blue-600 hover:text-blue-800 underline"
+        aria-label="Clear all filters"
+      >
+        Clear filters
+      </button>
+    </div>
+    
+    <!-- Feat grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <template x-for="feat in filteredFeats" :key="feat.name">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="font-bold text-gray-900" x-text="feat.name"></h3>
+              <span 
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                :class="feat.level === 0 ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'"
+                x-text="feat.level === 0 ? 'Origin' : 'General'"
+              ></span>
+            </div>
+            
+            <div class="text-sm text-gray-600 mb-2" x-text="feat.description"></div>
+            
+            <div class="flex flex-wrap gap-1 mb-2">
+              <template x-if="feat.abilityIncrease && feat.abilityIncrease.length > 0">
+                <div class="flex flex-wrap gap-1">
+                  <template x-for="ability in feat.abilityIncrease" :key="ability">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800" x-text="ability"></span>
+                  </template>
+                </div>
+              </template>
+            </div>
+            
+            <div class="flex justify-between items-center text-xs text-gray-500">
+              <span x-text="books[feat.book] || feat.book"></span>
+              <span x-show="feat.prerequisite" x-text="'Prereq: ' + feat.prerequisite"></span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+    
+    <!-- Empty state -->
+    <div x-show="filteredFeats.length === 0" class="text-center py-12 text-gray-500">
+      No feats match your filters.
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ initialData }}>
+import { fuzzyMatch } from './search-utils';
+
+// Make functions and data available globally for Alpine.js
+window.fuzzyMatch = fuzzyMatch;
+window.featExplorerData = initialData;
+
+// Define the featExplorer function for Alpine.js
+window.featExplorer = function() {
+  return {
+    feats: [],
+    filteredFeats: [],
+    abilities: [],
+    books: {},
+    searchQuery: '',
+    selectedAbility: 'All',
+    selectedBook: 'All',
+    selectedLevel: 'All',
+    isInitialized: false,
+    
+    init() {
+      // Load data from the global variable
+      this.feats = window.featExplorerData.feats || [];
+      this.abilities = window.featExplorerData.abilities || [];
+      this.books = window.featExplorerData.books || {};
+      this.filteredFeats = [...this.feats];
+      this.isInitialized = true;
+    },
+    
+    filterFeats() {
+      this.filteredFeats = this.feats.filter(feat => {
+        // Search query filter
+        const matchesSearch = !this.searchQuery || 
+          window.fuzzyMatch(this.searchQuery, feat.name);
+        
+        // Ability filter
+        const matchesAbility = this.selectedAbility === 'All' || 
+          (feat.abilityIncrease && feat.abilityIncrease.includes(this.selectedAbility));
+        
+        // Book filter
+        const matchesBook = this.selectedBook === 'All' || 
+          feat.book === this.selectedBook;
+        
+        // Level filter
+        let matchesLevel = true;
+        if (this.selectedLevel !== 'All') {
+          if (this.selectedLevel === '0') {
+            matchesLevel = feat.level === 0;
+          } else if (this.selectedLevel === '4+') {
+            matchesLevel = feat.level >= 4;
+          }
+        }
+        
+        return matchesSearch && matchesAbility && matchesBook && matchesLevel;
+      });
+    },
+    
+    clearFilters() {
+      this.searchQuery = '';
+      this.selectedAbility = 'All';
+      this.selectedBook = 'All';
+      this.selectedLevel = 'All';
+      this.filterFeats();
+    },
+    
+    hasActiveFilters() {
+      return this.searchQuery !== '' || 
+        this.selectedAbility !== 'All' || 
+        this.selectedBook !== 'All' || 
+        this.selectedLevel !== 'All';
+    }
+  };
+};
+</script>

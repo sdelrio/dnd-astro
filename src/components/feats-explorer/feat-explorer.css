@@ -1,0 +1,12 @@
+/* Feat Explorer Component Styles */
+
+/* All styling is handled via Tailwind CSS classes in the component.
+   This file exists for organizational purposes and potential future custom styles. */
+
+/* Responsive grid is handled by Tailwind: grid-cols-1 md:grid-cols-2 lg:grid-cols-3 */
+/* Card styling is handled by Tailwind: bg-white border border-gray-200 rounded-lg shadow-sm */
+/* Hover effects are handled by Tailwind: hover:shadow-md transition-shadow */
+/* Level badges are handled by Tailwind conditional classes */
+/* Ability tags are handled by Tailwind: bg-gray-100 text-gray-800 */
+/* Empty state is handled by Tailwind: text-center py-12 text-gray-500 */
+/* Loading state is handled by Tailwind: text-center py-12 text-gray-500 */
