@@ -6,7 +6,7 @@ date: "2026-09-16"
 tags: [character-search, alpine-js, filtering, fantasy-grounds]
 affects:
   - src/components/xml-viewer/CharSearch.astro
-  - src/content/docs/dnd/fantasy-grounds/character-search.mdx
+  - src/content/docs/fantasy-grounds/character-search.mdx
   - astro.config.mjs
 adr_constraints: []
 ---
@@ -15,7 +15,7 @@ adr_constraints: []
 
 ## Summary
 
-A Character Browser page at `/dnd/fantasy-grounds/character-search/` that displays all Fantasy Grounds characters in a filterable grid, supporting text search by name and dropdown filters for class and race.
+A Character Browser page at `/fantasy-grounds/character-search/` that displays all Fantasy Grounds characters in a filterable grid, supporting text search by name and dropdown filters for class and race.
 
 ## Problem Statement
 
@@ -52,7 +52,7 @@ Create `src/components/xml-viewer/CharSearch.astro` - an Astro component that:
 
 ### Step 2: Create Character Browser MDX Page
 
-Create `src/content/docs/dnd/fantasy-grounds/character-search.mdx` with:
+Create `src/content/docs/fantasy-grounds/character-search.mdx` with:
 - Title: "Character Browser"
 - Table of contents disabled
 - Sidebar hidden from autogenerate (linked from Fantasy Grounds section)
@@ -67,12 +67,12 @@ Update `astro.config.mjs` to include Character Browser in the Fantasy Grounds si
 | File | Action | Purpose |
 |------|--------|---------|
 | `src/components/xml-viewer/CharSearch.astro` | create | Character search component with Alpine.js filtering |
-| `src/content/docs/dnd/fantasy-grounds/character-search.mdx` | create | Starlight MDX page for character browser |
+| `src/content/docs/fantasy-grounds/character-search.mdx` | create | Starlight MDX page for character browser |
 | `astro.config.mjs` | modify | Add sidebar entry for Character Browser |
 
 ## Testing
 
-- Manual verification: Page builds and loads at `/dnd/fantasy-grounds/character-search/`
+- Manual verification: Page builds and loads at `/fantasy-grounds/character-search/`
 - Page not duplicated in "D&D rule fixes" sidebar (hidden from autogenerate)
 - Alpine.js directives present in generated HTML
 - All 111 characters render in the grid
@@ -84,7 +84,7 @@ Update `astro.config.mjs` to include Character Browser in the Fantasy Grounds si
 ## Rollback
 
 - Remove `src/components/xml-viewer/CharSearch.astro`
-- Remove `src/content/docs/dnd/fantasy-grounds/character-search.mdx`
+- Remove `src/content/docs/fantasy-grounds/character-search.mdx`
 - Remove sidebar entry from `astro.config.mjs`
 - Remove `sidebar.hidden` frontmatter from MDX file
 
