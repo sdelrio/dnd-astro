@@ -20,99 +20,118 @@ export const ABILITIES = [
 export const FEATS = [
   {
     "name": "Alert",
+    "level": 0,
     "book": "phb",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Crafter",
+    "level": 0,
     "book": "phb",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Cult of the Dragon Initiate",
+    "level": 0,
     "book": "hof",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Emerald Enclave Fledgling",
+    "level": 0,
     "book": "hof",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Harper Agent",
+    "level": 0,
     "book": "hof",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Healer",
+    "level": 0,
     "book": "phb",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Lords' Alliance Agent",
+    "level": 0,
     "book": "hof",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Lucky",
+    "level": 0,
     "book": "phb",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Magic Initiate",
+    "level": 0,
     "book": "phb",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Musician",
+    "level": 0,
     "book": "phb",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Purple Dragon Rook",
+    "level": 0,
     "book": "hof",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Savage Attacker",
+    "level": 0,
     "book": "phb",
     "youGain": "{false}",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Skilled",
+    "level": 0,
     "book": "phb",
     "youGain": "{false}",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Spellfire Spark",
+    "level": 0,
     "book": "hof",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Tavern Brawler",
+    "level": 0,
     "book": "phb",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Tough",
+    "level": 0,
     "book": "phb",
     "youGain": "{false}",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Tyro of the Gauntlet",
+    "level": 0,
     "book": "hof",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Zhentarim Ruffian",
+    "level": 0,
     "book": "hof",
-    "category": "General"
+    "category": "Origin"
   },
   {
     "name": "Active Alchemy",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Wisdom",
@@ -123,6 +142,7 @@ export const FEATS = [
   },
   {
     "name": "Actor",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma"
@@ -132,6 +152,7 @@ export const FEATS = [
   },
   {
     "name": "Adrenaline Surge",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -142,6 +163,7 @@ export const FEATS = [
   },
   {
     "name": "Arcane Shield",
+    "level": 4,
     "book": "fef",
     "prerequisite": "Ability to cast arcane spells",
     "youGain": "{false}",
@@ -149,6 +171,7 @@ export const FEATS = [
   },
   {
     "name": "Arcane Strike",
+    "level": 4,
     "book": "fef",
     "prerequisite": "Ability to cast arcane spells.",
     "youGain": "{false}",
@@ -156,6 +179,7 @@ export const FEATS = [
   },
   {
     "name": "Athlete",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -166,6 +190,7 @@ export const FEATS = [
   },
   {
     "name": "Augmented Conjuring",
+    "level": 4,
     "book": "fef",
     "prerequisite": "Spell Focus (Conjuration)",
     "youGain": "{false}",
@@ -173,6 +198,7 @@ export const FEATS = [
   },
   {
     "name": "Battlecaster",
+    "level": 4,
     "book": "fef",
     "prerequisite": "The ability to cast at least one spell.",
     "youGain": "{false}",
@@ -180,6 +206,7 @@ export const FEATS = [
   },
   {
     "name": "Battlefield Trickster",
+    "level": 4,
     "book": "fef",
     "abilityIncrease": [
       "Strength",
@@ -190,12 +217,14 @@ export const FEATS = [
   },
   {
     "name": "Blaster Buffet",
+    "level": 4,
     "book": "fef",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Blowgun Injector",
+    "level": 4,
     "book": "fef",
     "abilityIncrease": [
       "Dexterity"
@@ -205,6 +234,7 @@ export const FEATS = [
   },
   {
     "name": "Charger",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -215,6 +245,7 @@ export const FEATS = [
   },
   {
     "name": "Chef",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Constitution",
@@ -224,6 +255,7 @@ export const FEATS = [
   },
   {
     "name": "Cold Caster",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Charisma",
@@ -234,12 +266,14 @@ export const FEATS = [
   },
   {
     "name": "Combat Caster",
+    "level": 4,
     "book": "fef",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Combat Expertise",
+    "level": 4,
     "book": "fef",
     "abilityIncrease": [
       "Dexterity"
@@ -250,6 +284,7 @@ export const FEATS = [
   },
   {
     "name": "Comeback Kid",
+    "level": 4,
     "book": "fef",
     "abilityIncrease": [
       "Constitution"
@@ -259,6 +294,7 @@ export const FEATS = [
   },
   {
     "name": "Conditioned Body",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Constitution"
@@ -268,6 +304,7 @@ export const FEATS = [
   },
   {
     "name": "Conditioning",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Strength",
@@ -279,6 +316,7 @@ export const FEATS = [
   },
   {
     "name": "Counter-Riposte",
+    "level": 4,
     "book": "fef",
     "abilityIncrease": [
       "Strength",
@@ -289,6 +327,7 @@ export const FEATS = [
   },
   {
     "name": "Crossbow Expert",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Dexterity"
@@ -298,6 +337,7 @@ export const FEATS = [
   },
   {
     "name": "Crusher",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -307,12 +347,14 @@ export const FEATS = [
   },
   {
     "name": "Cunning Plan",
+    "level": 4,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Defensive Duelist",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Dexterity"
@@ -322,6 +364,7 @@ export const FEATS = [
   },
   {
     "name": "Desperate Reserve",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Constitution"
@@ -330,6 +373,7 @@ export const FEATS = [
   },
   {
     "name": "Dodging Expertise",
+    "level": 4,
     "book": "fef",
     "prerequisite": "Dex 13+",
     "youGain": "{false}",
@@ -337,6 +381,7 @@ export const FEATS = [
   },
   {
     "name": "Double Cast",
+    "level": 4,
     "book": "fef",
     "prerequisite": "The ability to cast at least one cantrip",
     "youGain": "{false}",
@@ -344,6 +389,7 @@ export const FEATS = [
   },
   {
     "name": "Down but not Out",
+    "level": 4,
     "book": "fef",
     "abilityIncrease": [
       "Constitution"
@@ -353,6 +399,7 @@ export const FEATS = [
   },
   {
     "name": "Downcaster",
+    "level": 4,
     "book": "fef",
     "prerequisite": "Spellcasting feature",
     "youGain": "{false}",
@@ -360,6 +407,7 @@ export const FEATS = [
   },
   {
     "name": "Dragonscarred",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Constitution",
@@ -369,6 +417,7 @@ export const FEATS = [
   },
   {
     "name": "Dual Wielder",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -379,6 +428,7 @@ export const FEATS = [
   },
   {
     "name": "Durable",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Constitution"
@@ -387,6 +437,7 @@ export const FEATS = [
   },
   {
     "name": "Eldritch Adept",
+    "level": 4,
     "book": "fef",
     "prerequisite": "Spellcasting or Pact Magic Feature",
     "youGain": "{false}",
@@ -394,6 +445,7 @@ export const FEATS = [
   },
   {
     "name": "Eldritch Lifesaver",
+    "level": 4,
     "book": "echh",
     "prerequisite": "The ability to cast at least one arcane spell.",
     "youGain": "{false}",
@@ -401,6 +453,7 @@ export const FEATS = [
   },
   {
     "name": "Elemental Adept",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -412,6 +465,7 @@ export const FEATS = [
   },
   {
     "name": "Elementary Expertise",
+    "level": 4,
     "book": "echh",
     "prerequisite": "The ability to cast at least one spell",
     "youGain": "{false}",
@@ -419,6 +473,7 @@ export const FEATS = [
   },
   {
     "name": "Enclave Magic",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Charisma",
@@ -429,6 +484,7 @@ export const FEATS = [
   },
   {
     "name": "Energy Recovery",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Spellcasting",
     "youGain": "{false}",
@@ -436,6 +492,7 @@ export const FEATS = [
   },
   {
     "name": "Expert Tactician",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Charisma"
@@ -445,6 +502,7 @@ export const FEATS = [
   },
   {
     "name": "Expert Trapper",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Wisdom"
@@ -454,6 +512,7 @@ export const FEATS = [
   },
   {
     "name": "Fairy Trickster",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Dexterity",
@@ -463,6 +522,7 @@ export const FEATS = [
   },
   {
     "name": "Fast as Lightning",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity"
@@ -472,6 +532,7 @@ export const FEATS = [
   },
   {
     "name": "Fey-Touched",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -483,6 +544,7 @@ export const FEATS = [
   },
   {
     "name": "Fleet",
+    "level": 4,
     "book": "fef",
     "abilityIncrease": [
       "Dexterity"
@@ -493,6 +555,7 @@ export const FEATS = [
   },
   {
     "name": "Genie Magic",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Charisma",
@@ -503,6 +566,7 @@ export const FEATS = [
   },
   {
     "name": "Grappler",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -514,6 +578,7 @@ export const FEATS = [
   },
   {
     "name": "Great Weapon Master",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength"
@@ -524,6 +589,7 @@ export const FEATS = [
   },
   {
     "name": "Harper Teamwork",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Dexterity",
@@ -534,6 +600,7 @@ export const FEATS = [
   },
   {
     "name": "Heavily Armored",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -545,6 +612,7 @@ export const FEATS = [
   },
   {
     "name": "Heavy Armor Master",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -556,12 +624,14 @@ export const FEATS = [
   },
   {
     "name": "Hulking Brute",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Strength 18+",
     "category": "General"
   },
   {
     "name": "Inspiring Leader",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -572,6 +642,7 @@ export const FEATS = [
   },
   {
     "name": "Invigorating Abjuration",
+    "level": 4,
     "book": "echh",
     "prerequisite": "The ability to cast at least one spell",
     "youGain": "{false}",
@@ -579,6 +650,7 @@ export const FEATS = [
   },
   {
     "name": "Keen Mind",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -589,6 +661,7 @@ export const FEATS = [
   },
   {
     "name": "Keep it Simple",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Strength",
@@ -599,6 +672,7 @@ export const FEATS = [
   },
   {
     "name": "Larger than Life",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Strength",
@@ -608,6 +682,7 @@ export const FEATS = [
   },
   {
     "name": "Lightly Armored",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -617,6 +692,7 @@ export const FEATS = [
   },
   {
     "name": "Lightning Stance",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity"
@@ -626,6 +702,7 @@ export const FEATS = [
   },
   {
     "name": "Lordly Resolve",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Strength",
@@ -635,6 +712,7 @@ export const FEATS = [
   },
   {
     "name": "Mage Killer",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Arcana proficiency",
     "youGain": "{false}",
@@ -642,6 +720,7 @@ export const FEATS = [
   },
   {
     "name": "Mage Slayer",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -651,6 +730,7 @@ export const FEATS = [
   },
   {
     "name": "Magical Prodigy",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Spellcasting or Pact Magic feature. Spellcasting ability score 16+",
     "youGain": "{false}",
@@ -658,12 +738,14 @@ export const FEATS = [
   },
   {
     "name": "Magical Reminiscence",
+    "level": 4,
     "book": "echh",
     "prerequisite": "The ability to cast at least one spell",
     "category": "General"
   },
   {
     "name": "Marksman",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity"
@@ -673,6 +755,7 @@ export const FEATS = [
   },
   {
     "name": "Martial Weapon Training",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -682,6 +765,7 @@ export const FEATS = [
   },
   {
     "name": "Master of Magic",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Magical Prodigy feat. Spellcasting ability score 18+. Arcane spellcasting or Divine spellcasting.",
     "youGain": "{false}",
@@ -689,6 +773,7 @@ export const FEATS = [
   },
   {
     "name": "Master of High Magic",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Master of Magic feat. Spellcasting ability score 18+. Arcane spellcasting or Divine spellcasting.",
     "youGain": "{false}",
@@ -696,6 +781,7 @@ export const FEATS = [
   },
   {
     "name": "Meditation",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -707,6 +793,7 @@ export const FEATS = [
   },
   {
     "name": "Medium Armor Master",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -717,6 +804,7 @@ export const FEATS = [
   },
   {
     "name": "Metamagic Adept",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Spellcasting or Pact Magic feature",
     "youGain": "{false}",
@@ -724,6 +812,7 @@ export const FEATS = [
   },
   {
     "name": "Metamagic: Preserved Spell",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Spellcasting ability score 16+",
     "youGain": "{false}",
@@ -731,6 +820,7 @@ export const FEATS = [
   },
   {
     "name": "Moderately Armored",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -741,6 +831,7 @@ export const FEATS = [
   },
   {
     "name": "Mounted Combatant",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -751,6 +842,7 @@ export const FEATS = [
   },
   {
     "name": "Mythal Touched",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Charisma",
@@ -761,6 +853,7 @@ export const FEATS = [
   },
   {
     "name": "Nimble Physique",
+    "level": 4,
     "abilityIncrease": [
       "Dexterity"
     ],
@@ -770,6 +863,7 @@ export const FEATS = [
   },
   {
     "name": "Observant",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Wisdom",
@@ -780,6 +874,7 @@ export const FEATS = [
   },
   {
     "name": "Order's Resilience",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Strength",
@@ -791,11 +886,13 @@ export const FEATS = [
   },
   {
     "name": "Overly Prepared",
+    "level": 4,
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Overwhelming Elemental Power",
+    "level": 4,
     "abilityIncrease": [
       "Charisma",
       "Wisdom",
@@ -806,18 +903,21 @@ export const FEATS = [
   },
   {
     "name": "Parry Spell",
+    "level": 4,
     "prerequisite": "Dex 13+, Arcana proficiency",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Parting Shot",
+    "level": 4,
     "prerequisite": "Dex 15+",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Piercer",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -827,6 +927,7 @@ export const FEATS = [
   },
   {
     "name": "Poisoner",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Dexterity",
@@ -836,6 +937,7 @@ export const FEATS = [
   },
   {
     "name": "Polearm Master",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Dexterity",
@@ -846,6 +948,7 @@ export const FEATS = [
   },
   {
     "name": "Precognitive",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Wisdom"
@@ -856,6 +959,7 @@ export const FEATS = [
   },
   {
     "name": "Privilege of the Wise",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Wisdom"
@@ -865,6 +969,7 @@ export const FEATS = [
   },
   {
     "name": "Protective Transmutation",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Intelligence",
@@ -877,6 +982,7 @@ export const FEATS = [
   },
   {
     "name": "Punisher",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Strength",
@@ -887,6 +993,7 @@ export const FEATS = [
   },
   {
     "name": "Purple Dragon Commandant",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Strength",
@@ -897,6 +1004,7 @@ export const FEATS = [
   },
   {
     "name": "Quick Adaptation",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Constitution"
@@ -906,6 +1014,7 @@ export const FEATS = [
   },
   {
     "name": "Reactive",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity"
@@ -916,6 +1025,7 @@ export const FEATS = [
   },
   {
     "name": "Resilient",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Constitution"
@@ -924,6 +1034,7 @@ export const FEATS = [
   },
   {
     "name": "Ritual Caster",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -935,6 +1046,7 @@ export const FEATS = [
   },
   {
     "name": "Seeker of Seven Songs",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Charisma"
@@ -944,6 +1056,7 @@ export const FEATS = [
   },
   {
     "name": "Sentinel",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -954,6 +1067,7 @@ export const FEATS = [
   },
   {
     "name": "Shadow-Touched",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -965,6 +1079,7 @@ export const FEATS = [
   },
   {
     "name": "Sharpshooter",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Dexterity"
@@ -974,6 +1089,7 @@ export const FEATS = [
   },
   {
     "name": "Shield Bearer",
+    "level": 4,
     "book": "fef",
     "abilityIncrease": [
       "Strength",
@@ -984,6 +1100,7 @@ export const FEATS = [
   },
   {
     "name": "Shield Master",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength"
@@ -993,6 +1110,7 @@ export const FEATS = [
   },
   {
     "name": "Sidestep",
+    "level": 4,
     "book": "fef",
     "abilityIncrease": [
       "Dexterity"
@@ -1002,6 +1120,7 @@ export const FEATS = [
   },
   {
     "name": "Skill Expert",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Choice"
@@ -1010,6 +1129,7 @@ export const FEATS = [
   },
   {
     "name": "Skulker",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Dexterity"
@@ -1019,6 +1139,7 @@ export const FEATS = [
   },
   {
     "name": "Slasher",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -1028,6 +1149,7 @@ export const FEATS = [
   },
   {
     "name": "Sleuthing",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Intelligence"
@@ -1037,6 +1159,7 @@ export const FEATS = [
   },
   {
     "name": "Speedy",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Dexterity",
@@ -1047,6 +1170,7 @@ export const FEATS = [
   },
   {
     "name": "Spellblade",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Intelligence",
@@ -1059,6 +1183,7 @@ export const FEATS = [
   },
   {
     "name": "Spellfire Adept",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Charisma",
@@ -1070,6 +1195,7 @@ export const FEATS = [
   },
   {
     "name": "Spell Focus",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Ability to cast spells.",
     "youGain": "{false}",
@@ -1077,6 +1203,7 @@ export const FEATS = [
   },
   {
     "name": "Spellmarked",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Sorcerer",
     "youGain": "{false}",
@@ -1084,6 +1211,7 @@ export const FEATS = [
   },
   {
     "name": "Spell Penetration",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Spell Focus Feat",
     "youGain": "{false}",
@@ -1091,6 +1219,7 @@ export const FEATS = [
   },
   {
     "name": "Spell Sniper",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1102,6 +1231,7 @@ export const FEATS = [
   },
   {
     "name": "Street Justice",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Strength",
@@ -1111,6 +1241,7 @@ export const FEATS = [
   },
   {
     "name": "Strong Grip",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Strength"
@@ -1120,6 +1251,7 @@ export const FEATS = [
   },
   {
     "name": "Telekinetic",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1130,6 +1262,7 @@ export const FEATS = [
   },
   {
     "name": "Telepathic",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1140,6 +1273,7 @@ export const FEATS = [
   },
   {
     "name": "Tireless",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Constitution"
@@ -1148,6 +1282,7 @@ export const FEATS = [
   },
   {
     "name": "Torch Master",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Strength",
@@ -1159,6 +1294,7 @@ export const FEATS = [
   },
   {
     "name": "Unrelenting Caster",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1171,6 +1307,7 @@ export const FEATS = [
   },
   {
     "name": "Upcaster",
+    "level": 4,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1183,6 +1320,7 @@ export const FEATS = [
   },
   {
     "name": "War Caster",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1194,6 +1332,7 @@ export const FEATS = [
   },
   {
     "name": "Weapon Master",
+    "level": 4,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -1203,6 +1342,7 @@ export const FEATS = [
   },
   {
     "name": "Wyrd Magic",
+    "level": 4,
     "book": "echh",
     "prerequisite": "Spellcasting or Pact Magic feature",
     "youGain": "{false}",
@@ -1210,6 +1350,7 @@ export const FEATS = [
   },
   {
     "name": "Zhentarim Tactics",
+    "level": 4,
     "book": "hof",
     "abilityIncrease": [
       "Dexterity",
@@ -1220,6 +1361,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Bloodshed",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Strenght",
@@ -1233,6 +1375,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Boutiful Health",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Strenght",
@@ -1246,6 +1389,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Combat Prowess",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1259,6 +1403,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Communication",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Charisma",
@@ -1269,6 +1414,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Desperate Resilience",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Strength",
@@ -1278,6 +1424,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Dimensional Travel",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1291,6 +1438,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Energy Infusion",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1304,6 +1452,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Energy Resistance",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1317,6 +1466,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Exquisite Radiance",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Choice"
@@ -1325,6 +1475,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Fate",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1338,6 +1489,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Fluid Forms",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Charisma",
@@ -1348,6 +1500,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Fortitude",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1361,6 +1514,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Fortune's Favor",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Choice"
@@ -1369,12 +1523,14 @@ export const FEATS = [
   },
   {
     "name": "Boon of High Magic",
+    "level": 19,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Boon of Invincibility",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Constitution"
@@ -1384,6 +1540,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Irresistable Offense",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Strength",
@@ -1393,12 +1550,14 @@ export const FEATS = [
   },
   {
     "name": "Boon of Legendary Actions",
+    "level": 19,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Boon of Magic Wellspring",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1410,6 +1569,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Poison Mastery",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Strength",
@@ -1423,6 +1583,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Quick Casting",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Intelligence",
@@ -1434,6 +1595,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Recovery",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1447,6 +1609,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Resilience",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Constitution"
@@ -1456,6 +1619,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Revelry",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Charisma",
@@ -1466,6 +1630,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Skill",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1479,6 +1644,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Speed",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1492,6 +1658,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Spell Lore",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1503,11 +1670,13 @@ export const FEATS = [
   },
   {
     "name": "Boon of Spell Mastery",
+    "level": 19,
     "book": "echh",
     "category": "General"
   },
   {
     "name": "Boon of Spell Recall",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Intelligence",
@@ -1518,6 +1687,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Terror",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Charisma"
@@ -1526,6 +1696,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of the Bright Sun",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Constitution",
@@ -1536,6 +1707,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of the Furious Storm",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Charisma",
@@ -1546,6 +1718,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of the Night Spirit",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1559,6 +1732,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Truesight",
+    "level": 19,
     "book": "phb",
     "abilityIncrease": [
       "Charisma",
@@ -1572,6 +1746,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of the Soul Drinker",
+    "level": 19,
     "book": "hof",
     "abilityIncrease": [
       "Choice"
@@ -1580,6 +1755,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of the True Caster",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1590,6 +1766,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of the Unfettered",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Strength",
@@ -1601,6 +1778,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of the Warmage",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1611,6 +1789,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of the Witch",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1622,6 +1801,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Time Mastery",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1634,6 +1814,7 @@ export const FEATS = [
   },
   {
     "name": "Boon of Unlimited Stamina",
+    "level": 19,
     "book": "echh",
     "abilityIncrease": [
       "Constitution"
@@ -1643,6 +1824,7 @@ export const FEATS = [
   },
   {
     "name": "Alchamaestro",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Constitution",
@@ -1653,6 +1835,7 @@ export const FEATS = [
   },
   {
     "name": "Arcane Insight",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1663,6 +1846,7 @@ export const FEATS = [
   },
   {
     "name": "Artifact Affinity",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1673,6 +1857,7 @@ export const FEATS = [
   },
   {
     "name": "Blinding Speed",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity"
@@ -1682,6 +1867,7 @@ export const FEATS = [
   },
   {
     "name": "Boundless Creativity",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Intelligence",
@@ -1693,6 +1879,7 @@ export const FEATS = [
   },
   {
     "name": "Cavalry Master",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Strength",
@@ -1704,6 +1891,7 @@ export const FEATS = [
   },
   {
     "name": "Deadshot",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity"
@@ -1713,12 +1901,14 @@ export const FEATS = [
   },
   {
     "name": "Deathbringer",
+    "level": 21,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Devastating Charger",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Strength"
@@ -1728,6 +1918,7 @@ export const FEATS = [
   },
   {
     "name": "Divine Aspect",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1739,6 +1930,7 @@ export const FEATS = [
   },
   {
     "name": "Extraordinary Focus",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1750,18 +1942,21 @@ export const FEATS = [
   },
   {
     "name": "Fist of Fury",
+    "level": 21,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Flawless Instincts",
+    "level": 21,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Force of Will",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Wisdom"
@@ -1770,6 +1965,7 @@ export const FEATS = [
   },
   {
     "name": "Giver of Life",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1780,6 +1976,7 @@ export const FEATS = [
   },
   {
     "name": "Immortality",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Constitution"
@@ -1789,30 +1986,35 @@ export const FEATS = [
   },
   {
     "name": "Impenetrable Bulkwark",
+    "level": 21,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Legendary Potency",
+    "level": 21,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Legendary Resistance",
+    "level": 21,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Legendary Skills",
+    "level": 21,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Living Armor",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity",
@@ -1824,6 +2026,7 @@ export const FEATS = [
   },
   {
     "name": "Lord of War",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity",
@@ -1835,11 +2038,13 @@ export const FEATS = [
   },
   {
     "name": "Magical Savant",
+    "level": 21,
     "book": "echh",
     "category": "General"
   },
   {
     "name": "Master of Rituals",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1850,12 +2055,14 @@ export const FEATS = [
   },
   {
     "name": "Master of Tactics",
+    "level": 21,
     "book": "echh",
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Might-based Spellcasting",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Strength"
@@ -1865,6 +2072,7 @@ export const FEATS = [
   },
   {
     "name": "Mystic Sage",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1875,11 +2083,13 @@ export const FEATS = [
   },
   {
     "name": "Paragon",
+    "level": 21,
     "youGain": "{false}",
     "category": "General"
   },
   {
     "name": "Perfect Health",
+    "level": 21,
     "abilityIncrease": [
       "Constitution"
     ],
@@ -1888,6 +2098,7 @@ export const FEATS = [
   },
   {
     "name": "Relentless Warrior",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity"
@@ -1896,6 +2107,7 @@ export const FEATS = [
   },
   {
     "name": "Shadowdancer",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Dexterity"
@@ -1904,6 +2116,7 @@ export const FEATS = [
   },
   {
     "name": "Sight Beyond Sight",
+    "level": 21,
     "abilityIncrease": [
       "Wisdom"
     ],
@@ -1912,11 +2125,13 @@ export const FEATS = [
   },
   {
     "name": "Songs of Power",
+    "level": 21,
     "book": "echh",
     "category": "General"
   },
   {
     "name": "Spell Lord",
+    "level": 21,
     "abilityIncrease": [
       "Charisma",
       "Wisdom",
@@ -1926,10 +2141,12 @@ export const FEATS = [
   },
   {
     "name": "Spell Reflection",
+    "level": 21,
     "category": "General"
   },
   {
     "name": "Spellslinger",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
@@ -1940,11 +2157,13 @@ export const FEATS = [
   },
   {
     "name": "Superior Initiative",
+    "level": 21,
     "book": "echh",
     "category": "General"
   },
   {
     "name": "Versatile Mind",
+    "level": 21,
     "book": "echh",
     "abilityIncrease": [
       "Charisma",
