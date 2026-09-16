@@ -1,6 +1,5 @@
 ---
 import { FEATS, BOOKS, ABILITIES } from './feat-data';
-import { fuzzyMatch } from './search-utils';
 
 interface Feat {
   name: string;
@@ -12,7 +11,6 @@ interface Feat {
   description: string;
 }
 
-// Pass data to client-side via a script tag
 const initialData = {
   feats: FEATS,
   books: BOOKS,
@@ -21,18 +19,10 @@ const initialData = {
 ---
 
 <div
-  x-data="featExplorer()"
-  x-intersect.once="init()"
+  x-data={`featExplorer(${JSON.stringify(initialData)})`}
   class="space-y-6"
 >
-  <!-- Loading state -->
-  <div x-show="!isInitialized" class="text-center py-12 text-gray-500">
-    Loading feats...
-  </div>
-
-  <!-- Main content -->
-  <div x-show="isInitialized">
-    <!-- Filter controls -->
+  <!-- Filter controls -->
     <div class="flex flex-col sm:flex-row gap-4 mb-6">
       <div class="flex-1">
         <label for="feat-search" class="block text-sm font-medium text-gray-700 mb-1">Search feats</label>
@@ -141,84 +131,80 @@ const initialData = {
       </template>
     </div>
     
-    <!-- Empty state -->
-    <div x-show="filteredFeats.length === 0" class="text-center py-12 text-gray-500">
-      No feats match your filters.
-    </div>
+  <!-- Empty state -->
+  <div x-show="filteredFeats.length === 0" class="text-center py-12 text-gray-500">
+    No feats match your filters.
   </div>
 </div>
 
-<script define:vars={{ initialData }}>
-import { fuzzyMatch } from './search-utils';
-
-// Make functions and data available globally for Alpine.js
-window.fuzzyMatch = fuzzyMatch;
-window.featExplorerData = initialData;
-
-// Define the featExplorer function for Alpine.js
-window.featExplorer = function() {
-  return {
-    feats: [],
-    filteredFeats: [],
-    abilities: [],
-    books: {},
-    searchQuery: '',
-    selectedAbility: 'All',
-    selectedBook: 'All',
-    selectedLevel: 'All',
-    isInitialized: false,
-    
-    init() {
-      // Load data from the global variable
-      this.feats = window.featExplorerData.feats || [];
-      this.abilities = window.featExplorerData.abilities || [];
-      this.books = window.featExplorerData.books || {};
-      this.filteredFeats = [...this.feats];
-      this.isInitialized = true;
-    },
-    
-    filterFeats() {
-      this.filteredFeats = this.feats.filter(feat => {
-        // Search query filter
-        const matchesSearch = !this.searchQuery || 
-          window.fuzzyMatch(this.searchQuery, feat.name);
-        
-        // Ability filter
-        const matchesAbility = this.selectedAbility === 'All' || 
-          (feat.abilityIncrease && feat.abilityIncrease.includes(this.selectedAbility));
-        
-        // Book filter
-        const matchesBook = this.selectedBook === 'All' || 
-          feat.book === this.selectedBook;
-        
-        // Level filter
-        let matchesLevel = true;
-        if (this.selectedLevel !== 'All') {
-          if (this.selectedLevel === '0') {
-            matchesLevel = feat.level === 0;
-          } else if (this.selectedLevel === '4+') {
-            matchesLevel = feat.level >= 4;
-          }
+<script>
+  function levenshtein(a, b) {
+    const m = a.length;
+    const n = b.length;
+    const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        if (a[i - 1] === b[j - 1]) {
+          dp[i][j] = dp[i - 1][j - 1];
+        } else {
+          dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + 1);
         }
-        
-        return matchesSearch && matchesAbility && matchesBook && matchesLevel;
-      });
-    },
-    
-    clearFilters() {
-      this.searchQuery = '';
-      this.selectedAbility = 'All';
-      this.selectedBook = 'All';
-      this.selectedLevel = 'All';
-      this.filterFeats();
-    },
-    
-    hasActiveFilters() {
-      return this.searchQuery !== '' || 
-        this.selectedAbility !== 'All' || 
-        this.selectedBook !== 'All' || 
-        this.selectedLevel !== 'All';
+      }
     }
+    return dp[m][n];
+  }
+
+  function fuzzyMatch(query, text) {
+    if (!query) return true;
+    const lowerQuery = query.toLowerCase();
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes(lowerQuery)) return true;
+    const distance = levenshtein(lowerQuery, lowerText);
+    return distance <= Math.floor(query.length / 3);
+  }
+
+  window.featExplorer = function(data) {
+    return {
+      feats: data.feats || [],
+      filteredFeats: data.feats ? [...data.feats] : [],
+      abilities: data.abilities || [],
+      books: data.books || {},
+      searchQuery: '',
+      selectedAbility: 'All',
+      selectedBook: 'All',
+      selectedLevel: 'All',
+
+      filterFeats() {
+        this.filteredFeats = this.feats.filter(feat => {
+          const matchesSearch = !this.searchQuery || fuzzyMatch(this.searchQuery, feat.name);
+          const matchesAbility = this.selectedAbility === 'All' ||
+            (feat.abilityIncrease && feat.abilityIncrease.includes(this.selectedAbility));
+          const matchesBook = this.selectedBook === 'All' || feat.book === this.selectedBook;
+          let matchesLevel = true;
+          if (this.selectedLevel !== 'All') {
+            if (this.selectedLevel === '0') matchesLevel = feat.level === 0;
+            else if (this.selectedLevel === '4+') matchesLevel = feat.level >= 4;
+          }
+          return matchesSearch && matchesAbility && matchesBook && matchesLevel;
+        });
+      },
+
+      clearFilters() {
+        this.searchQuery = '';
+        this.selectedAbility = 'All';
+        this.selectedBook = 'All';
+        this.selectedLevel = 'All';
+        this.filterFeats();
+      },
+
+      hasActiveFilters() {
+        return this.searchQuery !== '' ||
+          this.selectedAbility !== 'All' ||
+          this.selectedBook !== 'All' ||
+          this.selectedLevel !== 'All';
+      }
+    };
   };
-};
 </script>
