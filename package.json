@@ -10,6 +10,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@alpinejs/intersect": "^3.17.3",
     "@astrojs/alpinejs": "^1.0.0",
     "@astrojs/starlight": "^0.42.0",
     "@iconify-json/game-icons": "^1.2.4",

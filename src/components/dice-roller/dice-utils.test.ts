@@ -1,0 +1,124 @@
+import { describe, it, expect } from 'vitest';
+import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll } from './dice-utils';
+
+describe('rollDie', () => {
+  it('returns a number between 1 and sides', () => {
+    for (let i = 0; i < 100; i++) {
+      const result = rollDie(6);
+      expect(result).toBeGreaterThanOrEqual(1);
+      expect(result).toBeLessThanOrEqual(6);
+    }
+  });
+
+  it('defaults to 6 sides', () => {
+    for (let i = 0; i < 100; i++) {
+      const result = rollDie();
+      expect(result).toBeGreaterThanOrEqual(1);
+      expect(result).toBeLessThanOrEqual(6);
+    }
+  });
+});
+
+describe('rollDice', () => {
+  it('returns array of correct length', () => {
+    const result = rollDice(4, 6);
+    expect(result).toHaveLength(4);
+  });
+
+  it('each value is between 1 and sides', () => {
+    const result = rollDice(4, 6);
+    result.forEach((die) => {
+      expect(die).toBeGreaterThanOrEqual(1);
+      expect(die).toBeLessThanOrEqual(6);
+    });
+  });
+});
+
+describe('rollAbility', () => {
+  it('returns object with correct shape', () => {
+    const result = rollAbility();
+    expect(result).toHaveProperty('dice');
+    expect(result).toHaveProperty('sorted');
+    expect(result).toHaveProperty('topThree');
+    expect(result).toHaveProperty('sum');
+  });
+
+  it('dice array has 4 elements', () => {
+    const result = rollAbility();
+    expect(result.dice).toHaveLength(4);
+  });
+
+  it('sorted array is dice sorted descending', () => {
+    const result = rollAbility();
+    const expectedSorted = [...result.dice].sort((a, b) => b - a);
+    expect(result.sorted).toEqual(expectedSorted);
+  });
+
+  it('topThree contains the three highest values', () => {
+    const result = rollAbility();
+    expect(result.topThree).toHaveLength(3);
+    expect(result.topThree).toEqual(result.sorted.slice(0, 3));
+  });
+
+  it('sum equals sum of topThree', () => {
+    const result = rollAbility();
+    const expectedSum = result.topThree.reduce((a, b) => a + b, 0);
+    expect(result.sum).toBe(expectedSum);
+  });
+});
+
+describe('calculateModifier', () => {
+  it('returns correct D&D 5e modifier', () => {
+    expect(calculateModifier(1)).toBe(-5);
+    expect(calculateModifier(2)).toBe(-4);
+    expect(calculateModifier(3)).toBe(-4);
+    expect(calculateModifier(4)).toBe(-3);
+    expect(calculateModifier(10)).toBe(0);
+    expect(calculateModifier(11)).toBe(0);
+    expect(calculateModifier(12)).toBe(1);
+    expect(calculateModifier(16)).toBe(3);
+    expect(calculateModifier(20)).toBe(5);
+    expect(calculateModifier(30)).toBe(10);
+  });
+});
+
+describe('formatModifier', () => {
+  it('formats positive modifier with + prefix', () => {
+    expect(formatModifier(3)).toBe('+3');
+    expect(formatModifier(0)).toBe('+0');
+  });
+
+  it('formats negative modifier without + prefix', () => {
+    expect(formatModifier(-1)).toBe('-1');
+    expect(formatModifier(-5)).toBe('-5');
+  });
+});
+
+describe('updateAbilityWithRoll', () => {
+  it('updates ability with roll result', () => {
+    const ability = {
+      name: 'STR',
+      dice: [],
+      topThree: [],
+      sum: 0,
+      modifier: 0,
+      rolling: true,
+    };
+    
+    const result = {
+      dice: [6, 5, 4, 3],
+      sorted: [6, 5, 4, 3],
+      topThree: [6, 5, 4],
+      sum: 15,
+    };
+    
+    const updated = updateAbilityWithRoll(ability, result);
+    
+    expect(updated.dice).toEqual([6, 5, 4, 3]);
+    expect(updated.topThree).toEqual([6, 5, 4]);
+    expect(updated.sum).toBe(15);
+    expect(updated.modifier).toBe(2); // floor((15-10)/2) = 2
+    expect(updated.rolling).toBe(false);
+    expect(updated.name).toBe('STR');
+  });
+});
