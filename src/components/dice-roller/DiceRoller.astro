@@ -1,0 +1,153 @@
+---
+import { rollAbility, calculateModifier, formatModifier } from './dice-utils';
+
+interface Ability {
+  name: string;
+  dice: number[];
+  topThree: number[];
+  sum: number;
+  modifier: number;
+  rolling: boolean;
+}
+
+const abilities: Ability[] = [
+  { name: 'STR', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'DEX', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'CON', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'INT', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'WIS', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'CHA', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
+];
+---
+
+<div
+  x-data={`diceRoller(${JSON.stringify(abilities)})`}
+  class="space-y-6"
+>
+  <div class="flex justify-center">
+    <button
+      @click="rollAll()"
+      :disabled="isRolling"
+      class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      aria-label="Roll all ability scores"
+    >
+      <span x-text="isRolling ? 'Rolling...' : 'Roll All Abilities'"></span>
+    </button>
+  </div>
+
+  <div class="grid grid-cols-3 lg:grid-cols-6 gap-4">
+    <template x-for="(ability, index) in abilities" :key="ability.name">
+      <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="p-4">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="font-bold text-gray-900" x-text="ability.name"></h3>
+            <button
+              @click="rollIndividual(index)"
+              :disabled="isRolling || ability.rolling"
+              class="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Re-roll ability score"
+            >
+              Retry
+            </button>
+          </div>
+          
+          <div x-show="ability.dice.length > 0" class="space-y-2">
+            <div class="flex gap-1 justify-center">
+              <template x-for="(die, i) in ability.dice" :key="i">
+                <span
+                  class="w-8 h-8 flex items-center justify-center rounded border text-sm font-medium"
+                  :class="ability.topThree.includes(die) ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-gray-100 border-gray-300 text-gray-500 line-through'"
+                  x-text="die"
+                ></span>
+              </template>
+            </div>
+            
+            <div class="text-center">
+              <div class="text-sm text-gray-600">
+                <span x-text="ability.topThree.join(' + ')"></span> = <span x-text="ability.sum" class="font-bold"></span>
+              </div>
+              <div class="text-lg font-bold text-gray-900" x-text="formatModifier(ability.modifier)"></div>
+            </div>
+          </div>
+          
+          <div x-show="ability.dice.length === 0" class="text-center py-4 text-gray-500">
+            Roll to generate
+          </div>
+        </div>
+        
+        <div
+          x-show="ability.rolling"
+          class="h-1 bg-blue-500 animate-pulse"
+        ></div>
+      </div>
+    </template>
+  </div>
+
+  <div class="text-center text-sm text-gray-500">
+    <p>Roll 4d6-drop-lowest for each ability score.</p>
+  </div>
+
+  <script type="application/json" x-data x-text="JSON.stringify(abilities)"></script>
+</div>
+
+<script>
+import { rollAbility, calculateModifier, formatModifier } from './dice-utils';
+
+// Make functions available globally for Alpine.js
+window.rollAbility = rollAbility;
+window.calculateModifier = calculateModifier;
+window.formatModifier = formatModifier;
+
+// Define the diceRoller function for Alpine.js
+window.diceRoller = function(abilities) {
+  return {
+    abilities: abilities,
+    isRolling: false,
+    currentRollingIndex: -1,
+    rollAll() {
+      if (this.isRolling) return;
+      this.isRolling = true;
+      let index = 0;
+      const rollNext = () => {
+        if (index >= this.abilities.length) {
+          this.isRolling = false;
+          return;
+        }
+        this.currentRollingIndex = index;
+        this.abilities[index].rolling = true;
+        
+        setTimeout(() => {
+          const result = window.rollAbility();
+          this.abilities[index] = {
+            ...this.abilities[index],
+            dice: result.dice,
+            topThree: result.topThree,
+            sum: result.sum,
+            modifier: window.calculateModifier(result.sum),
+            rolling: false,
+          };
+          index++;
+          setTimeout(rollNext, 150);
+        }, 300);
+      };
+      rollNext();
+    },
+    rollIndividual(index) {
+      if (this.isRolling || this.abilities[index].rolling) return;
+      this.abilities[index].rolling = true;
+      
+      setTimeout(() => {
+        const result = window.rollAbility();
+        this.abilities[index] = {
+          ...this.abilities[index],
+          dice: result.dice,
+          topThree: result.topThree,
+          sum: result.sum,
+          modifier: window.calculateModifier(result.sum),
+          rolling: false,
+        };
+      }, 300);
+    }
+  };
+};
+</script>
