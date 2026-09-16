@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "Dice Roller & Character Sheet Generator"
 author: "opencode"
 date: "2026-09-16"

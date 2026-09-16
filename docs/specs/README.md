@@ -10,8 +10,8 @@ This directory contains feature specifications (specs) for the DnD Companion pro
 | 002 | Infrastructure & Deployment Architecture | archived | infrastructure, deployment, ci-cd, cloudflare, security, terraform | `wrangler.jsonc`, `terraform/`, `package.json` | Static Astro on Cloudflare Pages with Zero Trust edge security |
 | 003 | XML Character Sheet Viewer | archived | xml, fantasy-grounds, character-sheet, alpine-js, build-time, party | `src/components/xml-viewer/`, `src/utils/`, `src/assets/fantasy-grounds-sheets/`, `public/fg/` | Build-time XML parsing + Alpine.js character cards + PartyView |
 | 004 | Character Search Page with Alpine.js Filtering | archived | character-search, alpine-js, filtering, fantasy-grounds | `src/components/xml-viewer/CharSearch.astro`, `src/content/docs/dnd/fantasy-grounds/character-search.mdx`, `astro.config.mjs` | Searchable index of all Fantasy Grounds characters with client-side filtering |
-| 005 | Dice Roller & Character Sheet Generator | active | dice, roller, character-creation, alpine-js, dnd, mechanics | `src/components/dice-roller/`, `src/content/docs/`, `astro.config.mjs` | Alpine.js dice roller for ability scores (4d6-drop-lowest) |
-| 006 | Book-Filtered Feat Matrix | active | feats, filtering, search, alpine-js, dnd, character-options | `src/components/feats-explorer/`, `src/content/docs/`, `astro.config.mjs` | Fuzzy search and multi-select filtering for D&D feats |
+| 005 | Dice Roller & Character Sheet Generator | archived | dice, roller, character-creation, alpine-js, dnd, mechanics | `src/components/dice-roller/`, `src/content/docs/`, `astro.config.mjs` | Alpine.js dice roller for ability scores (4d6-drop-lowest) |
+| 006 | Book-Filtered Feat Matrix | archived | feats, filtering, search, alpine-js, dnd, character-options | `src/components/feats-explorer/`, `src/content/docs/`, `astro.config.mjs` | Fuzzy search and multi-select filtering for D&D feats |
 
 ## About Specs
 
