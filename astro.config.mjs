@@ -53,6 +53,7 @@ export default defineConfig({
           label: 'Tools',
           items: [
             { label: 'Dice Roller', slug: 'tools/dice-roller' },
+            { label: 'Feat Explorer', slug: 'tools/feat-explorer' },
           ],
         },
         {
