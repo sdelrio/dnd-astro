@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier } from './dice-utils';
+import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll } from './dice-utils';
 
 describe('rollDie', () => {
   it('returns a number between 1 and sides', () => {
@@ -91,5 +91,34 @@ describe('formatModifier', () => {
   it('formats negative modifier without + prefix', () => {
     expect(formatModifier(-1)).toBe('-1');
     expect(formatModifier(-5)).toBe('-5');
+  });
+});
+
+describe('updateAbilityWithRoll', () => {
+  it('updates ability with roll result', () => {
+    const ability = {
+      name: 'STR',
+      dice: [],
+      topThree: [],
+      sum: 0,
+      modifier: 0,
+      rolling: true,
+    };
+    
+    const result = {
+      dice: [6, 5, 4, 3],
+      sorted: [6, 5, 4, 3],
+      topThree: [6, 5, 4],
+      sum: 15,
+    };
+    
+    const updated = updateAbilityWithRoll(ability, result);
+    
+    expect(updated.dice).toEqual([6, 5, 4, 3]);
+    expect(updated.topThree).toEqual([6, 5, 4]);
+    expect(updated.sum).toBe(15);
+    expect(updated.modifier).toBe(2); // floor((15-10)/2) = 2
+    expect(updated.rolling).toBe(false);
+    expect(updated.name).toBe('STR');
   });
 });

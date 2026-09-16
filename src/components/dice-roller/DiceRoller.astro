@@ -1,6 +1,4 @@
 ---
-import { rollAbility, calculateModifier, formatModifier } from './dice-utils';
-
 interface Ability {
   name: string;
   dice: number[];
@@ -91,12 +89,13 @@ const abilities: Ability[] = [
 </div>
 
 <script>
-import { rollAbility, calculateModifier, formatModifier } from './dice-utils';
+import { rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll } from './dice-utils';
 
 // Make functions available globally for Alpine.js
 window.rollAbility = rollAbility;
 window.calculateModifier = calculateModifier;
 window.formatModifier = formatModifier;
+window.updateAbilityWithRoll = updateAbilityWithRoll;
 
 // Define the diceRoller function for Alpine.js
 window.diceRoller = function(abilities) {
@@ -118,14 +117,7 @@ window.diceRoller = function(abilities) {
         
         setTimeout(() => {
           const result = window.rollAbility();
-          this.abilities[index] = {
-            ...this.abilities[index],
-            dice: result.dice,
-            topThree: result.topThree,
-            sum: result.sum,
-            modifier: window.calculateModifier(result.sum),
-            rolling: false,
-          };
+          this.abilities[index] = window.updateAbilityWithRoll(this.abilities[index], result);
           index++;
           setTimeout(rollNext, 150);
         }, 300);
@@ -138,14 +130,7 @@ window.diceRoller = function(abilities) {
       
       setTimeout(() => {
         const result = window.rollAbility();
-        this.abilities[index] = {
-          ...this.abilities[index],
-          dice: result.dice,
-          topThree: result.topThree,
-          sum: result.sum,
-          modifier: window.calculateModifier(result.sum),
-          rolling: false,
-        };
+        this.abilities[index] = window.updateAbilityWithRoll(this.abilities[index], result);
       }, 300);
     }
   };

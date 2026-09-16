@@ -21,3 +21,14 @@ export function calculateModifier(score: number): number {
 export function formatModifier(mod: number): string {
   return mod >= 0 ? `+${mod}` : `${mod}`;
 }
+
+export function updateAbilityWithRoll(ability: any, result: any) {
+  return {
+    ...ability,
+    dice: result.dice,
+    topThree: result.topThree,
+    sum: result.sum,
+    modifier: calculateModifier(result.sum),
+    rolling: false,
+  };
+}
