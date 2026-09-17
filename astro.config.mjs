@@ -28,6 +28,9 @@ export default defineConfig({
       title: 'DnD Companion',
       description: 'D&D rules, Fantasy Grounds xml visualizer.',
       customCss: ['./src/styles/tailwind.css'],
+      components: {
+        ThemeProvider: './src/components/ThemeProvider.astro',
+      },
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }
       ],
