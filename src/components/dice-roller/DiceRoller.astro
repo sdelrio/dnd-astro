@@ -86,48 +86,73 @@ const abilities: Ability[] = [
 
   <div class="grid grid-cols-3 lg:grid-cols-6 gap-4">
     <template x-for="(ability, index) in abilities" :key="ability.name">
-      <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-        <div class="p-4">
-          <div class="flex justify-between items-center mb-2">
-            <h3 class="font-bold text-gray-900" x-text="ability.name"></h3>
-            <button
-              @click="rollIndividual(index)"
-              :disabled="isRolling || ability.rolling"
-              class="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Re-roll ability score"
-            >
-              Retry
-            </button>
-          </div>
-          
-          <div x-show="ability.dice.length > 0" class="space-y-2">
-            <div class="flex gap-1 justify-center">
-              <template x-for="(die, i) in ability.dice" :key="i">
-                <span
-                  class="w-8 h-8 flex items-center justify-center rounded border text-sm font-medium"
-                  :class="ability.topThree.includes(die) ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-gray-100 border-gray-300 text-gray-500 line-through'"
-                  x-text="die"
-                ></span>
-              </template>
+      <div>
+        <div
+          @click="selectAbility(index)"
+          class="bg-white border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors"
+          :class="selectedIndex === index ? 'border-blue-500 ring-2 ring-blue-200' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-blue-400' : 'border-gray-200'"
+        >
+          <div class="p-4">
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="font-bold text-gray-900" x-text="ability.name"></h3>
+              <button
+                @click.stop="rollIndividual(index)"
+                :disabled="isRolling || ability.rolling || selectedIndex !== null"
+                class="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label="Re-roll ability score"
+              >
+                Retry
+              </button>
             </div>
             
-            <div class="text-center">
-              <div class="text-sm text-gray-600">
-                <span x-text="ability.topThree.join(' + ')"></span> = <span x-text="ability.sum" class="font-bold"></span>
+            <div x-show="ability.dice.length > 0" class="space-y-2">
+              <div class="flex gap-1 justify-center">
+                <template x-for="(die, i) in ability.dice" :key="i">
+                  <span
+                    class="w-8 h-8 flex items-center justify-center rounded border text-sm font-medium"
+                    :class="ability.topThree.includes(die) ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-gray-100 border-gray-300 text-gray-500 line-through'"
+                    x-text="die"
+                  ></span>
+                </template>
               </div>
-              <div class="text-lg font-bold text-gray-900" x-text="formatModifier(ability.modifier)"></div>
+              
+              <div class="text-center">
+                <div class="text-sm text-gray-600">
+                  <span x-text="ability.topThree.join(' + ')"></span> = <span x-text="ability.sum" class="font-bold"></span>
+                </div>
+                <div class="text-lg font-bold text-gray-900" x-text="formatModifier(ability.modifier)"></div>
+              </div>
+            </div>
+            
+            <div x-show="ability.dice.length === 0" class="text-center py-4 text-gray-500">
+              Roll to generate
             </div>
           </div>
           
-          <div x-show="ability.dice.length === 0" class="text-center py-4 text-gray-500">
-            Roll to generate
-          </div>
+          <div
+            x-show="ability.rolling"
+            class="h-1 bg-blue-500 animate-pulse"
+          ></div>
         </div>
-        
-        <div
-          x-show="ability.rolling"
-          class="h-1 bg-blue-500 animate-pulse"
-        ></div>
+        <template x-if="stagedSwap && stagedSwap.index1 === index">
+          <div class="mt-2 bg-blue-50 border border-blue-300 rounded-lg p-2 flex items-center justify-between text-sm">
+            <span class="text-blue-800 font-medium" x-text="'Swap ' + abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></span>
+            <div class="flex gap-1">
+              <button
+                @click="confirmSwap()"
+                class="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+              >
+                Confirm
+              </button>
+              <button
+                @click="cancelSwap()"
+                class="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded hover:bg-gray-300 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </template>
       </div>
     </template>
   </div>
@@ -140,7 +165,7 @@ const abilities: Ability[] = [
 </div>
 
 <script>
-import { rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog } from './dice-utils';
+import { rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog, swapAbilities } from './dice-utils';
 
 // Make functions available globally for Alpine.js
 window.rollAbility = rollAbility;
@@ -150,6 +175,7 @@ window.updateAbilityWithRoll = updateAbilityWithRoll;
 window.calculateStats = calculateStats;
 window.formatStats = formatStats;
 window.formatResultLog = formatResultLog;
+window.swapAbilities = swapAbilities;
 
 // Define the diceRoller function for Alpine.js
 window.diceRoller = function(abilities) {
@@ -161,12 +187,18 @@ window.diceRoller = function(abilities) {
     preSwapStats: null,
     showPostSwap: false,
     postSwapStats: null,
+    selectedIndex: null as number | null,
+    stagedSwap: null as { index1: number; index2: number } | null,
+    swapUsed: false,
     rollAll() {
       if (this.isRolling) return;
       this.isRolling = true;
       this.preSwapStats = null;
       this.showPostSwap = false;
       this.postSwapStats = null;
+      this.selectedIndex = null;
+      this.stagedSwap = null;
+      this.swapUsed = false;
       let index = 0;
       const rollNext = () => {
         if (index >= this.abilities.length) {
@@ -196,6 +228,34 @@ window.diceRoller = function(abilities) {
         const result = window.rollAbility();
         this.abilities[index] = window.updateAbilityWithRoll(this.abilities[index], result);
       }, 300);
+    },
+    selectAbility(index) {
+      if (this.swapUsed || this.isRolling) return;
+      if (this.selectedIndex === null) {
+        this.selectedIndex = index;
+        return;
+      }
+      if (this.selectedIndex === index) {
+        this.selectedIndex = null;
+        return;
+      }
+      this.stagedSwap = { index1: this.selectedIndex, index2: index };
+    },
+    confirmSwap() {
+      if (!this.stagedSwap) return;
+      const { index1, index2 } = this.stagedSwap;
+      this.abilities = window.swapAbilities(this.abilities, index1, index2);
+      this.selectedIndex = null;
+      this.stagedSwap = null;
+      this.swapUsed = true;
+      this.resultLog[0] = window.formatResultLog(this.abilities);
+      const sums = this.abilities.map((a) => a.sum);
+      this.postSwapStats = window.formatStats(window.calculateStats(sums));
+      this.showPostSwap = true;
+    },
+    cancelSwap() {
+      this.selectedIndex = null;
+      this.stagedSwap = null;
     }
   };
 };
