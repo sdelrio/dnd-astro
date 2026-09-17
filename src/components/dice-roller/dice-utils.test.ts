@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats } from './dice-utils';
+import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats } from './dice-utils';
 
 describe('rollDie', () => {
   it('returns a number between 1 and sides', () => {
@@ -176,5 +176,46 @@ describe('calculateStats', () => {
     expect(stats.median).toBe(11);
     expect(stats.lowest).toEqual({ value: 8, count: 1 });
     expect(stats.highest).toEqual({ value: 16, count: 1 });
+  });
+});
+
+describe('formatStats', () => {
+  it('formats average to one decimal', () => {
+    const stats = calculateStats([10, 12, 14]);
+    const formatted = formatStats(stats);
+    expect(formatted.average).toBe('12.0');
+  });
+
+  it('formats median as integer when whole number', () => {
+    const stats = calculateStats([10, 12, 14]);
+    const formatted = formatStats(stats);
+    expect(formatted.median).toBe('12');
+  });
+
+  it('formats median with decimal when needed', () => {
+    const stats = calculateStats([10, 12, 14, 16]);
+    const formatted = formatStats(stats);
+    expect(formatted.median).toBe('13');
+  });
+
+  it('formats lowest with count', () => {
+    const stats = calculateStats([8, 10, 10, 12]);
+    const formatted = formatStats(stats);
+    expect(formatted.lowest).toBe('8');
+  });
+
+  it('formats highest with count', () => {
+    const stats = calculateStats([8, 10, 10, 12]);
+    const formatted = formatStats(stats);
+    expect(formatted.highest).toBe('12');
+  });
+
+  it('formats all same values', () => {
+    const stats = calculateStats([10, 10, 10]);
+    const formatted = formatStats(stats);
+    expect(formatted.average).toBe('10.0');
+    expect(formatted.median).toBe('10');
+    expect(formatted.lowest).toBe('10');
+    expect(formatted.highest).toBe('10');
   });
 });
