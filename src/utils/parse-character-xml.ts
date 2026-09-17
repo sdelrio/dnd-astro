@@ -37,12 +37,13 @@ export function parseCharacterXML(xml: string): CharacterData | null {
   const root = js?.root?.character || js?.character;
   if (!root) return null;
   // Helper for extracting collections by id keys
-  function getCollection(obj: any): any[] {
+  type XmlFields = Record<string, { '#text'?: string }>;
+  function getCollection(obj: Record<string, XmlFields> | undefined): XmlFields[] {
     if (!obj) return [];
     return Object.values(obj).filter((item) => typeof item === 'object');
   }
   // Parse top-level values
-  const getText = (obj: any, key: string) => obj?.[key]?.['#text'] ?? '';
+  const getText = (obj: XmlFields | undefined, key: string) => obj?.[key]?.['#text'] ?? '';
   // Classes
   // Classes node may be <classes>.<id-XXXXX> for each class taken
   const classes: Array<{ name: string; level: number }> = [];
@@ -76,16 +77,16 @@ export function parseCharacterXML(xml: string): CharacterData | null {
   // Prof bonus
   const profBonus = Number(root.profbonus?.['#text'] || 0);
   // Skills (prof only, prof > 0)
-  const skills = getCollection(root.skilllist).filter(s => Number(getText(s, 'prof')) > 0).map((s: any) => ({
+  const skills = getCollection(root.skilllist).filter(s => Number(getText(s, 'prof')) > 0).map((s) => ({
     name: getText(s, 'name'),
     total: Number(getText(s, 'total') || 0),
   }));
   // Languages
-  const languages = getCollection(root.languagelist).map((l: any) => getText(l, 'name'));
+  const languages = getCollection(root.languagelist).map((l) => getText(l, 'name'));
   // Feats
-  const feats = getCollection(root.featlist).map((f: any) => getText(f, 'name'));
+  const feats = getCollection(root.featlist).map((f) => getText(f, 'name'));
   // Features
-  const features = getCollection(root.featurelist).map((f: any) => ({
+  const features = getCollection(root.featurelist).map((f) => ({
     level: Number(getText(f, 'level') || 0),
     name: getText(f, 'name'),
     source: getText(f, 'source'),
@@ -97,7 +98,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
   const powers = Object.keys(powersNode)
     .filter((key) => key.startsWith('id-'))
     .map((key) => powersNode[key])
-    .map((p: any) => ({
+    .map((p) => ({
       level: Number(getText(p, 'level') || 0),
       name: getText(p, 'name'),
       group: getText(p, 'group'),

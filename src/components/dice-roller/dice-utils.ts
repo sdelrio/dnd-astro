@@ -68,7 +68,7 @@ export function formatResultLog(
     .join(', ');
 }
 
-export function updateAbilityWithRoll(ability: any, result: any) {
+export function updateAbilityWithRoll(ability: Ability, result: ReturnType<typeof rollAbility>): Ability {
   return {
     ...ability,
     dice: result.dice,

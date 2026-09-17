@@ -1,13 +1,5 @@
 ---
-interface Ability {
-  name: string;
-  dice: number[];
-  topThree: number[];
-  topThreeIndices: number[];
-  sum: number;
-  modifier: number;
-  rolling: boolean;
-}
+import type { Ability } from './dice-utils';
 
 const abilities: Ability[] = [
   { name: 'STR', dice: [], topThree: [], topThreeIndices: [], sum: 0, modifier: 0, rolling: false },
@@ -152,7 +144,21 @@ const abilities: Ability[] = [
 
 
 <script>
-import { rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog, swapAbilities } from './dice-utils';
+import { rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog, swapAbilities, type Ability } from './dice-utils';
+
+declare global {
+  interface Window {
+    rollAbility: typeof rollAbility;
+    calculateModifier: typeof calculateModifier;
+    formatModifier: typeof formatModifier;
+    updateAbilityWithRoll: typeof updateAbilityWithRoll;
+    calculateStats: typeof calculateStats;
+    formatStats: typeof formatStats;
+    formatResultLog: typeof formatResultLog;
+    swapAbilities: typeof swapAbilities;
+    diceRoller: typeof diceRoller;
+  }
+}
 
 // Make functions available globally for Alpine.js
 window.rollAbility = rollAbility;
@@ -163,16 +169,17 @@ window.calculateStats = calculateStats;
 window.formatStats = formatStats;
 window.formatResultLog = formatResultLog;
 window.swapAbilities = swapAbilities;
+window.diceRoller = diceRoller;
 
 // Define the diceRoller function for Alpine.js
-window.diceRoller = function(abilities) {
+function diceRoller(abilities: Ability[]) {
   return {
      abilities: abilities,
-    resultLog: [],
-    sessionRolls: [], // array of arrays of ability sums for all "Roll All Abilities" results
+    resultLog: [] as string[],
+    sessionRolls: [] as number[][], // array of arrays of ability sums for all "Roll All Abilities" results
     isRolling: false,
     currentRollingIndex: -1,
-    stats: null,
+    stats: null as ReturnType<typeof window.formatStats> | null,
     selectedIndex: null as number | null,
     stagedSwap: null as { index1: number; index2: number } | null,
     swapUsed: false,
@@ -207,7 +214,7 @@ window.diceRoller = function(abilities) {
       };
       rollNext();
     },
-    rollIndividual(index) {
+    rollIndividual(index: number) {
       if (this.isRolling || this.abilities[index].rolling) return;
       this.abilities[index].rolling = true;
       
@@ -216,7 +223,7 @@ window.diceRoller = function(abilities) {
         this.abilities[index] = window.updateAbilityWithRoll(this.abilities[index], result);
       }, 300);
     },
-    selectAbility(index) {
+    selectAbility(index: number) {
       if (this.swapUsed || this.isRolling) return;
       if (this.selectedIndex === null) {
         this.selectedIndex = index;
