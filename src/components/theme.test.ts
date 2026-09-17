@@ -38,4 +38,12 @@ describe('theme initialization', () => {
     expect(window.document.documentElement.dataset.theme).toBe('light');
     expect(window.localStorage.getItem('starlight-theme')).toBeNull();
   });
+
+  it.each([
+    ['dark', 'dark'],
+    ['light', 'light'],
+  ] as const)('keeps a saved %s choice on a %s OS', (saved, os) => {
+    const window = visit(os, saved);
+    expect(window.document.documentElement.dataset.theme).toBe(saved);
+  });
 });
