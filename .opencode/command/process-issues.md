@@ -4,13 +4,21 @@ description: Process GitHub Issues labeled ready-for-agent sequentially with TDD
 
 # Process GitHub Issues
 
-Process GitHub Issues labeled `ready-for-agent` sequentially in dependency order based on blockers.
+Process GitHub Issues labeled `ready-for-agent` strictly one at a time in dependency order based on blockers.
+
+## Critical: Process Tickets Strictly Sequentially
+
+Even if multiple tickets share the same dependency and could theoretically be parallelized, **always process them one at a time**. Tickets in the same feature area modify the same files and will cause merge conflicts if worked on concurrently. The dependency order determines the **sequence**, not parallelism.
+
+1. Sort tickets by dependency order (no blockers first, then tickets blocked by the first group, etc.)
+2. Process the first ticket fully (implement, PR, merge) before starting the next
+3. After each merge, pull main before starting the next ticket
 
 ## Steps for Each Ticket
 
 For each ticket, launch a subagent that will:
 
-1. **Ensure updated main branch** - Make sure you are on an updated main branch before starting work.
+1. **Ensure on updated main branch** - Check current branch. If not on main, switch to main first, then pull latest.
 
 2. **Create branch and commit** - Create a branch with a name referencing the GitHub issue, commit changes with good commit messages:
    - Short message follows conventional commits format
@@ -26,7 +34,9 @@ For each ticket, launch a subagent that will:
 
 7. **Add review summary** - Add a review summary to a new comment in the PR.
 
-8. **Move to next ticket** - When current work is complete, move to the next ticket.
+8. **Merge the PR** - Squash merge the PR before moving to the next ticket.
+
+9. **Move to next ticket** - When current work is fully merged, pull main and start the next ticket.
 
 ## Summary
 
