@@ -192,6 +192,7 @@ Create `src/components/feats-explorer/search-utils.js`:
 
 Create `src/components/feats-explorer/feat-explorer.css`:
 - Filter controls layout (flex row with gaps)
+- Accepted width refinement (#91): at the `sm` breakpoint and above, Ability uses 8rem, Book retains 12rem, and Level uses 6rem. Search retains flex growth and receives the recovered space. Below `sm`, controls remain full-width and vertically stacked.
 - Responsive grid (1/2/3 columns)
 - Card styling with hover effect
 - Level badge colors (green for origin, blue for general)
@@ -296,6 +297,8 @@ Search and filter through all available feats.
 - Open browser DevTools, verify no React components in Components tab
 - Check Network tab - no unnecessary JS downloads
 - Test on mobile viewport - filters stack, grid responsive
+- At desktop widths, verify Ability is approximately one third narrower and Level one half narrower than their previous 12rem widths, Book remains unchanged, and Search receives the freed space (#91).
+- The user visually accepted the width refinement. Production build validation passed; Astro checks are blocked by missing `@astrojs/check` and `typescript`, and lint has no documented command. Tooling follow-up: #90.
 
 ## Rollback
 
