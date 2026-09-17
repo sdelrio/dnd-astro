@@ -68,3 +68,35 @@ export function updateAbilityWithRoll(ability: any, result: any) {
     rolling: false,
   };
 }
+
+export interface Ability {
+  name: string;
+  dice: number[];
+  topThree: number[];
+  sum: number;
+  modifier: number;
+  rolling: boolean;
+}
+
+export function swapAbilities(
+  abilities: Ability[],
+  index1: number,
+  index2: number
+): Ability[] {
+  const copy = abilities.map((a) => ({ ...a }));
+  const a = copy[index1];
+  const b = copy[index2];
+  const tmpDice = a.dice;
+  const tmpTopThree = a.topThree;
+  const tmpSum = a.sum;
+  const tmpModifier = a.modifier;
+  a.dice = b.dice;
+  a.topThree = b.topThree;
+  a.sum = b.sum;
+  a.modifier = b.modifier;
+  b.dice = tmpDice;
+  b.topThree = tmpTopThree;
+  b.sum = tmpSum;
+  b.modifier = tmpModifier;
+  return copy;
+}
