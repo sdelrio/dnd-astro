@@ -39,6 +39,14 @@ export function calculateStats(sums: number[]) {
   };
 }
 
+export function formatResultLog(
+  abilities: Array<{ name: string; sum: number; modifier: number }>
+): string {
+  return abilities
+    .map((a) => `${a.name} ${a.sum} (${formatModifier(a.modifier)})`)
+    .join(', ');
+}
+
 export function updateAbilityWithRoll(ability: any, result: any) {
   return {
     ...ability,
