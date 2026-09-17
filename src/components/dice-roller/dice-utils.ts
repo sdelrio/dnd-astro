@@ -22,6 +22,23 @@ export function formatModifier(mod: number): string {
   return mod >= 0 ? `+${mod}` : `${mod}`;
 }
 
+export function calculateStats(sums: number[]) {
+  const sorted = [...sums].sort((a, b) => a - b);
+  const average = Math.round((sorted.reduce((a, b) => a + b, 0) / sorted.length) * 10) / 10;
+  const mid = Math.floor(sorted.length / 2);
+  const median = sorted.length % 2 !== 0
+    ? sorted[mid]
+    : (sorted[mid - 1] + sorted[mid]) / 2;
+  const lowest = sorted[0];
+  const highest = sorted[sorted.length - 1];
+  return {
+    average,
+    median,
+    lowest: { value: lowest, count: sorted.filter((v) => v === lowest).length },
+    highest: { value: highest, count: sorted.filter((v) => v === highest).length },
+  };
+}
+
 export function updateAbilityWithRoll(ability: any, result: any) {
   return {
     ...ability,
