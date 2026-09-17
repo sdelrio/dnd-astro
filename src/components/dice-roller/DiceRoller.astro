@@ -33,6 +33,12 @@ const abilities: Ability[] = [
     </button>
   </div>
 
+  <div x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
+    <template x-for="(entry, i) in resultLog" :key="i">
+      <div class="text-sm text-gray-700 font-mono" x-text="entry"></div>
+    </template>
+  </div>
+
   <div class="grid grid-cols-3 lg:grid-cols-6 gap-4">
     <template x-for="(ability, index) in abilities" :key="ability.name">
       <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
@@ -89,18 +95,20 @@ const abilities: Ability[] = [
 </div>
 
 <script>
-import { rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll } from './dice-utils';
+import { rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, formatResultLog } from './dice-utils';
 
 // Make functions available globally for Alpine.js
 window.rollAbility = rollAbility;
 window.calculateModifier = calculateModifier;
 window.formatModifier = formatModifier;
 window.updateAbilityWithRoll = updateAbilityWithRoll;
+window.formatResultLog = formatResultLog;
 
 // Define the diceRoller function for Alpine.js
 window.diceRoller = function(abilities) {
   return {
     abilities: abilities,
+    resultLog: [],
     isRolling: false,
     currentRollingIndex: -1,
     rollAll() {
@@ -110,6 +118,7 @@ window.diceRoller = function(abilities) {
       const rollNext = () => {
         if (index >= this.abilities.length) {
           this.isRolling = false;
+          this.resultLog.unshift(window.formatResultLog(this.abilities));
           return;
         }
         this.currentRollingIndex = index;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats } from './dice-utils';
+import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatResultLog } from './dice-utils';
 
 describe('rollDie', () => {
   it('returns a number between 1 and sides', () => {
@@ -176,5 +176,38 @@ describe('calculateStats', () => {
     expect(stats.median).toBe(11);
     expect(stats.lowest).toEqual({ value: 8, count: 1 });
     expect(stats.highest).toEqual({ value: 16, count: 1 });
+  });
+});
+
+describe('formatResultLog', () => {
+  it('formats abilities into comma-separated string', () => {
+    const abilities = [
+      { name: 'STR', sum: 15, modifier: 2 },
+      { name: 'DEX', sum: 12, modifier: 1 },
+    ];
+    expect(formatResultLog(abilities)).toBe('STR 15 (+2), DEX 12 (+1)');
+  });
+
+  it('formats all six abilities', () => {
+    const abilities = [
+      { name: 'STR', sum: 15, modifier: 2 },
+      { name: 'DEX', sum: 12, modifier: 1 },
+      { name: 'CON', sum: 14, modifier: 2 },
+      { name: 'INT', sum: 10, modifier: 0 },
+      { name: 'WIS', sum: 13, modifier: 1 },
+      { name: 'CHA', sum: 11, modifier: 0 },
+    ];
+    const result = formatResultLog(abilities);
+    expect(result).toBe('STR 15 (+2), DEX 12 (+1), CON 14 (+2), INT 10 (+0), WIS 13 (+1), CHA 11 (+0)');
+  });
+
+  it('handles zero modifier', () => {
+    const abilities = [{ name: 'INT', sum: 10, modifier: 0 }];
+    expect(formatResultLog(abilities)).toBe('INT 10 (+0)');
+  });
+
+  it('handles negative modifier', () => {
+    const abilities = [{ name: 'STR', sum: 7, modifier: -2 }];
+    expect(formatResultLog(abilities)).toBe('STR 7 (-2)');
   });
 });
