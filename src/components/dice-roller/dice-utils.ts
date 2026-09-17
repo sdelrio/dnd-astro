@@ -39,6 +39,17 @@ export function calculateStats(sums: number[]) {
   };
 }
 
+export function formatStats(stats: ReturnType<typeof calculateStats>) {
+  return {
+    average: stats.average.toFixed(1),
+    median: stats.median % 1 === 0 ? stats.median.toString() : stats.median.toFixed(1),
+    lowest: stats.lowest.value.toString(),
+    lowestCount: stats.lowest.count,
+    highest: stats.highest.value.toString(),
+    highestCount: stats.highest.count,
+  };
+}
+
 export function formatResultLog(
   abilities: Array<{ name: string; sum: number; modifier: number }>
 ): string {
