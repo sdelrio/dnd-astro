@@ -34,40 +34,12 @@ const abilities: Ability[] = [
     </button>
   </div>
 
-  <div x-show="stats" class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 max-w-sm">
-    <h3 class="font-bold text-gray-900 mb-2">Stats</h3>
-    <div class="space-y-1 text-sm">
-      <div class="flex justify-between">
-        <span class="text-gray-600">Average:</span>
-        <span class="font-medium" x-text="stats?.average"></span>
-      </div>
-      <div class="flex justify-between">
-        <span class="text-gray-600">Median:</span>
-        <span class="font-medium" x-text="stats?.median"></span>
-      </div>
-      <div class="flex justify-between">
-        <span class="text-gray-600">Lowest:</span>
-        <span class="font-medium" x-text="stats?.lowest + (stats?.lowestCount > 1 ? ' (x' + stats?.lowestCount + ')' : '')"></span>
-      </div>
-      <div class="flex justify-between">
-        <span class="text-gray-600">Highest:</span>
-        <span class="font-medium" x-text="stats?.highest + (stats?.highestCount > 1 ? ' (x' + stats?.highestCount + ')' : '')"></span>
-      </div>
-    </div>
-  </div>
-
-  <div x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
-    <template x-for="(entry, i) in resultLog" :key="i">
-      <div class="text-sm text-gray-700 font-mono" x-text="entry"></div>
-    </template>
-  </div>
-
   <div class="grid grid-cols-3 lg:grid-cols-6 gap-4">
     <template x-for="(ability, index) in abilities" :key="ability.name">
       <div>
         <div
           @click="selectAbility(index)"
-          class="bg-white border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors"
+          class="bg-white border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative"
           :class="selectedIndex === index ? 'border-blue-500 ring-2 ring-blue-200' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-blue-400' : 'border-gray-200'"
         >
           <div class="p-4">
@@ -95,7 +67,7 @@ const abilities: Ability[] = [
               </div>
               
               <div class="text-center">
-                <div class="text-sm text-gray-600">
+                <div class="text-xs sm:text-sm text-gray-600">
                   <span x-text="ability.topThree.join(' + ')"></span> = <span x-text="ability.sum" class="font-bold"></span>
                 </div>
                 <div class="text-lg font-bold text-gray-900" x-text="formatModifier(ability.modifier)"></div>
@@ -109,13 +81,14 @@ const abilities: Ability[] = [
           
           <div
             x-show="ability.rolling"
-            class="h-1 bg-blue-500 animate-pulse"
+            class="absolute left-0 right-0 bottom-0 h-1 bg-blue-500 animate-pulse"
+            style="z-index: 5"
           ></div>
         </div>
         <template x-if="stagedSwap && stagedSwap.index1 === index">
           <div class="mt-2 bg-blue-50 border border-blue-300 rounded-lg p-2 flex items-center justify-between text-sm">
             <span class="text-blue-800 font-medium" x-text="'Swap ' + abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></span>
-            <div class="flex gap-1">
+            <div class="flex gap-1 not-content">
               <button
                 @click="confirmSwap()"
                 class="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
@@ -133,6 +106,42 @@ const abilities: Ability[] = [
         </template>
       </div>
     </template>
+   </div>
+
+  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 max-w-sm mx-auto mt-6">
+    <h3 class="font-bold text-gray-900 mb-2">Stats</h3>
+    <template x-if="!stats || !stats.average || sessionRolls.length === 0">
+      <div class="flex flex-col items-center justify-center p-6 text-gray-400 text-center">
+        <span style="font-size: 2.25rem;">🎲</span>
+        <p class="mt-2 text-gray-500">No stats yet!<br>Roll all abilities to see your results.</p>
+      </div>
+    </template>
+    <template x-if="stats && stats.average && sessionRolls.length > 0">
+      <div class="space-y-0.5 text-sm">
+        <div class="flex justify-between">
+          <span class="text-gray-600">Average:</span>
+          <span class="font-medium" x-text="stats?.average"></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">Median:</span>
+          <span class="font-medium" x-text="stats?.median"></span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">Lowest:</span>
+          <span class="font-medium" x-text="stats?.lowest + (stats?.lowestCount > 1 ? ' (x' + stats?.lowestCount + ')' : '')"></span>
+        </div>
+        <div class="flex justify-between mb-0 mt-0 last:mb-0 last:mt-0">
+          <span class="text-gray-600 mb-0 mt-0">Highest:</span>
+          <span class="font-medium mb-0 mt-0" x-text="stats?.highest + (stats?.highestCount > 1 ? ' (x' + stats?.highestCount + ')' : '')"></span>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <div x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
+    <template x-for="(entry, i) in resultLog" :key="i">
+      <div class="text-sm text-gray-700 font-mono" x-text="entry"></div>
+    </template>
   </div>
 
   <div class="text-center text-sm text-gray-500">
@@ -140,6 +149,7 @@ const abilities: Ability[] = [
   </div>
 
 </div>
+
 
 <script>
 import { rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog, swapAbilities } from './dice-utils';
@@ -157,8 +167,9 @@ window.swapAbilities = swapAbilities;
 // Define the diceRoller function for Alpine.js
 window.diceRoller = function(abilities) {
   return {
-    abilities: abilities,
+     abilities: abilities,
     resultLog: [],
+    sessionRolls: [], // array of arrays of ability sums for all "Roll All Abilities" results
     isRolling: false,
     currentRollingIndex: -1,
     stats: null,
@@ -173,12 +184,15 @@ window.diceRoller = function(abilities) {
       this.stagedSwap = null;
       this.swapUsed = false;
       let index = 0;
+      if (!Array.isArray(this.sessionRolls)) this.sessionRolls = [];
       const rollNext = () => {
         if (index >= this.abilities.length) {
-          this.isRolling = false;
+           this.isRolling = false;
           this.resultLog.unshift(window.formatResultLog(this.abilities));
           const sums = this.abilities.map(a => a.sum);
-          this.stats = window.formatStats(window.calculateStats(sums));
+          this.sessionRolls.push(sums);
+          const allSums = this.sessionRolls.flat();
+          this.stats = window.formatStats(window.calculateStats(allSums));
           return;
         }
         this.currentRollingIndex = index;
