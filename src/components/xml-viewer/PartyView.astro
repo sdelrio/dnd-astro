@@ -178,7 +178,7 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
   </section>
 
   <script is:inline>
-    function partyView(el) {
+    window.partyView = function(el) {
       const allRoles = JSON.parse(el.dataset.allRoles);
       const roleConfig = JSON.parse(el.dataset.roleConfig);
       return {

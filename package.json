@@ -7,6 +7,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "typecheck": "astro check",
+    "lint": "eslint . --max-warnings 0",
+    "test": "vitest run",
     "astro": "astro"
   },
   "dependencies": {
@@ -21,9 +24,18 @@
     "sharp": "^0.35.3"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.3.3",
+    "@types/alpinejs": "^3.13.11",
+    "@types/alpinejs__intersect": "^3.13.4",
     "@types/node": "^26.5.1",
+    "eslint": "^10.10.0",
+    "eslint-plugin-astro": "^3.2.0",
+    "globals": "^17.12.0",
     "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0",
     "vitest": "^5.0.0"
   }
 }

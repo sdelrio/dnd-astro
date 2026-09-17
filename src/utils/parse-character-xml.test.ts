@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { parseCharacterXML, CharacterData } from './parse-character-xml';
+import { parseCharacterXML } from './parse-character-xml';
 
 describe('parseCharacterXML', () => {
   it('parses draknor.xml correctly', () => {

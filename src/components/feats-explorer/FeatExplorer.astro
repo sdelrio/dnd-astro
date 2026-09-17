@@ -1,16 +1,6 @@
 ---
 import { FEATS, BOOKS, ABILITIES } from './feat-data';
 
-interface Feat {
-  name: string;
-  level: number;
-  category: string;
-  book: string;
-  abilityIncrease?: string[];
-  prerequisite?: string;
-  description: string;
-}
-
 const initialData = {
   feats: FEATS,
   books: BOOKS,
@@ -140,7 +130,21 @@ const initialData = {
 </div>
 
 <script>
-  function levenshtein(a, b) {
+  import type { FEATS, BOOKS, ABILITIES } from './feat-data';
+
+  interface FeatExplorerData {
+    feats?: typeof FEATS;
+    books?: typeof BOOKS;
+    abilities?: typeof ABILITIES;
+  }
+
+  declare global {
+    interface Window {
+      featExplorer: typeof featExplorer;
+    }
+  }
+
+  function levenshtein(a: string, b: string) {
     const m = a.length;
     const n = b.length;
     const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
@@ -158,7 +162,7 @@ const initialData = {
     return dp[m][n];
   }
 
-  function fuzzyMatch(query, text) {
+  function fuzzyMatch(query: string, text: string) {
     if (!query) return true;
     const lowerQuery = query.toLowerCase();
     const lowerText = text.toLowerCase();
@@ -167,7 +171,7 @@ const initialData = {
     return distance <= Math.floor(query.length / 3);
   }
 
-  window.featExplorer = function(data) {
+  function featExplorer(data: FeatExplorerData) {
     return {
       feats: data.feats || [],
       filteredFeats: data.feats ? [...data.feats] : [],
@@ -212,4 +216,6 @@ const initialData = {
       }
     };
   };
+
+  window.featExplorer = featExplorer;
 </script>

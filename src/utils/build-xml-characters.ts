@@ -21,7 +21,7 @@ export interface BuildXmlCharactersOptions {
   astroOutputFile?: string;
   logger?: {
     log: (msg: string) => void;
-    warn: (msg: string, ...args: any[]) => void;
+    warn: (msg: string, ...args: unknown[]) => void;
   };
 }
 

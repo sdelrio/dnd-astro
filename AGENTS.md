@@ -21,6 +21,17 @@ Consult these guides before working on related tasks:
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
 
+## Verification
+
+Run these from the repo root before opening a PR:
+
+```
+pnpm lint        # ESLint (Astro-aware, zero warnings allowed)
+pnpm typecheck   # Astro diagnostics; use CI=true pnpm typecheck for noninteractive runs
+pnpm test        # Vitest unit tests
+pnpm build       # Production build
+```
+
 ## Architecture Decisions
 
 - Location: `docs/adr/`

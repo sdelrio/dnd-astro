@@ -2,7 +2,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import alpinejs from '@astrojs/alpinejs';
-import intersect from '@alpinejs/intersect';
 import tailwindcss from '@tailwindcss/vite';
 import { buildXmlCharacters } from './src/utils/build-xml-characters.ts';
 
@@ -23,7 +22,7 @@ export default defineConfig({
   integrations: [
     xmlCharacterViewer(),
     alpinejs({
-      plugins: [intersect],
+      entrypoint: '/src/alpine.ts',
     }),
     starlight({
       title: 'DnD Companion',
