@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog } from './dice-utils';
+import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog, swapAbilities, type Ability } from './dice-utils';
 
 describe('rollDie', () => {
   it('returns a number between 1 and sides', () => {
@@ -250,5 +250,89 @@ describe('formatResultLog', () => {
   it('handles negative modifier', () => {
     const abilities = [{ name: 'STR', sum: 7, modifier: -2 }];
     expect(formatResultLog(abilities)).toBe('STR 7 (-2)');
+  });
+});
+
+describe('swapAbilities', () => {
+  const makeAbility = (name: string, sum: number, modifier: number): Ability => ({
+    name,
+    dice: [6, 5, 4, 3],
+    topThree: [6, 5, 4],
+    sum,
+    modifier,
+    rolling: false,
+  });
+
+  it('swaps scores between two abilities', () => {
+    const abilities = [
+      makeAbility('STR', 15, 2),
+      makeAbility('DEX', 12, 1),
+    ];
+    const result = swapAbilities(abilities, 0, 1);
+    expect(result[0].name).toBe('STR');
+    expect(result[0].sum).toBe(12);
+    expect(result[0].modifier).toBe(1);
+    expect(result[1].name).toBe('DEX');
+    expect(result[1].sum).toBe(15);
+    expect(result[1].modifier).toBe(2);
+  });
+
+  it('preserves names in original positions', () => {
+    const abilities = [
+      makeAbility('STR', 15, 2),
+      makeAbility('DEX', 12, 1),
+      makeAbility('CON', 14, 2),
+    ];
+    const result = swapAbilities(abilities, 0, 2);
+    expect(result[0].name).toBe('STR');
+    expect(result[2].name).toBe('CON');
+  });
+
+  it('does not mutate original array', () => {
+    const abilities = [
+      makeAbility('STR', 15, 2),
+      makeAbility('DEX', 12, 1),
+    ];
+    swapAbilities(abilities, 0, 1);
+    expect(abilities[0].sum).toBe(15);
+    expect(abilities[1].sum).toBe(12);
+  });
+
+  it('swaps dice and topThree arrays', () => {
+    const abilities = [
+      { ...makeAbility('STR', 15, 2), dice: [6, 5, 4, 3], topThree: [6, 5, 4] },
+      { ...makeAbility('DEX', 12, 1), dice: [4, 4, 3, 1], topThree: [4, 4, 3] },
+    ];
+    const result = swapAbilities(abilities, 0, 1);
+    expect(result[0].dice).toEqual([4, 4, 3, 1]);
+    expect(result[0].topThree).toEqual([4, 4, 3]);
+    expect(result[1].dice).toEqual([6, 5, 4, 3]);
+    expect(result[1].topThree).toEqual([6, 5, 4]);
+  });
+
+  it('handles swapping same index (no-op)', () => {
+    const abilities = [
+      makeAbility('STR', 15, 2),
+      makeAbility('DEX', 12, 1),
+    ];
+    const result = swapAbilities(abilities, 0, 0);
+    expect(result[0].sum).toBe(15);
+    expect(result[1].sum).toBe(12);
+  });
+
+  it('handles swapping non-adjacent indices', () => {
+    const abilities = [
+      makeAbility('STR', 15, 2),
+      makeAbility('DEX', 12, 1),
+      makeAbility('CON', 14, 2),
+      makeAbility('INT', 10, 0),
+      makeAbility('WIS', 13, 1),
+      makeAbility('CHA', 11, 0),
+    ];
+    const result = swapAbilities(abilities, 0, 5);
+    expect(result[0].name).toBe('STR');
+    expect(result[0].sum).toBe(11);
+    expect(result[5].name).toBe('CHA');
+    expect(result[5].sum).toBe(15);
   });
 });
