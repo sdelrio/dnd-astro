@@ -34,47 +34,24 @@ const abilities: Ability[] = [
     </button>
   </div>
 
-  <div x-show="preSwapStats" class="grid grid-cols-2 gap-4">
-    <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-      <h3 class="font-bold text-gray-900 mb-2">Pre-Swap Stats</h3>
-      <div class="space-y-1 text-sm">
-        <div class="flex justify-between">
-          <span class="text-gray-600">Average:</span>
-          <span class="font-medium" x-text="preSwapStats?.average"></span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Median:</span>
-          <span class="font-medium" x-text="preSwapStats?.median"></span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Lowest:</span>
-          <span class="font-medium" x-text="preSwapStats?.lowest + (preSwapStats?.lowestCount > 1 ? ' (x' + preSwapStats?.lowestCount + ')' : '')"></span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Highest:</span>
-          <span class="font-medium" x-text="preSwapStats?.highest + (preSwapStats?.highestCount > 1 ? ' (x' + preSwapStats?.highestCount + ')' : '')"></span>
-        </div>
+  <div x-show="stats" class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 max-w-sm">
+    <h3 class="font-bold text-gray-900 mb-2">Stats</h3>
+    <div class="space-y-1 text-sm">
+      <div class="flex justify-between">
+        <span class="text-gray-600">Average:</span>
+        <span class="font-medium" x-text="stats?.average"></span>
       </div>
-    </div>
-    <div x-show="showPostSwap" class="bg-white border border-gray-200 rounded-lg shadow-sm p-4">
-      <h3 class="font-bold text-gray-900 mb-2">Post-Swap Stats</h3>
-      <div class="space-y-1 text-sm">
-        <div class="flex justify-between">
-          <span class="text-gray-600">Average:</span>
-          <span class="font-medium" x-text="postSwapStats?.average"></span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Median:</span>
-          <span class="font-medium" x-text="postSwapStats?.median"></span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Lowest:</span>
-          <span class="font-medium" x-text="postSwapStats?.lowest + (postSwapStats?.lowestCount > 1 ? ' (x' + postSwapStats?.lowestCount + ')' : '')"></span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Highest:</span>
-          <span class="font-medium" x-text="postSwapStats?.highest + (postSwapStats?.highestCount > 1 ? ' (x' + postSwapStats?.highestCount + ')' : '')"></span>
-        </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Median:</span>
+        <span class="font-medium" x-text="stats?.median"></span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Lowest:</span>
+        <span class="font-medium" x-text="stats?.lowest + (stats?.lowestCount > 1 ? ' (x' + stats?.lowestCount + ')' : '')"></span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Highest:</span>
+        <span class="font-medium" x-text="stats?.highest + (stats?.highestCount > 1 ? ' (x' + stats?.highestCount + ')' : '')"></span>
       </div>
     </div>
   </div>
@@ -184,18 +161,14 @@ window.diceRoller = function(abilities) {
     resultLog: [],
     isRolling: false,
     currentRollingIndex: -1,
-    preSwapStats: null,
-    showPostSwap: false,
-    postSwapStats: null,
+    stats: null,
     selectedIndex: null as number | null,
     stagedSwap: null as { index1: number; index2: number } | null,
     swapUsed: false,
     rollAll() {
       if (this.isRolling) return;
       this.isRolling = true;
-      this.preSwapStats = null;
-      this.showPostSwap = false;
-      this.postSwapStats = null;
+      this.stats = null;
       this.selectedIndex = null;
       this.stagedSwap = null;
       this.swapUsed = false;
@@ -205,7 +178,7 @@ window.diceRoller = function(abilities) {
           this.isRolling = false;
           this.resultLog.unshift(window.formatResultLog(this.abilities));
           const sums = this.abilities.map(a => a.sum);
-          this.preSwapStats = window.formatStats(window.calculateStats(sums));
+          this.stats = window.formatStats(window.calculateStats(sums));
           return;
         }
         this.currentRollingIndex = index;
@@ -249,9 +222,6 @@ window.diceRoller = function(abilities) {
       this.stagedSwap = null;
       this.swapUsed = true;
       this.resultLog[0] = window.formatResultLog(this.abilities);
-      const sums = this.abilities.map((a) => a.sum);
-      this.postSwapStats = window.formatStats(window.calculateStats(sums));
-      this.showPostSwap = true;
     },
     cancelSwap() {
       this.selectedIndex = null;
