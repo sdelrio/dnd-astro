@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll } from './dice-utils';
+import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats } from './dice-utils';
 
 describe('rollDie', () => {
   it('returns a number between 1 and sides', () => {
@@ -120,5 +120,61 @@ describe('updateAbilityWithRoll', () => {
     expect(updated.modifier).toBe(2); // floor((15-10)/2) = 2
     expect(updated.rolling).toBe(false);
     expect(updated.name).toBe('STR');
+  });
+});
+
+describe('calculateStats', () => {
+  it('computes average rounded to 1 decimal', () => {
+    const stats = calculateStats([10, 12, 14, 16]);
+    expect(stats.average).toBe(13.0);
+  });
+
+  it('computes average with rounding', () => {
+    const stats = calculateStats([10, 11, 13]);
+    expect(stats.average).toBe(11.3);
+  });
+
+  it('computes median for odd count', () => {
+    const stats = calculateStats([10, 12, 14]);
+    expect(stats.median).toBe(12);
+  });
+
+  it('computes median for even count', () => {
+    const stats = calculateStats([10, 12, 14, 16]);
+    expect(stats.median).toBe(13);
+  });
+
+  it('returns lowest with count', () => {
+    const stats = calculateStats([8, 10, 10, 12]);
+    expect(stats.lowest).toEqual({ value: 8, count: 1 });
+  });
+
+  it('returns highest with count', () => {
+    const stats = calculateStats([8, 10, 10, 12]);
+    expect(stats.highest).toEqual({ value: 12, count: 1 });
+  });
+
+  it('handles single element', () => {
+    const stats = calculateStats([15]);
+    expect(stats.average).toBe(15.0);
+    expect(stats.median).toBe(15);
+    expect(stats.lowest).toEqual({ value: 15, count: 1 });
+    expect(stats.highest).toEqual({ value: 15, count: 1 });
+  });
+
+  it('handles all same values', () => {
+    const stats = calculateStats([10, 10, 10]);
+    expect(stats.average).toBe(10.0);
+    expect(stats.median).toBe(10);
+    expect(stats.lowest).toEqual({ value: 10, count: 3 });
+    expect(stats.highest).toEqual({ value: 10, count: 3 });
+  });
+
+  it('handles unsorted input', () => {
+    const stats = calculateStats([16, 8, 12, 10]);
+    expect(stats.average).toBe(11.5);
+    expect(stats.median).toBe(11);
+    expect(stats.lowest).toEqual({ value: 8, count: 1 });
+    expect(stats.highest).toEqual({ value: 16, count: 1 });
   });
 });
