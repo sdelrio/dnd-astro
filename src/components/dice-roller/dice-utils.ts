@@ -6,12 +6,22 @@ export function rollDice(count: number, sides = 6): number[] {
   return Array.from({ length: count }, () => rollDie(sides));
 }
 
+export function getTopThreeIndices(dice: number[]): number[] {
+  return dice
+    .map((value, index) => ({ value, index }))
+    .sort((a, b) => b.value - a.value || a.index - b.index)
+    .slice(0, 3)
+    .map(({ index }) => index)
+    .sort((a, b) => a - b);
+}
+
 export function rollAbility() {
   const dice = rollDice(4);
   const sorted = [...dice].sort((a, b) => b - a);
   const topThree = sorted.slice(0, 3);
+  const topThreeIndices = getTopThreeIndices(dice);
   const sum = topThree.reduce((a, b) => a + b, 0);
-  return { dice, sorted, topThree, sum };
+  return { dice, sorted, topThree, topThreeIndices, sum };
 }
 
 export function calculateModifier(score: number): number {
@@ -63,6 +73,7 @@ export function updateAbilityWithRoll(ability: any, result: any) {
     ...ability,
     dice: result.dice,
     topThree: result.topThree,
+    topThreeIndices: result.topThreeIndices,
     sum: result.sum,
     modifier: calculateModifier(result.sum),
     rolling: false,
@@ -73,6 +84,7 @@ export interface Ability {
   name: string;
   dice: number[];
   topThree: number[];
+  topThreeIndices: number[];
   sum: number;
   modifier: number;
   rolling: boolean;
@@ -88,14 +100,17 @@ export function swapAbilities(
   const b = copy[index2];
   const tmpDice = a.dice;
   const tmpTopThree = a.topThree;
+  const tmpTopThreeIndices = a.topThreeIndices;
   const tmpSum = a.sum;
   const tmpModifier = a.modifier;
   a.dice = b.dice;
   a.topThree = b.topThree;
+  a.topThreeIndices = b.topThreeIndices;
   a.sum = b.sum;
   a.modifier = b.modifier;
   b.dice = tmpDice;
   b.topThree = tmpTopThree;
+  b.topThreeIndices = tmpTopThreeIndices;
   b.sum = tmpSum;
   b.modifier = tmpModifier;
   return copy;

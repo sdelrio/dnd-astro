@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rollDie, rollDice, rollAbility, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog, swapAbilities, type Ability } from './dice-utils';
+import { rollDie, rollDice, rollAbility, getTopThreeIndices, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog, swapAbilities, type Ability } from './dice-utils';
 
 describe('rollDie', () => {
   it('returns a number between 1 and sides', () => {
@@ -65,6 +65,56 @@ describe('rollAbility', () => {
     const expectedSum = result.topThree.reduce((a, b) => a + b, 0);
     expect(result.sum).toBe(expectedSum);
   });
+
+  it('topThreeIndices contains exactly 3 indices', () => {
+    const result = rollAbility();
+    expect(result.topThreeIndices).toHaveLength(3);
+  });
+
+  it('topThreeIndices are valid indices into dice array', () => {
+    const result = rollAbility();
+    result.topThreeIndices.forEach((idx) => {
+      expect(idx).toBeGreaterThanOrEqual(0);
+      expect(idx).toBeLessThan(4);
+    });
+  });
+
+  it('topThreeIndices correspond to the three highest dice values', () => {
+    const result = rollAbility();
+    const droppedValues = result.dice.filter((_, i) => !result.topThreeIndices.includes(i));
+    const keptValues = result.topThreeIndices.map((i) => result.dice[i]);
+    const sortedKept = [...keptValues].sort((a, b) => b - a);
+    const sortedAll = [...result.dice].sort((a, b) => b - a);
+    expect(sortedKept).toEqual(sortedAll.slice(0, 3));
+    expect(droppedValues).toHaveLength(1);
+    expect(sortedAll[3]).toBe(droppedValues[0]);
+  });
+});
+
+describe('getTopThreeIndices', () => {
+  it('returns indices of the three highest values', () => {
+    const indices = getTopThreeIndices([6, 5, 4, 3]);
+    expect(indices).toHaveLength(3);
+    expect(indices).toEqual([0, 1, 2]);
+  });
+
+  it('handles duplicate lowest values', () => {
+    const indices = getTopThreeIndices([2, 6, 2, 2]);
+    expect(indices).toHaveLength(3);
+    const keptValues = indices.map((i) => [2, 6, 2, 2][i]);
+    expect(keptValues.sort((a, b) => b - a)).toEqual([6, 2, 2]);
+  });
+
+  it('handles all same values', () => {
+    const indices = getTopThreeIndices([3, 3, 3, 3]);
+    expect(indices).toHaveLength(3);
+    expect(indices).toEqual([0, 1, 2]);
+  });
+
+  it('returns sorted indices', () => {
+    const indices = getTopThreeIndices([1, 4, 2, 3]);
+    expect(indices).toEqual([1, 2, 3]);
+  });
 });
 
 describe('calculateModifier', () => {
@@ -100,6 +150,7 @@ describe('updateAbilityWithRoll', () => {
       name: 'STR',
       dice: [],
       topThree: [],
+      topThreeIndices: [],
       sum: 0,
       modifier: 0,
       rolling: true,
@@ -109,6 +160,7 @@ describe('updateAbilityWithRoll', () => {
       dice: [6, 5, 4, 3],
       sorted: [6, 5, 4, 3],
       topThree: [6, 5, 4],
+      topThreeIndices: [0, 1, 2],
       sum: 15,
     };
     
@@ -116,6 +168,7 @@ describe('updateAbilityWithRoll', () => {
     
     expect(updated.dice).toEqual([6, 5, 4, 3]);
     expect(updated.topThree).toEqual([6, 5, 4]);
+    expect(updated.topThreeIndices).toEqual([0, 1, 2]);
     expect(updated.sum).toBe(15);
     expect(updated.modifier).toBe(2); // floor((15-10)/2) = 2
     expect(updated.rolling).toBe(false);
@@ -258,6 +311,7 @@ describe('swapAbilities', () => {
     name,
     dice: [6, 5, 4, 3],
     topThree: [6, 5, 4],
+    topThreeIndices: [0, 1, 2],
     sum,
     modifier,
     rolling: false,
@@ -300,8 +354,8 @@ describe('swapAbilities', () => {
 
   it('swaps dice and topThree arrays', () => {
     const abilities = [
-      { ...makeAbility('STR', 15, 2), dice: [6, 5, 4, 3], topThree: [6, 5, 4] },
-      { ...makeAbility('DEX', 12, 1), dice: [4, 4, 3, 1], topThree: [4, 4, 3] },
+      { ...makeAbility('STR', 15, 2), dice: [6, 5, 4, 3], topThree: [6, 5, 4], topThreeIndices: [0, 1, 2] },
+      { ...makeAbility('DEX', 12, 1), dice: [4, 4, 3, 1], topThree: [4, 4, 3], topThreeIndices: [0, 1, 2] },
     ];
     const result = swapAbilities(abilities, 0, 1);
     expect(result[0].dice).toEqual([4, 4, 3, 1]);
