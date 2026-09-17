@@ -3,18 +3,19 @@ interface Ability {
   name: string;
   dice: number[];
   topThree: number[];
+  topThreeIndices: number[];
   sum: number;
   modifier: number;
   rolling: boolean;
 }
 
 const abilities: Ability[] = [
-  { name: 'STR', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
-  { name: 'DEX', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
-  { name: 'CON', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
-  { name: 'INT', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
-  { name: 'WIS', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
-  { name: 'CHA', dice: [], topThree: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'STR', dice: [], topThree: [], topThreeIndices: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'DEX', dice: [], topThree: [], topThreeIndices: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'CON', dice: [], topThree: [], topThreeIndices: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'INT', dice: [], topThree: [], topThreeIndices: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'WIS', dice: [], topThree: [], topThreeIndices: [], sum: 0, modifier: 0, rolling: false },
+  { name: 'CHA', dice: [], topThree: [], topThreeIndices: [], sum: 0, modifier: 0, rolling: false },
 ];
 ---
 
@@ -110,7 +111,7 @@ const abilities: Ability[] = [
                 <template x-for="(die, i) in ability.dice" :key="i">
                   <span
                     class="w-8 h-8 flex items-center justify-center rounded border text-sm font-medium"
-                    :class="ability.topThree.includes(die) ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-gray-100 border-gray-300 text-gray-500 line-through'"
+                    :class="ability.topThreeIndices.includes(i) ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-gray-100 border-gray-300 text-gray-500 line-through'"
                     x-text="die"
                   ></span>
                 </template>
