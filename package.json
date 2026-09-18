@@ -21,6 +21,7 @@
     "alpinejs": "^3.17.3",
     "astro": "^7.3.2",
     "fast-xml-parser": "^5.11.1",
+    "he": "^1.2.0",
     "sharp": "^0.35.3"
   },
   "devDependencies": {

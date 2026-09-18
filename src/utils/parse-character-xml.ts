@@ -1,4 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
+import he from 'he';
 
 export interface CharacterData {
   name: string;
@@ -42,8 +43,15 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     if (!obj) return [];
     return Object.values(obj).filter((item) => typeof item === 'object');
   }
+  // Patch: decode entities in all text output
   // Parse top-level values
-  const getText = (obj: XmlFields | undefined, key: string) => obj?.[key]?.['#text'] ?? '';
+  const getText = (obj: XmlFields | undefined, key: string) => {
+  const val = obj?.[key]?.['#text'];
+  if (typeof val === 'string') return he.decode(val);
+  if (val == null) return '';
+  // handle numbers or other (should not happen for text fields, but guard for tests)
+  return he.decode(String(val));
+};
   // Classes
   // Classes node may be <classes>.<id-XXXXX> for each class taken
   const classes: Array<{ name: string; level: number }> = [];
@@ -51,7 +59,8 @@ export function parseCharacterXML(xml: string): CharacterData | null {
   for (const key of Object.keys(rawClasses)) {
     if (!key.startsWith('id-')) continue;
     const cc = rawClasses[key];
-    const cname = typeof cc.name === 'string' ? cc.name : cc.name?.['#text'] ?? '';
+    // Both name and level might be encoded/strings with entities
+    const cname = typeof cc.name === 'string' ? he.decode(cc.name) : he.decode(cc.name?.['#text'] ?? '');
     const clevel = typeof cc.level === 'number' ? cc.level : Number(cc.level?.['#text'] ?? 0);
     if (cname) {
       classes.push({ name: cname, level: clevel });
