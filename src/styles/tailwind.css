@@ -4,6 +4,8 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css";
 
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
 @media (min-width: 72rem) {
   :root {
     --sl-content-width: 55rem;
