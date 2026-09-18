@@ -3,3 +3,9 @@
    global reset cannot restyle Starlight documentation pages. */
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css";
+
+@media (min-width: 72rem) {
+  :root {
+    --sl-content-width: 55rem;
+  }
+}
