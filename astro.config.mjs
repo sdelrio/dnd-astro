@@ -30,6 +30,7 @@ export default defineConfig({
       customCss: ['./src/styles/tailwind.css'],
       components: {
         ThemeProvider: './src/components/ThemeProvider.astro',
+        ThemeSelect: './src/components/ThemeSelect.astro',
       },
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }
