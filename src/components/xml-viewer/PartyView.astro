@@ -77,30 +77,30 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
   data-all-roles={allRolesJson}
   data-role-config={roleConfigJson}
 >
-  <section class="bg-white border border-gray-200 rounded-lg p-6">
-    <h1 class="mt-0 text-2xl font-bold text-gray-900 mb-2">{party.partyName}</h1>
-    <p class="mt-0 text-gray-600 mb-4">{members.length} active members</p>
+  <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+    <h1 class="mt-0 text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{party.partyName}</h1>
+    <p class="mt-0 text-gray-600 dark:text-gray-400 mb-4">{members.length} active members</p>
 
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-      <div class="bg-gray-50 rounded-lg p-4 text-center">
-        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total HP</div>
-        <div class="text-2xl font-bold text-gray-900">{stats.totalHp}</div>
+      <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Total HP</div>
+        <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalHp}</div>
       </div>
-      <div class="bg-gray-50 rounded-lg p-4 text-center">
-        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Average AC</div>
-        <div class="text-2xl font-bold text-gray-900">{stats.avgAc}</div>
+      <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Average AC</div>
+        <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.avgAc}</div>
       </div>
-      <div class="bg-gray-50 rounded-lg p-4 text-center">
-        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Average Initiative</div>
-        <div class="text-2xl font-bold text-gray-900">{stats.avgInit >= 0 ? '+' : ''}{stats.avgInit}</div>
+      <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Average Initiative</div>
+        <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.avgInit >= 0 ? '+' : ''}{stats.avgInit}</div>
       </div>
-      <div class="bg-gray-50 rounded-lg p-4 text-center">
-        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Total Level</div>
-        <div class="text-2xl font-bold text-gray-900">{stats.totalLevel}</div>
+      <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Total Level</div>
+        <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalLevel}</div>
       </div>
-      <div class="bg-gray-50 rounded-lg p-4 text-center">
-        <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Members</div>
-        <div class="text-2xl font-bold text-gray-900">{members.length}</div>
+      <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-center">
+        <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">Members</div>
+        <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">{members.length}</div>
       </div>
     </div>
 
@@ -122,7 +122,7 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
     <div class="flex flex-wrap gap-2 mt-4" role="group" aria-label="Filter by role">
       <button
         class="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-        :class="activeRoles.length === allRoles.length ? 'active text-white shadow-md' : 'inactive bg-gray-100 text-gray-600 hover:bg-gray-200'"
+        :class="activeRoles.length === allRoles.length ? 'active text-white shadow-md' : 'inactive bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
         :style="activeRoles.length === allRoles.length ? 'background: #6366f1;' : ''"
         @click="activeRoles = activeRoles.length === allRoles.length ? [] : [...allRoles]"
         :aria-pressed="activeRoles.length === allRoles.length"
@@ -134,7 +134,7 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
         return (
           <button
             class="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-            :class={"isRoleActive('" + role + "') ? 'active text-white shadow-md' : 'inactive bg-gray-100 text-gray-600 hover:bg-gray-200'"}
+            :class={"isRoleActive('" + role + "') ? 'active text-white shadow-md' : 'inactive bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"}
             :style={"isRoleActive('" + role + "') ? 'background: " + config.color + ";' : ''"}
             @click={"toggleRole('" + role + "')"}
             :aria-pressed={"isRoleActive('" + role + "')"}
@@ -169,7 +169,7 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
               {roleConfig.label}
             </span>
             {member.notes && (
-              <span class="text-xs text-gray-500 italic">{member.notes}</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400 italic">{member.notes}</span>
             )}
           </div>
         </div>
