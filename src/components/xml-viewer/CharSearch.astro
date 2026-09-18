@@ -1,5 +1,6 @@
 ---
 import characters from '@/generated/characters.json';
+import IconifyIcon from '@/components/IconifyIcon.astro';
 
 const allClasses = [...new Set(characters.flatMap((c) => c.classes.map((cl) => cl.name)))].sort();
 const allRaces = [...new Set(characters.map((c) => c.race))].sort();
@@ -74,9 +75,10 @@ const allRaces = [...new Set(characters.map((c) => c.race))].sort();
     <button
       x-show="search || selectedClass || selectedRace"
       @click="clearFilters()"
-      class="text-sm text-blue-600 hover:text-blue-800 underline"
+      class="text-blue-600 hover:text-blue-800 transition-colors"
+      title="Clear filters"
     >
-      Clear filters
+      <IconifyIcon icon="mdi:filter-remove" width="1.25em" label="Clear filters" />
     </button>
   </div>
 
