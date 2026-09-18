@@ -13,7 +13,7 @@ const abilities: Ability[] = [
 
 <div
   x-data={`diceRoller(${JSON.stringify(abilities)})`}
-  class="space-y-6"
+  class="not-content space-y-6"
 >
   <div class="flex justify-center">
     <button
@@ -31,16 +31,16 @@ const abilities: Ability[] = [
       <div>
         <div
           @click="selectAbility(index)"
-          class="bg-white border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative"
-          :class="selectedIndex === index ? 'border-blue-500 ring-2 ring-blue-200' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-blue-400' : 'border-gray-200'"
+          class="bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative"
+          :class="selectedIndex === index ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-blue-400' : 'border-gray-200 dark:border-gray-700'"
         >
           <div class="p-4">
             <div class="flex justify-between items-center mb-2">
-              <h3 class="font-bold text-gray-900" x-text="ability.name"></h3>
+              <h3 class="font-bold text-gray-900 dark:text-gray-100" x-text="ability.name"></h3>
               <button
                 @click.stop="rollIndividual(index)"
                 :disabled="isRolling || ability.rolling || selectedIndex !== null"
-                class="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Re-roll ability score"
               >
                 Retry
@@ -52,21 +52,21 @@ const abilities: Ability[] = [
                 <template x-for="(die, i) in ability.dice" :key="i">
                   <span
                     class="w-8 h-8 flex items-center justify-center rounded border text-sm font-medium"
-                    :class="ability.topThreeIndices.includes(i) ? 'bg-blue-100 border-blue-300 text-blue-800' : 'bg-gray-100 border-gray-300 text-gray-500 line-through'"
+                    :class="ability.topThreeIndices.includes(i) ? 'bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-600 text-blue-800 dark:text-blue-200' : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 line-through'"
                     x-text="die"
                   ></span>
                 </template>
               </div>
               
               <div class="text-center">
-                <div class="text-xs sm:text-sm text-gray-600">
+                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   <span x-text="ability.topThree.join(' + ')"></span> = <span x-text="ability.sum" class="font-bold"></span>
                 </div>
-                <div class="text-lg font-bold text-gray-900" x-text="formatModifier(ability.modifier)"></div>
+                <div class="text-lg font-bold text-gray-900 dark:text-gray-100" x-text="formatModifier(ability.modifier)"></div>
               </div>
             </div>
             
-            <div x-show="ability.dice.length === 0" class="text-center py-4 text-gray-500">
+            <div x-show="ability.dice.length === 0" class="text-center py-4 text-gray-500 dark:text-gray-400">
               Roll to generate
             </div>
           </div>
@@ -78,8 +78,8 @@ const abilities: Ability[] = [
           ></div>
         </div>
         <template x-if="stagedSwap && stagedSwap.index1 === index">
-          <div class="mt-2 bg-blue-50 border border-blue-300 rounded-lg p-2 flex items-center justify-between text-sm">
-            <span class="text-blue-800 font-medium" x-text="'Swap ' + abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></span>
+          <div class="mt-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-600 rounded-lg p-2 flex items-center justify-between text-sm">
+            <span class="text-blue-800 dark:text-blue-200 font-medium" x-text="'Swap ' + abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></span>
             <div class="flex gap-1 not-content">
               <button
                 @click="confirmSwap()"
@@ -89,7 +89,7 @@ const abilities: Ability[] = [
               </button>
               <button
                 @click="cancelSwap()"
-                class="px-2 py-1 bg-gray-200 text-gray-700 text-xs rounded hover:bg-gray-300 transition-colors"
+                class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
               >
                 Cancel
               </button>
@@ -100,43 +100,43 @@ const abilities: Ability[] = [
     </template>
    </div>
 
-  <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 max-w-sm mx-auto mt-6">
-    <h3 class="font-bold text-gray-900 mb-2">Stats</h3>
+  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 max-w-sm mx-auto mt-6">
+    <h3 class="font-bold text-gray-900 dark:text-gray-100 mb-2">Stats</h3>
     <template x-if="!stats || !stats.average || sessionRolls.length === 0">
-      <div class="flex flex-col items-center justify-center p-6 text-gray-400 text-center">
+      <div class="flex flex-col items-center justify-center p-6 text-gray-400 dark:text-gray-500 text-center">
         <span style="font-size: 2.25rem;">🎲</span>
-        <p class="mt-2 text-gray-500">No stats yet!<br>Roll all abilities to see your results.</p>
+        <p class="mt-2 text-gray-500 dark:text-gray-400">No stats yet!<br>Roll all abilities to see your results.</p>
       </div>
     </template>
     <template x-if="stats && stats.average && sessionRolls.length > 0">
       <div class="space-y-0.5 text-sm">
         <div class="flex justify-between">
-          <span class="text-gray-600">Average:</span>
-          <span class="font-medium" x-text="stats?.average"></span>
+          <span class="text-gray-600 dark:text-gray-400">Average:</span>
+          <span class="font-medium dark:text-gray-100" x-text="stats?.average"></span>
         </div>
         <div class="flex justify-between">
-          <span class="text-gray-600">Median:</span>
-          <span class="font-medium" x-text="stats?.median"></span>
+          <span class="text-gray-600 dark:text-gray-400">Median:</span>
+          <span class="font-medium dark:text-gray-100" x-text="stats?.median"></span>
         </div>
         <div class="flex justify-between">
-          <span class="text-gray-600">Lowest:</span>
-          <span class="font-medium" x-text="stats?.lowest + (stats?.lowestCount > 1 ? ' (x' + stats?.lowestCount + ')' : '')"></span>
+          <span class="text-gray-600 dark:text-gray-400">Lowest:</span>
+          <span class="font-medium dark:text-gray-100" x-text="stats?.lowest + (stats?.lowestCount > 1 ? ' (x' + stats?.lowestCount + ')' : '')"></span>
         </div>
         <div class="flex justify-between mb-0 mt-0 last:mb-0 last:mt-0">
-          <span class="text-gray-600 mb-0 mt-0">Highest:</span>
-          <span class="font-medium mb-0 mt-0" x-text="stats?.highest + (stats?.highestCount > 1 ? ' (x' + stats?.highestCount + ')' : '')"></span>
+          <span class="text-gray-600 dark:text-gray-400 mb-0 mt-0">Highest:</span>
+          <span class="font-medium dark:text-gray-100 mb-0 mt-0" x-text="stats?.highest + (stats?.highestCount > 1 ? ' (x' + stats?.highestCount + ')' : '')"></span>
         </div>
       </div>
     </template>
   </div>
 
-  <div x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 rounded-lg p-3 bg-gray-50">
+  <div x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900">
     <template x-for="(entry, i) in resultLog" :key="i">
-      <div class="text-sm text-gray-700 font-mono" x-text="entry"></div>
+      <div class="text-sm text-gray-700 dark:text-gray-300 font-mono" x-text="entry"></div>
     </template>
   </div>
 
-  <div class="text-center text-sm text-gray-500">
+  <div class="text-center text-sm text-gray-500 dark:text-gray-400">
     <p>Roll 4d6-drop-lowest for each ability score.</p>
   </div>
 
