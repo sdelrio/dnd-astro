@@ -1,5 +1,6 @@
 ---
 import { FEATS, BOOKS, ABILITIES } from './feat-data';
+import IconifyIcon from '@/components/IconifyIcon.astro';
 
 const initialData = {
   feats: FEATS,
@@ -81,10 +82,11 @@ const initialData = {
       <button
         x-show="hasActiveFilters()"
         @click="clearFilters()"
-        class="text-sm text-blue-600 hover:text-blue-800 underline"
+        class="text-blue-600 hover:text-blue-800 transition-colors"
+        title="Clear filters"
         aria-label="Clear all filters"
       >
-        Clear filters
+        <IconifyIcon icon="mdi:filter-remove" width="1.25em" />
       </button>
     </div>
     
