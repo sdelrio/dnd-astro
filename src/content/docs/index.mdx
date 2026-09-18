@@ -1,40 +1,49 @@
 ---
-title: Welcome to Starlight
+title: DnD Companion
 description: Get started building your docs site with Starlight.
 template: splash # Remove or comment out this line to display the site sidebar on this page.
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Roll for Initiative! Characters, notes, and everything between the dice rolls. Ready when you are.
   image:
-    file: ../../assets/houston.webp
+    file: ../../assets/dnd-dragon-dice.svg
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Dice Roller
+      link: /tools/dice-roller/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
+    - text: Classes Balance fixes
+      link: /dnd/classes/
       icon: external
       variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
+This page centralizes Dungeons & Dragons house custom rules, balance patches, and essential mechanics.
+
+It serves as a comprehensive reference to ensure consistency and streamline tabletop gameplay.
+
 ## Next steps
 
-<CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+### Character
+
+<CardGrid>
+	<Card title="Classes" icon="pencil">
+	  Character archetypes, custom balance, and fixes for homebrew content.
 	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
+	<Card title="Character Creation" icon="document">
+	  Standardized character creation guides and processes.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="Feats" icon="add-document">
+  	Feat options, customizations, and balance adjustments. 
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Skills" icon="open-book">
+    Skill system details and specific mechanics for gameplay.
 	</Card>
 </CardGrid>
+
+- Edit `src/content/docs/index.mdx` to see this page change.
+- Delete `template: splash` in `src/content/docs/index.mdx` to display a sidebar on this page.
+- Add Markdown or MDX files to `src/content/docs` to create new pages.
+- Edit your `sidebar` and other config in `astro.config.mjs`.
+- Learn more in [the Starlight Docs](https://starlight.astro.build/).
+
