@@ -1,5 +1,6 @@
 ---
 import type { Ability } from './dice-utils';
+import IconifyIcon from '@/components/IconifyIcon.astro';
 
 const abilities: Ability[] = [
   { name: 'STR', dice: [], topThree: [], topThreeIndices: [], sum: 0, modifier: 0, rolling: false },
@@ -35,15 +36,15 @@ const abilities: Ability[] = [
           :class="selectedIndex === index ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-blue-400' : 'border-gray-200 dark:border-gray-700'"
         >
           <div class="p-4">
-            <div class="flex justify-between items-center mb-2">
+            <div class="flex items-center justify-center gap-1 mb-2">
               <h3 class="font-bold text-gray-900 dark:text-gray-100" x-text="ability.name"></h3>
               <button
                 @click.stop="rollIndividual(index)"
                 :disabled="isRolling || ability.rolling || selectedIndex !== null"
-                class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="group inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
                 aria-label="Re-roll ability score"
               >
-                Retry
+                <IconifyIcon icon="mdi:refresh" width="1em" class="transition-transform duration-200 group-hover:rotate-180" />
               </button>
             </div>
             
@@ -78,20 +79,22 @@ const abilities: Ability[] = [
           ></div>
         </div>
         <template x-if="stagedSwap && stagedSwap.index1 === index">
-          <div class="mt-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-600 rounded-lg p-2 flex items-center justify-between text-sm">
-            <span class="text-blue-800 dark:text-blue-200 font-medium" x-text="'Swap ' + abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></span>
-            <div class="flex gap-1 not-content">
+          <div class="mt-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-600 rounded-lg p-2 text-center text-sm">
+            <div class="text-blue-800 dark:text-blue-200 font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
+            <div class="flex justify-center gap-2 not-content">
               <button
                 @click="confirmSwap()"
-                class="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                class="p-1.5 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
+                aria-label="Confirm swap"
               >
-                Confirm
+                <IconifyIcon icon="mdi:check" width="1em" />
               </button>
               <button
                 @click="cancelSwap()"
-                class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                class="p-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                aria-label="Cancel swap"
               >
-                Cancel
+                <IconifyIcon icon="mdi:close" width="1em" />
               </button>
             </div>
           </div>
