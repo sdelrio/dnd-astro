@@ -75,7 +75,7 @@ const allRaces = [...new Set(characters.map((c) => c.race))].sort();
     <button
       x-show="search || selectedClass || selectedRace"
       @click="clearFilters()"
-      class="text-blue-600 hover:text-blue-800 transition-colors"
+      class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
       title="Clear filters"
       aria-label="Clear all filters"
     >
