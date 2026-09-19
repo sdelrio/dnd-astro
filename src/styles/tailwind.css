@@ -120,3 +120,29 @@
   color: #d4c4a8;
 }
 
+/* D&D table row colors and style overrides */
+.sl-markdown-content table:not(:where(.not-content *)) {
+  border: none;
+}
+
+.sl-markdown-content th:not(:where(.not-content *)) {
+  background: transparent;
+}
+
+.sl-markdown-content tr:nth-child(odd):not(:where(.not-content *)) {
+  background-color: #d9e0d6;
+}
+
+.sl-markdown-content tr:nth-child(even):not(:where(.not-content *)) {
+  background-color: #e8ede1;
+}
+
+/* Dark mode table row colors */
+:root[data-theme='dark'] .sl-markdown-content tr:nth-child(odd):not(:where(.not-content *)) {
+  background-color: #404521;
+}
+
+:root[data-theme='dark'] .sl-markdown-content tr:nth-child(even):not(:where(.not-content *)) {
+  background-color: #363b17;
+}
+
