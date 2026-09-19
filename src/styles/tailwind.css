@@ -43,3 +43,7 @@
   }
 }
 
+.weapon-mastery-table td:first-child {
+  vertical-align: middle;
+}
+
