@@ -146,3 +146,41 @@
   background-color: #363b17;
 }
 
+/* D&D admonition border and background overrides */
+.starlight-aside--note {
+  --sl-color-asides-border: #2563eb;
+  background-color: #eff6ff;
+}
+
+.starlight-aside--tip {
+  --sl-color-asides-border: #16a34a;
+  background-color: #f0fdf4;
+}
+
+.starlight-aside--caution {
+  --sl-color-asides-border: #d97706;
+  background-color: #fffbeb;
+}
+
+.starlight-aside--danger {
+  --sl-color-asides-border: #dc2626;
+  background-color: #fef2f2;
+}
+
+/* Dark mode admonition backgrounds */
+:root[data-theme='dark'] .starlight-aside--note {
+  background-color: #1e3a5f;
+}
+
+:root[data-theme='dark'] .starlight-aside--tip {
+  background-color: #14532d;
+}
+
+:root[data-theme='dark'] .starlight-aside--caution {
+  background-color: #78350f;
+}
+
+:root[data-theme='dark'] .starlight-aside--danger {
+  background-color: #7f1d1d;
+}
+
