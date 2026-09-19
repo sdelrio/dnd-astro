@@ -87,9 +87,9 @@
   /* Gray: Hue 40, Chroma 0.015 */
   /* Contrast Level: AAA */
   :root {
-	  --sl-color-accent-low: #002934;
-	  --sl-color-accent: #00768f;
-	  --sl-color-accent-high: #a5d1df;
+	  --sl-color-accent-low: #293400;
+	  --sl-color-accent:  #f7860f;
+	  --sl-color-accent-high: #d1dfa5;
 	  --sl-color-white: #ffffff;
 	  --sl-color-gray-1: #f1eceb;
 	  --sl-color-gray-2: #c7c0be;
@@ -98,12 +98,14 @@
 	  --sl-color-gray-5: #3f3632;
 	  --sl-color-gray-6: #2e2421;
 	  --sl-color-black: #1b1716;
+
+    /*--sl-color-text-heading: rgb(88, 24, 13);*/
   }
   /* Light mode colors. */
   :root[data-theme='light'] {
-	  --sl-color-accent-low: #bddde8;
-	  --sl-color-accent: #00758e;
-	  --sl-color-accent-high: #003946;
+	  --sl-color-accent-low: #b9c0b6;
+	  --sl-color-accent: #697066;
+	  --sl-color-accent-high: #394036;
 	  --sl-color-white: #1b1716;
 	  --sl-color-gray-1: #2e2421;
 	  --sl-color-gray-2: #3f3632;
@@ -125,34 +127,42 @@
   font-family: var(--sl-font-heading);
 }
 
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
+  color: #58180d;
+}
+
+.page h1 {
+  color: #58180d;
+}
+
 /* D&D theme heading colors and underlines */
 .sl-markdown-content h2:not(:where(.not-content *)) {
-  color: #58180d;
   border-bottom: 2px solid #c9ad6a;
   font-weight: 500; /* default was 600 */
   font-size: 28px; /* default was 35px */
 }
 
 .sl-markdown-content h3:not(:where(.not-content *)) {
-  color: #58180d;
   font-weight: 500; /* default was 600 */
   font-size: 24px; /* default was 29px */
 }
 
 .sl-markdown-content h4:not(:where(.not-content *)) {
-  color: #58180d;
   font-weight: 400; /* default was 600 */
   font-size: 20px; /* default was 24px */
 }
 
 /* Dark mode heading colors */
-:root[data-theme='dark'] .sl-markdown-content h2:not(:where(.not-content *)) {
+ :root[data-theme='dark'] .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
   color: #c68000;
-  border-bottom: 2px solid #867347;
 }
 
-:root[data-theme='dark'] .sl-markdown-content h3:not(:where(.not-content *)) {
+:root[data-theme='dark'] .page h1 {
   color: #c68000;
+}
+
+:root[data-theme='dark'] .sl-markdown-content h2:not(:where(.not-content *)) {
+  border-bottom: 2px solid #867347;
 }
 
 /* Body text colors */
