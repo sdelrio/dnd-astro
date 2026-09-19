@@ -69,6 +69,9 @@ importers:
       happy-dom:
         specifier: ^20.14.5
         version: 20.14.5
+      solbera-dnd-fonts:
+        specifier: ^1.0.2
+        version: 1.0.2
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -2396,6 +2399,10 @@ packages:
   smol-toml@1.8.0:
     resolution: {integrity: sha512-kCZr2V3ch9i00x8zXRhjUNVcjG9ijES5dDudkXvUVCT5QlJNQWElSJdZqyPemffHoLNUYwOcou0Fy+ojN0uHSQ==}
     engines: {node: '>= 18'}
+
+  solbera-dnd-fonts@1.0.2:
+    resolution: {integrity: sha512-GvIt207fGpQycophlee34J8QI/dyn1npLJYf/EOQogCbNHgHfADPK0bDQNFM0t5Ov/GKsZTAVKQHwPGtJdvKCQ==}
+    engines: {node: '>=18'}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -5343,6 +5350,8 @@ snapshots:
       sax: 1.6.1
 
   smol-toml@1.8.0: {}
+
+  solbera-dnd-fonts@1.0.2: {}
 
   source-map-js@1.2.1: {}
 
