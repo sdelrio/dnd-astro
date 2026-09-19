@@ -70,7 +70,7 @@ If a character dies while still suffering the penalties of a resurrection spell,
 The pricing for spellcasting services is calculated using the following formula, replacing the costs listed in the *Player’s Handbook* (p. 232):
 
 :::note Price formula
-**Price** = (Spell Level² × 25) + Consumed Material Component Cost + (10% × Non-consumed Material Component Cost)
+**Price** = (Spell Level² × 25) <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ Consumed Material Component Cost <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ (10% × Non-consumed Material Component Cost)
 :::
 
 | Spell Level | Base Price without components|
