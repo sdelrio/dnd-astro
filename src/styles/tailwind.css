@@ -91,3 +91,32 @@
   font-family: var(--sl-font-heading);
 }
 
+/* D&D theme heading colors and underlines */
+.sl-markdown-content h2:not(:where(.not-content *)) {
+  color: #58180d;
+  border-bottom: 2px solid #c9ad6a;
+}
+
+.sl-markdown-content h3:not(:where(.not-content *)) {
+  color: #58180d;
+}
+
+/* Dark mode heading colors */
+:root[data-theme='dark'] .sl-markdown-content h2:not(:where(.not-content *)) {
+  color: #c68000;
+  border-bottom: 2px solid #867347;
+}
+
+:root[data-theme='dark'] .sl-markdown-content h3:not(:where(.not-content *)) {
+  color: #c68000;
+}
+
+/* Body text colors */
+.sl-markdown-content:not(:where(.not-content *)) {
+  color: #2a2010;
+}
+
+:root[data-theme='dark'] .sl-markdown-content:not(:where(.not-content *)) {
+  color: #d4c4a8;
+}
+
