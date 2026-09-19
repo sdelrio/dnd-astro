@@ -85,7 +85,7 @@ The pricing for spellcasting services is calculated using the following formula,
 | 8           | 1600  |
 | 9           | 2025  |
 
-:::info Rituals
+:::note Rituals
 
 Spells cast as rituals cost 50% of the base service price. Material component costs remain unchanged.
 
