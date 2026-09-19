@@ -170,8 +170,9 @@
   font-family: var(--sl-font-table);
 }
 
+.sl-markdown-content thead,
 .sl-markdown-content th:not(:where(.not-content *)) {
-  background: transparent !important;
+  background: transparent;
   font-family: var(--sl-font-table);
 }
 
@@ -179,21 +180,25 @@
   font-family: var(--sl-font-table);
 }
 
-.sl-markdown-content tr:nth-child(odd):not(:where(.not-content *)) {
-  background-color: #d9e0d6;
+.sl-markdown-content tbody tr:nth-child(odd):not(:where(.not-content *)) {
+  background-color: transparent;
+  background-image: linear-gradient(to right, transparent, #d9e0d6 2%, #d0e0d6 98%, transparent);
 }
 
-.sl-markdown-content tr:nth-child(even):not(:where(.not-content *)) {
-  background-color: #e8ede1;
+.sl-markdown-content tbody tr:nth-child(even):not(:where(.not-content *)) {
+  background-color: transparent;
+  background-image: linear-gradient(to right, transparent, #e8ede1 2%, #e8ede1 98%, transparent);
 }
 
 /* Dark mode table row colors */
-:root[data-theme='dark'] .sl-markdown-content tr:nth-child(odd):not(:where(.not-content *)) {
-  background-color: #404521;
+:root[data-theme='dark'] .sl-markdown-content tbody tr:nth-child(odd):not(:where(.not-content *)) {
+  background-color: transparent;
+  background-image: linear-gradient(to right, transparent, #404521 2%, #404521 98%, transparent);
 }
 
-:root[data-theme='dark'] .sl-markdown-content tr:nth-child(even):not(:where(.not-content *)) {
-  background-color: #363b17;
+:root[data-theme='dark'] .sl-markdown-content tbody tr:nth-child(even):not(:where(.not-content *)) {
+  background-color: transparent;
+  background-image: linear-gradient(to right, transparent, #363b17 2%, #363b17 98%, transparent);
 }
 
 /* D&D admonition border and background overrides */
