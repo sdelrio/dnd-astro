@@ -11,6 +11,48 @@ font family in use.
 | **Bookinsanity**  | Body text            | `solbera-dnd-fonts`     | CC-BY-SA 4.0   |
 | **Cinzel**        | Headings (h2, h3)    | Google Fonts            | OFL 1.1        |
 
+## Solbera's D&D 5e Fonts
+
+All fonts in the [solbera-dnd-fonts](https://github.com/jonathonf/solbera-dnd-fonts)
+repository are released under the
+[Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/)
+(CC-BY-SA 4.0).
+
+### Available Fonts
+
+| Font Name                   | Original Font            | D&D 5e Usage                   |
+| --------------------------- | ------------------------ | ------------------------------ |
+| **Bookinsanity (Remake)**   | Bookmania                | Body text                      |
+| **Scaly Sans Caps**         | Scala Sans Caps          | Monster Manual quotes          |
+| **Nodesto Caps Condensed**  | Modesto Bold Condensed   | Book and card titles           |
+| **Mr Eaves Small Caps**     | Mrs Eaves Small Caps     | Headings                       |
+| **Zatanna Misdirection**    | Dai Vernon Misdirect     | Titles of tables               |
+| **Scaly Sans (Remake)**     | Scala Sans               | Tables                         |
+| **Solbera Imitation**       | (unknown)                | Drop caps                      |
+| **Dungeon Drop Case**       | (unknown)                | Drop caps                      |
+
+### CC-BY-SA 4.0 License Terms
+
+You are free to:
+- **Share** - copy and redistribute the material in any medium or format.
+- **Adapt** - remix, transform, and build upon the material for any purpose,
+  even commercially.
+
+Under the following terms:
+- **Attribution** - You must give appropriate credit, provide a link to the
+  license, and indicate if changes were made.
+- **ShareAlike** - If you remix, transform, or build upon the material, you
+  must distribute your contributions under the same license.
+
+### Why We Use These Fonts
+
+- **Bookinsanity** (from `solbera-dnd-fonts` npm package): CC-BY-SA 4.0
+  licensed, legally safe for free distribution. Provides the authentic D&D 5e
+  body text aesthetic.
+- **Cinzel** (from Google Fonts): Open Font License 1.1, completely free for
+  any use. Chosen as the legal alternative to MrEavesRemake for heading text,
+  with a similar classic/monumental serif feel.
+
 ## Background: D&D Community Fonts
 
 ### MrEavesRemake
@@ -35,13 +77,6 @@ font family in use.
   licenses. These files are shared freely as Creative Commons assets within the
   D&D homebrew community.
 
-## Comparison
-
-| Font Name         | Original Source                | Legal Status of the "Remake"   | Common Usage                     |
-| ----------------- | ------------------------------ | ------------------------------ | -------------------------------- |
-| **MrEavesRemake** | Emigre (Paid)                  | Gray market / Community shared | D&D 5e Stat Blocks & Subheadings |
-| **BookInsanity**  | Inspired by premium text fonts | Distributed under CC-BY-SA 4.0 | D&D 5e Body Text                 |
-
 ## Licensing Summary
 
 If you are using these fonts purely inside a tool like
@@ -51,18 +86,10 @@ a commercial book or product, you should **avoid using the "Remake" files** and
 instead buy the official license for Mr Eaves or use safe, open-source
 alternatives from a platform like [Google Fonts](https://fonts.google.com/).
 
-### Why We Use These Fonts
-
-- **Bookinsanity** (from `solbera-dnd-fonts` npm package): CC-BY-SA 4.0
-  licensed, legally safe for free distribution. Provides the authentic D&D 5e
-  body text aesthetic.
-- **Cinzel** (from Google Fonts): Open Font License 1.1, completely free for
-  any use. Chosen as the legal alternative to MrEavesRemake for heading text,
-  with a similar classic/monumental serif feel.
-
 ### References
 
 - [Solbera's D&D 5e Fonts](https://github.com/jonathonf/solbera-dnd-fonts)
+- [CC-BY-SA 4.0 License](https://creativecommons.org/licenses/by-sa/4.0/)
 - [The Homebrewery](https://homebrewery.naturalcrit.com/new/)
 - [Homebrewery's Included Fonts](https://www.reddit.com/r/homebrewery/comments/mlmcbe/homebrewerys_included_fonts/)
 - [Font Licensing for Commercial Use](https://www.reddit.com/r/selfpublishing/comments/qsl8kv/font_licensing_for_use_in_novel_please/)
