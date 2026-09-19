@@ -129,10 +129,20 @@
 .sl-markdown-content h2:not(:where(.not-content *)) {
   color: #58180d;
   border-bottom: 2px solid #c9ad6a;
+  font-weight: 500; /* default was 600 */
+  font-size: 28px; /* default was 35px */
 }
 
 .sl-markdown-content h3:not(:where(.not-content *)) {
   color: #58180d;
+  font-weight: 500; /* default was 600 */
+  font-size: 24px; /* default was 29px */
+}
+
+.sl-markdown-content h4:not(:where(.not-content *)) {
+  color: #58180d;
+  font-weight: 400; /* default was 600 */
+  font-size: 20px; /* default was 24px */
 }
 
 /* Dark mode heading colors */
