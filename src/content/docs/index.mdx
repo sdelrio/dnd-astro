@@ -17,29 +17,96 @@ hero:
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import IconifyIcon from '../../components/IconifyIcon.astro';
 
 This page centralizes Dungeons & Dragons house custom rules, balance patches, and essential mechanics.
 
 It serves as a comprehensive reference to ensure consistency and streamline tabletop gameplay.
 
-## Next steps
-
-### Character
+## Character
 
 <CardGrid>
-	<Card title="Classes" icon="pencil">
+	<Card title="Classes">
+    <IconifyIcon icon="game-icons:character" width="2em" />
 	  Character archetypes, custom balance, and fixes for homebrew content.
 	</Card>
-	<Card title="Character Creation" icon="document">
+	<Card title="Character Creation">
+    <IconifyIcon icon="mdi:account-plus" width="2em" />
 	  Standardized character creation guides and processes.
 	</Card>
-	<Card title="Feats" icon="add-document">
+	<Card title="Feats">
+    <IconifyIcon icon="game-icons:laurels" width="2em" />
   	Feat options, customizations, and balance adjustments. 
 	</Card>
-	<Card title="Skills" icon="open-book">
+	<Card title="Skills">
+    <IconifyIcon icon="game-icons:skills" width="2em" />
     Skill system details and specific mechanics for gameplay.
 	</Card>
 </CardGrid>
+
+## Magic & Injuries
+
+<CardGrid>
+	<Card title="Magic Fixes">
+    <IconifyIcon icon="game-icons:magic-swirl" width="2em" />
+    Spellcasting rules, spell lists, and custom balance and fixes.
+	</Card>
+	<Card title="Injuries">
+    <IconifyIcon icon="game-icons:bandage-roll" width="2em" />
+	  Injuries treatment and related mechanics for realistic consequences.
+	</Card>
+</CardGrid>
+
+## Weapons & Armor
+
+<CardGrid>
+	<Card title="Armor Table">
+    <IconifyIcon icon="game-icons:breastplate" width="2em" />
+    Complete armor equipment stats and protective properties.
+	</Card>
+	<Card title="Weapon Mastery Fixes">
+    <IconifyIcon icon="game-icons:master-of-arms" width="2em" />
+    Weapon mastery balance patches and rule refinements.
+	</Card>
+	<Card title="Weapon Properties">
+    <IconifyIcon icon="game-icons:crossed-swords" width="2em" />
+    Detailed weapon properties and their mechanical effects.
+	</Card>
+</CardGrid>
+
+## DM Resources
+
+<CardGrid>
+	<Card title="Campaign Design Tools">
+    <IconifyIcon icon="game-icons:dice-twenty-faces" width="2em" />
+    Essential digital tools, procedural map generators, and reference resources for tabletop planning.
+	</Card>
+</CardGrid>
+
+## Fantasy Grounds
+
+
+
+<CardGrid>
+	<Card title="Get PC from xml.db">
+    <IconifyIcon icon="mdi:application-cog" width="2em" />
+    Fantasy Grounds scripts to extract character XML from campaign db.xml files.
+	</Card>
+	<Card title="FG Effects">
+    <IconifyIcon icon="mdi:magic-staff" width="2em" />
+    Advanced automation tips, conditional operators, and custom effects for Fantasy Grounds.
+	</Card>
+	<Card title="Character Browser">
+    <IconifyIcon width="2em" icon="mdi:account-search" />
+    Search and browse all Fantasy Grounds characters by name and class.
+	</Card>
+	<Card title="Current Party">
+    <IconifyIcon icon="mdi:account-group" width="2em" />
+    Overview of active characters and their essential stats in the current campaign.
+	</Card>
+</CardGrid>
+
+---
 
 - Edit `src/content/docs/index.mdx` to see this page change.
 - Delete `template: splash` in `src/content/docs/index.mdx` to display a sidebar on this page.
