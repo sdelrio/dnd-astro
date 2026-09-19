@@ -28,6 +28,30 @@ export default defineConfig({
       title: 'DnD Companion',
       description: 'D&D rules, Fantasy Grounds xml visualizer.',
       customCss: ['./src/styles/tailwind.css'],
+      head: [
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'preconnect',
+            href: 'https://fonts.googleapis.com',
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'preconnect',
+            href: 'https://fonts.gstatic.com',
+            crossorigin: 'anonymous',
+          },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
+            href: 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
+          },
+        },
+      ],
       components: {
         ThemeProvider: './src/components/ThemeProvider.astro',
         ThemeSelect: './src/components/ThemeSelect.astro',
