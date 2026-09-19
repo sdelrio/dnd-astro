@@ -15,7 +15,8 @@ You always have the Divine Smite spell prepared. In addition, you can cast it wi
 
 ### Level 5: Weapon of Honor
 
-:::note[Important note] Replaces Faithful Steed
+:::note[Important note]
+Replaces Faithful Steed
 :::
 
 You can choose a melee weapon type to be your weapon of honor.
