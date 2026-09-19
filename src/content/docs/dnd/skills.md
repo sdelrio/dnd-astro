@@ -385,7 +385,7 @@ To make an item, you need raw materials worth half the purchase cost of the item
 
 A spellcaster can transfer a spell to a scroll and create a *Spell Scroll*.
 
-:::info
+:::note
 The scroll's spell uses the unmodified Spell Save DC or Spell Attack Bonus of the scroll creator. If the inscribed scroll is a cantrip, the cantrip is cast as if the caster were the spell's creator level.
 :::
 
@@ -400,7 +400,7 @@ The DC for inscribing a scroll is 10 + spell level
 
 You must have the spell prepared in each day of the inscription, and you must also have at hand any Material Component required by the spell;
 
-:::info
+:::note
 If the spell consumes its Material Components, they are consumed only when you complete the scroll.
 :::
 
@@ -452,7 +452,7 @@ Brewing this kind of potions is a process full of danger and ingenuity. The act 
 
 Magic is not a cooperative energy and doesn’t appreciate being forced into a tiny bottle for consumption. Despite the best efforts of countless crafters, the process of brewing potions has never been successfully automated, with any attempt leading to catastrophic results. Brewers must slave over their work, watching for a sign of things about to go terribly wrong. The difficulty and time required to complete this process is determined by the potion’s rarity.
 
-:::info
+:::note
 A series of successful Intelligence ability checks (typically three) is required to complete this process, along with an extended waiting period while the potion brews.
 :::
 
@@ -492,7 +492,7 @@ Mystical fluids with strange properties are far more effective. Rarer potions re
 The blood of a troll, a compound synthesized through transmutation magic, or the rain from a magic-soaked world are all examples of appropriate bases for brewing potions.
 When crafting potions, the first Intelligence ability check performed should be themed around preparing or synthesizing this alchemical base.
 
-:::info
+:::note
 At the end of this process roll and Alchemist's supplies or Brewer's supplies tool check
 :::
 
@@ -502,7 +502,7 @@ Binding magic to an alchemical base requires a potent agent through which the ma
 These bonding agents are often harvested from magical creatures and are consumed in the process of brewing the potion. The school of magic that best fits the potion’s magical effect determines what kind of creature a bonding agent must be harvested from, as detailed in the Bonding Agent Harvesting table.
 Additionally, the rarity of the potion determines of strength of the creature from which the bonding agent must be harvested.
 
-:::info
+:::note
 At the end of this process roll and Alchemist's supplies tool check
 :::
 
@@ -524,7 +524,7 @@ At the end of this process roll and Alchemist's supplies tool check
 
 The last step of alchemy is infusing magic to the base + reagent. The alchemist must cast a spell of the same level as the potion spell level and it must be from the school of magic the reagent has affinity for.
 
-:::info
+:::note
 At the end of this process roll and Alchemist's supplies tool check or Arcana skill check
 :::
 

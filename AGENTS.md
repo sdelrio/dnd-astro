@@ -71,6 +71,7 @@ Single-context. ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
 ## Writing Style
 
 - Never use the em dash "—". Use plain dash "-" instead.
+- Starlight markdown admonitions: only `:::note`, `:::tip`, `:::caution`, and `:::danger` are supported. Do not use `:::info` or `:::warning`.
 
 ## Temporary Files
 

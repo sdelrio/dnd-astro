@@ -26,7 +26,7 @@ A character sustains a lingering injury under the following conditions:
 
 ### Magical Treatment (Potions and Healing Spells)
 
-:::warning[Prerequisite]
+:::caution Prerequisite
 Lingering injuries can only be treated after the target has been **stabilized**.
 :::
 
