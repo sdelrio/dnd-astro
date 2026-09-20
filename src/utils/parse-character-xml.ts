@@ -26,6 +26,24 @@ export interface CharacterData {
   powers: Array<{ level: number; name: string; group: string }>;
 }
 
+// Subclass naming patterns per class, used only for the level-1 feature-entry
+// fallback (a granted feature whose name IS the subclass, e.g.
+// <name>School of Transmutation</name><source>Wizard</source>).
+const SUBCLASS_NAME_PATTERNS: Record<string, RegExp> = {
+  Barbarian: /^Path of (?:the )?\S.*$|^(?:Ancestral Guardian|Storm Herald)$/,
+  Bard: /^College of \S.*$/,
+  Cleric: /^\S+ Domain$/,
+  Druid: /^Circle of \S.*$/,
+  Fighter: /^(?:Battle Master|Champion|Eldritch Knight|Purple Dragon Knight|Psi Warrior|Arcane Archer|Cavalier|Samurai)$/,
+  Monk: /^Way of \S.*$|^(?:Sun Soul|Long Death|Four Elements|Kensei)$/,
+  Paladin: /^Oath of \S.*$|^Oathbreaker$/,
+  Ranger: /^\S+ Conclave$|^(?:Beast Master|Gloom Stalker|Horizon Walker|Monster Slayer|Fey Wanderer)$/,
+  Rogue: /^(?:Thief|Assassin|Arcane Trickster|Scout|Swashbuckler|Inquisitive|Mastermind)$/,
+  Sorcerer: /^(?:Draconic Bloodline|Wild Magic|Storm Sorcery|Shadow Magic|Divine Soul|Clockwork Soul|Aberrant Mind)$/,
+  Warlock: /^The \S.*$/,
+  Wizard: /^School of \S.*$|^Bladesinging$|^War Magic$/,
+};
+
 export function parseCharacterXML(xml: string): CharacterData | null {
   const parser = new XMLParser({
     ignoreAttributes: false,
@@ -55,6 +73,28 @@ export function parseCharacterXML(xml: string): CharacterData | null {
 };
   // Classes
   // Classes node may be <classes>.<id-XXXXX> for each class taken
+  // Subclass resolution order: class-node <specialization> -> feature entry
+  // with <specialization> (matched via the feature's <source>) -> level-1
+  // granted feature whose name is the subclass itself. Sheets rebuilt mid-play
+  // can leave features of an older subclass behind; first featurelist match
+  // wins.
+  const featureEntries = getCollection(root.featurelist);
+  const subclassBySource = new Map<string, string>();
+  for (const f of featureEntries) {
+    const fsource = getText(f, 'source');
+    const fspecialization = getText(f, 'specialization');
+    if (!fsource || !fspecialization || subclassBySource.has(fsource)) continue;
+    subclassBySource.set(fsource, fspecialization);
+  }
+  for (const f of featureEntries) {
+    const fsource = getText(f, 'source');
+    if (!fsource || subclassBySource.has(fsource)) continue;
+    if (Number(getText(f, 'level') || 0) !== 1) continue;
+    if (Number(getText(f, 'locked') || 0) !== 1) continue;
+    const pattern = SUBCLASS_NAME_PATTERNS[fsource];
+    const fname = getText(f, 'name');
+    if (pattern && pattern.test(fname)) subclassBySource.set(fsource, fname);
+  }
   const classes: Array<{ name: string; level: number; subclass?: string }> = [];
   const rawClasses = root.classes ?? {};
   for (const key of Object.keys(rawClasses)) {
@@ -63,7 +103,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     // Both name and level might be encoded/strings with entities
     const cname = typeof cc.name === 'string' ? he.decode(cc.name) : he.decode(cc.name?.['#text'] ?? '');
     const clevel = typeof cc.level === 'number' ? cc.level : Number(cc.level?.['#text'] ?? 0);
-    const csubclass = getText(cc, 'specialization');
+    const csubclass = getText(cc, 'specialization') || subclassBySource.get(cname) || '';
     if (cname) {
       classes.push({ name: cname, level: clevel, ...(csubclass ? { subclass: csubclass } : {}) });
     }
@@ -98,7 +138,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
   // Feats
   const feats = getCollection(root.featlist).map((f) => getText(f, 'name'));
   // Features
-  const features = getCollection(root.featurelist).map((f) => ({
+  const features = featureEntries.map((f) => ({
     level: Number(getText(f, 'level') || 0),
     name: getText(f, 'name'),
     source: getText(f, 'source'),

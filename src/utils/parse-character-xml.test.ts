@@ -48,6 +48,33 @@ describe('parseCharacterXML', () => {
     expect(result?.classes[0].name.toLowerCase()).toContain('warlock');
   });
 
+  it('keeps the class-node specialization as primary subclass source', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/darlo.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.classes[0].subclass).toBe('Oath of Vengeance');
+  });
+
+  it('derives the subclass from feature <specialization> entries when the class node lacks one', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/antonidas.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.classes[0].name).toBe('Wizard');
+    expect(result?.classes[0].subclass).toBe('School of Transmutation');
+  });
+
+  it('derives the subclass from a level-1 subclass-named feature entry', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/ethir.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.classes[0].name).toBe('Rogue');
+    expect(result?.classes[0].subclass).toBe('Arcane Trickster');
+  });
+
+  it('omits the subclass for characters below their subclass level', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/sarnoth.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.classes[0].name).toBe('Barbarian');
+    expect(result?.classes[0].subclass).toBeUndefined();
+  });
+
   it('returns null if no <character> node', () => {
     const xml = `<root><foo>bar</foo></root>`;
     const result = parseCharacterXML(xml);
