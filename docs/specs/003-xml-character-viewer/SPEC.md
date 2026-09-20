@@ -24,11 +24,11 @@ Migrate the Fantasy Grounds XML Character Sheet Viewer from Docusaurus (golden-f
 
 ## Problem Statement
 
-The golden-forest project has 112 Fantasy Grounds XML character sheets rendered by a Docusaurus React component (`XmlChar`). This component parses XML client-side via `DOMParser`, fetches images at runtime, and depends on Docusaurus-specific APIs (`useBaseUrl`, `BrowserOnly`). The dnd-astro project needs to migrate this functionality to Astro's static-first architecture, eliminating client-side XML parsing and aligning with the "Rule of Least Client-Side JavaScript" from SPEC.md Section 3.
+The golden-forest project has 111 Fantasy Grounds XML character sheets rendered by a Docusaurus React component (`XmlChar`). This component parses XML client-side via `DOMParser`, fetches images at runtime, and depends on Docusaurus-specific APIs (`useBaseUrl`, `BrowserOnly`). The dnd-astro project needs to migrate this functionality to Astro's static-first architecture, eliminating client-side XML parsing and aligning with the "Rule of Least Client-Side JavaScript" from SPEC.md Section 3.
 
 ## Goals
 
-- Parse all 112 XML character sheets at build time using Node.js (`fast-xml-parser`)
+- Parse all 111 XML character sheets at build time using Node.js (`fast-xml-parser`)
 - Render character cards in three display modes (small/medium/large) using Alpine.js + Tailwind CSS
 - Pre-resolve avatar image paths at build time (`.jpg` → `.png` → `faceless.svg` fallback)
 - Provide a `<PartyView>` component that reads `party.json` and renders aggregate party stats + member cards
@@ -43,7 +43,7 @@ The golden-forest project has 112 Fantasy Grounds XML character sheets rendered 
 - Dice Roller island (separate spec)
 - Feat Matrix island (separate spec)
 - React integration for the XML Viewer (Alpine.js chosen instead)
-- Real-time XML file ingestion after build (closed set of 112 files, rebuilt on deploy)
+- Real-time XML file ingestion after build (closed set of 111 files, rebuilt on deploy)
 
 ## Implementation Plan
 
@@ -234,7 +234,7 @@ Update `astro.config.mjs` sidebar to include a Fantasy Grounds section:
 | `src/components/xml-viewer/XmlCard.astro` | create | Single character card component |
 | `src/components/xml-viewer/PartyView.astro` | create | Party aggregate + member cards |
 | `src/content/docs/fantasy-grounds/current-party.mdx` | create | Party page in Starlight |
-| `src/assets/fantasy-grounds-sheets/` | create | XML source files (112 files) |
+| `src/assets/fantasy-grounds-sheets/` | create | XML source files (111 files) |
 | `public/fg/avatar/` | create | Avatar images |
 | `public/fg/party.json` | create | Party roster config |
 | `public/fg/chars/index.json` | create | Pre-built character index |
