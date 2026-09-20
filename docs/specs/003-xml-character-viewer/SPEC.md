@@ -317,6 +317,14 @@ The original spec implied a float-based layout for the portrait image. The imple
 
 The original spec defined different avatar sizes per mode (40px small, 48px medium, 64px large) and hid alignment/background/deity tags in small mode. The implementation uses a single 64px (`w-16 h-16`) avatar in all modes, and shows alignment/background/deity tags in all modes. Reason: the header height is now consistent regardless of display mode, and small mode shows the full character identity (name, race, class, alignment, background, deity) instead of hiding metadata. The S/M/L toggle buttons (large mode only) are vertically stacked on the right side of the header using `flex-col`, with single-letter labels to save horizontal space.
 
+### 12. HP moved from vitals grid to header box with tempHp
+
+The spec defined vitals as AC, HP, Speed, Initiative and Proficiency Bonus as a paragraph below vitals. The implementation moves HP to a dedicated box in the header (showing hit points and temporary HP), and replaces HP in the vitals grid with Proficiency Bonus to maintain the 4-column layout. Reason: user request to match a Fantasy Grounds-style HP display in the header area. The `CharacterData` interface adds `tempHp: number` parsed from `<hp><temporary>` in the XML. (PR #148)
+
+### 13. Vitals items: visible borders, rounded corners, accent top line
+
+The spec did not specify border styling for vitals items. The implementation adds visible borders (`border border-gray-300 dark:border-gray-600`), increased border-radius (`rounded-[7px]`), and a colored top border (`border-t-[3px]`) using the D&D heading colors (light: `#58180d`, dark: `#c68000`). Reason: user request for visual polish and consistency with the D&D theme. (PR #148)
+
 ## Status
 
 - [x] Implementation complete (all steps delivered across PRs #27-#46)
