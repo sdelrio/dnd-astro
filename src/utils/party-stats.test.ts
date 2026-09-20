@@ -19,7 +19,7 @@ describe('partyStats', () => {
   it('calculates aggregate stats accurately for mock members', () => {
     const mockMembers = [
       {
-        role: 'tank',
+        roles: ['tank'],
         character: {
           hp: 100,
           ac: 20,
@@ -28,7 +28,7 @@ describe('partyStats', () => {
         },
       },
       {
-        role: 'damage',
+        roles: ['damage'],
         character: {
           hp: 50,
           ac: 15,
@@ -37,7 +37,7 @@ describe('partyStats', () => {
         },
       },
       {
-        role: 'damage',
+        roles: ['damage'],
         character: {
           hp: 60,
           ac: 16,
@@ -61,6 +61,52 @@ describe('partyStats', () => {
     });
   });
 
+  it('counts every role a member holds and ignores empty role lists', () => {
+    const mockMembers = [
+      {
+        roles: ['tank', 'support'],
+        character: {
+          hp: 100,
+          ac: 20,
+          initiative: 1,
+          classes: [{ level: 5 }],
+        },
+      },
+      {
+        roles: ['damage'],
+        character: {
+          hp: 50,
+          ac: 15,
+          initiative: 4,
+          classes: [{ level: 7 }],
+        },
+      },
+      {
+        roles: [],
+        character: {
+          hp: 30,
+          ac: 12,
+          initiative: 2,
+          classes: [{ level: 3 }],
+        },
+      },
+    ];
+
+    const stats = partyStats(mockMembers);
+    expect(stats.roleCounts).toEqual({
+      tank: 1,
+      support: 1,
+      damage: 1,
+    });
+    expect(stats.totalHp).toBe(180);
+    // (20 + 15 + 12) / 3 = 47 / 3 = 15.666... -> rounded to 16
+    expect(stats.avgAc).toBe(16);
+    // (1 + 4 + 2) / 3 = 7 / 3 = 2.333... -> rounded to 2
+    expect(stats.avgInit).toBe(2);
+    // 5 + 7 + 3 = 15
+    expect(stats.totalLevel).toBe(15);
+  });
+
   it('matches manual calculation from raw XML data for current party (acceptance criteria)', () => {
     const partyJsonPath = resolve(__dirname, '../../public/fg/party.json');
     const partyJson = JSON.parse(readFileSync(partyJsonPath, 'utf8'));
@@ -76,7 +122,7 @@ describe('partyStats', () => {
         throw new Error(`Failed to parse XML for ${member.filename}`);
       }
       return {
-        role: member.role,
+        roles: [member.role],
         character,
       };
     });
