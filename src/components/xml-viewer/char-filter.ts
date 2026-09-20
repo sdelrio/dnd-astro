@@ -1,3 +1,5 @@
+import type { StoredCharacter } from '@/utils/build-xml-characters';
+
 export interface FilterableCharacter {
   name: string;
   race: string;
@@ -8,6 +10,14 @@ export interface CharFilterState {
   search?: string;
   selectedClass?: string;
   selectedRace?: string;
+}
+
+export function toFilterableCharacters(characters: StoredCharacter[]): FilterableCharacter[] {
+  return characters.map((c) => ({
+    name: c.name,
+    race: c.race,
+    classes: c.classes.map((cl) => ({ name: cl.name, level: cl.level })),
+  }));
 }
 
 export function createCharFilter(characters: FilterableCharacter[], state: CharFilterState = {}) {
