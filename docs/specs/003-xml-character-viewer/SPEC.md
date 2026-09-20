@@ -301,6 +301,10 @@ The spec's MDX import examples use relative paths (`../../../components/...`). T
 
 The original spec required `max-width 360px` and `inline-block` for small mode. The implementation uses `w-full` to make cards fill their parent grid column on mobile. Reason: on mobile (<640px) the grid is 1 column, so `w-full` lets the card span the full viewport width rather than being capped at 360px. On tablet/desktop, the grid columns naturally constrain card width. (PR #138)
 
+### 8. Medium mode: `w-full` instead of `max-w-[480px]`
+
+The original spec required `max-width 480px` for medium mode. The implementation uses `w-full` to make cards fill their parent grid column, consistent with the small mode fix. The parent grid (`grid-cols-1 sm:grid-cols-2`) controls column sizing: 2 columns on tablet+, 1 on phone. (PR #139)
+
 ## Status
 
 - [x] Implementation complete (all steps delivered across PRs #27-#46)
