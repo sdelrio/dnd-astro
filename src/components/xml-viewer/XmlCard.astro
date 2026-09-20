@@ -210,7 +210,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         </div>
         <div class={vitalsItemClass}>
           <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Speed</div>
-          <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{speed} ft</div>
+          <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{speed}{display !== 'small' && ' ft'}</div>
         </div>
         <div class={vitalsItemClass}>
           <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Init</div>
