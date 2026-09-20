@@ -146,7 +146,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         <p class="text-left text-sm text-gray-600 dark:text-gray-400 mt-1 truncate" title={`${race} - ${classString}${subclassString ? ` (${subclassString})` : ''}`}>
           {race} - {classString}
           {subclassString && (
-            <span x-show="displayMode === 'large'"> ({subclassString})</span>
+            <span x-show="displayMode === 'large'" style={display === 'large' ? undefined : 'display: none'}> ({subclassString})</span>
           )}
         </p>
         {canShow('tags') && (
