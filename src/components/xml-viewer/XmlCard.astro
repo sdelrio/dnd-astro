@@ -129,7 +129,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 <div
   class="not-content @container bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
-    x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'w-full': displayMode === 'small' || displayMode === 'medium' || displayMode === 'large' }"
 >
   <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
@@ -142,8 +142,8 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         x-show="canShow('avatar')"
       />
       <div class="flex-1 min-w-0">
-        <h3 class="mt-0 text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+        <h3 class="mt-0 text-left text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h3>
+        <p class="text-left text-sm text-gray-600 dark:text-gray-400 mt-1">
           {race} - {classString}
           {subclassString && (
             <span x-show="displayMode === 'large'"> ({subclassString})</span>
@@ -225,9 +225,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
       </div>
     </section>
 
-    <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
-      <SectionHeader title="Abilities" sectionKey="abilities" />
-      <div x-show="isExpanded('abilities')" x-transition>
+    <section class="border-t border-gray-100 dark:border-gray-700 pt-4" title="Abilities">
         {display === 'small' ? (
           <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
         ) : (
@@ -248,7 +246,6 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 
           </>
         )}
-      </div>
     </section>
 
     {canShow('saves') && proficientSaves.length > 0 && (
@@ -256,8 +253,8 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         class="border-t border-gray-100 dark:border-gray-700 pt-4"
         x-show="canShow('saves')"
       >
-        <SectionHeader title="Saving Throws" sectionKey="saves" />
-        <div class="grid grid-cols-2 gap-1 sm:grid-cols-3" x-show="isExpanded('saves')" x-transition>
+        <SectionHeader title="Saving Throws" />
+        <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
           {proficientSaves.map((abilityName) => (
             <div class="flex justify-between py-1 px-2 text-sm">
               <span class="text-gray-700 dark:text-gray-300">{abilityName}</span>
@@ -273,8 +270,8 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         class="border-t border-gray-100 dark:border-gray-700 pt-4"
         x-show="canShow('skills')"
       >
-        <SectionHeader title="Skills" sectionKey="skills" />
-        <div class="grid grid-cols-2 gap-1 sm:grid-cols-3" x-show="isExpanded('skills')" x-transition>
+        <SectionHeader title="Skills" />
+        <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
           {skills.map((skill) => (
             <div class="flex justify-between py-1 px-2 text-sm">
               <span class="text-gray-700 dark:text-gray-300">{skill.name}</span>
@@ -290,8 +287,8 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         class="border-t border-gray-100 dark:border-gray-700 pt-4"
         x-show="canShow('languages')"
       >
-        <SectionHeader title="Languages" sectionKey="languages" />
-        <div class="flex flex-wrap gap-2" x-show="isExpanded('languages')" x-transition>
+        <SectionHeader title="Languages" />
+        <div class="flex flex-wrap gap-2">
           {languages.map((lang) => (
             <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
           ))}
@@ -304,8 +301,8 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         class="border-t border-gray-100 dark:border-gray-700 pt-4"
         x-show="canShow('feats')"
       >
-        <SectionHeader title="Feats" sectionKey="feats" />
-        <div class="flex flex-wrap gap-2" x-show="isExpanded('feats')" x-transition>
+        <SectionHeader title="Feats" />
+        <div class="flex flex-wrap gap-2">
           {feats.map((feat) => (
             <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
           ))}
@@ -318,8 +315,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         class="border-t border-gray-100 dark:border-gray-700 pt-4"
         x-show="canShow('features')"
       >
-        <SectionHeader title="Features" sectionKey="features" />
-        <div x-show="isExpanded('features')" x-transition>
+        <SectionHeader title="Features" />
           {featuresByLevel.map((group, gi) => (
             <div>
               <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
@@ -348,8 +344,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
                 </div>
               ))}
             </div>
-          ))}
-        </div>
+           ))}
       </section>
     )}
 
@@ -358,8 +353,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         class="border-t border-gray-100 dark:border-gray-700 pt-4"
         x-show="canShow('powers')"
       >
-        <SectionHeader title="Powers" sectionKey="powers" />
-        <div x-show="isExpanded('powers')" x-transition>
+        <SectionHeader title="Powers" />
           {powersByLevel.map((levelGroup, li) => (
             <div>
               <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
@@ -396,7 +390,6 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
               ))}
             </div>
           ))}
-        </div>
       </section>
     )}
   </div>
