@@ -60,8 +60,11 @@ interface Feat {
 
 ## Feat Data Source
 
-Feat data is extracted from the golden-forest project's MDX file at:
-`/Users/sdelrio/github/sdelrio/golden-forest/docs/Games/DnD/feats.md`
+Feat data was extracted once from the golden-forest project's MDX file at
+`docs/Games/DnD/feats.md`, a path relative to a local golden-forest checkout. This
+is a historical one-time source: the extraction output is committed as
+`src/components/feats-explorer/feat-data.js`, so no golden-forest checkout is
+needed for builds.
 
 This file contains **219 feats** defined as `<Feat>` components with props:
 - `name` (string) - feat name
@@ -73,13 +76,13 @@ This file contains **219 feats** defined as `<Feat>` components with props:
 
 ### Extraction Approach
 
-A build-time script (`extract-feats.js`) parses the MDX file using regex to extract feat props. The script:
-1. Reads the golden-forest feats.md file
+A one-time script (`scripts/extract-feats.js`) parses the MDX file using regex to extract feat props. The script:
+1. Reads `../golden-forest/docs/Games/DnD/feats.md` (a sibling golden-forest checkout)
 2. Matches `<Feat ...>` opening tags with regex
 3. Extracts all props from the tag
-4. Outputs `feat-data.js` with the extracted array
+4. Outputs `src/components/feats-explorer/feat-data.js` with the extracted array
 
-This is a one-time extraction - the data is then hardcoded in the component.
+This is a one-time extraction, not part of the build - the data is committed and imported by the component, so the golden-forest checkout is only needed to re-run the extraction.
 
 ### Book Code Mapping
 
@@ -147,7 +150,7 @@ function featExplorer() {
 ### Step 1: Extract Feat Data from Golden-Forest
 
 Create `scripts/extract-feats.js` - a Node.js script that:
-1. Reads `/Users/sdelrio/github/sdelrio/golden-forest/docs/Games/DnD/feats.md`
+1. Reads `../golden-forest/docs/Games/DnD/feats.md` (a sibling golden-forest checkout)
 2. Parses `<Feat ...>` tags using regex: `/<Feat\s+([^>]+)>/g`
 3. Extracts props: name, level, book, abilityIncrease, prerequisite, youGain
 4. Outputs `src/components/feats-explorer/feat-data.js` with:
