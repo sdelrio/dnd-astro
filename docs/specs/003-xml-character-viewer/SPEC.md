@@ -319,7 +319,7 @@ The original spec defined different avatar sizes per mode (40px small, 48px medi
 
 ### 12. HP moved from vitals grid to header box with tempHp
 
-The spec defined vitals as AC, HP, Speed, Initiative and Proficiency Bonus as a paragraph below vitals. The implementation moves HP to a dedicated box in the header (showing hit points and temporary HP), and replaces HP in the vitals grid with Proficiency Bonus to maintain the 4-column layout. Reason: user request to match a Fantasy Grounds-style HP display in the header area. The `CharacterData` interface adds `tempHp: number` parsed from `<hp><temporary>` in the XML. (PR #148)
+The spec defined vitals as AC, HP, Speed, Initiative and Proficiency Bonus as a paragraph below vitals. The implementation moves HP to a dedicated box in the header (showing hit points and temporary HP), and replaces HP in the vitals grid with Proficiency Bonus to maintain the 4-column layout. Proficiency Bonus is now shown in all display modes (small/medium/large) as the 4th grid cell, rather than only in medium+ as a separate paragraph. The `CharacterData` interface adds `tempHp: number` parsed from `<hp><temporary>` in the XML. (PR #148)
 
 ### 13. Vitals items: visible borders, rounded corners, accent top line
 
