@@ -35,7 +35,7 @@ type ResolvedCharacter = CharacterData & { avatarPath: string; filename: string 
 
 interface PartyMember {
   filename: string;
-  role: Role;
+  roles: string[];
   notes?: string;
 }
 
@@ -55,18 +55,28 @@ function loadCharacter(filename: string): ResolvedCharacter | null {
   return { ...entry.character, avatarPath: entry.avatarPath, filename: entry.filename };
 }
 
+const allRoles = Object.keys(ROLE_CONFIG) as Role[];
+
+function validateRoles(filename: string, roles: string[]): Role[] {
+  const valid: Role[] = [];
+  for (const role of roles) {
+    if (Object.hasOwn(ROLE_CONFIG, role)) {
+      valid.push(role as Role);
+    } else {
+      console.warn(`[PartyView] Unknown role "${role}" for "${filename}" - dropping`);
+    }
+  }
+  return valid;
+}
+
 const members = party.members
-  .filter((member) => member.role in ROLE_CONFIG)
-  .map((member) => ({
-    ...member,
-    role: member.role as Role,
-    character: loadCharacter(member.filename),
-  }))
+  .map((member) => ({ ...member, roles: validateRoles(member.filename, member.roles) }))
+  .filter((member) => member.roles.length > 0)
+  .map((member) => ({ ...member, character: loadCharacter(member.filename) }))
   .filter((m): m is typeof m & { character: ResolvedCharacter } => m.character !== null);
 
-const stats = partyStats(members.map(({ role, character }) => ({ roles: [role], character })));
+const stats = partyStats(members);
 
-const allRoles = Object.keys(ROLE_CONFIG) as Role[];
 const allRolesJson = JSON.stringify(allRoles);
 const roleConfigJson = JSON.stringify(ROLE_CONFIG);
 ---
@@ -149,25 +159,29 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
 
   <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" role="list" aria-label="Party members">
     {members.map((member) => {
-      const roleConfig = ROLE_CONFIG[member.role];
       return (
         <div
           class="transition-opacity duration-200"
-          :class={"{ hidden: !isRoleActive('" + member.role + "') }"}
+          :class={"{ hidden: !hasActiveRole(" + JSON.stringify(member.roles) + ") }"}
           role="listitem"
         >
           <XmlCard
             character={member.character}
             display="small"
           />
-          <div class="mt-2 flex items-center gap-2">
-            <span
-              class="px-2 py-0.5 text-xs font-medium rounded-full"
-              style={`background: ${roleConfig.color}20; color: ${roleConfig.color};`}
-            >
-              <IconifyIcon icon={roleConfig.icon} width="0.875em" class="inline-block mr-1 align-[-2px]" />
-              {roleConfig.label}
-            </span>
+          <div class="mt-2 flex flex-wrap items-center gap-2">
+            {member.roles.map((role) => {
+              const roleConfig = ROLE_CONFIG[role];
+              return (
+                <span
+                  class="px-2 py-0.5 text-xs font-medium rounded-full"
+                  style={`background: ${roleConfig.color}20; color: ${roleConfig.color};`}
+                >
+                  <IconifyIcon icon={roleConfig.icon} width="0.875em" class="inline-block mr-1 align-[-2px]" />
+                  {roleConfig.label}
+                </span>
+              );
+            })}
             {member.notes && (
               <span class="text-xs text-gray-500 dark:text-gray-400 italic">{member.notes}</span>
             )}
@@ -194,6 +208,9 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
         },
         isRoleActive(role) {
           return this.activeRoles.includes(role);
+        },
+        hasActiveRole(roles) {
+          return roles.some((role) => this.isRoleActive(role));
         },
       };
     }

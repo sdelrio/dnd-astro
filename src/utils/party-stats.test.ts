@@ -111,7 +111,7 @@ describe('partyStats', () => {
     const partyJsonPath = resolve(__dirname, '../../public/fg/party.json');
     const partyJson = JSON.parse(readFileSync(partyJsonPath, 'utf8'));
 
-    const members = partyJson.members.map((member: { filename: string; role: string }) => {
+    const members = partyJson.members.map((member: { filename: string; roles: string[] }) => {
       const xmlPath = resolve(
         __dirname,
         `../../src/assets/fantasy-grounds-sheets/${member.filename}.xml`
@@ -122,18 +122,18 @@ describe('partyStats', () => {
         throw new Error(`Failed to parse XML for ${member.filename}`);
       }
       return {
-        roles: [member.role],
+        roles: member.roles,
         character,
       };
     });
 
     // Manual calculation per character from raw XML:
-    // draknor: HP 93, AC 20, Init 2, Lvl 8 (Fighter 8), Role tank
-    // elarion: HP 51, AC 16, Init 2, Lvl 5 (Ranger 5), Role damage
-    // melbick: HP 32, AC 17, Init 2, Lvl 6 (Wizard 6), Role support
-    // valkian: HP 58, AC 17, Init 4, Lvl 6 (Rogue 6), Role damage
-    // vogun: HP 57, AC 20, Init 2, Lvl 6 (Cleric 6), Role healer
-    // zephyrion: HP 75, AC 17, Init 5, Lvl 8 (Ranger 8), Role damage
+    // draknor: HP 93, AC 20, Init 2, Lvl 8 (Fighter 8), Roles tank
+    // elarion: HP 51, AC 16, Init 2, Lvl 5 (Ranger 5), Roles damage, utility
+    // melbick: HP 32, AC 17, Init 2, Lvl 6 (Wizard 6), Roles support, utility
+    // valkian: HP 58, AC 17, Init 4, Lvl 6 (Rogue 6), Roles damage, healer
+    // vogun: HP 57, AC 20, Init 2, Lvl 6 (Cleric 6), Roles healer, support
+    // zephyrion: HP 75, AC 17, Init 5, Lvl 8 (Ranger 8), Roles damage
 
     const stats = partyStats(members);
 
@@ -147,8 +147,9 @@ describe('partyStats', () => {
     expect(stats.roleCounts).toEqual({
       tank: 1,
       damage: 3,
-      support: 1,
-      healer: 1,
+      support: 2,
+      healer: 2,
+      utility: 2,
     });
   });
 });

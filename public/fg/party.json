@@ -3,27 +3,27 @@
   "members": [
     {
       "filename": "draknor",
-      "role": "tank"
+      "roles": ["tank"]
     },
     {
       "filename": "elarion",
-      "role": "damage"
+      "roles": ["damage", "utility"]
     },
     {
       "filename": "melbick",
-      "role": "support"
+      "roles": ["support", "utility"]
     },
     {
       "filename": "valkian",
-      "role": "damage"
+      "roles": ["damage", "healer"]
     },
     {
       "filename": "vogun",
-      "role": "healer"
+      "roles": ["healer", "support"]
     },
     {
       "filename": "zephyrion",
-      "role": "damage"
+      "roles": ["damage"]
     }
   ]
 }
