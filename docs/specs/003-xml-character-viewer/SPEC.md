@@ -305,6 +305,10 @@ The original spec required `max-width 360px` and `inline-block` for small mode. 
 
 The original spec required `max-width 480px` for medium mode. The implementation uses `w-full` to make cards fill their parent grid column, consistent with the small mode fix. The parent grid (`grid-cols-1 sm:grid-cols-2`) controls column sizing: 2 columns on tablet+, 1 on phone. (PR #139)
 
+### 9. Large mode: `w-full` instead of `max-w-[710px]`
+
+The original spec required `max-width 710px` for large mode. The implementation uses `w-full` to make cards fill their parent container width. Large cards are typically shown individually (full-width), so removing the cap eliminates unused whitespace on wide screens. (PR #140)
+
 ## Status
 
 - [x] Implementation complete (all steps delivered across PRs #27-#46)
