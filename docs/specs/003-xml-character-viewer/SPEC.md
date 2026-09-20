@@ -325,6 +325,10 @@ The spec defined vitals as AC, HP, Speed, Initiative and Proficiency Bonus as a 
 
 The spec did not specify border styling for vitals items. The implementation adds visible borders (`border border-gray-300 dark:border-gray-600`), increased border-radius (`rounded-[7px]`), and a colored top border (`border-t-[3px]`) using the D&D heading colors (light: `#58180d`, dark: `#c68000`). Reason: user request for visual polish and consistency with the D&D theme. (PR #148)
 
+### 14. HP box hidden in narrow containers, shown in tooltip
+
+When the card container is narrow (<400px, e.g. 3-column PartyView layout), the HP box in the header is hidden via `@max-[400px]:hidden` (CSS container query). HP and temporary HP are instead shown in a native `title` tooltip on the character name (`<h3>`), formatted as "Name - HP: X (Temp: Y)". This prevents the header from overflowing in tight layouts while keeping HP information accessible on hover. Reason: user request for tighter layout in PartyView. (PR #149)
+
 ## Status
 
 - [x] Implementation complete (all steps delivered across PRs #27-#46)

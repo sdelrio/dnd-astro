@@ -142,7 +142,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         x-show="canShow('avatar')"
       />
       <div class="flex-1 min-w-0">
-        <h3 class="mt-0 text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={name}>{name}</h3>
+        <h3 class="mt-0 text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
           {race} - {classString}
           {subclassString && (
@@ -163,7 +163,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
           </p>
         )}
       </div>
-      <div class="flex-shrink-0 text-center border border-gray-300 dark:border-gray-600 rounded-[7px] px-3 py-1.5 bg-gray-50 dark:bg-gray-900">
+      <div class="flex-shrink-0 text-center border border-gray-300 dark:border-gray-600 rounded-[7px] px-3 py-1.5 bg-gray-50 dark:bg-gray-900 @max-[400px]:hidden">
         <div class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Hit Points</div>
         <div class="text-lg font-bold text-gray-900 dark:text-gray-100 leading-tight">{hp}</div>
         <div class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Temporary</div>
