@@ -297,6 +297,10 @@ The spec assumes working Tailwind classes but does not mention a test page. The 
 
 The spec's MDX import examples use relative paths (`../../../components/...`). The implementation uses the `@/components/...` alias provided by Astro's path configuration, which is shorter and resilient to directory restructuring.
 
+### 7. Small mode: `w-full` instead of `max-w-[360px]` and `inline-block`
+
+The original spec required `max-width 360px` and `inline-block` for small mode. The implementation uses `w-full` to make cards fill their parent grid column on mobile. Reason: on mobile (<640px) the grid is 1 column, so `w-full` lets the card span the full viewport width rather than being capped at 360px. On tablet/desktop, the grid columns naturally constrain card width. (PR #138)
+
 ## Status
 
 - [x] Implementation complete (all steps delivered across PRs #27-#46)
