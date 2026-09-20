@@ -216,6 +216,21 @@ Dougal has 2 powers, showing the grouping by level and group.
 
 <XmlCard character={dougal} display="large" />
 
+### Passive Skills
+
+Large mode adds a Passive Skills section between Abilities and Saving Throws:
+three subcards side by side (Perception, Investigation, Insight) that reuse
+the vitals-item styling, including the same uniform `rounded-[7px]` radius on
+all four corners. Tanadirian's parsed passives are 18 / 11 / 18. The card's
+S/M/L toggle hides the section in small and medium modes; press L to bring it
+back.
+
+```mdx
+<XmlCard character={tanadirian} display="large" />
+```
+
+<XmlCard character={tanadirian} display="large" />
+
 ## Notes
 
 - **Powers:** parsed from the direct-child `<powers>` collection

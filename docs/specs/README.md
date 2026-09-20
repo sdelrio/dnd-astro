@@ -12,7 +12,7 @@ This directory contains feature specifications (specs) for the DnD Companion pro
 | 004 | Character Search Page with Alpine.js Filtering | archived | character-search, alpine-js, filtering, fantasy-grounds | `src/components/xml-viewer/CharSearch.astro`, `src/content/docs/fantasy-grounds/character-search.mdx`, `astro.config.mjs` | Searchable index of all Fantasy Grounds characters with client-side filtering |
 | 005 | Dice Roller & Character Sheet Generator | archived | dice, roller, character-creation, alpine-js, dnd, mechanics | `src/components/dice-roller/`, `src/content/docs/`, `astro.config.mjs` | Alpine.js dice roller for ability scores (4d6-drop-lowest) |
 | 006 | Book-Filtered Feat Matrix | archived | feats, filtering, search, alpine-js, dnd, character-options | `src/components/feats-explorer/`, `src/content/docs/`, `astro.config.mjs` | Fuzzy search and multi-select filtering for D&D feats |
-| 007 | Passive Skills | active | character-sheet, xml, fantasy-grounds, skills, passive, xml-viewer | `src/utils/parse-character-xml.ts`, `src/components/xml-viewer/XmlCard.astro`, `src/content/docs/guides/xml-card-test.mdx` | Large-mode Passive Perception/Investigation/Insight subcards from skill totals |
+| 007 | Passive Skills | archived | character-sheet, xml, fantasy-grounds, skills, passive, xml-viewer | `src/utils/parse-character-xml.ts`, `src/components/xml-viewer/XmlCard.astro`, `src/content/docs/guides/xml-card-test.mdx` | Large-mode Passive Perception/Investigation/Insight subcards from skill totals |
 
 ## About Specs
 

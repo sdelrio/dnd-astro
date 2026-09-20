@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "Passive Skills"
 author: "opencode"
 date: "2026-09-20"
