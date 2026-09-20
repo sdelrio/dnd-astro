@@ -104,9 +104,11 @@ Add a build hook in `astro.config.mjs` using `astro:build:start` (or `astro:conf
 1. Reads all `.xml` files from `src/assets/fantasy-grounds-sheets/`
 2. Parses each using `parseCharacterXml`
 3. Resolves avatar image paths: probe `public/fg/avatar/{filename}.jpg` → `public/fg/avatar/{filename}.png` → `public/fg/avatar/faceless.svg`
-4. Writes the resulting JSON array to a build artifact at `src/generated/characters.json`
+4. Writes two build artifacts:
+   - `src/generated/characters.json` - a flat array of `StoredCharacter` (`CharacterData` fields plus `filename` and `avatarPath`)
+   - `.astro/generated/characters.json` - an array of `{ filename, character, avatarPath }` entries
 
-The JSON is then importable by components during the Astro build.
+The `src/generated/` copy is importable by components during the Astro build (e.g. `import characters from '@/generated/characters.json'`). The `.astro/` copy is read from disk at build time by components that look characters up by `filename`.
 
 ### Step 4: Create `signed()` Utility
 
@@ -186,7 +188,7 @@ import PartyView from '../../../components/xml-viewer/PartyView.astro';
 
 ### Step 7: Create Current Party MDX Page
 
-Create `src/content/docs/dnd/fantasy-grounds/current-party.mdx`:
+Create `src/content/docs/fantasy-grounds/current-party.mdx`:
 
 ```mdx
 ---
@@ -271,9 +273,14 @@ Update `astro.config.mjs` sidebar to include a Fantasy Grounds section:
 
 The following deviations from this spec were accepted during implementation (PR #29, code-review rounds 1–3) and are recorded here to prevent re-flagging in future reviews.
 
-### 1. Build artifact path: `src/generated/` not `.astro/generated/`
+### 1. Build artifacts: both `src/generated/` and `.astro/generated/`
 
-The original spec called for `.astro/generated/characters.json`. The actual location is `src/generated/characters.json`. Reason: `.astro/` is not module-resolvable by Astro's import system; placing the artifact under `src/` makes it importable during the build without additional configuration.
+The original spec called for a single artifact at `.astro/generated/characters.json`. The implementation writes two artifacts with different shapes, both consumed:
+
+- `.astro/generated/characters.json` - an array of `{ filename, character, avatarPath }` entries (`CharacterArtifactEntry`). Read from disk at build time by `PartyView.astro` (`src/components/xml-viewer/PartyView.astro`), which looks members up by `filename`.
+- `src/generated/characters.json` - a flat array of `StoredCharacter` (`CharacterData` fields plus `filename` and `avatarPath`). Statically imported by `CharSearch.astro` (`src/components/xml-viewer/CharSearch.astro`) and `src/content/docs/guides/xml-card-test.mdx` via the `@/generated/characters.json` alias.
+
+Reason both exist: `.astro/` is not module-resolvable by Astro's import system, so components that need the data at import time require the copy under `src/`. `PartyView` reads the `.astro/` copy from disk because it only needs a filename-keyed lookup, and the entry shape keeps `character` separate from `filename` and `avatarPath`; the flat `src/generated/` shape exists for direct imports. Both are written by the same build hook, `buildXmlCharacters()` in `src/utils/build-xml-characters.ts`.
 
 ### 2. Role icons: `game-icons:` not `mdi:`
 
