@@ -5,7 +5,7 @@ author: "sdelrio"
 date: "2026-09-12"
 tags: [infrastructure, deployment, ci-cd, cloudflare, security, terraform]
 affects: [wrangler.jsonc, terraform/, package.json]
-adr_constraints: []
+adr_constraints: [0002, 0003]
 ---
 
 # SPEC: Infrastructure & Deployment Architecture
@@ -42,7 +42,8 @@ Create the Cloudflare Worker with static assets linked to the private GitHub rep
 **Terraform (primary):**
 - Define `cloudflare_workers_script` resource
 - Set compatibility_date
-- Content loaded from built `_worker.js`
+- Load script content from the hand-written `worker/index.js` shim (`file("${path.module}/../worker/index.js")`), required because the `cloudflare_workers_script` resource needs script content; the shim only forwards requests to the `ASSETS` binding
+- Static assets are served by the Workers Assets binding (`assets.directory: ./dist` in `wrangler.jsonc`), not from a build-generated worker bundle
 
 **Dashboard fallback:**
 1. Go to Cloudflare Dashboard → Workers & Pages → Create
@@ -202,6 +203,7 @@ Note: The quotes around the resource address are required because of the `[0]` i
 - `terraform/terraform.tfvars` — Variable values (gitignored)
 - `terraform/.gitignore` — Exclude state files and tfvars
 - `wrangler.jsonc` — Workers configuration with static assets
+- `worker/index.js` - Hand-written Worker shim referenced as `main` in `wrangler.jsonc`; forwards requests to the `ASSETS` binding and provides the script content required by `cloudflare_workers_script`
 
 ## Cloudflare API Token Permissions
 
