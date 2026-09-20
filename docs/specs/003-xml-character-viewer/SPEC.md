@@ -125,15 +125,15 @@ Only `signed()` is needed. `formatNumber` and `timeAgo` from golden-forest are n
 Create `src/components/xml-viewer/XmlCard.astro` — a static Astro component that:
 - Accepts a `character` prop (the parsed `CharacterData` JSON)
 - Accepts a `display` prop: `'small' | 'medium' | 'large'` (default `'medium'`)
-- Accepts an optional `image` prop for avatar override (large mode only)
+- Accepts an optional `image` prop for avatar override (all display modes)
 - Renders the character card as semantic HTML + Tailwind CSS classes
 - Embeds the character data as a JSON data attribute for Alpine.js to consume
 - Uses Alpine.js `x-data` for display-mode toggle and expand/collapse state
 
 Display modes:
-- **small** (max-width 360px): Compact card — name, race/class/level, vitals grid, compact abilities (MOD + SAVE columns). Inline-block for side-by-side flow.
-- **medium** (max-width 480px): Name, race/class/alignment/background/deity, vitals, full abilities grid, saving throws, proficient skills, languages, proficiency bonus.
-- **large** (max-width 710px): All of medium + portrait image, feats, features (grouped by level), powers (grouped by level + group).
+- **small** (max-width 360px): Compact card - small avatar (40px), name (truncated with tooltip), race/class/level, vitals grid, compact abilities (MOD + SAVE columns). Inline-block for side-by-side flow.
+- **medium** (max-width 480px): Medium avatar (48px), name (truncated with tooltip), race/class/alignment/background/deity, vitals, full abilities grid, saving throws, proficient skills, languages, proficiency bonus.
+- **large** (max-width 710px): Large avatar (64px), all of medium + feats, features (grouped by level), powers (grouped by level + group).
 
 Avatar resolution (build-time):
 - If `image` prop provided, use `public/fg/avatar/{image}`
