@@ -64,7 +64,7 @@ const members = party.members
   }))
   .filter((m): m is typeof m & { character: ResolvedCharacter } => m.character !== null);
 
-const stats = partyStats(members);
+const stats = partyStats(members.map(({ role, character }) => ({ roles: [role], character })));
 
 const allRoles = Object.keys(ROLE_CONFIG) as Role[];
 const allRolesJson = JSON.stringify(allRoles);
