@@ -72,7 +72,18 @@ Update `astro.config.mjs` to include Character Search in the Fantasy Grounds sid
 
 ## Testing
 
-- Manual verification: Page builds and loads at `/fantasy-grounds/character-search/`
+### Automated Tests
+
+`pnpm test` runs the vitest suites that cover this spec:
+
+- `src/components/xml-viewer/char-filter.test.ts` - shared filter predicate: case-insensitive name search, class and race selection, AND combination, and the `toFilterableCharacters` payload
+- `src/components/xml-viewer/char-search-component.test.ts` - Alpine component state: dataset loading, match count, and `clearFilters`
+
+Run the AGENTS.md verification commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
+
+### Manual Verification
+
+- Page builds and loads at `/fantasy-grounds/character-search/`
 - Page not duplicated in "D&D rule fixes" sidebar (hidden from autogenerate)
 - Alpine.js directives present in generated HTML
 - All 111 characters render in the grid

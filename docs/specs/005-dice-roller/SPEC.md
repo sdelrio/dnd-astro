@@ -164,6 +164,15 @@ Roll 4d6-drop-lowest for each ability score.
 
 ## Testing
 
+### Automated Tests
+
+`pnpm test` runs the vitest suites that cover this spec:
+
+- `src/components/dice-roller/dice-utils.test.ts` - `rollDie`, `rollDice`, `rollAbility` (4d6-drop-lowest), `getTopThreeIndices`, `calculateModifier`, `formatModifier`, `updateAbilityWithRoll`, `calculateStats`, `formatStats`, `formatResultLog`, and `swapAbilities`
+- `src/components/dice-roller/dice-roller.test.ts` - asserts `DiceRoller.astro` uses Starlight accent variables instead of hardcoded blue
+
+Run the AGENTS.md verification commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
+
 ### Acceptance Criteria
 1. **Page load**: Visit `/tools/dice-roller/` - page renders without errors
 2. **Initial state**: 6 ability placeholders shown, "Roll All" button enabled
