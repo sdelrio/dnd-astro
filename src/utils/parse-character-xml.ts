@@ -15,6 +15,7 @@ export interface CharacterData {
   abilities: Record<string, { score: number; bonus: number; save: number; saveprof: number }>;
   ac: number;
   hp: number;
+  tempHp: number;
   speed: number;
   initiative: number;
   profBonus: number;
@@ -82,6 +83,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
   // Defenses (flat, per SPEC-003 Step 2 output shape)
   const ac = Number(getText(root.defenses?.ac, 'total') || 0);
   const hp = Number(getText(root.hp, 'total') || 0);
+  const tempHp = Number(getText(root.hp, 'temporary') || 0);
   const speed = Number(getText(root.speed, 'total') || 0);
   const initiative = Number(getText(root.initiative, 'total') || 0);
   // Prof bonus
@@ -124,6 +126,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     abilities,
     ac,
     hp,
+    tempHp,
     speed,
     initiative,
     profBonus,
