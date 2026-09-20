@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { createCharFilter } from './char-filter';
+import { createCharFilter, toFilterableCharacters } from './char-filter';
+import type { StoredCharacter } from '@/utils/build-xml-characters';
 
 const characters = [
   {
@@ -70,5 +71,50 @@ describe('createCharFilter', () => {
     expect(filter.matches(0)).toBe(false);
     expect(filter.matches(1)).toBe(false);
     expect(filter.matches(2)).toBe(false);
+  });
+});
+
+describe('toFilterableCharacters', () => {
+  const fullCharacter: StoredCharacter = {
+    name: 'Aelar',
+    race: 'Elf',
+    alignment: 'Chaotic Good',
+    background: 'Sage',
+    deity: '',
+    classes: [{ name: 'Ranger', level: 5, subclass: 'Gloom Stalker' }],
+    abilities: {
+      dexterity: { score: 16, bonus: 3, save: 3, saveprof: 1 },
+    },
+    ac: 14,
+    hp: 44,
+    tempHp: 0,
+    speed: 30,
+    initiative: 2,
+    profBonus: 3,
+    skills: [{ name: 'Perception', total: 6 }],
+    languages: ['Common'],
+    feats: ['Sharpshooter'],
+    features: [{ level: 1, name: 'Favored Enemy', source: 'Ranger' }],
+    powers: [],
+    filename: 'aelar',
+    avatarPath: '/fg/avatar/aelar.jpg',
+  };
+
+  it('keeps only the fields the filter needs, preserving order', () => {
+    const payload = toFilterableCharacters([fullCharacter, { ...fullCharacter, name: 'Borin' }]);
+    expect(payload).toEqual([
+      { name: 'Aelar', race: 'Elf', classes: [{ name: 'Ranger', level: 5 }] },
+      { name: 'Borin', race: 'Elf', classes: [{ name: 'Ranger', level: 5 }] },
+    ]);
+  });
+
+  it('produces a payload the shared filter can match against', () => {
+    const filter = createCharFilter(toFilterableCharacters([fullCharacter]), {
+      search: 'ael',
+      selectedClass: 'Ranger',
+      selectedRace: 'Elf',
+    });
+    expect(filter.matches(0)).toBe(true);
+    expect(filter.count).toBe(1);
   });
 });
