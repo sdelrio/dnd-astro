@@ -125,16 +125,14 @@ Update `astro.config.mjs` to include Dice Roller in the sidebar:
 
 ```javascript
 {
-  label: 'Tools',
-  items: [
-    { label: 'Dice Roller', slug: 'tools/dice-roller' },
-  ],
+  label: 'D&D Tools',
+  items: [{ autogenerate: { directory: 'dnd-tools' } }],
 }
 ```
 
 ### Step 5: Create MDX Page
 
-Create `src/content/docs/tools/dice-roller.mdx`:
+Create `src/content/docs/dnd-tools/dice-roller.mdx`:
 
 ```mdx
 ---
@@ -159,7 +157,7 @@ Roll 4d6-drop-lowest for each ability score.
 | `src/components/dice-roller/dice-utils.js` | create | Pure dice rolling functions |
 | `src/components/dice-roller/DiceRoller.astro` | create | Alpine.js dice roller component |
 | `src/components/dice-roller/dice-roller.css` | create | Component styling |
-| `src/content/docs/tools/dice-roller.mdx` | create | Starlight page for dice roller |
+| `src/content/docs/dnd-tools/dice-roller.mdx` | create | Starlight page for dice roller |
 | `astro.config.mjs` | modify | Add sidebar entry |
 
 ## Testing
@@ -174,7 +172,7 @@ Roll 4d6-drop-lowest for each ability score.
 Run the AGENTS.md verification commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
 
 ### Acceptance Criteria
-1. **Page load**: Visit `/tools/dice-roller/` - page renders without errors
+1. **Page load**: Visit `/dnd-tools/dice-roller/` - page renders without errors
 2. **Initial state**: 6 ability placeholders shown, "Roll All" button enabled
 3. **Roll All**: Click button - 6 abilities roll sequentially with 150ms delay
 4. **Dice values**: Each ability shows 4 dice values, top 3 highlighted
@@ -194,7 +192,7 @@ Run the AGENTS.md verification commands from the repo root before opening a PR: 
 ## Rollback
 
 - Remove `src/components/dice-roller/` directory
-- Remove `src/content/docs/tools/dice-roller.mdx`
+- Remove `src/content/docs/dnd-tools/dice-roller.mdx`
 - Remove sidebar entry from `astro.config.mjs`
 
 ## Accepted Deviations
