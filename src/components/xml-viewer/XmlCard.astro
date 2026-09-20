@@ -132,7 +132,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
   <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
     <div class="flex gap-4">
       <img
-        class="w-16 h-[4.75rem] rounded object-cover flex-shrink-0"
+        class="w-16 h-[4.75rem] object-cover flex-shrink-0 overflow-hidden border border-gray-300 dark:border-gray-600 [border-top-left-radius:7px] [border-top-right-radius:7px] [border-bottom-left-radius:45%] [border-bottom-right-radius:45%]"
         src={avatarSrc}
         alt={`${name} portrait`}
         title={name}
