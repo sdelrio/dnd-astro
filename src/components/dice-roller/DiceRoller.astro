@@ -20,7 +20,7 @@ const abilities: Ability[] = [
     <button
       @click="rollAll()"
       :disabled="isRolling"
-      class="px-6 py-3 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      class="px-6 py-3 bg-(--sl-color-accent) text-(color:--sl-color-text-invert) rounded-lg shadow hover:bg-(--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       aria-label="Roll all ability scores"
     >
       <span x-text="isRolling ? 'Rolling...' : 'Roll All Abilities'"></span>
@@ -33,7 +33,7 @@ const abilities: Ability[] = [
         <div
           @click="selectAbility(index)"
           class="bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative"
-          :class="selectedIndex === index ? 'border-blue-500 ring-2 ring-blue-200 dark:ring-blue-800' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-blue-400' : 'border-gray-200 dark:border-gray-700'"
+          :class="selectedIndex === index ? 'border-(color:--sl-color-accent) ring-2 ring-(color:--sl-color-accent-low)' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-(color:--sl-color-accent-high)' : 'border-gray-200 dark:border-gray-700'"
         >
           <div class="p-4">
             <div class="flex items-center justify-center gap-1 mb-2">
@@ -41,7 +41,7 @@ const abilities: Ability[] = [
               <button
                 @click.stop="rollIndividual(index)"
                 :disabled="isRolling || ability.rolling || selectedIndex !== null"
-                class="group inline-flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+                class="group inline-flex items-center gap-1 text-xs text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
                 aria-label="Re-roll ability score"
               >
                 <IconifyIcon icon="mdi:refresh" width="1em" class="transition-transform duration-200 group-hover:rotate-180" />
@@ -53,7 +53,7 @@ const abilities: Ability[] = [
                 <template x-for="(die, i) in ability.dice" :key="i">
                   <span
                     class="w-8 h-8 flex items-center justify-center rounded border text-sm font-medium"
-                    :class="ability.topThreeIndices.includes(i) ? 'bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-600 text-blue-800 dark:text-blue-200' : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 line-through'"
+                    :class="ability.topThreeIndices.includes(i) ? 'bg-(--sl-color-accent-low) border-(color:--sl-color-accent) text-(color:--sl-color-accent-high)' : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 line-through'"
                     x-text="die"
                   ></span>
                 </template>
@@ -74,13 +74,13 @@ const abilities: Ability[] = [
           
           <div
             x-show="ability.rolling"
-            class="absolute left-0 right-0 bottom-0 h-1 bg-blue-500 animate-pulse"
+            class="absolute left-0 right-0 bottom-0 h-1 bg-(--sl-color-accent) animate-pulse"
             style="z-index: 5"
           ></div>
         </div>
         <template x-if="stagedSwap && stagedSwap.index1 === index">
-          <div class="mt-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-600 rounded-lg p-2 text-center text-sm">
-            <div class="text-blue-800 dark:text-blue-200 font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
+          <div class="mt-2 bg-(--sl-color-accent-low) border border-(color:--sl-color-accent) rounded-lg p-2 text-center text-sm">
+            <div class="text-(color:--sl-color-accent-high) font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
             <div class="flex justify-center gap-2 not-content">
               <button
                 @click="confirmSwap()"
