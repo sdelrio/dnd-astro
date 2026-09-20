@@ -188,6 +188,22 @@ Roll 4d6-drop-lowest for each ability score.
 - Remove `src/content/docs/tools/dice-roller.mdx`
 - Remove sidebar entry from `astro.config.mjs`
 
+## Accepted Deviations
+
+The following deviations from this spec were accepted during implementation (PR #67 and follow-up PRs) and are recorded here to prevent re-flagging in future reviews.
+
+### 1. Styling: no `dice-roller.css` stylesheet
+
+The spec's Step 3 and Files table called for `src/components/dice-roller/dice-roller.css`. The implementation ships no stylesheet in `src/components/dice-roller/`; styling lives in Tailwind utility classes directly on the markup in `DiceRoller.astro` (for example `grid grid-cols-3 lg:grid-cols-6`, `bg-white dark:bg-gray-800 border rounded-lg shadow-sm`, `animate-pulse`, `disabled:opacity-50`, and accent classes for kept dice), with two inline `style` attributes for the rolling indicator's `z-index` and the empty-state emoji size. Reason: a separate stylesheet was unnecessary once every requirement in Step 3 was expressed with Tailwind utilities and Starlight theme variables, and it avoids maintaining a second styling mechanism.
+
+### 2. Utilities: `dice-utils.ts` instead of `dice-utils.js`
+
+The spec's Step 1 and Files table called for `src/components/dice-roller/dice-utils.js`. The implementation ships `dice-utils.ts`, imported by the `<script>` block in `DiceRoller.astro`. Reason: the repo is TypeScript-first (`typescript` and `@astrojs/check` are devDependencies), and typed exports plus the `Ability` interface keep the Alpine state and utility signatures aligned.
+
+### 3. Vitest suites for the dice utilities
+
+The spec did not plan unit tests. The implementation adds `dice-utils.test.ts` (utility behaviour, created in PR #67 and extended by follow-up PRs) and `dice-roller.test.ts` (asserts `DiceRoller.astro` uses Starlight accent variables instead of hardcoded blue, PR #180). Reason: `vitest` is the repo's configured test runner, the pure utilities are directly unit-testable, and the component assertion guards the theme-color fix against regressions.
+
 ## Status
 
 - [x] Implementation complete
