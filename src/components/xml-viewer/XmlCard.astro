@@ -144,13 +144,13 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         {canShow('tags') && (
           <p class="mt-2 flex flex-wrap gap-1" x-show="canShow('tags')">
             {alignment && (
-              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{alignment}</span>
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs" x-show="displayMode !== 'small'">{alignment}</span>
             )}
             {background && (
               <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{background}</span>
             )}
             {deity && (
-              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{deity}</span>
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs" x-show="displayMode !== 'small'">{deity}</span>
             )}
           </p>
         )}
