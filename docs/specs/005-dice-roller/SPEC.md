@@ -190,6 +190,6 @@ Roll 4d6-drop-lowest for each ability score.
 
 ## Status
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] ADR updated (if new decision made)
+- [x] Implementation complete
+- [x] Tests passing (112 unit tests, build verified)
+- [x] ADR updated (no new decisions)
