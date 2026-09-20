@@ -24,7 +24,7 @@ function rank(mode: string): number {
   return RANKS[mode] ?? 0;
 }
 const sectionPolicy = {
-  avatar: 'large' as const,
+  avatar: 'small' as const,
   tags: 'medium' as const,
   profBonus: 'medium' as const,
   saves: 'medium' as const,
@@ -126,7 +126,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 <div
   class="not-content bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
-    x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 2, tags: 1, profBonus: 1, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+    x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 1, profBonus: 1, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'w-full': displayMode === 'small' || displayMode === 'medium' || displayMode === 'large' }"
 >
   <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
@@ -160,8 +160,16 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     )}
 
     <div class="flex gap-4">
+      <img
+        class="rounded object-cover flex-shrink-0"
+        :class="displayMode === 'small' ? 'w-10 h-10' : displayMode === 'large' ? 'w-16 h-16' : 'w-12 h-12'"
+        src={avatarSrc}
+        alt={`${name} portrait`}
+        title={name}
+        x-show="canShow('avatar')"
+      />
       <div class="flex-1 min-w-0">
-        <h1 class="mt-0 text-xl font-bold text-gray-900 dark:text-gray-100">{name}</h1>
+        <h3 class="mt-0 text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={name}>{name}</h3>
         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{race} - {classString}</p>
         {canShow('tags') && (
           <p class="mt-2 flex flex-wrap gap-1" x-show="canShow('tags')">
@@ -177,14 +185,6 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
           </p>
         )}
       </div>
-      {canShow('avatar') && (
-        <img
-          class="w-36 sm:w-44 rounded object-cover flex-shrink-0"
-          src={avatarSrc}
-          alt={`${name} portrait`}
-          x-show="canShow('avatar')"
-        />
-      )}
     </div>
   </header>
 
