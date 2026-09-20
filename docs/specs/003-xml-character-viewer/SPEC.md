@@ -309,6 +309,10 @@ The original spec required `max-width 480px` for medium mode. The implementation
 
 The original spec required `max-width 710px` for large mode. The implementation uses `w-full` to make cards fill their parent container width. Large cards are typically shown individually (full-width), so removing the cap eliminates unused whitespace on wide screens. (PR #140)
 
+### 10. Large mode image layout: flex instead of float
+
+The original spec implied a float-based layout for the portrait image. The implementation uses a flex container inside the header, with the image as a flex child (`flex-shrink-0`) and text content as `flex-1 min-w-0`. This prevents the image float from bleeding into the vitals section below the header. (PR #141)
+
 ## Status
 
 - [x] Implementation complete (all steps delivered across PRs #27-#46)
