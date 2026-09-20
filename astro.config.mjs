@@ -77,13 +77,6 @@ export default defineConfig({
           items: [{ autogenerate: { directory: 'reference' } }],
         },
         {
-          label: 'Tools',
-          items: [
-            { label: 'Dice Roller', slug: 'tools/dice-roller' },
-            { label: 'Feat Explorer', slug: 'tools/feat-explorer' },
-          ],
-        },
-        {
           label: 'Fantasy Grounds',
           items: [
             { label: 'Current Party', slug: 'fantasy-grounds/current-party' },
