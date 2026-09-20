@@ -37,7 +37,7 @@ Players need to quickly find feats during character creation and leveling. The g
 ## Non-Goals
 
 - Individual feat detail pages (clicking a card) - future feature
-- Sorting functionality (alphabetical by default from build)
+- Sorting functionality (feats follow source MDX order from `scripts/extract-feats.js`; the extraction script does not sort)
 - Pagination or virtual scrolling
 - Server-side search API
 - Integration with character sheet builder
@@ -63,7 +63,7 @@ interface Feat {
 Feat data is extracted from the golden-forest project's MDX file at:
 `/Users/sdelrio/github/sdelrio/golden-forest/docs/Games/DnD/feats.md`
 
-This file contains **216 feats** defined as `<Feat>` components with props:
+This file contains **219 feats** defined as `<Feat>` components with props:
 - `name` (string) - feat name
 - `level` (number) - 0 for origin, 4+ for general
 - `book` (string) - phb, hof, fef, echh
@@ -151,7 +151,7 @@ Create `scripts/extract-feats.js` - a Node.js script that:
 2. Parses `<Feat ...>` tags using regex: `/<Feat\s+([^>]+)>/g`
 3. Extracts props: name, level, book, abilityIncrease, prerequisite, youGain
 4. Outputs `src/components/feats-explorer/feat-data.js` with:
-   - `FEATS` array containing all 216 feat objects
+   - `FEATS` array containing all 219 feat objects
    - `BOOKS` constant mapping codes to full names
    - `ABILITIES` constant array
    - `FEAT_CATEGORIES` constant array
@@ -251,7 +251,7 @@ Search and filter through all available feats.
 | File | Action | Purpose |
 |------|--------|---------|
 | `scripts/extract-feats.js` | create | Node.js script to extract feats from golden-forest MDX |
-| `src/components/feats-explorer/feat-data.js` | create | Generated feat metadata (216 feats) |
+| `src/components/feats-explorer/feat-data.js` | create | Generated feat metadata (219 feats) |
 | `src/components/feats-explorer/FeatExplorer.astro` | create | Alpine.js feat browser component |
 | `src/components/feats-explorer/search-utils.js` | create | Fuzzy search utility functions |
 | `src/components/feats-explorer/feat-explorer.css` | create | Component styling |

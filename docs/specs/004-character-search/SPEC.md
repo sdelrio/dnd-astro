@@ -35,7 +35,7 @@ Users need a way to search and browse all 111 Fantasy Grounds characters by name
 ## Non-Goals
 
 - Character detail page (clicking a card) - future feature
-- Sorting functionality (currently alphabetical from build hook)
+- Sorting functionality (results follow directory read order from `readdirSync`; the build hook does not sort)
 - Pagination or virtual scrolling
 - E2E testing infrastructure
 
