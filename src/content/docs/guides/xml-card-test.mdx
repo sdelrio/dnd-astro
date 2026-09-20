@@ -13,6 +13,7 @@ export const malfunction = byFile('malfunction');
 export const delizan = byFile('delizan');
 export const dorian = byFile('dorian');
 export const dougal = byFile('dougal');
+export const darlo = byFile('darlo');
 export const malagolvir = byFile('malagolvir');
 export const garaele = byFile('garaele');
 export const milo = byFile('milo');
@@ -123,6 +124,18 @@ The complete card: portrait (floated right), feats, features grouped by
 level, and powers grouped by level and group. Includes vertically stacked
 S/M/L toggle buttons on the right side of the header to switch display
 modes live.
+
+### Subclass
+
+Darlo has a subclass (Oath of Vengeance), shown in parentheses after
+class and level. Large mode is the only mode that displays it; toggle to
+S or M to see it hidden.
+
+```mdx
+<XmlCard character={darlo} display="large" />
+```
+
+<XmlCard character={darlo} display="large" />
 
 ### Fallback Portrait
 
