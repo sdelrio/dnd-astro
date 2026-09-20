@@ -27,9 +27,9 @@ function lookupAbility(fullName: string): AbilityView {
 }
 ---
 
-<div class="grid grid-cols-6 gap-1">
+<div class="grid grid-cols-3 @lg:grid-cols-6 gap-1">
   {entries.map((entry) => (
-    <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 rounded">
+    <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
       <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{entry.short}</div>
       <div class="text-sm text-gray-600 dark:text-gray-400">{signed(lookupAbility(entry.name).bonus)}</div>
       <div class="text-xs text-gray-500 dark:text-gray-400">{signed(lookupAbility(entry.name).save)}</div>
