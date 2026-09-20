@@ -33,7 +33,7 @@ The golden-forest project has 112 Fantasy Grounds XML character sheets rendered 
 - Pre-resolve avatar image paths at build time (`.jpg` → `.png` → `faceless.svg` fallback)
 - Provide a `<PartyView>` component that reads `party.json` and renders aggregate party stats + member cards
 - Store XML source files in `src/assets/fantasy-grounds-sheets/` and avatar images in `public/fg/avatar/`
-- Keep client-side JavaScript minimal — only Alpine.js for display-mode toggles and expand/collapse interactions
+- Keep client-side JavaScript minimal — only Alpine.js for display-mode toggles and item-level expand/collapse interactions (section-level collapse removed per #151)
 - Support inline usage in Starlight MDX pages and standalone character pages
 
 ## Non-Goals
@@ -128,7 +128,7 @@ Create `src/components/xml-viewer/XmlCard.astro` — a static Astro component th
 - Accepts an optional `image` prop for avatar override (all display modes)
 - Renders the character card as semantic HTML + Tailwind CSS classes
 - Embeds the character data as a JSON data attribute for Alpine.js to consume
-- Uses Alpine.js `x-data` for display-mode toggle and expand/collapse state
+- Uses Alpine.js `x-data` for display-mode toggle and item-level expand/collapse state (section-level collapse removed per #151)
 
 Display modes:
 - **small** (max-width 360px): Compact card - small avatar (40px), name (truncated with tooltip), race/class/level, vitals grid, compact abilities (MOD + SAVE columns). Inline-block for side-by-side flow.
