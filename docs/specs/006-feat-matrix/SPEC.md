@@ -308,6 +308,14 @@ Search and filter through all available feats.
 - Remove `@alpinejs/intersect` from `package.json`
 - Remove intersect plugin registration from `astro.config.mjs`
 
+## Accepted Deviations
+
+The following deviation from this spec was accepted during implementation (PR #67) and is recorded here to prevent re-flagging in future reviews.
+
+### 1. Fuzzy search utilities: inline in `FeatExplorer.astro`, no `search-utils.js`
+
+The spec's Step 3 and Files table called for `src/components/feats-explorer/search-utils.js` containing `fuzzyMatch` and `levenshtein`. The implementation defines both functions inline in the `<script>` block of `FeatExplorer.astro` instead. Reason: the `featExplorer()` Alpine component is their only consumer, so keeping them colocated avoids an extra module and import without changing behaviour.
+
 ## Status
 
 - [x] Implementation complete
