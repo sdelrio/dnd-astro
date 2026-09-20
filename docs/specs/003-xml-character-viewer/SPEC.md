@@ -313,6 +313,10 @@ The original spec required `max-width 710px` for large mode. The implementation 
 
 The original spec implied a float-based layout for the portrait image. The implementation uses a flex container inside the header, with the image as a flex child (`flex-shrink-0`) and text content as `flex-1 min-w-0`. This prevents the image float from bleeding into the vitals section below the header. (PR #141)
 
+### 11. Unified header: same avatar size and tags across all display modes
+
+The original spec defined different avatar sizes per mode (40px small, 48px medium, 64px large) and hid alignment/background/deity tags in small mode. The implementation uses a single 64px (`w-16 h-16`) avatar in all modes, and shows alignment/background/deity tags in all modes. Reason: the header height is now consistent regardless of display mode, and small mode shows the full character identity (name, race, class, alignment, background, deity) instead of hiding metadata. The S/M/L toggle buttons (large mode only) are vertically stacked on the right side of the header using `flex-col`, with single-letter labels to save horizontal space.
+
 ## Status
 
 - [x] Implementation complete (all steps delivered across PRs #27-#46)

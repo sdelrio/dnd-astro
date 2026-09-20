@@ -40,8 +40,9 @@ export const tanadirian = characters.find((c) => c.filename === 'tanadirian');
 
 ## Display: Small
 
-Compact card: name, race/class/level, vitals grid, compact abilities
-(MOD + SAVE). Small cards are `inline-block`, so they flow side by side.
+Compact card: name, race/class/level, alignment/background/deity, vitals grid,
+compact abilities (MOD + SAVE). Avatar is the same size as medium/large (64px).
+Small cards are `inline-block`, so they flow side by side.
 
 ### Single Character
 
@@ -83,9 +84,8 @@ Wrap them in a centered container.
 
 ## Display: Medium
 
-Everything from small mode, plus alignment/background/deity, full ability
-grid, proficient-only saving throws, skills, languages, and proficiency
-bonus. This is the default size.
+Everything from small mode, plus full ability grid, proficient-only saving
+throws, skills, languages, and proficiency bonus. This is the default size.
 
 ### Basic Usage
 
@@ -120,8 +120,9 @@ Verify two medium cards display side by side on PC workstation screens.
 ## Display: Large
 
 The complete card: portrait (floated right), feats, features grouped by
-level, and powers grouped by level and group. Includes S/M/L toggle buttons
-to switch display modes live.
+level, and powers grouped by level and group. Includes vertically stacked
+S/M/L toggle buttons on the right side of the header to switch display
+modes live.
 
 ### Fallback Portrait
 
