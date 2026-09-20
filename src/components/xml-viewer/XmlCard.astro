@@ -225,8 +225,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
       </div>
     </section>
 
-    <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
-      <SectionHeader title="Abilities" />
+    <section class="border-t border-gray-100 dark:border-gray-700 pt-4" title="Abilities">
         {display === 'small' ? (
           <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
         ) : (
