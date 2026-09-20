@@ -25,7 +25,7 @@ function rank(mode: string): number {
 }
 const sectionPolicy = {
   avatar: 'small' as const,
-  tags: 'medium' as const,
+  tags: 'small' as const,
   profBonus: 'medium' as const,
   saves: 'medium' as const,
   skills: 'medium' as const,
@@ -60,6 +60,7 @@ const {
 } = character;
 
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
+const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).join(' / ');
 
 // Build-time avatar resolution: explicit image prop wins when the file exists
 // (missing files fall back to faceless.svg), otherwise probe {base}.jpg ->
@@ -126,43 +127,13 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 <div
   class="not-content bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
-    x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 1, profBonus: 1, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+    x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 1, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'w-full': displayMode === 'small' || displayMode === 'medium' || displayMode === 'large' }"
 >
   <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
-    {display === 'large' && (
-      <div class="flex justify-end gap-1 mb-2" role="group" aria-label="Display mode">
-        <button
-          class="px-2 py-1 text-xs rounded transition-colors"
-          :class="displayMode === 'small' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
-          @click="displayMode = 'small'"
-          :aria-pressed="displayMode === 'small'"
-        >
-          Small
-        </button>
-        <button
-          class="px-2 py-1 text-xs rounded transition-colors"
-          :class="displayMode === 'medium' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
-          @click="displayMode = 'medium'"
-          :aria-pressed="displayMode === 'medium'"
-        >
-          Medium
-        </button>
-        <button
-          class="px-2 py-1 text-xs rounded transition-colors"
-          :class="displayMode === 'large' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
-          @click="displayMode = 'large'"
-          :aria-pressed="displayMode === 'large'"
-        >
-          Large
-        </button>
-      </div>
-    )}
-
     <div class="flex gap-4">
       <img
-        class="rounded object-cover flex-shrink-0"
-        :class="displayMode === 'small' ? 'w-10 h-10' : displayMode === 'large' ? 'w-16 h-16' : 'w-12 h-12'"
+        class="w-16 h-20 object-cover flex-shrink-0 overflow-hidden border border-gray-300 dark:border-gray-600 [border-top-left-radius:7px] [border-top-right-radius:7px] [border-bottom-left-radius:45%] [border-bottom-right-radius:45%]"
         src={avatarSrc}
         alt={`${name} portrait`}
         title={name}
@@ -170,21 +141,54 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
       />
       <div class="flex-1 min-w-0">
         <h3 class="mt-0 text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={name}>{name}</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{race} - {classString}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          {race} - {classString}
+          {subclassString && (
+            <span x-show="displayMode === 'large'"> ({subclassString})</span>
+          )}
+        </p>
         {canShow('tags') && (
           <p class="mt-2 flex flex-wrap gap-1" x-show="canShow('tags')">
             {alignment && (
-              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{alignment}</span>
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs" x-show="displayMode !== 'small'">{alignment}</span>
             )}
             {background && (
               <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{background}</span>
             )}
             {deity && (
-              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{deity}</span>
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs" x-show="displayMode !== 'small'">{deity}</span>
             )}
           </p>
         )}
       </div>
+      {display === 'large' && (
+        <div class="flex flex-col gap-1 flex-shrink-0" role="group" aria-label="Display mode">
+          <button
+            class="px-2 py-1 text-xs rounded transition-colors"
+            :class="displayMode === 'small' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
+            @click="displayMode = 'small'"
+            :aria-pressed="displayMode === 'small'"
+          >
+            S
+          </button>
+          <button
+            class="px-2 py-1 text-xs rounded transition-colors"
+            :class="displayMode === 'medium' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
+            @click="displayMode = 'medium'"
+            :aria-pressed="displayMode === 'medium'"
+          >
+            M
+          </button>
+          <button
+            class="px-2 py-1 text-xs rounded transition-colors"
+            :class="displayMode === 'large' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
+            @click="displayMode = 'large'"
+            :aria-pressed="displayMode === 'large'"
+          >
+            L
+          </button>
+        </div>
+      )}
     </div>
   </header>
 

@@ -11,7 +11,7 @@ export interface CharacterData {
   filename?: string;
   /** Build-time resolved avatar path (e.g. "/fg/avatar/milo.jpg"). Set by the build hook, not the parser. */
   avatarPath?: string;
-  classes: Array<{ name: string; level: number }>;
+  classes: Array<{ name: string; level: number; subclass?: string }>;
   abilities: Record<string, { score: number; bonus: number; save: number; saveprof: number }>;
   ac: number;
   hp: number;
@@ -54,7 +54,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
 };
   // Classes
   // Classes node may be <classes>.<id-XXXXX> for each class taken
-  const classes: Array<{ name: string; level: number }> = [];
+  const classes: Array<{ name: string; level: number; subclass?: string }> = [];
   const rawClasses = root.classes ?? {};
   for (const key of Object.keys(rawClasses)) {
     if (!key.startsWith('id-')) continue;
@@ -62,8 +62,9 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     // Both name and level might be encoded/strings with entities
     const cname = typeof cc.name === 'string' ? he.decode(cc.name) : he.decode(cc.name?.['#text'] ?? '');
     const clevel = typeof cc.level === 'number' ? cc.level : Number(cc.level?.['#text'] ?? 0);
+    const csubclass = getText(cc, 'specialization');
     if (cname) {
-      classes.push({ name: cname, level: clevel });
+      classes.push({ name: cname, level: clevel, ...(csubclass ? { subclass: csubclass } : {}) });
     }
   }
   // Abilities
