@@ -125,7 +125,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 ---
 
 <div
-  class="not-content bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
+  class="not-content @container bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
     x-data="{ displayMode: $el.dataset.display, expandedSections: { abilities: true, saves: true, skills: true, languages: true, feats: true, features: true, powers: true }, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 1, saves: 1, skills: 1, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'w-full': displayMode === 'small' || displayMode === 'medium' || displayMode === 'large' }"
@@ -231,11 +231,11 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         ) : (
           <>
             <div
-              class="grid grid-cols-6 gap-1"
+              class="grid grid-cols-3 @lg:grid-cols-6 gap-1"
               x-show="displayMode !== 'small'"
             >
               {abilityNames.map((abilityName, i) => (
-                <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 rounded">
+                <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
                   <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{abilityShort[i]}</div>
                   <div class="text-xl font-bold text-gray-900 dark:text-gray-100">{lookupAbility(abilityName).score}</div>
                   <div class="text-sm text-gray-600 dark:text-gray-400">{signed(lookupAbility(abilityName).bonus)}</div>
