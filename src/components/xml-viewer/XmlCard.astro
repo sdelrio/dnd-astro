@@ -60,6 +60,7 @@ const {
 } = character;
 
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
+const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).join(' / ');
 
 // Build-time avatar resolution: explicit image prop wins when the file exists
 // (missing files fall back to faceless.svg), otherwise probe {base}.jpg ->
@@ -140,7 +141,12 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
       />
       <div class="flex-1 min-w-0">
         <h3 class="mt-0 text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={name}>{name}</h3>
-        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{race} - {classString}</p>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          {race} - {classString}
+          {subclassString && (
+            <span x-show="displayMode === 'large'"> ({subclassString})</span>
+          )}
+        </p>
         {canShow('tags') && (
           <p class="mt-2 flex flex-wrap gap-1" x-show="canShow('tags')">
             {alignment && (
