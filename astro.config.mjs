@@ -25,7 +25,7 @@ export default defineConfig({
       entrypoint: '/src/alpine.ts',
     }),
     starlight({
-      title: 'DnD Companion',
+      title: 'D&D Companion',
       description: 'D&D rules, Fantasy Grounds xml visualizer.',
       customCss: ['./src/styles/tailwind.css'],
       head: [
