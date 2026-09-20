@@ -148,7 +148,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     .map(({ name, total }) => ({ name, total }));
   const passives: PassiveSkills = { perception: 10, investigation: 10, insight: 10 };
   for (const s of skillEntries) {
-    const key = s.name.toLowerCase() as keyof PassiveSkills;
+    const key = s.name.toLowerCase();
     if (key === 'perception' || key === 'investigation' || key === 'insight') {
       passives[key] = 10 + s.total;
     }
