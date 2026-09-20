@@ -40,6 +40,75 @@ describe('parseCharacterXML', () => {
     }
   });
 
+  it('computes passive Perception, Investigation, and Insight from skill totals', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.passives).toEqual({ perception: 13, investigation: 9, insight: 10 });
+  });
+
+  it('counts a non-proficient skill toward its passive', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    // draknor Investigation has prof 0 and total -1, so its passive is 9, not the 10 default.
+    expect(result?.passives.investigation).toBe(9);
+  });
+
+  it('keeps the prof-only skills output unchanged', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    const names = result?.skills.map((s) => s.name) ?? [];
+    // Perception (prof 1) stays; Investigation and Insight (both prof 0) do not.
+    expect(names).toContain('Perception');
+    expect(names).not.toContain('Investigation');
+    expect(names).not.toContain('Insight');
+  });
+
+  it('defaults a missing skill entry to passive 10', () => {
+    const xml = `
+      <root>
+        <character>
+          <skilllist>
+            <id-00001>
+              <name type="string">Perception</name>
+              <prof type="number">1</prof>
+              <total type="number">4</total>
+            </id-00001>
+            <id-00002>
+              <name type="string">Investigation</name>
+              <prof type="number">0</prof>
+              <total type="number">1</total>
+            </id-00002>
+          </skilllist>
+        </character>
+      </root>
+    `;
+    const result = parseCharacterXML(xml);
+    expect(result?.passives).toEqual({ perception: 14, investigation: 11, insight: 10 });
+  });
+
+  it('matches passive skill names case-insensitively', () => {
+    const xml = `
+      <root>
+        <character>
+          <skilllist>
+            <id-00001>
+              <name type="string">PERCEPTION</name>
+              <prof type="number">0</prof>
+              <total type="number">4</total>
+            </id-00001>
+            <id-00002>
+              <name type="string">insight</name>
+              <prof type="number">0</prof>
+              <total type="number">2</total>
+            </id-00002>
+          </skilllist>
+        </character>
+      </root>
+    `;
+    const result = parseCharacterXML(xml);
+    expect(result?.passives).toEqual({ perception: 14, investigation: 10, insight: 12 });
+  });
+
   it('parses elarion.xml correctly & yields multiclass info', () => {
     const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/elarion.xml'), 'utf8');
     const result = parseCharacterXML(xml);
