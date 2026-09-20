@@ -159,30 +159,33 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
       </div>
     )}
 
-    {canShow('avatar') && (
-      <img
-        class="float-right ml-4 mb-3 w-36 sm:w-44 rounded object-cover"
-        src={avatarSrc}
-        alt={`${name} portrait`}
-        x-show="canShow('avatar')"
-      />
-    )}
-
-    <h1 class="mt-0 text-xl font-bold text-gray-900 dark:text-gray-100">{name}</h1>
-    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{race} - {classString}</p>
-    {canShow('tags') && (
-      <p class="mt-2 flex flex-wrap gap-1" x-show="canShow('tags')">
-        {alignment && (
-          <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{alignment}</span>
+    <div class="flex gap-4">
+      <div class="flex-1 min-w-0">
+        <h1 class="mt-0 text-xl font-bold text-gray-900 dark:text-gray-100">{name}</h1>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{race} - {classString}</p>
+        {canShow('tags') && (
+          <p class="mt-2 flex flex-wrap gap-1" x-show="canShow('tags')">
+            {alignment && (
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{alignment}</span>
+            )}
+            {background && (
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{background}</span>
+            )}
+            {deity && (
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{deity}</span>
+            )}
+          </p>
         )}
-        {background && (
-          <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{background}</span>
-        )}
-        {deity && (
-          <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{deity}</span>
-        )}
-      </p>
-    )}
+      </div>
+      {canShow('avatar') && (
+        <img
+          class="w-36 sm:w-44 rounded object-cover flex-shrink-0"
+          src={avatarSrc}
+          alt={`${name} portrait`}
+          x-show="canShow('avatar')"
+        />
+      )}
+    </div>
   </header>
 
   <div class="p-4 space-y-4">
