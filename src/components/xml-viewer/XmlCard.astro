@@ -201,8 +201,8 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
   </header>
 
   <div class="p-4 space-y-4">
-    <section class="border-t border-gray-100 dark:border-gray-700 pt-4 first:border-t-0 first:pt-0">
-      <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Vitals</h2>
+    <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4 first:border-t-0 first:pt-0">
+      <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Vitals</span>
       <div class="grid grid-cols-4 gap-2 text-center">
         <div class={vitalsItemClass}>
           <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">AC</div>
@@ -210,7 +210,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         </div>
         <div class={vitalsItemClass}>
           <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Speed</div>
-          <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{speed} ft</div>
+          <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{speed}{display !== 'small' && ' ft'}</div>
         </div>
         <div class={vitalsItemClass}>
           <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Init</div>
