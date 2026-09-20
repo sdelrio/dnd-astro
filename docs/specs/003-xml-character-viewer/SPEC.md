@@ -251,7 +251,21 @@ Update `astro.config.mjs` sidebar to include a Fantasy Grounds section:
 
 ## Testing
 
-- **Build verification**: Run `astro build` and confirm no errors from XML parsing or component rendering
+### Automated Tests
+
+`pnpm test` runs the vitest suites that cover this spec:
+
+- `src/utils/parse-character-xml.test.ts` - parser output: vitals, skills, passives, powers, and subclass derivation
+- `src/utils/build-xml-characters.test.ts` - avatar resolution (`.jpg` → `.png` → `faceless.svg`), dual artifact output, and processing of all 111 sheets
+- `src/utils/party-stats.test.ts` - PartyView aggregate stats (total HP, avg AC, avg initiative, total level, role counts), including the manual calculation from the current party's raw XML
+- `src/utils/group-by.test.ts` - level and group grouping used by XmlCard large mode
+- `src/components/xml-viewer/xml-card-passives.test.ts` - XmlCard Passive Skills rendering and build-time/live policy sync
+
+Run the AGENTS.md verification commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
+
+### Manual Verification
+
+- **Build verification**: Run `pnpm build` and confirm no errors from XML parsing or component rendering
 - **Visual parity**: Compare rendered character cards against golden-forest at 3 display modes
 - **Avatar resolution**: Verify `.jpg` → `.png` → `faceless.svg` fallback for characters with/without avatars
 - **PartyView aggregate stats**: Verify total HP, avg AC, avg init match manual calculation from XML data

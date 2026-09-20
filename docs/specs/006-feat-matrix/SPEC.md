@@ -279,6 +279,10 @@ Search and filter through all available feats.
 
 ## Testing
 
+### Automated Tests
+
+No dedicated vitest suite covers the feat explorer yet: the filter and fuzzy-search logic is inline in `FeatExplorer.astro` (see Accepted Deviations). Repo-wide verification runs the AGENTS.md commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
+
 ### Acceptance Criteria
 1. **Page load**: Visit `/tools/feat-explorer/` - page renders without errors
 2. **Initial state**: All feats displayed, all filters set to "All"
@@ -298,7 +302,7 @@ Search and filter through all available feats.
 - Check Network tab - no unnecessary JS downloads
 - Test on mobile viewport - filters stack, grid responsive
 - At desktop widths, verify Ability is approximately one third narrower and Level one half narrower than their previous 12rem widths, Book remains unchanged, and Search receives the freed space (#91).
-- The user visually accepted the width refinement. Production build validation passed; Astro checks are blocked by missing `@astrojs/check` and `typescript`, and lint has no documented command. Tooling follow-up: #90.
+- The user visually accepted the width refinement. Production build validation passed via `pnpm build`; Astro checks and lint now run via `pnpm typecheck` and `pnpm lint` (see AGENTS.md Verification).
 
 ## Rollback
 
