@@ -92,6 +92,7 @@ describe('toFilterableCharacters', () => {
     initiative: 2,
     profBonus: 3,
     skills: [{ name: 'Perception', total: 6 }],
+    passives: { perception: 16, investigation: 10, insight: 10 },
     languages: ['Common'],
     feats: ['Sharpshooter'],
     features: [{ level: 1, name: 'Favored Enemy', source: 'Ranger' }],
