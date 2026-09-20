@@ -9,6 +9,7 @@ interface CharSearchComponent {
   init(): void;
   matches(index: number): boolean;
   readonly matchCount: number;
+  createFilter(): ReturnType<typeof createCharFilter>;
   clearFilters(): void;
 }
 
@@ -23,14 +24,17 @@ export function charSearchComponent(): CharSearchComponent {
       this.characters = this.$el.dataset.characters ? JSON.parse(this.$el.dataset.characters) : [];
     },
     matches(index: number): boolean {
+      return this.createFilter().matches(index);
+    },
+    get matchCount() {
+      return this.createFilter().count;
+    },
+    createFilter() {
       return createCharFilter(this.characters, {
         search: this.search,
         selectedClass: this.selectedClass,
         selectedRace: this.selectedRace,
-      }).matches(index);
-    },
-    get matchCount() {
-      return this.characters.reduce((count, _, index) => count + (this.matches(index) ? 1 : 0), 0);
+      });
     },
     clearFilters() {
       this.search = '';

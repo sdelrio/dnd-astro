@@ -24,13 +24,14 @@ export function createCharFilter(characters: FilterableCharacter[], state: CharF
     return matchesSearch && matchesClass && matchesRace;
   };
 
-  const indices = () => characters.map((_, i) => i).filter(matchesIndex);
-
   return {
     matches: matchesIndex,
-    indices,
     get count() {
-      return indices().length;
+      let total = 0;
+      for (let i = 0; i < characters.length; i++) {
+        if (matchesIndex(i)) total++;
+      }
+      return total;
     },
   };
 }
