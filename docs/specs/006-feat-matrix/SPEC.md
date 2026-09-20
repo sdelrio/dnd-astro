@@ -222,17 +222,14 @@ Update `package.json` to add dependency:
 Update `astro.config.mjs` sidebar:
 ```javascript
 {
-  label: 'Tools',
-  items: [
-    { label: 'Dice Roller', slug: 'tools/dice-roller' },
-    { label: 'Feat Explorer', slug: 'tools/feat-explorer' },
-  ],
+  label: 'D&D Tools',
+  items: [{ autogenerate: { directory: 'dnd-tools' } }],
 }
 ```
 
 ### Step 7: Create MDX Page
 
-Create `src/content/docs/tools/feat-explorer.mdx`:
+Create `src/content/docs/dnd-tools/feat-explorer.mdx`:
 ```mdx
 ---
 title: Feat Explorer
@@ -258,7 +255,7 @@ Search and filter through all available feats.
 | `src/components/feats-explorer/FeatExplorer.astro` | create | Alpine.js feat browser component |
 | `src/components/feats-explorer/search-utils.js` | create | Fuzzy search utility functions |
 | `src/components/feats-explorer/feat-explorer.css` | create | Component styling |
-| `src/content/docs/tools/feat-explorer.mdx` | create | Starlight page for feat explorer |
+| `src/content/docs/dnd-tools/feat-explorer.mdx` | create | Starlight page for feat explorer |
 | `astro.config.mjs` | modify | Add sidebar entry + intersect plugin |
 | `package.json` | modify | Add @alpinejs/intersect dependency |
 
@@ -287,7 +284,7 @@ Search and filter through all available feats.
 No dedicated vitest suite covers the feat explorer yet: the filter and fuzzy-search logic is inline in `FeatExplorer.astro` (see Accepted Deviations). Repo-wide verification runs the AGENTS.md commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
 
 ### Acceptance Criteria
-1. **Page load**: Visit `/tools/feat-explorer/` - page renders without errors
+1. **Page load**: Visit `/dnd-tools/feat-explorer/` - page renders without errors
 2. **Initial state**: All feats displayed, all filters set to "All"
 3. **Search**: Type "alert" - only "Alert" feat displayed
 4. **Ability filter**: Select "Strength" - only feats with STR ability increase shown
@@ -310,7 +307,7 @@ No dedicated vitest suite covers the feat explorer yet: the filter and fuzzy-sea
 ## Rollback
 
 - Remove `src/components/feats-explorer/` directory
-- Remove `src/content/docs/tools/feat-explorer.mdx`
+- Remove `src/content/docs/dnd-tools/feat-explorer.mdx`
 - Remove sidebar entry from `astro.config.mjs`
 - Remove `@alpinejs/intersect` from `package.json`
 - Remove intersect plugin registration from `astro.config.mjs`
