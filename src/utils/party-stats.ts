@@ -1,5 +1,5 @@
 export interface PartyMemberStatInput {
-  role: string;
+  roles: string[];
   character: {
     hp: number;
     ac: number;
@@ -22,7 +22,7 @@ export interface PartyStatsResult {
  * - avgAc: mean AC rounded to nearest integer (0 if empty)
  * - avgInit: mean initiative rounded to nearest integer (0 if empty)
  * - totalLevel: sum of all class levels across all members
- * - roleCounts: count of members per role
+ * - roleCounts: count of members holding each role (every role a member holds counts once)
  */
 export function partyStats(members: PartyMemberStatInput[]): PartyStatsResult {
   const totalHp = members.reduce((sum, m) => sum + (m.character?.hp ?? 0), 0);
@@ -40,8 +40,10 @@ export function partyStats(members: PartyMemberStatInput[]): PartyStatsResult {
   );
   const roleCounts: Record<string, number> = {};
   for (const m of members) {
-    if (m.role) {
-      roleCounts[m.role] = (roleCounts[m.role] || 0) + 1;
+    for (const role of m.roles ?? []) {
+      if (role) {
+        roleCounts[role] = (roleCounts[role] || 0) + 1;
+      }
     }
   }
   return { totalHp, avgAc, avgInit, totalLevel, roleCounts };
