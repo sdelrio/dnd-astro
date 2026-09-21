@@ -469,7 +469,7 @@ describe('XmlCard Inventory section', () => {
     expect(section).not.toContain('Sold Gem');
   });
 
-  it('places the section after Equipped Weapons and before Features in large mode', async () => {
+  it('places the section after Skills and before Equipped Weapons in large mode', async () => {
     const html = await renderCard('large', {
       abilities: strongAbilities,
       inventory: alberichInventory,
@@ -485,12 +485,14 @@ describe('XmlCard Inventory section', () => {
       }],
       features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
     });
-    const weapons = html.indexOf('>Equipped Weapons</h2>');
+    const skills = html.indexOf('>Skills</h2>');
     const inventory = html.indexOf('>Inventory</h2>');
+    const weapons = html.indexOf('>Equipped Weapons</h2>');
     const features = html.indexOf('>Features</h2>');
-    expect(weapons).toBeGreaterThan(-1);
-    expect(inventory).toBeGreaterThan(weapons);
-    expect(features).toBeGreaterThan(inventory);
+    expect(skills).toBeGreaterThan(-1);
+    expect(inventory).toBeGreaterThan(skills);
+    expect(weapons).toBeGreaterThan(inventory);
+    expect(features).toBeGreaterThan(weapons);
   });
 });
 
@@ -585,6 +587,128 @@ describe('XmlCard Saving Throws section', () => {
     expect(passives).toBeGreaterThan(-1);
     expect(saves).toBeGreaterThan(passives);
     expect(skills).toBeGreaterThan(saves);
+  });
+});
+
+describe('XmlCard Overview group', () => {
+  it('groups Vitals, Abilities, and Passive Skills under one large-mode heading', async () => {
+    const html = await renderCard('large');
+    const overview = html.indexOf('>Overview</h2>');
+    const abilities = html.indexOf('title="Abilities"');
+    const passives = html.indexOf('Passive Skills');
+    const saves = html.indexOf('>Saving Throws</h2>');
+    expect(overview).toBeGreaterThan(-1);
+    expect(abilities).toBeGreaterThan(overview);
+    expect(passives).toBeGreaterThan(abilities);
+    expect(saves).toBeGreaterThan(passives);
+  });
+
+  it('omits the Overview heading from small and medium cards', async () => {
+    expect(await renderCard('small')).not.toContain('>Overview</h2>');
+    expect(await renderCard('medium')).not.toContain('>Overview</h2>');
+  });
+
+  it('gives the overview and saving throws one half each at ultra-wide container widths', async () => {
+    const html = await renderCard('large');
+    expect(html).toContain('grid grid-cols-1 @6xl:grid-cols-2 gap-4');
+    expect(html).toContain('@6xl:border-t-0');
+    expect(html).toContain('@6xl:pt-0');
+  });
+
+  it('keeps one full-width column when the right-hand stack is empty', async () => {
+    const noProficiency = Object.fromEntries(
+      Object.entries(baseCharacter.abilities).map(([key, ability]) => [
+        key,
+        { ...ability, saveprof: 0 },
+      ])
+    );
+    const emptyRight = await renderCard('medium', { abilities: noProficiency, languages: [] });
+    expect(emptyRight).not.toContain('Saving Throws');
+    expect(emptyRight).not.toContain('@6xl:grid-cols-2');
+    expect(await renderCard('small')).not.toContain('@6xl:grid-cols-2');
+  });
+});
+
+function pairingGridCount(html: string): number {
+  return html.split('grid grid-cols-1 @6xl:grid-cols-2 gap-4').length - 1;
+}
+
+describe('XmlCard ultra-wide section pairing', () => {
+  const equippedSword = {
+    name: 'Greatsword',
+    attackbonus: 0,
+    attackstat: '',
+    properties: '',
+    carried: 2,
+    type: 0,
+    damage: [{ bonus: 0, dice: 'd6,d6', stat: 'base', statmult: 1, type: 'slashing' }],
+  };
+  const carriedItem = { name: 'Rope', count: 1, weight: 10, carried: 1 };
+  const feature = { level: 1, name: 'Second Wind', source: 'Fighter' };
+  const power = { level: 1, name: 'Bless', group: 'Cleric' };
+  const someCoins = { pp: 0, gp: 5, ep: 0, sp: 0, cp: 0 };
+
+  async function renderPaired(): Promise<string> {
+    return renderCard('large', {
+      feats: ['Alert'],
+      weapons: [equippedSword],
+      inventory: [carriedItem],
+      coins: someCoins,
+      features: [feature],
+      powers: [power],
+    });
+  }
+
+  it('stacks Languages and Feats under Saving Throws to the right of Overview', async () => {
+    const html = await renderPaired();
+    const saves = html.indexOf('>Saving Throws</h2>');
+    const languages = html.indexOf('>Languages</h2>');
+    const feats = html.indexOf('>Feats</h2>');
+    const skills = html.indexOf('>Skills</h2>');
+    expect(saves).toBeGreaterThan(-1);
+    expect(languages).toBeGreaterThan(saves);
+    expect(feats).toBeGreaterThan(languages);
+    expect(skills).toBeGreaterThan(feats);
+    expect(html.indexOf('<div class="space-y-4"><section class="border-t')).toBeGreaterThan(-1);
+  });
+
+  it('pairs Skills with Inventory and leaves Equipped Weapons full width', async () => {
+    const html = await renderPaired();
+    const skills = html.indexOf('>Skills</h2>');
+    const inventory = html.indexOf('>Inventory</h2>');
+    const wealth = html.indexOf('Current Wealth');
+    const weapons = html.indexOf('>Equipped Weapons</h2>');
+    expect(skills).toBeGreaterThan(-1);
+    expect(inventory).toBeGreaterThan(skills);
+    expect(wealth).toBeGreaterThan(inventory);
+    expect(weapons).toBeGreaterThan(wealth);
+  });
+
+  it('pairs Features with Powers', async () => {
+    const html = await renderPaired();
+    const features = html.indexOf('>Features</h2>');
+    const powers = html.indexOf('>Powers</h2>');
+    expect(features).toBeGreaterThan(-1);
+    expect(powers).toBeGreaterThan(features);
+  });
+
+  it('renders three ultra-wide pairing grids for a full large card', async () => {
+    expect(pairingGridCount(await renderPaired())).toBe(3);
+  });
+
+  it('drops the pairing grid when the right-hand section is absent', async () => {
+    const noRight = await renderCard('large', {
+      inventory: [],
+      coins: { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 },
+      powers: [],
+    });
+    expect(pairingGridCount(noRight)).toBe(1);
+  });
+
+  it('gives every paired section a borderless top at ultra-wide widths', async () => {
+    const html = await renderPaired();
+    const borderless = 'pt-4 @6xl:border-t-0 @6xl:pt-0';
+    expect(html.split(borderless).length - 1).toBe(6);
   });
 });
 
