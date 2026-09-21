@@ -5,6 +5,13 @@ import { join } from 'node:path';
 import { signed } from '@/utils/format';
 import { groupBy } from '@/utils/group-by';
 import { toWeaponRows } from '@/components/xml-viewer/weapon-display';
+import {
+  toInventoryRows,
+  carriedWeight,
+  carryCapacity,
+  toCoinRows,
+  hasInventoryContents,
+} from '@/components/xml-viewer/inventory-display';
 import SectionHeader from '@/components/xml-viewer/SectionHeader.astro';
 import CompactAbilityGrid from '@/components/xml-viewer/CompactAbilityGrid.astro';
 
@@ -35,6 +42,7 @@ const sectionPolicy = {
   languages: 'medium' as const,
   feats: 'large' as const,
   weapons: 'large' as const,
+  inventory: 'large' as const,
   features: 'large' as const,
   powers: 'large' as const,
 } as const;
@@ -65,6 +73,8 @@ const {
   weapons,
   features,
   powers,
+  inventory,
+  coins,
 } = character;
 
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
@@ -132,6 +142,12 @@ function abilityAbbr(stat: string): string {
 
 const weaponRows = toWeaponRows(weapons, abilities, profBonus);
 
+const inventoryRows = toInventoryRows(inventory);
+const inventoryWeight = carriedWeight(inventory);
+const inventoryCapacity = carryCapacity(lookupAbility('Strength').score);
+const coinRows = toCoinRows(coins);
+const showInventory = hasInventoryContents(inventory, coins);
+
 const sortedPowers = [...powers].sort(
   (a, b) =>
     a.level - b.level || a.group.localeCompare(b.group) || a.name.localeCompare(b.name)
@@ -148,7 +164,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 <div
   class="not-content @container bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
-    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, skills: 1, allSkills: 2, passives: 2, languages: 1, feats: 2, weapons: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, skills: 1, allSkills: 2, passives: 2, languages: 1, feats: 2, weapons: 2, inventory: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'w-full': displayMode === 'small' || displayMode === 'medium' || displayMode === 'large' }"
 >
   <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
@@ -423,6 +439,55 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
               ))}
             </tbody>
           </table>
+        </div>
+      </section>
+    )}
+
+    {canShow('inventory') && showInventory && (
+      <section
+        class="border-t border-gray-100 dark:border-gray-700 pt-4"
+        x-show="canShow('inventory')"
+      >
+        <SectionHeader title="Inventory" />
+        {inventoryRows.length > 0 && (
+          <>
+            <p class="m-0 mb-1 text-xs text-gray-500 dark:text-gray-400">
+              {inventoryWeight} / {inventoryCapacity} lb. carried
+            </p>
+            <div class={vitalsItemClass}>
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    <th class="text-left font-medium pb-1">Item</th>
+                    <th class="text-right font-medium pb-1">Count</th>
+                    <th class="text-right font-medium pb-1">Weight</th>
+                    <th class="text-left font-medium pb-1">State</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {inventoryRows.map((item) => (
+                    <tr class="border-t border-gray-200 dark:border-gray-700">
+                      <td class="py-1 text-gray-700 dark:text-gray-300">{item.name}</td>
+                      <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.count}</td>
+                      <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.weight}</td>
+                      <td class="py-1 text-gray-500 dark:text-gray-400">{item.state}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+        <div class={`mt-2 ${vitalsItemClass}`}>
+          <div class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Current Wealth</div>
+          <div class="grid grid-cols-5 gap-1 text-center">
+            {coinRows.map((coin) => (
+              <div>
+                <div class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">{coin.label}</div>
+                <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{coin.value}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     )}
