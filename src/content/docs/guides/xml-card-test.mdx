@@ -271,7 +271,7 @@ mode is fixed at build time, with no live switching.
 
 ### Equipped Weapons
 
-Large mode adds an Equipped Weapons table between Feats and Features, listing
+Large mode adds an Equipped Weapons table after Inventory and before Features, listing
 only weapons the sheet marks as equipped (`carried` 2). Each row shows the
 computed ATK, the weapon name, its properties (`-` when the sheet has none),
 and the computed Damage. Alberich exercises the display: with STR 18 and a +2
@@ -288,7 +288,7 @@ nothing is equipped. Small and medium cards omit the section at build time.
 
 ### Inventory
 
-Large mode adds an Inventory section between Equipped Weapons and Features. A
+Large mode adds an Inventory section after Skills and before Equipped Weapons. A
 muted line above the items table reads the carried weight total against the
 5e carrying capacity of STR x 15; alberich (STR 18) reads
 `68.0 / 270 lb. carried`. The table columns are Item, Count, Weight, and
@@ -317,6 +317,40 @@ are proficient, while DEX `+2`, CON `+3`, INT `+1`, and CHA `+1` are not.
 Medium cards render the prof-only saving-throw grid instead, and small cards
 omit the section entirely; the display mode is fixed at build time, with no
 live switching.
+
+```mdx
+<XmlCard character={alberich} display="large" />
+```
+
+<XmlCard character={alberich} display="large" />
+
+### Overview Group
+
+Large cards group Vitals, Abilities, and Passive Skills under one visible
+`Overview` heading; small and medium cards render the same sections without
+the heading. On card containers at least 72rem wide (`@6xl`), the Overview
+group takes the left half of the card while Saving Throws, Languages, and
+Feats stack in the right half; below that width the sections stack in a
+single full-width column. The display mode and the grouping are fixed at
+build time, with no live switching.
+
+```mdx
+<XmlCard character={alberich} display="large" />
+```
+
+<XmlCard character={alberich} display="large" />
+
+### Ultra-Wide Section Pairings
+
+At the same `@6xl` threshold, large cards pair the remaining sections into
+halves: Saving Throws, Languages, and Feats stack in the right half beside
+the Overview group; Skills sits beside Inventory and Current Wealth;
+Equipped Weapons spans the full width; and Features sits beside Powers. When
+a partner stack is empty (no saving throws, no languages, no feats, no
+inventory contents, or no powers), the surviving section keeps the full
+width. Paired sections drop their top rule at ultra-wide widths so both
+columns start level, and everything stacks back into one full-width column
+below 72rem. The pairing is fixed at build time, with no live switching.
 
 ```mdx
 <XmlCard character={alberich} display="large" />
