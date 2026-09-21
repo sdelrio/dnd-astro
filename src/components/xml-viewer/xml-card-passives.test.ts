@@ -65,6 +65,28 @@ function passiveSection(html: string): string {
   return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
 }
 
+function skillsSection(html: string): string {
+  const marker = html.indexOf('>Skills</h2>');
+  if (marker === -1) return '';
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
+function skillRows(section: string): string[] {
+  return section.split('<tr').slice(1);
+}
+
+function skillRow(section: string, name: string): string {
+  const matches = skillRows(section).filter((row) => row.includes(`>${name}<`));
+  expect(matches).toHaveLength(1);
+  return matches[0];
+}
+
+function rowNames(section: string): string[] {
+  return [...section.matchAll(/<span class="truncate">([^<]+)<\/span>/g)].map(([, name]) => name);
+}
+
 function passiveSubcards(section: string): string[] {
   const starts: number[] = [];
   let marker = section.indexOf('rounded-[7px]');
@@ -171,6 +193,90 @@ describe('XmlCard Passive Skills section', () => {
   });
 });
 
+describe('XmlCard All-skills section', () => {
+  const fiveSkills = [
+    { name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' },
+    { name: 'Athletics', total: 5, prof: 1, stat: 'strength' },
+    { name: 'Insight', total: 2, prof: 0, stat: 'wisdom' },
+    { name: 'Perception', total: 3, prof: 1, stat: 'wisdom' },
+    { name: 'Stealth', total: 4, prof: 1, stat: 'dexterity' },
+  ];
+
+  it('keeps the build-time and live rank policy maps in sync', async () => {
+    const live = parseLivePolicy(await renderCard('large'));
+    const stat = parseStaticPolicy();
+    expect(stat.allSkills).toBe(2);
+    expect(live).toEqual(stat);
+  });
+
+  it('renders one card with two alphabetical tables in large mode only', async () => {
+    const large = skillsSection(await renderCard('large', { allSkills: fiveSkills }));
+    expect(large.match(/<table/g)).toHaveLength(2);
+    expect(large).toContain('>Skill</th>');
+    expect(large).toContain('>Abil</th>');
+    expect(large).toContain('>Total</th>');
+    expect(large.match(/rounded-\[7px\]/g)).toHaveLength(1);
+    const secondTable = large.indexOf('<table', large.indexOf('<table') + 1);
+    expect(rowNames(large.slice(0, secondTable))).toEqual([
+      'Arcana',
+      'Athletics',
+      'Insight',
+    ]);
+    expect(rowNames(large.slice(secondTable))).toEqual(['Perception', 'Stealth']);
+
+    expect(skillsSection(await renderCard('small', { allSkills: fiveSkills }))).not.toContain(
+      '<table'
+    );
+    const medium = skillsSection(await renderCard('medium', { allSkills: fiveSkills }));
+    expect(medium).not.toContain('<table');
+    expect(medium).not.toContain('Abil');
+  });
+
+  it('marks proficiency with gold dots: none for prof 0, one for 1, two for 2', async () => {
+    const allSkills = [
+      { name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' },
+      { name: 'Perception', total: 3, prof: 1, stat: 'wisdom' },
+      { name: 'Sleight of Hand', total: 7, prof: 2, stat: 'dexterity' },
+    ];
+    const section = skillsSection(await renderCard('large', { allSkills }));
+
+    const arcana = skillRow(section, 'Arcana');
+    expect(arcana).not.toContain('bg-[#c68000]');
+    expect(arcana).not.toContain('title=');
+
+    const perception = skillRow(section, 'Perception');
+    expect(perception.match(/bg-\[#c68000\]/g)).toHaveLength(1);
+    expect(perception).toContain('title="Proficient"');
+
+    const sleight = skillRow(section, 'Sleight of Hand');
+    expect(sleight.match(/bg-\[#c68000\]/g)).toHaveLength(2);
+    expect(sleight).toContain('title="Expertise"');
+
+    expect(section).not.toContain('<button');
+  });
+
+  it('derives the ability abbreviation from stat, blank when missing', async () => {
+    const allSkills = [
+      { name: 'Thieves Tools (Traps)', total: 6, prof: 2, stat: 'intelligence' },
+      { name: 'Mystery Skill', total: 1, prof: 0, stat: '' },
+    ];
+    const section = skillsSection(await renderCard('large', { allSkills }));
+    expect(skillRow(section, 'Thieves Tools (Traps)')).toContain('>INT</td>');
+    expect(skillRow(section, 'Mystery Skill')).toMatch(/>\s*<\/td>/);
+  });
+
+  it('live-hides the medium prof-only grid in large mode but keeps it in medium', async () => {
+    const large = skillsSection(await renderCard('large'));
+    expect(large).toContain(`x-show="!canShow('allSkills')"`);
+
+    const medium = skillsSection(await renderCard('medium'));
+    expect(medium).toContain(`x-show="!canShow('allSkills')"`);
+    expect(medium).toContain('Perception');
+    expect(medium).toContain('font-mono');
+    expect(medium).not.toContain('<table');
+  });
+});
+
 describe('XmlCard visual test page', () => {
   it('documents the Passive Skills subsection under Display: Large', () => {
     const large = testPageSource.indexOf('## Display: Large');
@@ -187,5 +293,18 @@ describe('XmlCard visual test page', () => {
     expect(body).toContain('Passive Perception');
     expect(body).toContain('Passive Investigation');
     expect(body).toContain('Passive Insight');
+  });
+
+  it('documents the All-Skills Table subsection under Display: Large', () => {
+    const large = testPageSource.indexOf('## Display: Large');
+    const notes = testPageSource.indexOf('## Notes');
+    const subsection = testPageSource.indexOf('### All-Skills Table');
+    expect(large).toBeGreaterThan(-1);
+    expect(subsection).toBeGreaterThan(large);
+    expect(subsection).toBeLessThan(notes);
+    const body = testPageSource.slice(subsection, notes);
+    expect(body).toContain('ethir');
+    expect(body).toContain('tanadirian');
+    expect(body).toMatch(/S\/M/);
   });
 });

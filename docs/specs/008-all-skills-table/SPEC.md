@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "All-skills table"
 author: "opencode"
 date: "2026-09-21"
