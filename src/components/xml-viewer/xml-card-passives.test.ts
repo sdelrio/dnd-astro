@@ -40,7 +40,6 @@ const baseCharacter: CharacterData = {
   avatarPath: '/fg/avatar/faceless.svg',
 };
 
-const cardSource = readFileSync(join(__dirname, 'XmlCard.astro'), 'utf8');
 const testPageSource = readFileSync(
   join(__dirname, '../../content/docs/guides/xml-card-test.mdx'),
   'utf8'
@@ -152,25 +151,6 @@ function saveRow(table: string, short: string): string {
   return matches[0];
 }
 
-function parseStaticPolicy(): Record<string, number> {
-  const rankByMode: Record<string, number> = { small: 0, medium: 1, large: 2 };
-  const body = cardSource.match(/const sectionPolicy = \{([\s\S]*?)\} as const;/)?.[1] ?? '';
-  const policy: Record<string, number> = {};
-  for (const [, key, mode] of body.matchAll(/(\w+):\s*'(small|medium|large)'/g)) {
-    policy[key] = rankByMode[mode];
-  }
-  return policy;
-}
-
-function parseLivePolicy(html: string): Record<string, number> {
-  const body = html.match(/sectionPolicy:\s*\{([^}]*)\}/)?.[1] ?? '';
-  const policy: Record<string, number> = {};
-  for (const [, key, rank] of body.matchAll(/(\w+):\s*(\d+)/g)) {
-    policy[key] = Number(rank);
-  }
-  return policy;
-}
-
 describe('XmlCard Passive Skills section', () => {
   it('renders in large mode between Abilities and Saving Throws', async () => {
     const html = await renderCard('large');
@@ -240,12 +220,6 @@ describe('XmlCard Passive Skills section', () => {
     expect(section.match(/font-bold/g)).toHaveLength(3);
   });
 
-  it('keeps the build-time and live rank policy maps in sync', async () => {
-    const live = parseLivePolicy(await renderCard('large'));
-    const stat = parseStaticPolicy();
-    expect(stat.passives).toBe(2);
-    expect(live).toEqual(stat);
-  });
 });
 
 describe('XmlCard All-skills section', () => {
@@ -256,13 +230,6 @@ describe('XmlCard All-skills section', () => {
     { name: 'Perception', total: 3, prof: 1, stat: 'wisdom' },
     { name: 'Stealth', total: 4, prof: 1, stat: 'dexterity' },
   ];
-
-  it('keeps the build-time and live rank policy maps in sync', async () => {
-    const live = parseLivePolicy(await renderCard('large'));
-    const stat = parseStaticPolicy();
-    expect(stat.allSkills).toBe(2);
-    expect(live).toEqual(stat);
-  });
 
   it('renders one card with two alphabetical tables in large mode only', async () => {
     const large = skillsSection(await renderCard('large', { allSkills: fiveSkills }));
@@ -320,15 +287,15 @@ describe('XmlCard All-skills section', () => {
     expect(skillRow(section, 'Mystery Skill')).toMatch(/>\s*<\/td>/);
   });
 
-  it('live-hides the medium prof-only grid in large mode but keeps it in medium', async () => {
-    const large = skillsSection(await renderCard('large'));
-    expect(large).toContain(`x-show="!canShow('allSkills')"`);
-
+  it('renders the prof-only skills grid in medium mode but not in large mode', async () => {
     const medium = skillsSection(await renderCard('medium'));
-    expect(medium).toContain(`x-show="!canShow('allSkills')"`);
     expect(medium).toContain('Perception');
     expect(medium).toContain('font-mono');
     expect(medium).not.toContain('<table');
+
+    const large = skillsSection(await renderCard('large'));
+    expect(large).not.toContain('justify-between');
+    expect(large).toContain('<table');
   });
 });
 
@@ -351,13 +318,6 @@ describe('XmlCard Equipped Weapons section', () => {
     type: 2,
     damage: [{ bonus: 0, dice: 'd6', stat: 'base', statmult: 1, type: 'slashing' }],
   };
-
-  it('keeps the build-time and live rank policy maps in sync', async () => {
-    const live = parseLivePolicy(await renderCard('large'));
-    const stat = parseStaticPolicy();
-    expect(stat.weapons).toBe(2);
-    expect(live).toEqual(stat);
-  });
 
   it('renders one equipped-weapons table with computed totals in large mode', async () => {
     const section = weaponsSection(await renderCard('large', { weapons: [greatsword, handaxe] }));
@@ -403,11 +363,6 @@ describe('XmlCard Equipped Weapons section', () => {
     expect(weapons).toBeGreaterThan(feats);
     expect(features).toBeGreaterThan(weapons);
   });
-
-  it('live-shows the section through the shared policy predicate', async () => {
-    const section = weaponsSection(await renderCard('large', { weapons: [greatsword] }));
-    expect(section).toContain(`x-show="canShow('weapons')"`);
-  });
 });
 
 describe('XmlCard Inventory section', () => {
@@ -440,13 +395,6 @@ describe('XmlCard Inventory section', () => {
       })
     );
   }
-
-  it('keeps the build-time and live rank policy maps in sync', async () => {
-    const live = parseLivePolicy(await renderCard('large'));
-    const stat = parseStaticPolicy();
-    expect(stat.inventory).toBe(2);
-    expect(live).toEqual(stat);
-  });
 
   it('renders the items table with the specified columns and row values', async () => {
     const section = await renderInventory();
@@ -542,11 +490,6 @@ describe('XmlCard Inventory section', () => {
     expect(inventory).toBeGreaterThan(weapons);
     expect(features).toBeGreaterThan(inventory);
   });
-
-  it('live-shows the section through the shared policy predicate', async () => {
-    const section = await renderInventory();
-    expect(section).toContain(`x-show="canShow('inventory')"`);
-  });
 });
 
 describe('XmlCard Saving Throws section', () => {
@@ -557,18 +500,12 @@ describe('XmlCard Saving Throws section', () => {
     ])
   );
 
-  it('keeps the build-time and live rank policy maps in sync', async () => {
-    const live = parseLivePolicy(await renderCard('large'));
-    const stat = parseStaticPolicy();
-    expect(stat.allSaves).toBe(2);
-    expect(live).toEqual(stat);
-  });
-
   it('renders the all-saves card in large mode only', async () => {
     const large = savesSection(await renderCard('large'));
     expect(large.match(/<table/g)).toHaveLength(2);
     expect(large).toContain('>Ability</th>');
     expect(large).toContain('>Save</th>');
+    expect(large).not.toContain('justify-between');
 
     expect(savesSection(await renderCard('small'))).toBe('');
     const medium = savesSection(await renderCard('medium'));
@@ -638,7 +575,7 @@ describe('XmlCard Saving Throws section', () => {
     expect(medium).not.toContain('<table');
   });
 
-  it('stays between Passive Skills and Skills and carries the live toggling predicates', async () => {
+  it('stays between Passive Skills and Skills', async () => {
     const html = await renderCard('large');
     const passives = html.indexOf('Passive Skills');
     const saves = html.indexOf('>Saving Throws</h2>');
@@ -646,14 +583,18 @@ describe('XmlCard Saving Throws section', () => {
     expect(passives).toBeGreaterThan(-1);
     expect(saves).toBeGreaterThan(passives);
     expect(skills).toBeGreaterThan(saves);
+  });
+});
 
-    const section = savesSection(html);
-    expect(section).toContain(`x-show="canShow('saves')"`);
-    expect(section).toContain(`x-show="!canShow('allSaves')"`);
-    expect(section).toContain(`x-show="canShow('allSaves')"`);
-
-    const saveLess = savesSection(await renderCard('large', { abilities: noProficiency }));
-    expect(saveLess).toContain(`x-show="canShow('saves') &amp;&amp; canShow('allSaves')"`);
+describe('XmlCard display-mode toggle', () => {
+  it('renders no S/M/L toggle in small, medium, or large mode', async () => {
+    for (const display of ['small', 'medium', 'large'] as const) {
+      const html = await renderCard(display);
+      expect(html).not.toContain('aria-label="Display mode"');
+      expect(html).not.toMatch(/>\s*S\s*<\/button>/);
+      expect(html).not.toMatch(/>\s*M\s*<\/button>/);
+      expect(html).not.toMatch(/>\s*L\s*<\/button>/);
+    }
   });
 });
 
@@ -667,7 +608,9 @@ describe('XmlCard visual test page', () => {
     expect(subsection).toBeLessThan(notes);
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('display="large"');
-    expect(body).toMatch(/S\/M/);
+    expect(body).not.toMatch(/S\/M/);
+    expect(body).not.toMatch(/toggle/i);
+    expect(body).toContain('build time');
     expect(body).toContain('tooltip');
     expect(body).toMatch(/single row/);
     expect(body).toContain('Passive Perception');
@@ -685,7 +628,9 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('ethir');
     expect(body).toContain('tanadirian');
-    expect(body).toMatch(/S\/M/);
+    expect(body).not.toMatch(/S\/M/);
+    expect(body).not.toMatch(/toggle/i);
+    expect(body).toContain('build time');
   });
 
   it('documents the Equipped Weapons subsection under Display: Large', () => {
@@ -698,7 +643,9 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('alberich');
     expect(body).toContain('display="large"');
-    expect(body).toMatch(/S\/M/);
+    expect(body).not.toMatch(/S\/M/);
+    expect(body).not.toMatch(/toggle/i);
+    expect(body).toContain('build time');
     expect(body).toContain('ATK');
     expect(body).toContain('2d6+4 Slashing');
   });
@@ -713,7 +660,9 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('alberich');
     expect(body).toContain('display="large"');
-    expect(body).toMatch(/S\/M/);
+    expect(body).not.toMatch(/S\/M/);
+    expect(body).not.toMatch(/toggle/i);
+    expect(body).toContain('build time');
     expect(body).toContain('68.0 / 270 lb. carried');
     expect(body).toContain('Current Wealth');
     expect(body).toContain('Item');
@@ -730,7 +679,9 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('alberich');
     expect(body).toContain('display="large"');
-    expect(body).toMatch(/S\/M/);
+    expect(body).not.toMatch(/S\/M/);
+    expect(body).not.toMatch(/toggle/i);
+    expect(body).toContain('build time');
     expect(body).toContain('Ability');
     expect(body).toContain('Save');
     expect(body).toContain('Proficient');

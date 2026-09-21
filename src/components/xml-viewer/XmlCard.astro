@@ -26,7 +26,7 @@ const { character, display = 'medium', image } = Astro.props;
 // --- Display-mode rank policy -----------------------------------------------
 // Each section declares the minimum display mode required to appear.
 // Rank order: small=0, medium=1, large=2.
-// This single map drives both server-side rendering and Alpine x-show.
+// This map drives which sections render at build time.
 const RANKS: Record<string, number> = { small: 0, medium: 1, large: 2 };
 function rank(mode: string): number {
   return RANKS[mode] ?? 0;
@@ -176,10 +176,8 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 ---
 
 <div
-  class="not-content @container bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
-  data-display={display}
-    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, allSaves: 2, skills: 1, allSkills: 2, passives: 2, languages: 1, feats: 2, weapons: 2, inventory: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
-  :class="{ 'w-full': displayMode === 'small' || displayMode === 'medium' || displayMode === 'large' }"
+  class="not-content @container w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
+  x-data="{ expandedSections: {}, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
 >
   <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
     <div class="flex flex-wrap gap-4">
@@ -188,26 +186,25 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         src={avatarSrc}
         alt={`${name} portrait`}
         title={name}
-        x-show="canShow('avatar')"
       />
       <div class="flex-1 min-w-0">
         <h3 class="mt-0 text-left text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h3>
         <p class="text-left text-sm text-gray-600 dark:text-gray-400 mt-1 truncate" title={`${race} - ${classString}${subclassString ? ` (${subclassString})` : ''}`}>
           {race} - {classString}
-          {subclassString && (
-            <span x-show="displayMode === 'large'" style={display === 'large' ? undefined : 'display: none'}> ({subclassString})</span>
+          {subclassString && display === 'large' && (
+            <span> ({subclassString})</span>
           )}
         </p>
         {canShow('tags') && (
-          <p class="mt-2 flex flex-wrap gap-1" x-show="canShow('tags')">
-            {alignment && (
-              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs" x-show="displayMode !== 'small'">{alignment}</span>
+          <p class="mt-2 flex flex-wrap gap-1">
+            {alignment && display !== 'small' && (
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{alignment}</span>
             )}
             {background && (
               <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{background}</span>
             )}
-            {deity && (
-              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs" x-show="displayMode !== 'small'">{deity}</span>
+            {deity && display !== 'small' && (
+              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{deity}</span>
             )}
           </p>
         )}
@@ -218,34 +215,6 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         <div class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Temporary</div>
         <div class="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-tight">{tempHp}</div>
       </div>
-      {display === 'large' && (
-        <div class="flex flex-col gap-1 flex-shrink-0" role="group" aria-label="Display mode">
-          <button
-            class="px-2 py-1 text-xs rounded transition-colors"
-            :class="displayMode === 'small' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
-            @click="displayMode = 'small'"
-            :aria-pressed="displayMode === 'small'"
-          >
-            S
-          </button>
-          <button
-            class="px-2 py-1 text-xs rounded transition-colors"
-            :class="displayMode === 'medium' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
-            @click="displayMode = 'medium'"
-            :aria-pressed="displayMode === 'medium'"
-          >
-            M
-          </button>
-          <button
-            class="px-2 py-1 text-xs rounded transition-colors"
-            :class="displayMode === 'large' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
-            @click="displayMode = 'large'"
-            :aria-pressed="displayMode === 'large'"
-          >
-            L
-          </button>
-        </div>
-      )}
     </div>
   </header>
 
@@ -281,7 +250,6 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
           <>
             <div
               class="grid grid-cols-3 @lg:grid-cols-6 gap-1"
-              x-show="displayMode !== 'small'"
             >
               {abilityNames.map((abilityName, i) => (
                 <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
@@ -298,10 +266,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     </section>
 
     {canShow('passives') && (
-      <section
-        class="relative group border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show="canShow('passives')"
-      >
+      <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4">
         <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Passive Skills</span>
         <div class="grid grid-cols-3 gap-2 text-center">
           <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
@@ -321,24 +286,20 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     )}
 
     {canShow('saves') && (proficientSaves.length > 0 || canShow('allSaves')) && (
-      <section
-        class="border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show={proficientSaves.length > 0 ? "canShow('saves')" : "canShow('saves') && canShow('allSaves')"}
-      >
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
         <SectionHeader title="Saving Throws" />
-        <div
-          class="grid grid-cols-2 gap-1 sm:grid-cols-3"
-          x-show="!canShow('allSaves')"
-        >
-          {proficientSaves.map((abilityName) => (
-            <div class="flex justify-between py-1 px-2 text-sm">
-              <span class="text-gray-700 dark:text-gray-300">{abilityName}</span>
-              <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(lookupAbility(abilityName).save)}</span>
-            </div>
-          ))}
-        </div>
+        {!canShow('allSaves') && (
+          <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
+            {proficientSaves.map((abilityName) => (
+              <div class="flex justify-between py-1 px-2 text-sm">
+                <span class="text-gray-700 dark:text-gray-300">{abilityName}</span>
+                <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(lookupAbility(abilityName).save)}</span>
+              </div>
+            ))}
+          </div>
+        )}
         {canShow('allSaves') && (
-          <div class={vitalsItemClass} x-show="canShow('allSaves')">
+          <div class={vitalsItemClass}>
             <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
               {saveColumns.map((column) => (
                 <table class="w-full text-sm">
@@ -372,24 +333,20 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     )}
 
     {canShow('skills') && skills.length > 0 && (
-      <section
-        class="border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show="canShow('skills')"
-      >
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
         <SectionHeader title="Skills" />
-        <div
-          class="grid grid-cols-2 gap-1 sm:grid-cols-3"
-          x-show="!canShow('allSkills')"
-        >
-          {skills.map((skill) => (
-            <div class="flex justify-between py-1 px-2 text-sm">
-              <span class="text-gray-700 dark:text-gray-300">{skill.name}</span>
-              <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</span>
-            </div>
-          ))}
-        </div>
+        {!canShow('allSkills') && (
+          <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
+            {skills.map((skill) => (
+              <div class="flex justify-between py-1 px-2 text-sm">
+                <span class="text-gray-700 dark:text-gray-300">{skill.name}</span>
+                <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</span>
+              </div>
+            ))}
+          </div>
+        )}
         {canShow('allSkills') && (
-          <div class={vitalsItemClass} x-show="canShow('allSkills')">
+          <div class={vitalsItemClass}>
             <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
               {skillColumns.map((column) => (
                 <table class="w-full text-sm">
@@ -433,10 +390,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     )}
 
     {canShow('languages') && languages.length > 0 && (
-      <section
-        class="border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show="canShow('languages')"
-      >
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
         <SectionHeader title="Languages" />
         <div class="flex flex-wrap gap-2">
           {languages.map((lang) => (
@@ -447,10 +401,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     )}
 
     {canShow('feats') && feats.length > 0 && (
-      <section
-        class="border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show="canShow('feats')"
-      >
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
         <SectionHeader title="Feats" />
         <div class="flex flex-wrap gap-2">
           {feats.map((feat) => (
@@ -461,10 +412,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     )}
 
     {canShow('weapons') && weaponRows.length > 0 && (
-      <section
-        class="border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show="canShow('weapons')"
-      >
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
         <SectionHeader title="Equipped Weapons" />
         <div class={vitalsItemClass}>
           <table class="w-full text-sm">
@@ -492,10 +440,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     )}
 
     {canShow('inventory') && showInventory && (
-      <section
-        class="border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show="canShow('inventory')"
-      >
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
         <SectionHeader title="Inventory" />
         {inventoryRows.length > 0 && (
           <>
@@ -541,10 +486,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     )}
 
     {canShow('features') && featuresByLevel.length > 0 && (
-      <section
-        class="border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show="canShow('features')"
-      >
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
         <SectionHeader title="Features" />
           {featuresByLevel.map((group, gi) => (
             <div>
@@ -579,10 +521,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     )}
 
     {canShow('powers') && powersByLevel.length > 0 && (
-      <section
-        class="border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show="canShow('powers')"
-      >
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
         <SectionHeader title="Powers" />
           {powersByLevel.map((levelGroup, li) => (
             <div>
