@@ -259,7 +259,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
               class="grid grid-cols-3 @lg:grid-cols-6 gap-1"
             >
               {abilityNames.map((abilityName, i) => (
-                <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
+                <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
                   <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{abilityShort[i]}</div>
                   <div class="text-xl font-bold text-gray-900 dark:text-gray-100">{lookupAbility(abilityName).score}</div>
                   <div class="text-sm text-gray-600 dark:text-gray-400">{signed(lookupAbility(abilityName).bonus)}</div>
