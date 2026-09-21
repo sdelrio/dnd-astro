@@ -26,7 +26,7 @@ const { character, display = 'medium', image } = Astro.props;
 // --- Display-mode rank policy -----------------------------------------------
 // Each section declares the minimum display mode required to appear.
 // Rank order: small=0, medium=1, large=2.
-// This map drives which sections render at build time.
+// canShow() is the single build-time source of truth for which sections render.
 const RANKS: Record<string, number> = { small: 0, medium: 1, large: 2 };
 function rank(mode: string): number {
   return RANKS[mode] ?? 0;

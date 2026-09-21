@@ -288,13 +288,14 @@ describe('XmlCard All-skills section', () => {
   });
 
   it('renders the prof-only skills grid in medium mode but not in large mode', async () => {
-    const medium = skillsSection(await renderCard('medium'));
-    expect(medium).toContain('Perception');
+    const profOnly = { name: 'Prof Only Skill', total: 9 };
+    const medium = skillsSection(await renderCard('medium', { skills: [profOnly] }));
+    expect(medium).toContain('Prof Only Skill');
     expect(medium).toContain('font-mono');
     expect(medium).not.toContain('<table');
 
-    const large = skillsSection(await renderCard('large'));
-    expect(large).not.toContain('justify-between');
+    const large = skillsSection(await renderCard('large', { skills: [profOnly] }));
+    expect(large).not.toContain('Prof Only Skill');
     expect(large).toContain('<table');
   });
 });
@@ -505,7 +506,7 @@ describe('XmlCard Saving Throws section', () => {
     expect(large.match(/<table/g)).toHaveLength(2);
     expect(large).toContain('>Ability</th>');
     expect(large).toContain('>Save</th>');
-    expect(large).not.toContain('justify-between');
+    expect(large).not.toContain('>Strength<');
 
     expect(savesSection(await renderCard('small'))).toBe('');
     const medium = savesSection(await renderCard('medium'));
@@ -598,6 +599,12 @@ describe('XmlCard display-mode toggle', () => {
   });
 });
 
+function expectFixedModeCopy(body: string): void {
+  expect(body).not.toMatch(/S\/M/);
+  expect(body).not.toMatch(/toggle/i);
+  expect(body).toContain('build time');
+}
+
 describe('XmlCard visual test page', () => {
   it('documents the Passive Skills subsection under Display: Large', () => {
     const large = testPageSource.indexOf('## Display: Large');
@@ -608,9 +615,7 @@ describe('XmlCard visual test page', () => {
     expect(subsection).toBeLessThan(notes);
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('display="large"');
-    expect(body).not.toMatch(/S\/M/);
-    expect(body).not.toMatch(/toggle/i);
-    expect(body).toContain('build time');
+    expectFixedModeCopy(body);
     expect(body).toContain('tooltip');
     expect(body).toMatch(/single row/);
     expect(body).toContain('Passive Perception');
@@ -628,9 +633,7 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('ethir');
     expect(body).toContain('tanadirian');
-    expect(body).not.toMatch(/S\/M/);
-    expect(body).not.toMatch(/toggle/i);
-    expect(body).toContain('build time');
+    expectFixedModeCopy(body);
   });
 
   it('documents the Equipped Weapons subsection under Display: Large', () => {
@@ -643,9 +646,7 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('alberich');
     expect(body).toContain('display="large"');
-    expect(body).not.toMatch(/S\/M/);
-    expect(body).not.toMatch(/toggle/i);
-    expect(body).toContain('build time');
+    expectFixedModeCopy(body);
     expect(body).toContain('ATK');
     expect(body).toContain('2d6+4 Slashing');
   });
@@ -660,9 +661,7 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('alberich');
     expect(body).toContain('display="large"');
-    expect(body).not.toMatch(/S\/M/);
-    expect(body).not.toMatch(/toggle/i);
-    expect(body).toContain('build time');
+    expectFixedModeCopy(body);
     expect(body).toContain('68.0 / 270 lb. carried');
     expect(body).toContain('Current Wealth');
     expect(body).toContain('Item');
@@ -679,9 +678,7 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('alberich');
     expect(body).toContain('display="large"');
-    expect(body).not.toMatch(/S\/M/);
-    expect(body).not.toMatch(/toggle/i);
-    expect(body).toContain('build time');
+    expectFixedModeCopy(body);
     expect(body).toContain('Ability');
     expect(body).toContain('Save');
     expect(body).toContain('Proficient');
