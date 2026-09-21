@@ -124,6 +124,34 @@ function inventoryRows(section: string): string[] {
   return section.split('<tr').slice(1);
 }
 
+function savesSection(html: string): string {
+  const marker = html.indexOf('>Saving Throws</h2>');
+  if (marker === -1) return '';
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
+function saveTables(section: string): string[] {
+  return section.split('<table').slice(1);
+}
+
+function saveRows(table: string): string[] {
+  return table.split('<tr').slice(1);
+}
+
+function saveRowShorts(table: string): string[] {
+  return saveRows(table)
+    .filter((row) => !row.includes('<th'))
+    .map((row) => row.match(/<span>([A-Z]{3})<\/span>/)?.[1] ?? '');
+}
+
+function saveRow(table: string, short: string): string {
+  const matches = saveRows(table).filter((row) => row.includes(`>${short}<`));
+  expect(matches).toHaveLength(1);
+  return matches[0];
+}
+
 function parseStaticPolicy(): Record<string, number> {
   const rankByMode: Record<string, number> = { small: 0, medium: 1, large: 2 };
   const body = cardSource.match(/const sectionPolicy = \{([\s\S]*?)\} as const;/)?.[1] ?? '';
@@ -521,6 +549,114 @@ describe('XmlCard Inventory section', () => {
   });
 });
 
+describe('XmlCard Saving Throws section', () => {
+  const noProficiency = Object.fromEntries(
+    Object.entries(baseCharacter.abilities).map(([key, ability]) => [
+      key,
+      { ...ability, saveprof: 0 },
+    ])
+  );
+
+  it('keeps the build-time and live rank policy maps in sync', async () => {
+    const live = parseLivePolicy(await renderCard('large'));
+    const stat = parseStaticPolicy();
+    expect(stat.allSaves).toBe(2);
+    expect(live).toEqual(stat);
+  });
+
+  it('renders the all-saves card in large mode only', async () => {
+    const large = savesSection(await renderCard('large'));
+    expect(large.match(/<table/g)).toHaveLength(2);
+    expect(large).toContain('>Ability</th>');
+    expect(large).toContain('>Save</th>');
+
+    expect(savesSection(await renderCard('small'))).toBe('');
+    const medium = savesSection(await renderCard('medium'));
+    expect(medium).not.toContain('<table');
+    expect(medium).not.toContain('Ability');
+  });
+
+  it('splits the six saves 3+3 in standard order inside one card', async () => {
+    const section = savesSection(await renderCard('large'));
+    const tables = saveTables(section);
+    expect(tables).toHaveLength(2);
+    expect(saveRowShorts(tables[0])).toEqual(['STR', 'DEX', 'CON']);
+    expect(saveRowShorts(tables[1])).toEqual(['INT', 'WIS', 'CHA']);
+    expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
+  });
+
+  it('marks a proficient save with exactly one gold dot and no others', async () => {
+    const section = savesSection(await renderCard('large'));
+
+    for (const short of ['STR', 'CON']) {
+      const row = saveRow(section, short);
+      expect(row.match(/bg-\[#c68000\]/g)).toHaveLength(1);
+      expect(row).toContain('title="Proficient"');
+    }
+
+    for (const short of ['DEX', 'INT', 'WIS', 'CHA']) {
+      const row = saveRow(section, short);
+      expect(row).not.toContain('bg-[#c68000]');
+      expect(row).not.toContain('title=');
+    }
+
+    expect(section).not.toContain('<button');
+  });
+
+  it('shows each signed save bonus right-aligned in mono', async () => {
+    const section = savesSection(await renderCard('large'));
+    const bonuses: Record<string, string> = {
+      STR: '+5',
+      DEX: '+1',
+      CON: '+4',
+      INT: '+0',
+      WIS: '+1',
+      CHA: '-1',
+    };
+    for (const [short, bonus] of Object.entries(bonuses)) {
+      const row = saveRow(section, short);
+      expect(row).toContain('font-mono');
+      expect(row).toContain(`>${bonus}</td>`);
+    }
+  });
+
+  it('renders the all-saves card for a save-less character in large mode only', async () => {
+    const large = savesSection(await renderCard('large', { abilities: noProficiency }));
+    expect(large.match(/<table/g)).toHaveLength(2);
+
+    const medium = await renderCard('medium', { abilities: noProficiency });
+    expect(medium).not.toContain('Saving Throws');
+  });
+
+  it('keeps the unchanged prof-only grid in medium mode', async () => {
+    const medium = savesSection(await renderCard('medium'));
+    expect(medium).toContain('Strength');
+    expect(medium).toContain('Constitution');
+    expect(medium).not.toContain('Dexterity');
+    expect(medium).toContain('justify-between');
+    expect(medium).toContain('font-mono');
+    expect(medium).not.toContain('<table');
+  });
+
+  it('stays between Passive Skills and Skills and carries the live toggling predicates', async () => {
+    const html = await renderCard('large');
+    const passives = html.indexOf('Passive Skills');
+    const saves = html.indexOf('>Saving Throws</h2>');
+    const skills = html.indexOf('>Skills</h2>');
+    expect(passives).toBeGreaterThan(-1);
+    expect(saves).toBeGreaterThan(passives);
+    expect(skills).toBeGreaterThan(saves);
+
+    const section = savesSection(html);
+    expect(section).toContain(`x-show="canShow('saves')"`);
+    expect(section).toContain(`x-show="!canShow('allSaves')"`);
+    expect(section).toContain(`x-show="canShow('allSaves')"`);
+
+    const saveLess = savesSection(await renderCard('large', { abilities: noProficiency }));
+    expect(saveLess).toContain(`x-show="canShow('saves') &amp;&amp; canShow('allSaves')"`);
+  });
+});
+
 describe('XmlCard visual test page', () => {
   it('documents the Passive Skills subsection under Display: Large', () => {
     const large = testPageSource.indexOf('## Display: Large');
@@ -582,5 +718,21 @@ describe('XmlCard visual test page', () => {
     expect(body).toContain('Current Wealth');
     expect(body).toContain('Item');
     expect(body).toContain('State');
+  });
+
+  it('documents the Saving Throws subsection under Display: Large', () => {
+    const large = testPageSource.indexOf('## Display: Large');
+    const notes = testPageSource.indexOf('## Notes');
+    const subsection = testPageSource.indexOf('### Saving Throws');
+    expect(large).toBeGreaterThan(-1);
+    expect(subsection).toBeGreaterThan(large);
+    expect(subsection).toBeLessThan(notes);
+    const body = testPageSource.slice(subsection, notes);
+    expect(body).toContain('alberich');
+    expect(body).toContain('display="large"');
+    expect(body).toMatch(/S\/M/);
+    expect(body).toContain('Ability');
+    expect(body).toContain('Save');
+    expect(body).toContain('Proficient');
   });
 });
