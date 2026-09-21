@@ -69,6 +69,20 @@ describe('build-xml-characters', () => {
     <hp>
       <total type="number">28</total>
     </hp>
+    <inventorylist>
+      <id-00001>
+        <name type="string">Longsword</name>
+        <count type="number">1</count>
+        <weight type="number">3</weight>
+        <carried type="number">2</carried>
+      </id-00001>
+    </inventorylist>
+    <coins>
+      <slot1>
+        <amount type="number">15</amount>
+        <name type="string">gp</name>
+      </slot1>
+    </coins>
   </character>
 </root>`;
 
@@ -112,6 +126,10 @@ describe('build-xml-characters', () => {
       expect(generatedJson[0].filename).toBe('testhero');
       expect(generatedJson[0].avatarPath).toBe('/fg/avatar/testhero.jpg');
       expect(generatedJson[0].name).toBe('Test Hero');
+      expect(generatedJson[0].inventory).toEqual([
+        { name: 'Longsword', count: 1, weight: 3, carried: 2 },
+      ]);
+      expect(generatedJson[0].coins).toEqual({ pp: 0, gp: 15, ep: 0, sp: 0, cp: 0 });
 
       // Verify astroOutputFile (.astro/generated/characters.json format)
       expect(existsSync(astroOutputFile)).toBe(true);
@@ -120,6 +138,10 @@ describe('build-xml-characters', () => {
       expect(astroJson[0].filename).toBe('testhero');
       expect(astroJson[0].avatarPath).toBe('/fg/avatar/testhero.jpg');
       expect(astroJson[0].character.name).toBe('Test Hero');
+      expect(astroJson[0].character.inventory).toEqual([
+        { name: 'Longsword', count: 1, weight: 3, carried: 2 },
+      ]);
+      expect(astroJson[0].character.coins).toEqual({ pp: 0, gp: 15, ep: 0, sp: 0, cp: 0 });
     });
 
     it('skips unparseable or corrupted XML files with warnings', () => {
@@ -185,6 +207,8 @@ describe('build-xml-characters', () => {
         (c: { filename: string }) => c.filename === 'draknor'
       );
       expect(draknorJson.weapons.length).toBeGreaterThan(0);
+      expect(draknorJson.inventory).toHaveLength(22);
+      expect(draknorJson.coins).toEqual({ pp: 0, gp: 378, ep: 0, sp: 583, cp: 0 });
 
       const antonidas = characters.find((c) => c.filename === 'antonidas');
       expect(antonidas).toBeDefined();

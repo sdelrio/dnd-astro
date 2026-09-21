@@ -99,6 +99,8 @@ describe('toFilterableCharacters', () => {
     features: [{ level: 1, name: 'Favored Enemy', source: 'Ranger' }],
     powers: [],
     weapons: [],
+    inventory: [],
+    coins: { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 },
     filename: 'aelar',
     avatarPath: '/fg/avatar/aelar.jpg',
   };
