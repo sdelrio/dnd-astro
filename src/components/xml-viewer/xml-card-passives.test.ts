@@ -53,10 +53,11 @@ beforeAll(async () => {
 
 async function renderCard(
   display: 'small' | 'medium' | 'large',
-  overrides: Partial<CharacterData> = {}
+  overrides: Partial<CharacterData> = {},
+  extraProps: { link?: boolean } = {}
 ): Promise<string> {
   return container.renderToString(XmlCard, {
-    props: { character: { ...baseCharacter, ...overrides }, display },
+    props: { character: { ...baseCharacter, ...overrides }, display, ...extraProps },
   });
 }
 
@@ -599,6 +600,43 @@ describe('XmlCard display-mode toggle', () => {
   });
 });
 
+function portraitImg(html: string): string {
+  const match = html.match(/<img\b[^>]*alt="Test Hero portrait"[^>]*>/);
+  expect(match).not.toBeNull();
+  return match?.[0] ?? '';
+}
+
+function portraitAnchor(html: string): string {
+  return html.match(/<a\b[^>]*>\s*<img\b[^>]*alt="Test Hero portrait"/)?.[0] ?? '';
+}
+
+describe('XmlCard portrait link', () => {
+  it('wraps the portrait in a link to the character page by default', async () => {
+    const html = await renderCard('large');
+    const anchor = portraitAnchor(html);
+    expect(anchor).toContain('href="/fantasy-grounds/characters/testhero"');
+    expect(anchor).toContain('aria-label="View Test Hero character sheet"');
+    expect(portraitImg(html)).toContain('title="Test Hero"');
+    expect(portraitImg(html)).toContain('src="/fg/avatar/faceless.svg"');
+  });
+
+  it('renders no anchor around the portrait when link is false', async () => {
+    const html = await renderCard('large', {}, { link: false });
+    expect(portraitAnchor(html)).toBe('');
+    expect(html).not.toContain('href="/fantasy-grounds/characters/testhero"');
+    expect(html).not.toContain('aria-label="View Test Hero character sheet"');
+    expect(portraitImg(html)).toContain('title="Test Hero"');
+  });
+
+  it('renders no anchor around the portrait when the character has no filename', async () => {
+    const html = await renderCard('large', { filename: undefined });
+    expect(portraitAnchor(html)).toBe('');
+    expect(html).not.toContain('href="/fantasy-grounds/characters/testhero"');
+    expect(html).not.toContain('aria-label="View Test Hero character sheet"');
+    expect(portraitImg(html)).toContain('title="Test Hero"');
+  });
+});
+
 function expectFixedModeCopy(body: string): void {
   expect(body).not.toMatch(/S\/M/);
   expect(body).not.toMatch(/toggle/i);
@@ -606,6 +644,17 @@ function expectFixedModeCopy(body: string): void {
 }
 
 describe('XmlCard visual test page', () => {
+  it('documents that card portraits link to character pages', () => {
+    const display = testPageSource.indexOf('## Display: Small');
+    const linkNote = testPageSource.indexOf('Card portraits link to character pages');
+    expect(linkNote).toBeGreaterThan(-1);
+    expect(linkNote).toBeLessThan(display);
+    const body = testPageSource.slice(linkNote, display);
+    expect(body).toContain('/fantasy-grounds/characters/');
+    expect(body).toContain('real character page');
+    expect(body).toContain('link={false}');
+  });
+
   it('documents the Passive Skills subsection under Display: Large', () => {
     const large = testPageSource.indexOf('## Display: Large');
     const notes = testPageSource.indexOf('## Notes');

@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "Character Pages"
 author: "opencode (grill-with-docs)"
 date: "2026-09-21"
@@ -144,6 +144,6 @@ Extend `src/components/xml-viewer/xml-card-passives.test.ts`:
 
 ## Status
 
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] ADR updated (ADR-0006 written)
+- [x] Implementation complete
+- [x] Tests passing
+- [x] ADR updated (ADR-0006 written)
