@@ -124,6 +124,7 @@ function lookupAbility(fullName: string): AbilityView {
 }
 
 const proficientSaves = abilityNames.filter((a) => lookupAbility(a).saveprof > 0);
+const showSaves = canShow('saves') && (proficientSaves.length > 0 || canShow('allSaves'));
 
 interface SaveRow {
   short: string;
@@ -162,7 +163,7 @@ const inventoryRows = toInventoryRows(inventory);
 const inventoryWeight = carriedWeight(inventory);
 const inventoryCapacity = carryCapacity(lookupAbility('Strength').score);
 const coinRows = toCoinRows(coins);
-const showInventory = hasInventoryContents(inventory, coins);
+const hasInventory = hasInventoryContents(inventory, coins);
 
 const sortedPowers = [...powers].sort(
   (a, b) =>
@@ -175,6 +176,14 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
     items: gg.items,
   })),
 }));
+
+const showSkills = canShow('skills') && skills.length > 0;
+const showLanguages = canShow('languages') && languages.length > 0;
+const showFeats = canShow('feats') && feats.length > 0;
+const showWeapons = canShow('weapons') && weaponRows.length > 0;
+const showInventory = canShow('inventory') && hasInventory;
+const showFeatures = canShow('features') && featuresByLevel.length > 0;
+const showPowers = canShow('powers') && powersByLevel.length > 0;
 ---
 
 <div
@@ -226,200 +235,261 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
   </header>
 
   <div class="p-4 space-y-4">
-    <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4 first:border-t-0 first:pt-0">
-      <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Vitals</span>
-      <div class="grid grid-cols-4 gap-2 text-center">
-        <div class={vitalsItemClass}>
-          <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">AC</div>
-          <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{ac}</div>
-        </div>
-        <div class={vitalsItemClass}>
-          <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Speed</div>
-          <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{speed}{display !== 'small' && ' ft'}</div>
-        </div>
-        <div class={vitalsItemClass}>
-          <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Init</div>
-          <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{signed(initiative)}</div>
-        </div>
-        {canShow('profBonus') && (
-          <div class={vitalsItemClass}>
-            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Prof</div>
-            <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{signed(profBonus)}</div>
-          </div>
-        )}
-      </div>
-    </section>
-
-    <section class="pt-2" title="Abilities">
-        {display === 'small' ? (
-          <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
-        ) : (
-          <>
-            <div
-              class="grid grid-cols-3 @lg:grid-cols-6 gap-1"
-            >
-              {abilityNames.map((abilityName, i) => (
-                <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
-                  <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{abilityShort[i]}</div>
-                  <div class="text-xl font-bold text-gray-900 dark:text-gray-100">{lookupAbility(abilityName).score}</div>
-                  <div class="text-sm text-gray-600 dark:text-gray-400">{signed(lookupAbility(abilityName).bonus)}</div>
-                  <div class="text-xs text-gray-500 dark:text-gray-400">SAVE {signed(lookupAbility(abilityName).save)}</div>
+    <div class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
+      <section>
+        {display === 'large' && <SectionHeader title="Overview" />}
+        <div class="space-y-4">
+          <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4 first:border-t-0 first:pt-0">
+            <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Vitals</span>
+            <div class="grid grid-cols-4 gap-2 text-center">
+              <div class={vitalsItemClass}>
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">AC</div>
+                <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{ac}</div>
+              </div>
+              <div class={vitalsItemClass}>
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Speed</div>
+                <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{speed}{display !== 'small' && ' ft'}</div>
+              </div>
+              <div class={vitalsItemClass}>
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Init</div>
+                <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{signed(initiative)}</div>
+              </div>
+              {canShow('profBonus') && (
+                <div class={vitalsItemClass}>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Prof</div>
+                  <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{signed(profBonus)}</div>
                 </div>
-              ))}
+              )}
             </div>
+          </section>
 
-          </>
-        )}
-    </section>
+          <section class="pt-2" title="Abilities">
+            {display === 'small' ? (
+              <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
+            ) : (
+              <>
+                <div
+                  class="grid grid-cols-3 @lg:grid-cols-6 gap-1"
+                >
+                  {abilityNames.map((abilityName, i) => (
+                    <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
+                      <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{abilityShort[i]}</div>
+                      <div class="text-xl font-bold text-gray-900 dark:text-gray-100">{lookupAbility(abilityName).score}</div>
+                      <div class="text-sm text-gray-600 dark:text-gray-400">{signed(lookupAbility(abilityName).bonus)}</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">SAVE {signed(lookupAbility(abilityName).save)}</div>
+                    </div>
+                  ))}
+                </div>
 
-    {canShow('passives') && (
-      <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4">
-        <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Passive Skills</span>
-        <div class="grid grid-cols-3 gap-2 text-center">
-          <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
-            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Perception</div>
-            <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.perception}</div>
-          </div>
-          <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
-            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Investigation</div>
-            <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.investigation}</div>
-          </div>
-          <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
-            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Insight</div>
-            <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.insight}</div>
-          </div>
+              </>
+            )}
+          </section>
+
+          {canShow('passives') && (
+            <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4">
+              <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Passive Skills</span>
+              <div class="grid grid-cols-3 gap-2 text-center">
+                <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Perception</div>
+                  <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.perception}</div>
+                </div>
+                <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Investigation</div>
+                  <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.investigation}</div>
+                </div>
+                <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
+                  <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Insight</div>
+                  <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.insight}</div>
+                </div>
+              </div>
+            </section>
+          )}
         </div>
       </section>
-    )}
 
-    {canShow('saves') && (proficientSaves.length > 0 || canShow('allSaves')) && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
-        <SectionHeader title="Saving Throws" />
-        {!canShow('allSaves') && (
-          <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
-            {proficientSaves.map((abilityName) => (
-              <div class="flex justify-between py-1 px-2 text-sm">
-                <span class="text-gray-700 dark:text-gray-300">{abilityName}</span>
-                <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(lookupAbility(abilityName).save)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        {canShow('allSaves') && (
-          <div class={vitalsItemClass}>
-            <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
-              {saveColumns.map((column) => (
-                <table class="w-full text-sm">
-                  <thead>
-                    <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                      <th class="text-left font-medium pb-1">Ability</th>
-                      <th class="text-right font-medium pb-1">Save</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {column.map((row) => (
-                      <tr class="border-t border-gray-200 dark:border-gray-700">
-                        <td class="py-1 text-gray-700 dark:text-gray-300">
-                          <span class="inline-flex items-center gap-1">
-                            <span>{row.short}</span>
-                            {row.saveprof > 0 && (
-                              <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Proficient"></span>
-                            )}
-                          </span>
-                        </td>
-                        <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(row.save)}</td>
-                      </tr>
+      {(showSaves || showLanguages || showFeats) && (
+        <div class="space-y-4">
+          {showSaves && (
+            <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+              <SectionHeader title="Saving Throws" />
+              {!canShow('allSaves') && (
+                <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
+                  {proficientSaves.map((abilityName) => (
+                    <div class="flex justify-between py-1 px-2 text-sm">
+                      <span class="text-gray-700 dark:text-gray-300">{abilityName}</span>
+                      <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(lookupAbility(abilityName).save)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {canShow('allSaves') && (
+                <div class={vitalsItemClass}>
+                  <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
+                    {saveColumns.map((column) => (
+                      <table class="w-full text-sm">
+                        <thead>
+                          <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                            <th class="text-left font-medium pb-1">Ability</th>
+                            <th class="text-right font-medium pb-1">Save</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {column.map((row) => (
+                            <tr class="border-t border-gray-200 dark:border-gray-700">
+                              <td class="py-1 text-gray-700 dark:text-gray-300">
+                                <span class="inline-flex items-center gap-1">
+                                  <span>{row.short}</span>
+                                  {row.saveprof > 0 && (
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Proficient"></span>
+                                  )}
+                                </span>
+                              </td>
+                              <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(row.save)}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     ))}
-                  </tbody>
-                </table>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
-    )}
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
 
-    {canShow('skills') && skills.length > 0 && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
-        <SectionHeader title="Skills" />
-        {!canShow('allSkills') && (
-          <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
-            {skills.map((skill) => (
-              <div class="flex justify-between py-1 px-2 text-sm">
-                <span class="text-gray-700 dark:text-gray-300">{skill.name}</span>
-                <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</span>
+          {showLanguages && (
+            <section class={`border-t border-gray-100 dark:border-gray-700 pt-4${showSaves ? '' : ' @6xl:border-t-0 @6xl:pt-0'}`}>
+              <SectionHeader title="Languages" />
+              <div class="flex flex-wrap gap-2">
+                {languages.map((lang) => (
+                  <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
-        {canShow('allSkills') && (
-          <div class={vitalsItemClass}>
-            <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
-              {skillColumns.map((column) => (
-                <table class="w-full text-sm">
-                  <thead>
-                    <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                      <th class="text-left font-medium pb-1">Skill</th>
-                      <th class="text-left font-medium pb-1">Abil</th>
-                      <th class="text-right font-medium pb-1">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {column.map((skill) => (
-                      <tr class="border-t border-gray-200 dark:border-gray-700">
-                        <td class="py-1 text-gray-700 dark:text-gray-300">
-                          <span class="inline-flex items-center gap-1">
-                            <span class="truncate">{skill.name}</span>
-                            {skill.prof > 0 && (
-                              <span
-                                class="inline-flex items-center gap-px"
-                                title={skill.prof > 1 ? 'Expertise' : 'Proficient'}
-                              >
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
-                                {skill.prof > 1 && (
-                                  <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+            </section>
+          )}
+
+          {showFeats && (
+            <section class={`border-t border-gray-100 dark:border-gray-700 pt-4${showSaves || showLanguages ? '' : ' @6xl:border-t-0 @6xl:pt-0'}`}>
+              <SectionHeader title="Feats" />
+              <div class="flex flex-wrap gap-2">
+                {feats.map((feat) => (
+                  <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
+    </div>
+
+    {(showSkills || showInventory) && (
+      <div class={showSkills && showInventory ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
+        {showSkills && (
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+            <SectionHeader title="Skills" />
+            {!canShow('allSkills') && (
+              <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
+                {skills.map((skill) => (
+                  <div class="flex justify-between py-1 px-2 text-sm">
+                    <span class="text-gray-700 dark:text-gray-300">{skill.name}</span>
+                    <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {canShow('allSkills') && (
+              <div class={vitalsItemClass}>
+                <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
+                  {skillColumns.map((column) => (
+                    <table class="w-full text-sm">
+                      <thead>
+                        <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                          <th class="text-left font-medium pb-1">Skill</th>
+                          <th class="text-left font-medium pb-1">Abil</th>
+                          <th class="text-right font-medium pb-1">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {column.map((skill) => (
+                          <tr class="border-t border-gray-200 dark:border-gray-700">
+                            <td class="py-1 text-gray-700 dark:text-gray-300">
+                              <span class="inline-flex items-center gap-1">
+                                <span class="truncate">{skill.name}</span>
+                                {skill.prof > 0 && (
+                                  <span
+                                    class="inline-flex items-center gap-px"
+                                    title={skill.prof > 1 ? 'Expertise' : 'Proficient'}
+                                  >
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                                    {skill.prof > 1 && (
+                                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                                    )}
+                                  </span>
                                 )}
                               </span>
-                            )}
-                          </span>
-                        </td>
-                        <td class="py-1 text-gray-500 dark:text-gray-400">{abilityAbbr(skill.stat)}</td>
-                        <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ))}
-            </div>
-          </div>
+                            </td>
+                            <td class="py-1 text-gray-500 dark:text-gray-400">{abilityAbbr(skill.stat)}</td>
+                            <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
         )}
-      </section>
+
+        {showInventory && (
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+            <SectionHeader title="Inventory" />
+            {inventoryRows.length > 0 && (
+              <>
+                <p class="m-0 mb-1 text-xs text-gray-500 dark:text-gray-400">
+                  {inventoryWeight} / {inventoryCapacity} lb. carried
+                </p>
+                <div class={vitalsItemClass}>
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                        <th class="text-left font-medium pb-1">Item</th>
+                        <th class="text-right font-medium pb-1">Count</th>
+                        <th class="text-right font-medium pb-1">Weight</th>
+                        <th class="text-left font-medium pb-1">State</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {inventoryRows.map((item) => (
+                        <tr class="border-t border-gray-200 dark:border-gray-700">
+                          <td class="py-1 text-gray-700 dark:text-gray-300">{item.name}</td>
+                          <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.count}</td>
+                          <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.weight}</td>
+                          <td class="py-1 text-gray-500 dark:text-gray-400">{item.state}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+            <div class={`mt-2 ${vitalsItemClass}`}>
+              <div class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Current Wealth</div>
+              <div class="grid grid-cols-5 gap-1 text-center">
+                {coinRows.map((coin) => (
+                  <div>
+                    <div class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">{coin.label}</div>
+                    <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{coin.value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </div>
     )}
 
-    {canShow('languages') && languages.length > 0 && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
-        <SectionHeader title="Languages" />
-        <div class="flex flex-wrap gap-2">
-          {languages.map((lang) => (
-            <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
-          ))}
-        </div>
-      </section>
-    )}
-
-    {canShow('feats') && feats.length > 0 && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
-        <SectionHeader title="Feats" />
-        <div class="flex flex-wrap gap-2">
-          {feats.map((feat) => (
-            <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
-          ))}
-        </div>
-      </section>
-    )}
-
-    {canShow('weapons') && weaponRows.length > 0 && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
+    {showWeapons && (
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
         <SectionHeader title="Equipped Weapons" />
         <div class={vitalsItemClass}>
           <table class="w-full text-sm">
@@ -446,127 +516,85 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
       </section>
     )}
 
-    {canShow('inventory') && showInventory && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
-        <SectionHeader title="Inventory" />
-        {inventoryRows.length > 0 && (
-          <>
-            <p class="m-0 mb-1 text-xs text-gray-500 dark:text-gray-400">
-              {inventoryWeight} / {inventoryCapacity} lb. carried
-            </p>
-            <div class={vitalsItemClass}>
-              <table class="w-full text-sm">
-                <thead>
-                  <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                    <th class="text-left font-medium pb-1">Item</th>
-                    <th class="text-right font-medium pb-1">Count</th>
-                    <th class="text-right font-medium pb-1">Weight</th>
-                    <th class="text-left font-medium pb-1">State</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {inventoryRows.map((item) => (
-                    <tr class="border-t border-gray-200 dark:border-gray-700">
-                      <td class="py-1 text-gray-700 dark:text-gray-300">{item.name}</td>
-                      <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.count}</td>
-                      <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.weight}</td>
-                      <td class="py-1 text-gray-500 dark:text-gray-400">{item.state}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-        <div class={`mt-2 ${vitalsItemClass}`}>
-          <div class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Current Wealth</div>
-          <div class="grid grid-cols-5 gap-1 text-center">
-            {coinRows.map((coin) => (
+    {(showFeatures || showPowers) && (
+      <div class={showFeatures && showPowers ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
+        {showFeatures && (
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+            <SectionHeader title="Features" />
+            {featuresByLevel.map((group, gi) => (
               <div>
-                <div class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">{coin.label}</div>
-                <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{coin.value}</div>
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                  Level {group.level}
+                </h3>
+                {group.items.map((feature, fi) => (
+                  <div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                    <div
+                      class="flex items-center justify-between cursor-pointer"
+                      role="button"
+                      tabindex="0"
+                      @click={"toggleSection('feature-" + gi + '-' + fi + "')"}
+                      @keydown.enter={"toggleSection('feature-" + gi + '-' + fi + "')"}
+                    >
+                      <span class="font-medium text-gray-900 dark:text-gray-100">{feature.name}</span>
+                      <span class="text-xs text-gray-500 dark:text-gray-400">{feature.source}</span>
+                    </div>
+                    <div
+                      class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400"
+                      x-show={"isExpanded('feature-" + gi + '-' + fi + "')"}
+                      x-transition
+                    >
+                      <p class="m-0">Source: {feature.source}</p>
+                      <p class="m-0">Gained at level {feature.level}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+             ))}
+          </section>
+        )}
+
+        {showPowers && (
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+            <SectionHeader title="Powers" />
+            {powersByLevel.map((levelGroup, li) => (
+              <div>
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                  Level {levelGroup.level}
+                </h3>
+                {levelGroup.groups.map((group, gi) => (
+                  <div>
+                    <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
+                      {group.name}
+                    </h4>
+                    {group.items.map((power, pi) => (
+                      <div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                        <div
+                          class="flex items-center justify-between cursor-pointer"
+                          role="button"
+                          tabindex="0"
+                          @click={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
+                          @keydown.enter={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
+                        >
+                          <span class="font-medium text-gray-900 dark:text-gray-100">{power.name}</span>
+                          <span class="text-xs text-gray-500 dark:text-gray-400">{power.group}</span>
+                        </div>
+                        <div
+                          class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400"
+                          x-show={"isExpanded('power-" + li + '-' + gi + '-' + pi + "')"}
+                          x-transition
+                        >
+                          <p class="m-0">Level: {power.level}</p>
+                          <p class="m-0">Group: {power.group}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-    )}
-
-    {canShow('features') && featuresByLevel.length > 0 && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
-        <SectionHeader title="Features" />
-          {featuresByLevel.map((group, gi) => (
-            <div>
-              <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
-                Level {group.level}
-              </h3>
-              {group.items.map((feature, fi) => (
-                <div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-                  <div
-                    class="flex items-center justify-between cursor-pointer"
-                    role="button"
-                    tabindex="0"
-                    @click={"toggleSection('feature-" + gi + '-' + fi + "')"}
-                    @keydown.enter={"toggleSection('feature-" + gi + '-' + fi + "')"}
-                  >
-                    <span class="font-medium text-gray-900 dark:text-gray-100">{feature.name}</span>
-                    <span class="text-xs text-gray-500 dark:text-gray-400">{feature.source}</span>
-                  </div>
-                  <div
-                    class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400"
-                    x-show={"isExpanded('feature-" + gi + '-' + fi + "')"}
-                    x-transition
-                  >
-                    <p class="m-0">Source: {feature.source}</p>
-                    <p class="m-0">Gained at level {feature.level}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-           ))}
-      </section>
-    )}
-
-    {canShow('powers') && powersByLevel.length > 0 && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4">
-        <SectionHeader title="Powers" />
-          {powersByLevel.map((levelGroup, li) => (
-            <div>
-              <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
-                Level {levelGroup.level}
-              </h3>
-              {levelGroup.groups.map((group, gi) => (
-                <div>
-                  <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
-                    {group.name}
-                  </h4>
-                  {group.items.map((power, pi) => (
-                    <div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-                      <div
-                        class="flex items-center justify-between cursor-pointer"
-                        role="button"
-                        tabindex="0"
-                        @click={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
-                        @keydown.enter={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
-                      >
-                        <span class="font-medium text-gray-900 dark:text-gray-100">{power.name}</span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">{power.group}</span>
-                      </div>
-                      <div
-                        class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400"
-                        x-show={"isExpanded('power-" + li + '-' + gi + '-' + pi + "')"}
-                        x-transition
-                      >
-                        <p class="m-0">Level: {power.level}</p>
-                        <p class="m-0">Group: {power.group}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          ))}
-      </section>
+          </section>
+        )}
+      </div>
     )}
   </div>
 </div>
