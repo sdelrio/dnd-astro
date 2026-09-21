@@ -134,6 +134,109 @@ describe('parseCharacterXML', () => {
     expect(emptyWeaponlist?.weapons).toEqual([]);
   });
 
+  it('parses inventory items from the id-keyed inventorylist collection', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.inventory).toHaveLength(22);
+    expect(result?.inventory[0]).toEqual({
+      name: 'Plate Armor, +1',
+      count: 1,
+      weight: 65,
+      carried: 2,
+    });
+    expect(result?.inventory[4]).toEqual({
+      name: "Clothes, Traveler's",
+      count: 1,
+      weight: 4,
+      carried: 0,
+    });
+  });
+
+  it('defaults missing inventory fields to zero and yields an empty array without inventorylist', () => {
+    const xml = `
+      <root>
+        <character>
+          <name type="string">Pack Rat</name>
+          <inventorylist>
+            <id-00001>
+              <name type="string">Rope</name>
+              <count type="number">2</count>
+              <weight type="number">10</weight>
+              <carried type="number">1</carried>
+            </id-00001>
+            <id-00002>
+              <name type="string">Torch</name>
+            </id-00002>
+            <id-00003 />
+          </inventorylist>
+        </character>
+      </root>
+    `;
+    const result = parseCharacterXML(xml);
+    expect(result?.inventory).toEqual([
+      { name: 'Rope', count: 2, weight: 10, carried: 1 },
+      { name: 'Torch', count: 0, weight: 0, carried: 0 },
+      { name: '', count: 0, weight: 0, carried: 0 },
+    ]);
+    const withoutInventorylist = parseCharacterXML(`
+      <root><character><name type="string">Empty</name></character></root>
+    `);
+    const emptyInventorylist = parseCharacterXML(`
+      <root><character><name type="string">Empty</name><inventorylist /></character></root>
+    `);
+    expect(withoutInventorylist?.inventory).toEqual([]);
+    expect(emptyInventorylist?.inventory).toEqual([]);
+  });
+
+  it('parses coins from the slot-keyed shape', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/flint.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.coins).toEqual({ pp: 0, gp: 40, ep: 0, sp: 0, cp: 0 });
+  });
+
+  it('parses coins from the id-keyed shape', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.coins).toEqual({ pp: 0, gp: 378, ep: 0, sp: 583, cp: 0 });
+  });
+
+  it('ignores coin names that are not a denomination', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/karas.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    // slot6 holds 7 RATIONS, which is not a coin denomination and is dropped.
+    expect(result?.coins).toEqual({ pp: 4, gp: 468, ep: 22, sp: 22, cp: 52 });
+  });
+
+  it('sums amounts that share a denomination and ignores empty coin entries', () => {
+    const xml = `
+      <root>
+        <character>
+          <coins>
+            <slot1><amount type="number">5</amount><name type="string">gp</name></slot1>
+            <slot2><amount type="number">7</amount><name type="string">GP</name></slot2>
+            <slot3><amount type="number">9</amount><name type="string">RATIONS</name></slot3>
+            <slot4><amount type="number">3</amount></slot4>
+            <slot5 />
+            <slot6><amount type="number">2</amount><name type="string">SP</name></slot6>
+          </coins>
+        </character>
+      </root>
+    `;
+    const result = parseCharacterXML(xml);
+    expect(result?.coins).toEqual({ pp: 0, gp: 12, ep: 0, sp: 2, cp: 0 });
+  });
+
+  it('defaults missing or empty coins to all zeros', () => {
+    const withoutCoins = parseCharacterXML(`
+      <root><character><name type="string">Empty</name></character></root>
+    `);
+    const emptyCoins = parseCharacterXML(`
+      <root><character><name type="string">Empty</name><coins /></character></root>
+    `);
+    expect(withoutCoins?.coins).toEqual({ pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 });
+    expect(emptyCoins?.coins).toEqual({ pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 });
+  });
+
   it('exposes flat vitals and skill totals per SPEC-003', () => {
     const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
     const result = parseCharacterXML(xml);

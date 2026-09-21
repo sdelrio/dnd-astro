@@ -26,6 +26,21 @@ export interface WeaponData {
   damage: WeaponDamageData[];
 }
 
+export interface InventoryItem {
+  name: string;
+  count: number;
+  weight: number;
+  carried: number;
+}
+
+export interface Coins {
+  pp: number;
+  gp: number;
+  ep: number;
+  sp: number;
+  cp: number;
+}
+
 export interface CharacterData {
   name: string;
   race: string;
@@ -52,7 +67,17 @@ export interface CharacterData {
   features: Array<{ level: number; name: string; source: string }>;
   powers: Array<{ level: number; name: string; group: string }>;
   weapons: WeaponData[];
+  inventory: InventoryItem[];
+  coins: Coins;
 }
+
+const COIN_DENOMINATIONS: Record<string, keyof Coins> = {
+  PP: 'pp',
+  GP: 'gp',
+  EP: 'ep',
+  SP: 'sp',
+  CP: 'cp',
+};
 
 // Subclass naming patterns per class, used only for the level-1 feature-entry
 // fallback (a granted feature whose name IS the subclass, e.g.
@@ -222,6 +247,24 @@ export function parseCharacterXML(xml: string): CharacterData | null {
         type: getText(d, 'type'),
       })),
     }));
+  const inventoryNode = root.inventorylist ?? {};
+  const inventory = Object.keys(inventoryNode)
+    .filter((key) => key.startsWith('id-'))
+    .map((key) => inventoryNode[key])
+    .map((item) => ({
+      name: getText(item, 'name'),
+      count: Number(getText(item, 'count') || 0),
+      weight: Number(getText(item, 'weight') || 0),
+      carried: Number(getText(item, 'carried') || 0),
+    }));
+  const coins: Coins = { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 };
+  const coinsNode = (root.coins ?? {}) as Record<string, XmlFields | string>;
+  for (const entry of Object.values(coinsNode)) {
+    if (!entry || typeof entry !== 'object') continue;
+    const denomination = COIN_DENOMINATIONS[getText(entry, 'name').toUpperCase()];
+    if (!denomination) continue;
+    coins[denomination] += Number(getText(entry, 'amount') || 0);
+  }
 
   return {
     name: getText(root, 'name'),
@@ -245,6 +288,8 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     features,
     powers,
     weapons,
+    inventory,
+    coins,
   };
 }
 
