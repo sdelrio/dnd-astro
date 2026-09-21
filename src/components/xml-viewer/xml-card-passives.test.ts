@@ -58,9 +58,20 @@ async function renderCard(
 }
 
 function passiveSection(html: string): string {
-  const start = html.indexOf('Passive Skills');
-  const end = html.indexOf('Saving Throws');
-  return html.slice(start, end === -1 ? undefined : end);
+  const marker = html.indexOf('Passive Skills');
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
+function passiveSubcards(section: string): string[] {
+  const starts: number[] = [];
+  let marker = section.indexOf('rounded-[7px]');
+  while (marker !== -1) {
+    starts.push(section.lastIndexOf('<div', marker));
+    marker = section.indexOf('rounded-[7px]', marker + 1);
+  }
+  return starts.map((start, i) => section.slice(start, starts[i + 1] ?? section.length));
 }
 
 function parseStaticPolicy(): Record<string, number> {
@@ -97,9 +108,9 @@ describe('XmlCard Passive Skills section', () => {
 
   it('shows the three subcards with values from the parsed passives data', async () => {
     const section = passiveSection(await renderCard('large'));
-    expect(section).toContain('Perception');
-    expect(section).toContain('Investigation');
-    expect(section).toContain('Insight');
+    expect(section).toContain('Passive Perception');
+    expect(section).toContain('Passive Investigation');
+    expect(section).toContain('Passive Insight');
     expect(section).toContain('>14</div>');
     expect(section).toContain('>11</div>');
     expect(section).toContain('>10</div>');
@@ -115,6 +126,32 @@ describe('XmlCard Passive Skills section', () => {
   it('never renders in small or medium mode at build time', async () => {
     expect(await renderCard('small')).not.toContain('Passive Skills');
     expect(await renderCard('medium')).not.toContain('Passive Skills');
+  });
+
+  it('renders the section title as a hover tooltip instead of a heading', async () => {
+    const section = passiveSection(await renderCard('large'));
+    expect(section).not.toContain('<h2');
+    expect(section).toContain('opacity-0');
+    expect(section).toContain('group-hover:opacity-100');
+    expect(section).toContain('transition-opacity');
+    expect(section).toContain('pointer-events-none');
+    expect(section).toContain('>Passive Skills</span>');
+  });
+
+  it('lays each subcard out as a single label/value row', async () => {
+    const section = passiveSection(await renderCard('large'));
+    const labels = ['Passive Perception', 'Passive Investigation', 'Passive Insight'];
+    const values = ['14', '11', '10'];
+    const subcards = passiveSubcards(section);
+    expect(subcards).toHaveLength(3);
+    subcards.forEach((subcard, i) => {
+      expect(subcard).toContain('flex');
+      expect(subcard).toContain('justify-between');
+      const labelIndex = subcard.indexOf(labels[i]);
+      const valueIndex = subcard.indexOf(`>${values[i]}</div>`);
+      expect(labelIndex).toBeGreaterThan(-1);
+      expect(valueIndex).toBeGreaterThan(labelIndex);
+    });
   });
 
   it('uses one uniform vitals-item radius on all four corners of each subcard', async () => {
@@ -144,5 +181,10 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('display="large"');
     expect(body).toMatch(/S\/M/);
+    expect(body).toContain('tooltip');
+    expect(body).toMatch(/single row/);
+    expect(body).toContain('Passive Perception');
+    expect(body).toContain('Passive Investigation');
+    expect(body).toContain('Passive Insight');
   });
 });
