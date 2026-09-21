@@ -11,6 +11,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 | 0003 | Use Cloudflare Workers with Static Assets over Pages | accepted | 2026-09-13 |
 | 0004 | Use Only Supported Starlight Markdown Admonitions | accepted | 2026-09-19 |
 | 0005 | Table Row Striping Pattern with Transparent Headers | accepted | 2026-09-19 |
+| 0006 | Pre-render Character Pages as a Static Dynamic Route | accepted | 2026-09-21 |
 
 ## About ADRs
 
