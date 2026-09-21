@@ -13,6 +13,7 @@ This directory contains feature specifications (specs) for the DnD Companion pro
 | 005 | Dice Roller & Character Sheet Generator | archived | dice, roller, character-creation, alpine-js, dnd, mechanics | `src/components/dice-roller/`, `src/content/docs/`, `astro.config.mjs` | Alpine.js dice roller for ability scores (4d6-drop-lowest) |
 | 006 | Book-Filtered Feat Matrix | archived | feats, filtering, search, alpine-js, dnd, character-options | `src/components/feats-explorer/`, `src/content/docs/`, `astro.config.mjs` | Fuzzy search and multi-select filtering for D&D feats |
 | 007 | Passive Skills | archived | character-sheet, xml, fantasy-grounds, skills, passive, xml-viewer | `src/utils/parse-character-xml.ts`, `src/components/xml-viewer/XmlCard.astro`, `src/content/docs/guides/xml-card-test.mdx` | Large-mode Passive Perception/Investigation/Insight subcards from skill totals |
+| 008 | All-skills table | active | character-sheet, xml, fantasy-grounds, skills, xml-viewer, all-skills | `src/utils/parse-character-xml.ts`, `src/utils/parse-character-xml.test.ts`, `src/components/xml-viewer/XmlCard.astro`, `src/components/xml-viewer/xml-card-passives.test.ts`, `src/content/docs/guides/xml-card-test.mdx` | Large-mode card with two alphabetical all-skills tables and gold proficiency dots |
 
 ## About Specs
 
