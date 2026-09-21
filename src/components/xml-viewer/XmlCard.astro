@@ -4,6 +4,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { signed } from '@/utils/format';
 import { groupBy } from '@/utils/group-by';
+import { toWeaponRows } from '@/components/xml-viewer/weapon-display';
 import SectionHeader from '@/components/xml-viewer/SectionHeader.astro';
 import CompactAbilityGrid from '@/components/xml-viewer/CompactAbilityGrid.astro';
 
@@ -33,6 +34,7 @@ const sectionPolicy = {
   passives: 'large' as const,
   languages: 'medium' as const,
   feats: 'large' as const,
+  weapons: 'large' as const,
   features: 'large' as const,
   powers: 'large' as const,
 } as const;
@@ -60,6 +62,7 @@ const {
   passives,
   languages,
   feats,
+  weapons,
   features,
   powers,
 } = character;
@@ -127,6 +130,8 @@ function abilityAbbr(stat: string): string {
   return stat ? stat.slice(0, 3).toUpperCase() : '';
 }
 
+const weaponRows = toWeaponRows(weapons, abilities, profBonus);
+
 const sortedPowers = [...powers].sort(
   (a, b) =>
     a.level - b.level || a.group.localeCompare(b.group) || a.name.localeCompare(b.name)
@@ -143,7 +148,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 <div
   class="not-content @container bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
-    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, skills: 1, allSkills: 2, passives: 2, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, skills: 1, allSkills: 2, passives: 2, languages: 1, feats: 2, weapons: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'w-full': displayMode === 'small' || displayMode === 'medium' || displayMode === 'large' }"
 >
   <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
@@ -387,6 +392,37 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
           {feats.map((feat) => (
             <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
           ))}
+        </div>
+      </section>
+    )}
+
+    {canShow('weapons') && weaponRows.length > 0 && (
+      <section
+        class="border-t border-gray-100 dark:border-gray-700 pt-4"
+        x-show="canShow('weapons')"
+      >
+        <SectionHeader title="Equipped Weapons" />
+        <div class={vitalsItemClass}>
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                <th class="text-left font-medium pb-1">ATK</th>
+                <th class="text-left font-medium pb-1">Weapon</th>
+                <th class="text-left font-medium pb-1">Properties</th>
+                <th class="text-right font-medium pb-1">Damage</th>
+              </tr>
+            </thead>
+            <tbody>
+              {weaponRows.map((weapon) => (
+                <tr class="border-t border-gray-200 dark:border-gray-700">
+                  <td class="py-1 font-mono font-semibold text-gray-900 dark:text-gray-100">{weapon.attack}</td>
+                  <td class="py-1 text-gray-700 dark:text-gray-300">{weapon.name}</td>
+                  <td class="py-1 text-gray-500 dark:text-gray-400">{weapon.properties}</td>
+                  <td class="py-1 text-right text-gray-700 dark:text-gray-300">{weapon.damage}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
     )}

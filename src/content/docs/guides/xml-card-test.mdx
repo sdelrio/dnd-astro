@@ -21,6 +21,7 @@ export const milo = byFile('milo');
 export const alioth = byFile('alioth');
 export const antonidas = byFile('antonidas');
 export const akinori = byFile('akinori');
+export const alberich = byFile('alberich');
 
 This page demonstrates the `XmlCard` component in its display modes and
 configuration options. Unlike golden-forest's `XmlChar` (which takes a
@@ -261,6 +262,24 @@ the all-skills tables without a page reload.
 ```
 
 <XmlCard character={tanadirian} display="large" />
+
+### Equipped Weapons
+
+Large mode adds an Equipped Weapons table between Feats and Features, listing
+only weapons the sheet marks as equipped (`carried` 2). Each row shows the
+computed ATK, the weapon name, its properties (`-` when the sheet has none),
+and the computed Damage. Alberich exercises the display: with STR 18 and a +2
+proficiency bonus, his Greatsword reads ATK `+6` and damage `2d6+4 Slashing`,
+and his two equipped Handaxes each read ATK `+6` and damage `d6+4 Slashing`.
+Stowed or sold weapons are omitted, and the section disappears entirely when
+nothing is equipped. The S/M/L toggle hides the table in small and medium
+modes; press L to bring it back.
+
+```mdx
+<XmlCard character={alberich} display="large" />
+```
+
+<XmlCard character={alberich} display="large" />
 
 ## Notes
 

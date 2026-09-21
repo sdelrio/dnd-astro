@@ -98,6 +98,18 @@ function passiveSubcards(section: string): string[] {
   return starts.map((start, i) => section.slice(start, starts[i + 1] ?? section.length));
 }
 
+function weaponsSection(html: string): string {
+  const marker = html.indexOf('>Equipped Weapons</h2>');
+  if (marker === -1) return '';
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
+function weaponRows(section: string): string[] {
+  return section.split('<tr').slice(1);
+}
+
 function parseStaticPolicy(): Record<string, number> {
   const rankByMode: Record<string, number> = { small: 0, medium: 1, large: 2 };
   const body = cardSource.match(/const sectionPolicy = \{([\s\S]*?)\} as const;/)?.[1] ?? '';
@@ -278,6 +290,84 @@ describe('XmlCard All-skills section', () => {
   });
 });
 
+describe('XmlCard Equipped Weapons section', () => {
+  const greatsword = {
+    name: 'Greatsword',
+    attackbonus: 0,
+    attackstat: '',
+    properties: 'reroll 2',
+    carried: 2,
+    type: 0,
+    damage: [{ bonus: 0, dice: 'd6,d6', stat: 'base', statmult: 1, type: 'slashing' }],
+  };
+  const handaxe = {
+    name: 'Handaxe',
+    attackbonus: 0,
+    attackstat: '',
+    properties: '',
+    carried: 2,
+    type: 2,
+    damage: [{ bonus: 0, dice: 'd6', stat: 'base', statmult: 1, type: 'slashing' }],
+  };
+
+  it('keeps the build-time and live rank policy maps in sync', async () => {
+    const live = parseLivePolicy(await renderCard('large'));
+    const stat = parseStaticPolicy();
+    expect(stat.weapons).toBe(2);
+    expect(live).toEqual(stat);
+  });
+
+  it('renders one equipped-weapons table with computed totals in large mode', async () => {
+    const section = weaponsSection(await renderCard('large', { weapons: [greatsword, handaxe] }));
+    expect(section).toContain('>ATK</th>');
+    expect(section).toContain('>Weapon</th>');
+    expect(section).toContain('>Properties</th>');
+    expect(section).toContain('>Damage</th>');
+    expect(section.match(/<table/g)).toHaveLength(1);
+    expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
+    expect(section).not.toContain('<button');
+
+    const greatswordRow = weaponRows(section).find((row) => row.includes('Greatsword'));
+    expect(greatswordRow).toContain('>+5<');
+    expect(greatswordRow).toContain('reroll 2');
+    expect(greatswordRow).toContain('2d6+3 Slashing');
+
+    const handaxeRow = weaponRows(section).find((row) => row.includes('Handaxe'));
+    expect(handaxeRow).toContain('>d6+3 Slashing<');
+    expect(handaxeRow).toContain('>-<');
+  });
+
+  it('hides the section in small and medium modes at build time', async () => {
+    expect(await renderCard('small', { weapons: [greatsword] })).not.toContain('Equipped Weapons');
+    expect(await renderCard('medium', { weapons: [greatsword] })).not.toContain('Equipped Weapons');
+  });
+
+  it('hides the section when no weapon is equipped', async () => {
+    const stowed = { ...greatsword, carried: 1 };
+    expect(await renderCard('large', { weapons: [stowed] })).not.toContain('Equipped Weapons');
+    expect(await renderCard('large', { weapons: [] })).not.toContain('Equipped Weapons');
+  });
+
+  it('places the section after Feats and before Features in large mode', async () => {
+    const html = await renderCard('large', {
+      feats: ['Alert'],
+      weapons: [greatsword],
+      features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
+    });
+    const feats = html.indexOf('>Feats</h2>');
+    const weapons = html.indexOf('>Equipped Weapons</h2>');
+    const features = html.indexOf('>Features</h2>');
+    expect(feats).toBeGreaterThan(-1);
+    expect(weapons).toBeGreaterThan(feats);
+    expect(features).toBeGreaterThan(weapons);
+  });
+
+  it('live-shows the section through the shared policy predicate', async () => {
+    const section = weaponsSection(await renderCard('large', { weapons: [greatsword] }));
+    expect(section).toContain(`x-show="canShow('weapons')"`);
+  });
+});
+
 describe('XmlCard visual test page', () => {
   it('documents the Passive Skills subsection under Display: Large', () => {
     const large = testPageSource.indexOf('## Display: Large');
@@ -307,5 +397,20 @@ describe('XmlCard visual test page', () => {
     expect(body).toContain('ethir');
     expect(body).toContain('tanadirian');
     expect(body).toMatch(/S\/M/);
+  });
+
+  it('documents the Equipped Weapons subsection under Display: Large', () => {
+    const large = testPageSource.indexOf('## Display: Large');
+    const notes = testPageSource.indexOf('## Notes');
+    const subsection = testPageSource.indexOf('### Equipped Weapons');
+    expect(large).toBeGreaterThan(-1);
+    expect(subsection).toBeGreaterThan(large);
+    expect(subsection).toBeLessThan(notes);
+    const body = testPageSource.slice(subsection, notes);
+    expect(body).toContain('alberich');
+    expect(body).toContain('display="large"');
+    expect(body).toMatch(/S\/M/);
+    expect(body).toContain('ATK');
+    expect(body).toContain('2d6+4 Slashing');
   });
 });

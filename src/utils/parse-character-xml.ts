@@ -21,6 +21,8 @@ export interface WeaponData {
   attackstat: string;
   properties: string;
   carried: number;
+  /** Fantasy Grounds weapon type: 0 = melee, 1 = ranged, 2 = thrown. */
+  type: number;
   damage: WeaponDamageData[];
 }
 
@@ -211,6 +213,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
       attackstat: getText(w, 'attackstat'),
       properties: getText(w, 'properties'),
       carried: Number(getText(w, 'carried') || 0),
+      type: Number(getText(w, 'type') || 0),
       damage: getCollection(w.damagelist).map((d) => ({
         bonus: Number(getText(d, 'bonus') || 0),
         dice: getText(d, 'dice'),
