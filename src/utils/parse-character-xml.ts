@@ -26,6 +26,7 @@ export interface CharacterData {
   initiative: number;
   profBonus: number;
   skills: Array<{ name: string; total: number }>;
+  allSkills: Array<{ name: string; total: number; prof: number; stat: string }>;
   passives: PassiveSkills;
   languages: string[];
   feats: string[];
@@ -135,17 +136,24 @@ export function parseCharacterXML(xml: string): CharacterData | null {
   const initiative = Number(getText(root.initiative, 'total') || 0);
   // Prof bonus
   const profBonus = Number(root.profbonus?.['#text'] || 0);
-  // Skills: the prof-only list (prof > 0) keeps its SPEC-003 shape, while
-  // passives read every entry regardless of prof (a prof 0 skill still has a
-  // passive value).
+  // Skills: the prof-only list (prof > 0) keeps its SPEC-003 shape, allSkills
+  // exposes every entry, and passives read every entry regardless of prof (a
+  // prof 0 skill still has a passive value).
   const skillEntries = getCollection(root.skilllist).map((s) => ({
     name: getText(s, 'name'),
     total: Number(getText(s, 'total') || 0),
     prof: Number(getText(s, 'prof') || 0),
+    stat: getText(s, 'stat'),
   }));
   const skills = skillEntries
     .filter((s) => s.prof > 0)
     .map(({ name, total }) => ({ name, total }));
+  const allSkills = skillEntries.map(({ name, total, prof, stat }) => ({
+    name,
+    total,
+    prof,
+    stat,
+  }));
   const passives: PassiveSkills = { perception: 10, investigation: 10, insight: 10 };
   for (const s of skillEntries) {
     const key = s.name.toLowerCase();
@@ -191,6 +199,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     initiative,
     profBonus,
     skills,
+    allSkills,
     passives,
     languages,
     feats,
