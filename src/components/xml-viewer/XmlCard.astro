@@ -36,6 +36,7 @@ const sectionPolicy = {
   tags: 'small' as const,
   profBonus: 'small' as const,
   saves: 'medium' as const,
+  allSaves: 'large' as const,
   skills: 'medium' as const,
   allSkills: 'large' as const,
   passives: 'large' as const,
@@ -122,6 +123,19 @@ function lookupAbility(fullName: string): AbilityView {
 
 const proficientSaves = abilityNames.filter((a) => lookupAbility(a).saveprof > 0);
 
+interface SaveRow {
+  short: string;
+  save: number;
+  saveprof: number;
+}
+const saveColumns: SaveRow[][] = [abilityEntries.slice(0, 3), abilityEntries.slice(3)].map(
+  (column) =>
+    column.map(({ name, short }) => {
+      const { save, saveprof } = lookupAbility(name);
+      return { short, save, saveprof };
+    })
+);
+
 const sortedFeatures = [...features].sort(
   (a, b) => a.level - b.level || a.name.localeCompare(b.name)
 );
@@ -164,7 +178,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 <div
   class="not-content @container bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
-    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, skills: 1, allSkills: 2, passives: 2, languages: 1, feats: 2, weapons: 2, inventory: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, allSaves: 2, skills: 1, allSkills: 2, passives: 2, languages: 1, feats: 2, weapons: 2, inventory: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'w-full': displayMode === 'small' || displayMode === 'medium' || displayMode === 'large' }"
 >
   <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
@@ -306,13 +320,16 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
       </section>
     )}
 
-    {canShow('saves') && proficientSaves.length > 0 && (
+    {canShow('saves') && (proficientSaves.length > 0 || canShow('allSaves')) && (
       <section
         class="border-t border-gray-100 dark:border-gray-700 pt-4"
-        x-show="canShow('saves')"
+        x-show={proficientSaves.length > 0 ? "canShow('saves')" : "canShow('saves') && canShow('allSaves')"}
       >
         <SectionHeader title="Saving Throws" />
-        <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
+        <div
+          class="grid grid-cols-2 gap-1 sm:grid-cols-3"
+          x-show="!canShow('allSaves')"
+        >
           {proficientSaves.map((abilityName) => (
             <div class="flex justify-between py-1 px-2 text-sm">
               <span class="text-gray-700 dark:text-gray-300">{abilityName}</span>
@@ -320,6 +337,37 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
             </div>
           ))}
         </div>
+        {canShow('allSaves') && (
+          <div class={vitalsItemClass} x-show="canShow('allSaves')">
+            <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
+              {saveColumns.map((column) => (
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                      <th class="text-left font-medium pb-1">Ability</th>
+                      <th class="text-right font-medium pb-1">Save</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {column.map((row) => (
+                      <tr class="border-t border-gray-200 dark:border-gray-700">
+                        <td class="py-1 text-gray-700 dark:text-gray-300">
+                          <span class="inline-flex items-center gap-1">
+                            <span>{row.short}</span>
+                            {row.saveprof > 0 && (
+                              <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Proficient"></span>
+                            )}
+                          </span>
+                        </td>
+                        <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(row.save)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     )}
 

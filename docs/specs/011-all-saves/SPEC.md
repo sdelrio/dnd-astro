@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "Saving Throws card"
 author: "opencode"
 date: "2026-09-21"
@@ -242,6 +242,6 @@ pnpm build
 
 ## Status
 
-- [ ] Implementation complete (delivered by #215)
-- [ ] Tests passing
+- [x] Implementation complete (delivered by #215)
+- [x] Tests passing
 - [ ] ADR updated (not applicable: no new decision made)

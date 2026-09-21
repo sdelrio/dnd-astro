@@ -301,6 +301,24 @@ modes; press L to bring it back.
 
 <XmlCard character={alberich} display="large" />
 
+### Saving Throws
+
+Large mode replaces the prof-only saving-throw grid with one card holding two
+tables of all six saves in standard ability order. Each table carries
+`Ability` and `Save` headers; the first lists STR, DEX, and CON and the second
+INT, WIS, and CHA. Each row shows the ability abbreviation and the signed
+bonus right-aligned in mono; a proficient save carries a single gold dot with
+a "Proficient" tooltip. Alberich exercises the display: STR `+6` and WIS `+5`
+are proficient, while DEX `+2`, CON `+3`, INT `+1`, and CHA `+1` are not. The
+S/M/L toggle swaps views live: M restores the prof-only grid, S hides the
+section, and L restores the all-saves card without a page reload.
+
+```mdx
+<XmlCard character={alberich} display="large" />
+```
+
+<XmlCard character={alberich} display="large" />
+
 ## Notes
 
 - **Powers:** parsed from the direct-child `<powers>` collection
