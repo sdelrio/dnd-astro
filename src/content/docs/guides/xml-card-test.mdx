@@ -8,6 +8,7 @@ import characters from '@/generated/characters.json';
 
 export const byFile = (filename) => characters.find((c) => c.filename === filename);
 export const tanadirian = byFile('tanadirian');
+export const ethir = byFile('ethir');
 export const murky = byFile('murky');
 export const malfunction = byFile('malfunction');
 export const delizan = byFile('delizan');
@@ -227,6 +228,33 @@ vitals-item styling, including the same uniform `rounded-[7px]` radius on
 all four corners. Tanadirian's parsed passives are 18 / 11 / 18. The card's
 S/M/L toggle hides the section in small and medium modes; press L to bring
 it back.
+
+```mdx
+<XmlCard character={tanadirian} display="large" />
+```
+
+<XmlCard character={tanadirian} display="large" />
+
+### All-Skills Table
+
+Large mode replaces the prof-only skills grid with one card holding two
+tables of every skill on the sheet, split alphabetically into halves. Each
+row shows the skill name, its ability abbreviation, and the total
+right-aligned in mono. Gold dots mark proficiency: one dot for proficient,
+two for expertise, none for untrained, with a tooltip on each marker. Custom
+skills take their ability from the sheet's `stat` field, so ethir's
+`Thieves Tools (Traps)` row reads `INT`. Ethir has 20 skills - two dots
+appear on `Sleight of Hand` and both `Thieves Tools` rows (expertise), one
+dot on the proficient rows. Tanadirian has 18 skills with no expertise, so
+he exercises the one-dot and no-dot cases. The S/M/L toggle swaps views
+live: M brings back the prof-only grid, S hides the section, and L restores
+the all-skills tables without a page reload.
+
+```mdx
+<XmlCard character={ethir} display="large" />
+```
+
+<XmlCard character={ethir} display="large" />
 
 ```mdx
 <XmlCard character={tanadirian} display="large" />

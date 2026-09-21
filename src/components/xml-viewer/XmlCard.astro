@@ -29,6 +29,7 @@ const sectionPolicy = {
   profBonus: 'small' as const,
   saves: 'medium' as const,
   skills: 'medium' as const,
+  allSkills: 'large' as const,
   passives: 'large' as const,
   languages: 'medium' as const,
   feats: 'large' as const,
@@ -55,6 +56,7 @@ const {
   initiative,
   profBonus,
   skills,
+  allSkills,
   passives,
   languages,
   feats,
@@ -115,6 +117,16 @@ const featuresByLevel = groupBy(sortedFeatures, (f) => f.level).map((g) => ({
   items: g.items,
 }));
 
+const sortedAllSkills = [...allSkills].sort((a, b) => a.name.localeCompare(b.name));
+const skillHalf = Math.ceil(sortedAllSkills.length / 2);
+const skillColumns = [
+  sortedAllSkills.slice(0, skillHalf),
+  sortedAllSkills.slice(skillHalf),
+];
+function abilityAbbr(stat: string): string {
+  return stat ? stat.slice(0, 3).toUpperCase() : '';
+}
+
 const sortedPowers = [...powers].sort(
   (a, b) =>
     a.level - b.level || a.group.localeCompare(b.group) || a.name.localeCompare(b.name)
@@ -131,7 +143,7 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
 <div
   class="not-content @container bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
   data-display={display}
-    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, skills: 1, passives: 2, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
+    x-data="{ displayMode: $el.dataset.display, expandedSections: {}, rank(m) { return ({ small: 0, medium: 1, large: 2 })[m] || 0; }, sectionPolicy: { avatar: 0, tags: 0, profBonus: 0, saves: 1, skills: 1, allSkills: 2, passives: 2, languages: 1, feats: 2, features: 2, powers: 2 }, canShow(s) { return this.rank(this.displayMode) >= this.sectionPolicy[s]; }, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }"
   :class="{ 'w-full': displayMode === 'small' || displayMode === 'medium' || displayMode === 'large' }"
 >
   <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
@@ -296,7 +308,10 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
         x-show="canShow('skills')"
       >
         <SectionHeader title="Skills" />
-        <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
+        <div
+          class="grid grid-cols-2 gap-1 sm:grid-cols-3"
+          x-show="!canShow('allSkills')"
+        >
           {skills.map((skill) => (
             <div class="flex justify-between py-1 px-2 text-sm">
               <span class="text-gray-700 dark:text-gray-300">{skill.name}</span>
@@ -304,6 +319,47 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
             </div>
           ))}
         </div>
+        {canShow('allSkills') && (
+          <div class={vitalsItemClass} x-show="canShow('allSkills')">
+            <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
+              {skillColumns.map((column) => (
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                      <th class="text-left font-medium pb-1">Skill</th>
+                      <th class="text-left font-medium pb-1">Abil</th>
+                      <th class="text-right font-medium pb-1">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {column.map((skill) => (
+                      <tr class="border-t border-gray-200 dark:border-gray-700">
+                        <td class="py-1 text-gray-700 dark:text-gray-300">
+                          <span class="inline-flex items-center gap-1">
+                            <span class="truncate">{skill.name}</span>
+                            {skill.prof > 0 && (
+                              <span
+                                class="inline-flex items-center gap-px"
+                                title={skill.prof > 1 ? 'Expertise' : 'Proficient'}
+                              >
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                                {skill.prof > 1 && (
+                                  <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                                )}
+                              </span>
+                            )}
+                          </span>
+                        </td>
+                        <td class="py-1 text-gray-500 dark:text-gray-400">{abilityAbbr(skill.stat)}</td>
+                        <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     )}
 
