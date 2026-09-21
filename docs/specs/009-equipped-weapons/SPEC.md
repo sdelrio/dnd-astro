@@ -30,7 +30,7 @@ The parser ignored `<weaponlist>`, so no weapon data reached the generated chara
 
 ## Background (verified during tickets #202 and #203)
 
-- Fantasy Grounds stores weapons in `<weaponlist>` under `id-NNNNN` keys, the same collection pattern as `powers`, `skilllist`, and every other FG list. The parser's existing `root.weaponlist` access and `id-` key filter are reused.
+- Fantasy Grounds stores weapons in `<weaponlist>` under `id-NNNNN` keys, the same collection pattern as `powers`, `skilllist`, and every other FG list. The extraction reuses the parser's existing `root.<collection>` access pattern and `id-` key filter.
 - Across the 111 sheets, 107 carry a `weaponlist` with 383 weapons in total. `carried` observed values: 0 (not carried, 88), 1 (carried or stowed, 109), and 2 (equipped, 186); 67 sheets have at least one equipped weapon. A future inventory card needs all three states, so the parser stores `carried` unfiltered.
 - Weapon `type` observed values: 0 melee (241), 1 ranged (67), 2 thrown (75). Thrown weapons use Strength for the `base` stat mapping.
 - `attackstat` is either a lowercase ability name (dexterity 111, charisma 8, wisdom 5, strength 2) or empty (257); no sheet writes the literal `base` for attack, but empty plays that role. Damage `stat` values are `base`, a lowercase ability name, or empty.
