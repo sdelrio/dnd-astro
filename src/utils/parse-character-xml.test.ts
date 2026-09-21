@@ -30,6 +30,106 @@ describe('parseCharacterXML', () => {
     expect(secondWind?.group).toContain('Fighter');
   });
 
+  it('parses weapons from the id-keyed weaponlist collection', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.weapons.length).toBeGreaterThan(0);
+    const battleaxe = result?.weapons.find((w) => w.name === 'Battleaxe, +1');
+    expect(battleaxe).toEqual({
+      name: 'Battleaxe, +1',
+      attackbonus: 1,
+      attackstat: '',
+      properties: 'Versatile (1d10), magic, crit range 18',
+      carried: 2,
+      damage: [
+        { bonus: 1, dice: 'd8', stat: 'base', statmult: 1, type: 'slashing,magic,brutal' },
+      ],
+    });
+  });
+
+  it('handles multi-part weapon damage and missing weapon fields with defaults', () => {
+    const xml = `
+      <root>
+        <character>
+          <weaponlist>
+            <id-00001>
+              <attackbonus type="number">2</attackbonus>
+              <attackstat type="string">strength</attackstat>
+              <carried type="number">2</carried>
+              <damagelist>
+                <id-00001>
+                  <bonus type="number">3</bonus>
+                  <dice type="dice">2d6</dice>
+                  <stat type="string">strength</stat>
+                  <statmult type="number">2</statmult>
+                  <type type="string">slashing</type>
+                </id-00001>
+                <id-00002>
+                  <bonus type="number">1</bonus>
+                  <dice type="dice">d6</dice>
+                  <stat type="string">base</stat>
+                  <type type="string">fire</type>
+                </id-00002>
+              </damagelist>
+              <name type="string">Flametongue</name>
+            </id-00001>
+            <id-00002>
+              <damagelist>
+                <id-00001>
+                  <stat type="string">base</stat>
+                  <type type="string">piercing</type>
+                </id-00001>
+              </damagelist>
+              <name type="string">Improvised Rock</name>
+            </id-00002>
+          </weaponlist>
+        </character>
+      </root>
+    `;
+    const result = parseCharacterXML(xml);
+    expect(result?.weapons).toEqual([
+      {
+        name: 'Flametongue',
+        attackbonus: 2,
+        attackstat: 'strength',
+        properties: '',
+        carried: 2,
+        damage: [
+          { bonus: 3, dice: '2d6', stat: 'strength', statmult: 2, type: 'slashing' },
+          { bonus: 1, dice: 'd6', stat: 'base', statmult: 1, type: 'fire' },
+        ],
+      },
+      {
+        name: 'Improvised Rock',
+        attackbonus: 0,
+        attackstat: '',
+        properties: '',
+        carried: 0,
+        damage: [{ bonus: 0, dice: '', stat: 'base', statmult: 1, type: 'piercing' }],
+      },
+    ]);
+  });
+
+  it('yields an empty weapons array when weaponlist is missing or empty', () => {
+    const withoutWeaponlist = parseCharacterXML(`
+      <root>
+        <character>
+          <name type="string">Unarmed</name>
+        </character>
+      </root>
+    `);
+    const emptyWeaponlist = parseCharacterXML(`
+      <root>
+        <character>
+          <name type="string">Unarmed</name>
+          <weaponlist />
+        </character>
+      </root>
+    `);
+    expect(withoutWeaponlist?.weapons).toEqual([]);
+    expect(emptyWeaponlist?.weapons).toEqual([]);
+  });
+
   it('exposes flat vitals and skill totals per SPEC-003', () => {
     const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
     const result = parseCharacterXML(xml);

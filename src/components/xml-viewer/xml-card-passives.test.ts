@@ -33,6 +33,7 @@ const baseCharacter: CharacterData = {
   feats: [],
   features: [],
   powers: [],
+  weapons: [],
   filename: 'testhero',
   avatarPath: '/fg/avatar/faceless.svg',
 };

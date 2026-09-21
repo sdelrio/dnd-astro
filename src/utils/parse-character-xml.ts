@@ -7,6 +7,23 @@ export interface PassiveSkills {
   insight: number;
 }
 
+export interface WeaponDamageData {
+  bonus: number;
+  dice: string;
+  stat: string;
+  statmult: number;
+  type: string;
+}
+
+export interface WeaponData {
+  name: string;
+  attackbonus: number;
+  attackstat: string;
+  properties: string;
+  carried: number;
+  damage: WeaponDamageData[];
+}
+
 export interface CharacterData {
   name: string;
   race: string;
@@ -32,6 +49,7 @@ export interface CharacterData {
   feats: string[];
   features: Array<{ level: number; name: string; source: string }>;
   powers: Array<{ level: number; name: string; group: string }>;
+  weapons: WeaponData[];
 }
 
 // Subclass naming patterns per class, used only for the level-1 feature-entry
@@ -183,6 +201,24 @@ export function parseCharacterXML(xml: string): CharacterData | null {
       name: getText(p, 'name'),
       group: getText(p, 'group'),
     }));
+  const weaponsNode = root.weaponlist ?? {};
+  const weapons = Object.keys(weaponsNode)
+    .filter((key) => key.startsWith('id-'))
+    .map((key) => weaponsNode[key])
+    .map((w) => ({
+      name: getText(w, 'name'),
+      attackbonus: Number(getText(w, 'attackbonus') || 0),
+      attackstat: getText(w, 'attackstat'),
+      properties: getText(w, 'properties'),
+      carried: Number(getText(w, 'carried') || 0),
+      damage: getCollection(w.damagelist).map((d) => ({
+        bonus: Number(getText(d, 'bonus') || 0),
+        dice: getText(d, 'dice'),
+        stat: getText(d, 'stat'),
+        statmult: Number(getText(d, 'statmult') || 1),
+        type: getText(d, 'type'),
+      })),
+    }));
 
   return {
     name: getText(root, 'name'),
@@ -205,6 +241,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
     feats,
     features,
     powers,
+    weapons,
   };
 }
 

@@ -177,6 +177,14 @@ describe('build-xml-characters', () => {
       expect(draknor).toBeDefined();
       expect(draknor?.name).toBe('Drakknor');
       expect(draknor?.avatarPath).toBe('/fg/avatar/faceless.svg');
+      expect(draknor?.weapons.length).toBeGreaterThan(0);
+      expect(draknor?.weapons[0].damage.length).toBeGreaterThan(0);
+
+      const generatedJson = JSON.parse(readFileSync('src/generated/characters.json', 'utf8'));
+      const draknorJson = generatedJson.find(
+        (c: { filename: string }) => c.filename === 'draknor'
+      );
+      expect(draknorJson.weapons.length).toBeGreaterThan(0);
 
       const antonidas = characters.find((c) => c.filename === 'antonidas');
       expect(antonidas).toBeDefined();

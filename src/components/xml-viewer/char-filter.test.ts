@@ -98,6 +98,7 @@ describe('toFilterableCharacters', () => {
     feats: ['Sharpshooter'],
     features: [{ level: 1, name: 'Favored Enemy', source: 'Ranger' }],
     powers: [],
+    weapons: [],
     filename: 'aelar',
     avatarPath: '/fg/avatar/aelar.jpg',
   };
