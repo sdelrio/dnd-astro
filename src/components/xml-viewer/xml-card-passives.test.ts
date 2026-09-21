@@ -112,6 +112,18 @@ function weaponRows(section: string): string[] {
   return section.split('<tr').slice(1);
 }
 
+function inventorySection(html: string): string {
+  const marker = html.indexOf('>Inventory</h2>');
+  if (marker === -1) return '';
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
+function inventoryRows(section: string): string[] {
+  return section.split('<tr').slice(1);
+}
+
 function parseStaticPolicy(): Record<string, number> {
   const rankByMode: Record<string, number> = { small: 0, medium: 1, large: 2 };
   const body = cardSource.match(/const sectionPolicy = \{([\s\S]*?)\} as const;/)?.[1] ?? '';
@@ -370,6 +382,145 @@ describe('XmlCard Equipped Weapons section', () => {
   });
 });
 
+describe('XmlCard Inventory section', () => {
+  const strongAbilities = {
+    ...baseCharacter.abilities,
+    strength: { score: 18, bonus: 4, save: 4, saveprof: 0 },
+  };
+  const alberichCoins = { pp: 0, gp: 57, ep: 0, sp: 28, cp: 92 };
+  const alberichInventory = [
+    { name: 'Greatsword', count: 1, weight: 6, carried: 2 },
+    { name: 'Handaxe', count: 2, weight: 2, carried: 2 },
+    { name: 'Scale Mail', count: 1, weight: 45, carried: 2 },
+    { name: 'Rhodochrosite', count: 1, weight: 0.01, carried: 1 },
+    { name: 'Potion of Healing', count: 0, weight: 0.5, carried: 1 },
+    { name: '+2 Drowcraft Studded Leather', count: 1, weight: 13, carried: 1 },
+    { name: 'Azurite', count: 1, weight: 0.01, carried: 1 },
+    { name: 'Malachite', count: 1, weight: 0.01, carried: 1 },
+  ];
+  const droppedGem = { name: 'Sold Gem', count: 1, weight: 100, carried: 0 };
+
+  async function renderInventory(
+    overrides: Partial<CharacterData> = {}
+  ): Promise<string> {
+    return inventorySection(
+      await renderCard('large', {
+        abilities: strongAbilities,
+        inventory: alberichInventory,
+        coins: alberichCoins,
+        ...overrides,
+      })
+    );
+  }
+
+  it('keeps the build-time and live rank policy maps in sync', async () => {
+    const live = parseLivePolicy(await renderCard('large'));
+    const stat = parseStaticPolicy();
+    expect(stat.inventory).toBe(2);
+    expect(live).toEqual(stat);
+  });
+
+  it('renders the items table with the specified columns and row values', async () => {
+    const section = await renderInventory();
+    expect(section).toContain('>Item</th>');
+    expect(section).toContain('>Count</th>');
+    expect(section).toContain('>Weight</th>');
+    expect(section).toContain('>State</th>');
+    expect(section.match(/<table/g)).toHaveLength(1);
+    expect(section.match(/rounded-\[7px\]/g)).toHaveLength(2);
+    expect(section).not.toContain('<button');
+
+    const greatsword = inventoryRows(section).find((row) => row.includes('Greatsword'));
+    expect(greatsword).toContain('6.0 lb.');
+    expect(greatsword).toContain('>Equipped</td>');
+
+    const handaxe = inventoryRows(section).find((row) => row.includes('Handaxe'));
+    expect(handaxe).toContain('>2</td>');
+    expect(handaxe).toContain('2.0 lb.');
+    expect(handaxe).toContain('>Equipped</td>');
+
+    const gem = inventoryRows(section).find((row) => row.includes('Rhodochrosite'));
+    expect(gem).toContain('0.0 lb.');
+    expect(gem).toContain('>Carried</td>');
+  });
+
+  it('shows the carried weight total against STR x 15 capacity', async () => {
+    const section = await renderInventory();
+    expect(section).toContain('68.0 / 270 lb. carried');
+  });
+
+  it('drops carried 0 items from the table and the weight total', async () => {
+    const section = await renderInventory({ inventory: [...alberichInventory, droppedGem] });
+    expect(section).not.toContain('Sold Gem');
+    expect(section).toContain('68.0 / 270 lb. carried');
+  });
+
+  it('renders Current Wealth in fixed PP, GP, EP, SP, CP order', async () => {
+    const section = await renderInventory();
+    expect(section).toContain('Current Wealth');
+    const positions = ['PP', 'GP', 'EP', 'SP', 'CP'].map((label) =>
+      section.indexOf(`>${label}<`)
+    );
+    expect(positions.every((position) => position > -1)).toBe(true);
+    expect(positions).toEqual([...positions].sort((a, b) => a - b));
+    expect(section).toContain('>57</div>');
+    expect(section).toContain('>28</div>');
+    expect(section).toContain('>92</div>');
+  });
+
+  it('hides the section in small and medium modes at build time', async () => {
+    expect(
+      await renderCard('small', { inventory: alberichInventory, coins: alberichCoins })
+    ).not.toContain('Current Wealth');
+    expect(
+      await renderCard('medium', { inventory: alberichInventory, coins: alberichCoins })
+    ).not.toContain('Current Wealth');
+  });
+
+  it('hides the section when nothing is carried and all coins are zero', async () => {
+    const html = await renderCard('large', { inventory: [droppedGem] });
+    expect(html).not.toContain('>Inventory</h2>');
+    expect(html).not.toContain('Current Wealth');
+  });
+
+  it('renders the wealth card alone when no items are carried but coins are non-zero', async () => {
+    const section = await renderInventory({ inventory: [droppedGem] });
+    expect(section).toContain('Current Wealth');
+    expect(section).not.toContain('<table');
+    expect(section).not.toContain('lb. carried');
+    expect(section).not.toContain('Sold Gem');
+  });
+
+  it('places the section after Equipped Weapons and before Features in large mode', async () => {
+    const html = await renderCard('large', {
+      abilities: strongAbilities,
+      inventory: alberichInventory,
+      coins: alberichCoins,
+      weapons: [{
+        name: 'Greatsword',
+        attackbonus: 0,
+        attackstat: '',
+        properties: 'reroll 2',
+        carried: 2,
+        type: 0,
+        damage: [{ bonus: 0, dice: 'd6,d6', stat: 'base', statmult: 1, type: 'slashing' }],
+      }],
+      features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
+    });
+    const weapons = html.indexOf('>Equipped Weapons</h2>');
+    const inventory = html.indexOf('>Inventory</h2>');
+    const features = html.indexOf('>Features</h2>');
+    expect(weapons).toBeGreaterThan(-1);
+    expect(inventory).toBeGreaterThan(weapons);
+    expect(features).toBeGreaterThan(inventory);
+  });
+
+  it('live-shows the section through the shared policy predicate', async () => {
+    const section = await renderInventory();
+    expect(section).toContain(`x-show="canShow('inventory')"`);
+  });
+});
+
 describe('XmlCard visual test page', () => {
   it('documents the Passive Skills subsection under Display: Large', () => {
     const large = testPageSource.indexOf('## Display: Large');
@@ -414,5 +565,22 @@ describe('XmlCard visual test page', () => {
     expect(body).toMatch(/S\/M/);
     expect(body).toContain('ATK');
     expect(body).toContain('2d6+4 Slashing');
+  });
+
+  it('documents the Inventory subsection under Display: Large', () => {
+    const large = testPageSource.indexOf('## Display: Large');
+    const notes = testPageSource.indexOf('## Notes');
+    const subsection = testPageSource.indexOf('### Inventory');
+    expect(large).toBeGreaterThan(-1);
+    expect(subsection).toBeGreaterThan(large);
+    expect(subsection).toBeLessThan(notes);
+    const body = testPageSource.slice(subsection, notes);
+    expect(body).toContain('alberich');
+    expect(body).toContain('display="large"');
+    expect(body).toMatch(/S\/M/);
+    expect(body).toContain('68.0 / 270 lb. carried');
+    expect(body).toContain('Current Wealth');
+    expect(body).toContain('Item');
+    expect(body).toContain('State');
   });
 });

@@ -281,6 +281,26 @@ modes; press L to bring it back.
 
 <XmlCard character={alberich} display="large" />
 
+### Inventory
+
+Large mode adds an Inventory section between Equipped Weapons and Features. A
+muted line above the items table reads the carried weight total against the
+5e carrying capacity of STR x 15; alberich (STR 18) reads
+`68.0 / 270 lb. carried`. The table columns are Item, Count, Weight, and
+State, listing every carried or equipped item (`carried` 1 or 2) in sheet
+order with its name, count, unit weight to one decimal, and a plain-text
+State of `Carried` or `Equipped`. Stowed or dropped items never appear.
+Below it, a Current Wealth card shows the parsed coins in fixed order PP, GP,
+EP, SP, CP. The section disappears entirely when nothing is carried and
+every coin is zero. The S/M/L toggle hides the section in small and medium
+modes; press L to bring it back.
+
+```mdx
+<XmlCard character={alberich} display="large" />
+```
+
+<XmlCard character={alberich} display="large" />
+
 ## Notes
 
 - **Powers:** parsed from the direct-child `<powers>` collection
