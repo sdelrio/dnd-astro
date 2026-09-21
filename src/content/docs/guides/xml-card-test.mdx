@@ -123,15 +123,15 @@ Verify two medium cards display side by side on PC workstation screens.
 ## Display: Large
 
 The complete card: portrait (floated right), feats, features grouped by
-level, and powers grouped by level and group. Includes vertically stacked
-S/M/L toggle buttons on the right side of the header to switch display
-modes live.
+level, and powers grouped by level and group. The display mode is fixed at
+build time by the `display` prop the mounting page passes; there is no
+in-card toggle.
 
 ### Subclass
 
 Darlo has a subclass (Oath of Vengeance), shown in parentheses after
-class and level. Large mode is the only mode that displays it; toggle to
-S or M to see it hidden.
+class and level. Large mode is the only mode that displays it; small and
+medium cards omit it at build time.
 
 ```mdx
 <XmlCard character={darlo} display="large" />
@@ -180,8 +180,9 @@ portrait resolves from the XML filename (`milo.xml` → `milo.jpg`).
 
 ### Explicit Portrait (JPG) + Long Deity
 
-Alioth exercises an exceptionally long deity field, and the S/M/L toggle
-above the portrait switches the card between display modes.
+Alioth exercises an exceptionally long deity field, rendered as a tag in the
+header for medium and large cards; small cards omit the alignment and deity
+tags at build time.
 
 ```mdx
 <XmlCard character={alioth} display="large" image="alioth.jpg" />
@@ -226,9 +227,8 @@ tooltip. It holds three subcards side by side, each a single row with the
 name on the left and the value on the right: Passive Perception,
 Passive Investigation, and Passive Insight. The subcards reuse the
 vitals-item styling, including the same uniform `rounded-[7px]` radius on
-all four corners. Tanadirian's parsed passives are 18 / 11 / 18. The card's
-S/M/L toggle hides the section in small and medium modes; press L to bring
-it back.
+all four corners. Tanadirian's parsed passives are 18 / 11 / 18. The section
+renders only in large mode; small and medium cards omit it at build time.
 
 ```mdx
 <XmlCard character={tanadirian} display="large" />
@@ -247,9 +247,9 @@ skills take their ability from the sheet's `stat` field, so ethir's
 `Thieves Tools (Traps)` row reads `INT`. Ethir has 20 skills - two dots
 appear on `Sleight of Hand` and both `Thieves Tools` rows (expertise), one
 dot on the proficient rows. Tanadirian has 18 skills with no expertise, so
-he exercises the one-dot and no-dot cases. The S/M/L toggle swaps views
-live: M brings back the prof-only grid, S hides the section, and L restores
-the all-skills tables without a page reload.
+he exercises the one-dot and no-dot cases. Medium cards render the prof-only
+skills grid instead, and small cards omit the section entirely; the display
+mode is fixed at build time, with no live switching.
 
 ```mdx
 <XmlCard character={ethir} display="large" />
@@ -272,8 +272,7 @@ and the computed Damage. Alberich exercises the display: with STR 18 and a +2
 proficiency bonus, his Greatsword reads ATK `+6` and damage `2d6+4 Slashing`,
 and his two equipped Handaxes each read ATK `+6` and damage `d6+4 Slashing`.
 Stowed or sold weapons are omitted, and the section disappears entirely when
-nothing is equipped. The S/M/L toggle hides the table in small and medium
-modes; press L to bring it back.
+nothing is equipped. Small and medium cards omit the section at build time.
 
 ```mdx
 <XmlCard character={alberich} display="large" />
@@ -292,8 +291,7 @@ order with its name, count, unit weight to one decimal, and a plain-text
 State of `Carried` or `Equipped`. Stowed or dropped items never appear.
 Below it, a Current Wealth card shows the parsed coins in fixed order PP, GP,
 EP, SP, CP. The section disappears entirely when nothing is carried and
-every coin is zero. The S/M/L toggle hides the section in small and medium
-modes; press L to bring it back.
+every coin is zero. Small and medium cards omit the section at build time.
 
 ```mdx
 <XmlCard character={alberich} display="large" />
@@ -309,9 +307,10 @@ tables of all six saves in standard ability order. Each table carries
 INT, WIS, and CHA. Each row shows the ability abbreviation and the signed
 bonus right-aligned in mono; a proficient save carries a single gold dot with
 a "Proficient" tooltip. Alberich exercises the display: STR `+6` and WIS `+5`
-are proficient, while DEX `+2`, CON `+3`, INT `+1`, and CHA `+1` are not. The
-S/M/L toggle swaps views live: M restores the prof-only grid, S hides the
-section, and L restores the all-saves card without a page reload.
+are proficient, while DEX `+2`, CON `+3`, INT `+1`, and CHA `+1` are not.
+Medium cards render the prof-only saving-throw grid instead, and small cards
+omit the section entirely; the display mode is fixed at build time, with no
+live switching.
 
 ```mdx
 <XmlCard character={alberich} display="large" />
