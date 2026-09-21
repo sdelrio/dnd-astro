@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "Remove XmlCard Display-Mode Toggle"
 author: "opencode (grill-with-docs)"
 date: "2026-09-21"
@@ -107,6 +107,6 @@ predicates, and the live-policy tests from git history.
 
 ## Status
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [ ] ADR updated (not applicable - no new decision)
