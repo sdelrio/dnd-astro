@@ -17,7 +17,7 @@ function abilityBonus(abilities: Abilities, stat: string): number {
   return abilities[stat]?.bonus ?? 0;
 }
 
-function baseStat(weaponType: number): string {
+function baseAbility(weaponType: number): string {
   return weaponType === 1 ? 'dexterity' : 'strength';
 }
 
@@ -25,7 +25,7 @@ function attackTotal(weapon: Weapon, abilities: Abilities, profBonus: number): n
   const stat =
     weapon.attackstat && weapon.attackstat !== 'base'
       ? weapon.attackstat
-      : baseStat(weapon.type);
+      : baseAbility(weapon.type);
   return weapon.attackbonus + profBonus + abilityBonus(abilities, stat);
 }
 
@@ -63,7 +63,7 @@ function titleCaseDamageType(type: string): string {
 }
 
 function damageTotal(part: WeaponDamage, abilities: Abilities, weaponType: number): string {
-  const stat = part.stat === 'base' ? baseStat(weaponType) : part.stat;
+  const stat = part.stat === 'base' ? baseAbility(weaponType) : part.stat;
   const statBonus = stat ? abilityBonus(abilities, stat) : 0;
   const modifier = part.bonus + statBonus * part.statmult;
   const dice = normalizeDice(part.dice);
