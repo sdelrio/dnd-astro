@@ -601,19 +601,13 @@ describe('XmlCard display-mode toggle', () => {
 });
 
 function portraitImg(html: string): string {
-  const marker = html.indexOf('alt="Test Hero portrait"');
-  expect(marker).toBeGreaterThan(-1);
-  const start = html.lastIndexOf('<img', marker);
-  const end = html.indexOf('>', marker);
-  return html.slice(start, end + 1);
+  const match = html.match(/<img\b[^>]*alt="Test Hero portrait"[^>]*>/);
+  expect(match).not.toBeNull();
+  return match?.[0] ?? '';
 }
 
 function portraitAnchor(html: string): string {
-  const marker = html.indexOf('alt="Test Hero portrait"');
-  expect(marker).toBeGreaterThan(-1);
-  const start = html.lastIndexOf('<a ', html.lastIndexOf('<img', marker));
-  const end = html.indexOf('</a>', marker);
-  return start === -1 || end === -1 ? '' : html.slice(start, end + '</a>'.length);
+  return html.match(/<a\b[^>]*>\s*<img\b[^>]*alt="Test Hero portrait"/)?.[0] ?? '';
 }
 
 describe('XmlCard portrait link', () => {

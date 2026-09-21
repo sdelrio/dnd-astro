@@ -82,6 +82,7 @@ const {
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
 const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).join(' / ');
 const vitalsItemClass = 'p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]';
+const portraitClass = 'w-16 h-20 object-cover flex-shrink-0 overflow-hidden border border-gray-300 dark:border-gray-600 [border-top-left-radius:7px] [border-top-right-radius:7px] [border-bottom-left-radius:45%] [border-bottom-right-radius:45%]';
 
 // Build-time avatar resolution: explicit image prop wins when the file exists
 // (missing files fall back to faceless.svg), otherwise probe {base}.jpg ->
@@ -188,20 +189,10 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
           aria-label={`View ${name} character sheet`}
           class="flex-shrink-0 rounded-[7px] hover:ring-2 hover:ring-[#58180d]/40 dark:hover:ring-[#c68000]/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]"
         >
-          <img
-            class="w-16 h-20 object-cover flex-shrink-0 overflow-hidden border border-gray-300 dark:border-gray-600 [border-top-left-radius:7px] [border-top-right-radius:7px] [border-bottom-left-radius:45%] [border-bottom-right-radius:45%]"
-            src={avatarSrc}
-            alt={`${name} portrait`}
-            title={name}
-          />
+          <img class={portraitClass} src={avatarSrc} alt={`${name} portrait`} title={name} />
         </a>
       ) : (
-        <img
-          class="w-16 h-20 object-cover flex-shrink-0 overflow-hidden border border-gray-300 dark:border-gray-600 [border-top-left-radius:7px] [border-top-right-radius:7px] [border-bottom-left-radius:45%] [border-bottom-right-radius:45%]"
-          src={avatarSrc}
-          alt={`${name} portrait`}
-          title={name}
-        />
+        <img class={portraitClass} src={avatarSrc} alt={`${name} portrait`} title={name} />
       )}
       <div class="flex-1 min-w-0">
         <h3 class="mt-0 text-left text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h3>
