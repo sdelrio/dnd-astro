@@ -29,6 +29,12 @@ configuration options. Unlike golden-forest's `XmlChar` (which takes a
 `character` JSON — missing files therefore fail the build instead of
 rendering an error card.
 
+Card portraits link to character pages. A card whose character has a
+`filename` wraps its portrait in an anchor to
+`/fantasy-grounds/characters/<filename>` labelled `View <name> character
+sheet`, so every card on this page opens a real character page. Pass
+`link={false}` to render a plain portrait.
+
 Character data comes from the `src/generated/characters.json` build artifact
 (a single array; look entries up by `filename`):
 
