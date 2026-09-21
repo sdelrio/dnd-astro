@@ -41,6 +41,7 @@ describe('parseCharacterXML', () => {
       attackstat: '',
       properties: 'Versatile (1d10), magic, crit range 18',
       carried: 2,
+      type: 0,
       damage: [
         { bonus: 1, dice: 'd8', stat: 'base', statmult: 1, type: 'slashing,magic,brutal' },
       ],
@@ -72,6 +73,7 @@ describe('parseCharacterXML', () => {
                 </id-00002>
               </damagelist>
               <name type="string">Flametongue</name>
+              <type type="number">1</type>
             </id-00001>
             <id-00002>
               <damagelist>
@@ -94,6 +96,7 @@ describe('parseCharacterXML', () => {
         attackstat: 'strength',
         properties: '',
         carried: 2,
+        type: 1,
         damage: [
           { bonus: 3, dice: '2d6', stat: 'strength', statmult: 2, type: 'slashing' },
           { bonus: 1, dice: 'd6', stat: 'base', statmult: 1, type: 'fire' },
@@ -105,6 +108,7 @@ describe('parseCharacterXML', () => {
         attackstat: '',
         properties: '',
         carried: 0,
+        type: 0,
         damage: [{ bonus: 0, dice: '', stat: 'base', statmult: 1, type: 'piercing' }],
       },
     ]);
