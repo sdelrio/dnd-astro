@@ -6,7 +6,7 @@ date: "2026-09-21"
 tags: [character-page, routing, starlight, xml-card, fantasy-grounds, print, seo]
 affects:
   - src/pages/fantasy-grounds/characters/[slug].astro
-  - src/pages/fantasy-grounds/characters/character-page.test.ts
+  - src/pages/fantasy-grounds/characters/_character-page.test.ts
   - src/components/xml-viewer/XmlCard.astro
   - src/components/xml-viewer/CharSearch.astro
   - src/components/xml-viewer/PartyView.astro
@@ -99,7 +99,8 @@ Create the route at `src/pages/fantasy-grounds/characters/[slug].astro`:
 ## Files to Create/Modify
 
 - `src/pages/fantasy-grounds/characters/[slug].astro` - new route
-- `src/pages/fantasy-grounds/characters/character-page.test.ts` - route tests
+- `src/pages/fantasy-grounds/characters/_character-page.test.ts` - route tests
+  (underscore-prefixed so Astro does not treat the file as an endpoint route)
 - `src/components/xml-viewer/XmlCard.astro` - `link` prop and portrait anchor
 - `src/components/xml-viewer/xml-card-passives.test.ts` - link render assertions
 - `src/content/docs/guides/xml-card-test.mdx` - portrait link copy
