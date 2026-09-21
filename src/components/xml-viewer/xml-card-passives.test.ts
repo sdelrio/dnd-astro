@@ -27,6 +27,7 @@ const baseCharacter: CharacterData = {
   initiative: 1,
   profBonus: 2,
   skills: [{ name: 'Perception', total: 3 }],
+  allSkills: [{ name: 'Perception', total: 3, prof: 1, stat: 'wisdom' }],
   passives: { perception: 14, investigation: 11, insight: 10 },
   languages: ['Common'],
   feats: [],

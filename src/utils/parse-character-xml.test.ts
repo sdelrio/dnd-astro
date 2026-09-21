@@ -63,6 +63,116 @@ describe('parseCharacterXML', () => {
     expect(names).not.toContain('Insight');
   });
 
+  it('exposes every skilllist entry as allSkills in XML order', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    const all = result?.allSkills ?? [];
+    expect(all.map((s) => s.name)).toEqual([
+      'Perception',
+      'Athletics',
+      'Arcana',
+      'Persuasion',
+      'Nature',
+      'Medicine',
+      'Survival',
+      'Performance',
+      'Acrobatics',
+      'Religion',
+      'Sleight of Hand',
+      'Insight',
+      'Intimidation',
+      'Deception',
+      'Investigation',
+      'Stealth',
+      'History',
+      'Animal Handling',
+      "Tools: Carpenter's Tools",
+    ]);
+  });
+
+  it('keeps each allSkills entry total, prof, and stat', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.allSkills[0]).toEqual({
+      name: 'Perception',
+      total: 3,
+      prof: 1,
+      stat: 'wisdom',
+    });
+    expect(result?.allSkills[2]).toEqual({
+      name: 'Arcana',
+      total: -1,
+      prof: 0,
+      stat: 'intelligence',
+    });
+    expect(result?.allSkills[14]).toEqual({
+      name: 'Investigation',
+      total: -1,
+      prof: 0,
+      stat: 'intelligence',
+    });
+    expect(result?.allSkills[18]).toEqual({
+      name: "Tools: Carpenter's Tools",
+      total: 8,
+      prof: 1,
+      stat: 'strength',
+    });
+  });
+
+  it('preserves expertise entries on ethir.xml (prof 2)', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/ethir.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.allSkills).toHaveLength(20);
+    expect(result?.allSkills[10]).toEqual({
+      name: 'Sleight of Hand',
+      total: 7,
+      prof: 2,
+      stat: 'dexterity',
+    });
+    expect(result?.allSkills[18]).toEqual({
+      name: 'Thieves Tools (locks)',
+      total: 7,
+      prof: 2,
+      stat: 'dexterity',
+    });
+  });
+
+  it('includes custom skills with their governing stat', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/ethir.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    const traps = result?.allSkills.find((s) => s.name === 'Thieves Tools (Traps)');
+    expect(traps).toEqual({
+      name: 'Thieves Tools (Traps)',
+      total: 6,
+      prof: 2,
+      stat: 'intelligence',
+    });
+  });
+
+  it('degrades gracefully when skill entry fields are missing', () => {
+    const xml = `
+      <root>
+        <character>
+          <skilllist>
+            <id-00001>
+              <name type="string">Perception</name>
+              <total type="number">4</total>
+              <prof type="number">1</prof>
+            </id-00001>
+            <id-00002>
+              <name type="string">Odd Skill</name>
+            </id-00002>
+          </skilllist>
+        </character>
+      </root>
+    `;
+    const result = parseCharacterXML(xml);
+    expect(result?.allSkills).toEqual([
+      { name: 'Perception', total: 4, prof: 1, stat: '' },
+      { name: 'Odd Skill', total: 0, prof: 0, stat: '' },
+    ]);
+  });
+
   it('defaults a missing skill entry to passive 10', () => {
     const xml = `
       <root>
