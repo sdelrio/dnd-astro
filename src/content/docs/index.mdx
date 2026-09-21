@@ -1,97 +1,110 @@
 ---
 title: D&D Companion
-description: Get started building your docs site with Starlight.
+description: House rules, balance patches, and essential mechanics for D&D.
 template: splash # Remove or comment out this line to display the site sidebar on this page.
 hero:
   tagline: Roll for Initiative! Characters, notes, and everything between the dice rolls. Ready when you are.
   image:
     dark: ../../assets/dnd-dragon-dice-dark.svg
     light: ../../assets/dnd-dragon-dice.svg
-  actions:
-    - text: Dice Roller
-      link: /dnd-tools/dice-roller/
-      icon: right-arrow
-    - text: Classes Balance fixes
-      link: /dnd/classes/
-      icon: external
-      variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { LinkButton } from '@astrojs/starlight/components';
 import IconifyIcon from '../../components/IconifyIcon.astro';
 
 This page centralizes Dungeons & Dragons house custom rules, balance patches, and essential mechanics.
 
 It serves as a comprehensive reference to ensure consistency and streamline tabletop gameplay.
 
-<CardGrid stagger>
-	<Card title="Classes" icon="document">
-    <IconifyIcon icon="game-icons:character" width="2em" />
-	  Character archetypes, custom balance, and fixes for homebrew content.
-	</Card>
-	<Card title="Character Creation" icon="document">
-    <IconifyIcon icon="mdi:account-plus" width="2em" />
-	  Standardized character creation guides and processes.
-	</Card>
-	<Card title="Feats" icon="document">
-    <IconifyIcon icon="game-icons:laurels" width="2em" />
-  	Feat options, customizations, and balance adjustments. 
-	</Card>
-	<Card title="Skills" icon="document">
-    <IconifyIcon icon="game-icons:skills" width="2em" />
-    Skill system details and specific mechanics for gameplay.
-	</Card>
+<div class="not-content flex flex-wrap gap-3">
+	<LinkButton href="/dnd-tools/dice-roller/" aria-label="Dice Roller">
+		<IconifyIcon icon="game-icons:dice-twenty-faces-twenty" width="1.5em" />
+	</LinkButton>
+	<LinkButton href="/dnd/classes/" variant="secondary">
+		<IconifyIcon icon="game-icons:character" width="1.5em" />
+		Classes
+	</LinkButton>
+	<LinkButton href="/dnd/skills/" variant="secondary">
+		<IconifyIcon icon="game-icons:skills" width="1.5em" />
+		Skills
+	</LinkButton>
+	<LinkButton href="/dnd/magic/" variant="secondary">
+		<IconifyIcon icon="game-icons:magic-swirl" width="1.5em" />
+		Magic Fixes
+	</LinkButton>
+	<LinkButton href="/dnd/injuries/" variant="secondary">
+		<IconifyIcon icon="game-icons:bandage-roll" width="1.5em" />
+		Injuries
+	</LinkButton>
+</div>
 
-	<Card title="Magic Fixes" icon="document">
-    <IconifyIcon icon="game-icons:magic-swirl" width="2em" />
-    Spellcasting rules, spell lists, and custom balance and fixes.
-	</Card>
-	<Card title="Injuries" icon="document">
-    <IconifyIcon icon="game-icons:bandage-roll" width="2em" />
-	  Injuries treatment and related mechanics for realistic consequences.
-	</Card>
+## Rules
 
-	<Card title="Armor Table" icon="seti:csv">
-    <IconifyIcon icon="game-icons:breastplate" width="2em" />
-    Complete armor equipment stats and protective properties.
-	</Card>
-	<Card title="Weapon Mastery Fixes" icon="seti:csv">
-    <IconifyIcon icon="game-icons:master-of-arms" width="2em" />
-    Weapon mastery balance patches and rule refinements.
-	</Card>
-	<Card title="Weapon Properties" icon="seti:csv">
-    <IconifyIcon icon="game-icons:crossed-swords" width="2em" />
-    Detailed weapon properties and their mechanical effects.
-	</Card>
+<ul>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="game-icons:character" width="2em" class="shrink-0" />
+		<span><strong><a href="/dnd/classes/">Classes</a></strong> - Character archetypes, custom balance, and fixes for homebrew content.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="mdi:account-plus" width="2em" class="shrink-0" />
+		<span><strong>Character Creation</strong> - Standardized character creation guides and processes.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="game-icons:laurels" width="2em" class="shrink-0" />
+		<span><strong><a href="/dnd-tools/feat-explorer/">Feats</a></strong> - Feat options, customizations, and balance adjustments.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="game-icons:skills" width="2em" class="shrink-0" />
+		<span><strong><a href="/dnd/skills/">Skills</a></strong> - Skill system details and specific mechanics for gameplay.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="game-icons:magic-swirl" width="2em" class="shrink-0" />
+		<span><strong><a href="/dnd/magic/">Magic Fixes</a></strong> - Spellcasting rules, spell lists, and custom balance and fixes.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="game-icons:bandage-roll" width="2em" class="shrink-0" />
+		<span><strong><a href="/dnd/injuries/">Injuries</a></strong> - Injuries treatment and related mechanics for realistic consequences.</span>
+	</li>
+</ul>
 
-  <Card title="Campaign Design Tools" icon="desktop">
-    <IconifyIcon icon="game-icons:dice-twenty-faces-twenty" width="2em" />
-    Essential digital tools, procedural map generators, and reference resources for tabletop planning.
-	</Card>
+## Reference
 
-	<Card title="Get PC from xml.db" icon="desktop">
-    <IconifyIcon icon="mdi:application-cog" width="2em" />
-    Fantasy Grounds scripts to extract character XML from campaign db.xml files.
-	</Card>
-	<Card title="FG Effects" icon="desktop">
-    <IconifyIcon icon="mdi:magic-staff" width="2em"/>
-    Advanced automation tips, conditional operators, and custom effects for Fantasy Grounds.
-	</Card>
-	<Card title="Character Browser" icon="desktop">
-    <IconifyIcon width="2em" icon="mdi:account-search" />
-    Search and browse all Fantasy Grounds characters by name and class.
-	</Card>
-	<Card title="Current Party" icon="desktop">
-    <IconifyIcon icon="mdi:account-group" width="2em" />
-    Overview of active characters and their essential stats in the current campaign.
-	</Card>
-</CardGrid>
+<ul>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="game-icons:breastplate" width="2em" class="shrink-0" />
+		<span><strong><a href="/dnd/master-armor-table/">Armor Table</a></strong> - Complete armor equipment stats and protective properties.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="game-icons:master-of-arms" width="2em" class="shrink-0" />
+		<span><strong><a href="/dnd/weapon-mastery/">Weapon Mastery Fixes</a></strong> - Weapon mastery balance patches and rule refinements.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="game-icons:crossed-swords" width="2em" class="shrink-0" />
+		<span><strong><a href="/dnd/weapon-properties/">Weapon Properties</a></strong> - Detailed weapon properties and their mechanical effects.</span>
+	</li>
+</ul>
 
----
+## Tools
 
-- Edit `src/content/docs/index.mdx` to see this page change.
-- Delete `template: splash` in `src/content/docs/index.mdx` to display a sidebar on this page.
-- Add Markdown or MDX files to `src/content/docs` to create new pages.
-- Edit your `sidebar` and other config in `astro.config.mjs`.
-- Learn more in [the Starlight Docs](https://starlight.astro.build/).
-
+<ul>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="game-icons:dice-twenty-faces-twenty" width="2em" class="shrink-0" />
+		<span><strong><a href="/dnd-tools/tools-for-campaign/">Campaign Design Tools</a></strong> - Essential digital tools, procedural map generators, and reference resources for tabletop planning.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="mdi:application-cog" width="2em" class="shrink-0" />
+		<span><strong>Get PC from xml.db</strong> - Fantasy Grounds scripts to extract character XML from campaign db.xml files.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="mdi:magic-staff" width="2em" class="shrink-0" />
+		<span><strong>FG Effects</strong> - Advanced automation tips, conditional operators, and custom effects for Fantasy Grounds.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="mdi:account-search" width="2em" class="shrink-0" />
+		<span><strong><a href="/fantasy-grounds/character-search/">Character Browser</a></strong> - Search and browse all Fantasy Grounds characters by name and class.</span>
+	</li>
+	<li class="flex items-start gap-3">
+		<IconifyIcon icon="mdi:account-group" width="2em" class="shrink-0" />
+		<span><strong><a href="/fantasy-grounds/current-party/">Current Party</a></strong> - Overview of active characters and their essential stats in the current campaign.</span>
+	</li>
+</ul>
