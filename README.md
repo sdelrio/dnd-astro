@@ -69,3 +69,72 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 | `pnpm test` | Run the Vitest unit tests |
 | `pnpm astro` | Run the Astro CLI |
 | `make check` | Run every gate: lint, typecheck, test, build |
+
+## Project structure
+
+Committed layout, with generated output annotated:
+
+```text
+docs/                    Architecture decisions, specs, and agent workflow docs
+  adr/                   Accepted architecture decision records (ADR 0001 - 0007)
+  agents/                Issue tracker, triage, and domain conventions
+  specs/                 Feature specifications
+public/                  Static assets served as-is
+  fg/
+    avatar/              Character portrait images
+    party.json           Current party roster
+  fonts/                 Self-hosted webfont files
+scripts/                 One-off content extraction scripts
+src/
+  components/
+    dice-roller/         Dice Roller Alpine.js island
+    feats-explorer/      Feat Explorer Alpine.js island
+    point-buy/           Point Buy Alpine.js island
+    xml-viewer/          XML Character Viewer components (XmlCard, CharSearch, PartyView)
+  content/
+    docs/                Starlight Markdown and MDX content
+  generated/             gitignored: characters.json, rebuilt on every dev/build
+  pages/
+    fantasy-grounds/
+      characters/
+        [slug].astro     Prerendered Character page route
+  styles/                Tailwind v4 entry and theme CSS
+  utils/                 XML parsing and build pipeline modules
+terraform/               Cloudflare infrastructure as code
+worker/                  Cloudflare Worker static assets entrypoint
+astro.config.mjs         Astro, Starlight, Alpine.js, and Mermaid setup plus the XML hook
+wrangler.jsonc           Cloudflare Workers static assets config
+devbox.json              Pinned Node 24 / pnpm toolchain
+Makefile                 Verification gates (make check)
+AGENTS.md                Agent workflow and repo conventions
+CONTEXT.md               Domain glossary
+SPEC.md                  Technical specification
+```
+
+Build output and local scratch space (`dist/`, `.astro/`, `src/generated/`, `tmp/`, `.scratch/`) are gitignored and never committed.
+
+## Architecture
+
+### Least client-side JavaScript
+
+The site is statically generated: every page ships as HTML and CSS, and interactive behavior lives in small Alpine.js islands scoped to the component that needs it. New interactivity belongs in an island, not in a site-wide framework bundle.
+
+### Build-time Fantasy Grounds XML pipeline
+
+`astro.config.mjs` registers an `xml-character-viewer` integration whose `astro:config:setup` hook runs on every Astro startup, dev and build, so the generated data exists before any page renders. The hook calls `buildXmlCharacters()` in `src/utils/build-xml-characters.ts`, which:
+
+1. Reads the committed Fantasy Grounds `.xml` sheets under `src/assets`.
+2. Parses each Character sheet with `fast-xml-parser` (through `src/utils/parse-character-xml.ts`) into a `CharacterData` record.
+3. Resolves each avatar path with the `.jpg` -> `.png` -> `faceless.svg` fallback.
+4. Writes `src/generated/characters.json`, which is gitignored and rebuilt on every dev server start and production build.
+
+`src/generated/characters.json` feeds the Character viewer at build time. A Card (`XmlCard`) renders one Character sheet's data in a Display mode, small, medium, or large, chosen at build time by the page that mounts the Card. The route in `src/pages/fantasy-grounds/characters/[slug].astro` uses `getStaticPaths()` to turn every generated entry into a prerendered Character page: one Character sheet shown as a single full-width large Card, with no server code at runtime.
+
+## Rendering conventions
+
+These follow the accepted ADRs under `docs/adr/`:
+
+- **Icons**: render decorative Iconify icons with `IconifyIcon.astro`. The component fetches SVGs at build time and ships zero client-side JavaScript. See [ADR 0001](docs/adr/0001-icon-component.md).
+- **Diagrams**: `mermaid` code fences render through the `astro-mermaid` integration registered in `astro.config.mjs`, which loads Mermaid only on pages that contain a diagram. See [ADR 0007](docs/adr/0007-mermaid-rendering-strategy.md).
+- **Admonitions**: Starlight supports exactly four types - `:::note`, `:::tip`, `:::caution`, and `:::danger`. Docusaurus-era `info` and `warning` admonitions are not supported and must not be used. See [ADR 0004](docs/adr/0004-starlight-admonitions.md).
+- **Tables**: Markdown content tables are striped with a transparent header row and alternating gradient data rows in the golden-forest theme. See [ADR 0005](docs/adr/0005-table-row-striping-pattern.md).
