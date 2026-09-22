@@ -45,5 +45,6 @@ instead of spending points.
 _Avoid_: Default array, preset scores
 
 **Mulligan**:
-Discarding a character's rolled ability scores and rolling a fresh set.
+Discarding a character's rolled ability scores and using the fixed Mulligan
+array 15, 14, 12, 12, 10, 8 instead.
 _Avoid_: Reroll, do-over
