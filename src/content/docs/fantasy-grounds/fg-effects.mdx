@@ -1,0 +1,118 @@
+---
+title: Fantasy Grounds Effects
+description: Automation effects, conditional operators, and macros for the Fantasy Grounds BCE Gold extension.
+tags: [fantasy-grounds, fg-effects, bce, automation, dnd]
+---
+
+import IconifyIcon from '@/components/IconifyIcon.astro';
+
+## BCE Gold
+
+[Better Combat Effects (BCE) Gold Readme (PDF) <IconifyIcon icon="mdi:download" width="1.25em" />](https://www.fantasygrounds.com/forums/attachment.php?attachmentid=63813&d=1742242097)
+
+In the **Better Combat Effects (BCE) Gold** extension for Fantasy Grounds, you can use the `EXPIREADD`, `RESTS` and `TREGENA` conditional operators to create a *"looping"* effect that re-applies itself and triggers a *"pulse"* of temporary hit points every time a rest occurs. Conditional Operators are Not case-sensitive.
+
+### Important Tips
+
+- **Spelling Matters**: Ensure the name in `EXPIREADD` matches the name of the other effect in your Custom Effects list **exactly**.
+
+- **Non-Stacking**: Note that `TREGENA` follows standard 5e rules; it will not add 5 to existing Temp HP. It will set them to 5 (or keep them higher if the character already had more than 5).
+
+- **Visibility**: If you don't want the effect text to clutter the tracker, you can set the  effect to *"GM Only"* or *"Hidden"* in the Custom Effects settings.
+
+## Larger Than Life Feat
+
+To set up **Larger Than Life** (LTL), you will need to create two separate entries in your **Custom Effects** list (the star icon in the upper right of the desktop) and then apply the first one to the character.
+
+### Step 1: Create the Custom Effects
+
+Open your **Custom Effects** window and add these two exact lines:
+
+|Effect Name|Effect String|
+|---|---|
+|**LTL_Tracker**|`LTL_Tracker; EXPIREADD: LTL_Heal; RESTS`|
+|**LTL_Heal**|`LTL_Heal; TREGENA: 5; EXPIREADD: LTL_Tracker`|
+
+:::note[Effect Naming]
+The "Effect Name" (how it appears in the Combat Tracker) is defined by the **first segment** of the string (the text before the first `;`). For example, in the first line above, the effect name is `LTL_Tracker`. And is case-sensitive.
+:::
+
+### Step 2: Application
+
+Once you have defined these in your Custom Effects:
+
+1. Drag **LTL_Tracker** onto the character in the Combat Tracker.
+
+2. Leave it there permanently.
+
+3. Whenever the DM clicks *"Short Rest"* or *"Long Rest"* in the Combat Tracker menu, the character will see a message in the chat and their Temp HP will update to 5.
+
+### How it Works
+
+<details>
+<summary>Click to expand</summary>
+
+1. **LTL_Tracker**: This sits on the character's Combat Tracker entry. The `RESTS` tag tells Fantasy Grounds to expire this effect immediately when a Short or Long rest is taken.
+
+2. **EXPIREADD: LTL_Heal**: When the tracker expires (due to the rest), it automatically "fires" the second effect, `LTL_Heal`.
+
+3. **TREGENA: 5**: It stands for **T**emp **REGEN** **A**dd (instant). It immediately grants 5 temporary hit points to the character the moment the effect is added.
+
+4. **EXPIREADD: LTL_Tracker**: Since `LTL_Heal` doesn't have a duration, it applies its 5 THP and then immediately expires, which triggers the original `LTL_Tracker` to be put back on the character, resetting the loop for the next rest.
+
+```mermaid
+sequenceDiagram
+    participant CT as Combat Tracker
+    participant LTLT as LTL_Tracker
+    participant LTLH as LTL_Heal
+    participant Chat as Chat Window
+
+    Note over CT, LTLT: Initial State: LTL_Tracker active
+    GM->>CT: Clicks "Short Rest" or "Long Rest"
+    CT->>LTLT: Triggers RESTS (Expire)
+    LTLT->>LTLH: EXPIREADD: LTL_Heal
+    activate LTLH
+    LTLH->>Chat: [Grant 5 Temp HP] via TREGENA: 5
+    LTLH->>LTLT: EXPIREADD: LTL_Tracker
+    deactivate LTLH
+    Note over CT, LTLT: Result: LTL_Tracker re-applied
+```
+</details>
+
+## Attack & Damage Differentiation
+
+* Spell Attack Bonus: `ATK: 10, spell` (Adds 10 only to spell attacks)
+
+* Weapon Attack Bonus: `ATK: 2, weapon, melee` (Adds 2 only to melee weapon attacks)
+
+* Spell Resistance: `RESIST: all, spell` (Resists all damage coming from spell-type attacks)
+
+## Ongoing Saves & Effects
+
+* Save at Start of Turn: `SAVEST: wisdom; SaveDamage: 1d6 poison; SaveAd: Poisoned` (Rolls a Wisdom save at the start of the turn; on failure, takes damage and adds the "Poisoned" condition)
+
+* Tick-Tock (Chained Effects): `Tick; ExpireAdd: Talk` (When "Tick" expires, it automatically adds the "Talk" effect)
+
+## Macros (Automatic Scaling)
+
+* Spell Save DC (SDC): `SAVE: [SAVEDC] wisdom` (Automatically replaces [SDC] with the actor's actual Spell Save DC). (Don't use `SDC`, is deprecated)
+
+* Attribute Scaling: `STR: [19-STR]` (Used for items like Gauntlets of Ogre Power to set Strength to 19 regardless of the base score)
+
+* Proficiency: `ATK: [PRF]` (Adds the actor's proficiency bonus to the attack)
+
+## Conditional Operators (If/Then Logic)
+
+* Target Type: `IFT: TYPE(humanoid); ATK: 2` (Grants +2 to attack if the target is a humanoid)
+
+* Inverse Logic: `IF: !CUSTOM(Sneak Attack); ATK: 10` (Adds 10 to the attack if the actor does not have the "Sneak Attack" effect)
+
+* Pack Tactics Logic: `IF: RANGE(5); IFT: ADJ(enemy); ADVATK` (Grants advantage if within 5ft and an enemy is adjacent to the target)
+
+## Special Utility Tags
+
+* Destroy: `IFT: CR(<=.25); Destroy` (Instantly sets HP to 0 and burns death saves if the target's CR is 0.25 or lower; useful for "Destroy Undead")
+
+* Sneak Attack: `Sneak Attack` (Simply adding this tag automates the once-per-turn damage and removal based on weapon type). It's defined in the `BCE - Core` extension.
+
+* Immune to Effect: `Immune: CUSTOM(Frightened)` (Makes the actor immune to a specific custom-labeled effect)

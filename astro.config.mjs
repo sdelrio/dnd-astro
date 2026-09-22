@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import alpinejs from '@astrojs/alpinejs';
+import mermaid from 'astro-mermaid';
 import tailwindcss from '@tailwindcss/vite';
 import { buildXmlCharacters } from './src/utils/build-xml-characters.ts';
 
@@ -23,6 +24,9 @@ export default defineConfig({
     xmlCharacterViewer(),
     alpinejs({
       entrypoint: '/src/alpine.ts',
+    }),
+    mermaid({
+      autoTheme: true,
     }),
     starlight({
       title: 'D&D Companion',
