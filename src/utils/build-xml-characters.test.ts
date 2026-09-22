@@ -198,7 +198,7 @@ describe('build-xml-characters', () => {
       const draknor = characters.find((c) => c.filename === 'draknor');
       expect(draknor).toBeDefined();
       expect(draknor?.name).toBe('Drakknor');
-      expect(draknor?.avatarPath).toBe('/fg/avatar/faceless.svg');
+      expect(draknor?.avatarPath).toBe('/fg/avatar/draknor.png');
       expect(draknor?.weapons.length).toBeGreaterThan(0);
       expect(draknor?.weapons[0].damage.length).toBeGreaterThan(0);
 
