@@ -33,8 +33,9 @@ describe('Character Creation page', () => {
     );
     expect(pageSource).toMatch(/\| 14\s+\| 7\s+\|/);
     expect(pageSource).toMatch(/\| 15\s+\| 9\s+\|/);
-    expect(pageSource).toContain(':::tip Fantasy Grounds');
+    expect(pageSource).toContain(':::tip[Fantasy Grounds]');
     expect(pageSource).toContain('`/die 4d6k3`');
+    expect(pageSource).not.toMatch(/^:::(note|tip|caution|danger) [^[]/m);
     expect(pageSource.match(/:::note\[Example\]/g)).toHaveLength(2);
     expect(pageSource).not.toMatch(/^:::info/m);
     expect(pageSource).not.toMatch(/^:::warning/m);
