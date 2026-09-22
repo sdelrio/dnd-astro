@@ -1,52 +1,71 @@
-# Starlight Starter Kit: Basics
+# D&D Companion
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+D&D rules, Fantasy Grounds xml visualizer. A static-first Starlight docs site plus a Fantasy Grounds character viewer for a homebrew D&D 5e campaign.
 
+[![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)](https://astro.build)
+[![Starlight](https://img.shields.io/badge/Starlight-0.42-A855F7?logo=astro&logoColor=white)](https://starlight.astro.build)
+[![Alpine.js](https://img.shields.io/badge/Alpine.js-3-8BC0D0?logo=alpinedotjs&logoColor=white)](https://alpinejs.dev)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Vitest](https://img.shields.io/badge/Vitest-5-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev)
+[![Node.js](https://img.shields.io/badge/Node-24-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org)
+[![pnpm](https://img.shields.io/badge/pnpm-11-F69220?logo=pnpm&logoColor=white)](https://pnpm.io)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare_Workers-Static_Assets-F38020?logo=cloudflareworkers&logoColor=white)](https://workers.cloudflare.com)
+
+## Overview
+
+D&D Companion is a static-first SSG compendium that hosts the campaign's house rules alongside three interactive tools:
+
+- **Dice Roller**: rolls 4d6-drop-lowest ability scores for character creation.
+- **Feat Explorer**: browses and filters feats by ability, book, and level.
+- **XML Character Viewer**: parses Fantasy Grounds character XML at build time into character cards and pages.
+
+Interactivity runs as Alpine.js islands on top of the static HTML, so the pages ship without a client-side framework runtime.
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| Site framework | Astro 7 (SSG) + Starlight |
+| Interactivity | Alpine.js islands |
+| Styling | Tailwind v4 |
+| Character data | fast-xml-parser build pipeline |
+| Diagrams | Mermaid |
+| Tests | Vitest |
+| Hosting | Cloudflare Workers static assets |
+| Infrastructure | Terraform |
+| Toolchain | devbox / Node 24 |
+
+## Quick start
+
+Prerequisites:
+
+- Node 24
+- pnpm 11
+- Optional: devbox, which pins Node 24 and pnpm for the repo
+
+```sh
+pnpm install
+pnpm dev
 ```
-pnpm create astro@latest -- --template starlight
+
+Per AGENTS.md, start the dev server in background mode:
+
+```sh
+astro dev --background
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
-## 🚀 Project Structure
+## Commands
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
-
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
-```
-
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
-
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
-
-Static assets, like favicons, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `pnpm install`             | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm typecheck`       | Run Astro diagnostics (type checking, set `CI=true` for noninteractive use) |
-| `pnpm lint`            | Lint `.astro`, `.ts`, and `.js` files with ESLint |
-| `pnpm test`            | Run unit tests with Vitest                       |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+| Command | Action |
+| --- | --- |
+| `pnpm dev` | Start the local dev server at `localhost:4321` |
+| `pnpm build` | Build the production site to `./dist/` |
+| `pnpm preview` | Preview the production build locally |
+| `pnpm typecheck` | Run Astro diagnostics; use `CI=true pnpm typecheck` for noninteractive runs |
+| `pnpm lint` | Lint `.astro`, `.ts`, and `.js` files with ESLint, zero warnings allowed |
+| `pnpm test` | Run the Vitest unit tests |
+| `pnpm astro` | Run the Astro CLI |
+| `make check` | Run every gate: lint, typecheck, test, build |
