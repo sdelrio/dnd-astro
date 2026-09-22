@@ -12,6 +12,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 | 0004 | Use Only Supported Starlight Markdown Admonitions | accepted | 2026-09-19 |
 | 0005 | Table Row Striping Pattern with Transparent Headers | accepted | 2026-09-19 |
 | 0006 | Pre-render Character Pages as a Static Dynamic Route | accepted | 2026-09-21 |
+| 0007 | Render Mermaid Diagrams with the astro-mermaid Integration | accepted | 2026-09-22 |
 
 ## About ADRs
 
