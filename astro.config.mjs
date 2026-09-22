@@ -83,6 +83,7 @@ export default defineConfig({
         {
           label: 'Fantasy Grounds',
           items: [
+            { label: 'FG Effects', slug: 'fantasy-grounds/fg-effects' },
             { label: 'Current Party', slug: 'fantasy-grounds/current-party' },
             { label: 'Character Search', slug: 'fantasy-grounds/character-search' },
           ],

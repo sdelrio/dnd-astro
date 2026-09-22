@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "FG Effects Page Migration with Mermaid"
 author: "opencode (grill-with-docs)"
 date: "2026-09-22"
@@ -159,6 +159,6 @@ Then verify the migration itself:
 
 ## Status
 
-- [ ] Implementation complete
-- [ ] Tests passing
+- [x] Implementation complete
+- [x] Tests passing
 - [x] ADR updated (ADR-0007 written)
