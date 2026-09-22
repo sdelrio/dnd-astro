@@ -197,3 +197,9 @@ Workflow rules:
 - Never push to master directly. Every change lands through a pull request for review.
 - Always merge PRs with squash (`gh pr merge <number> --squash`); the repo does not allow merge commits, and squash keeps history linear with one conventional commit per PR.
 - Run `pnpm lint`, `CI=true pnpm typecheck`, `pnpm test`, and `pnpm build` before opening a PR.
+
+## Licensing
+
+This project is all rights reserved. There is no `LICENSE` file: the site code and campaign content are not licensed for reuse or redistribution.
+
+Third-party assets keep their own licenses. Fonts are documented in [docs/fonts-licensing.md](docs/fonts-licensing.md): Bookinsanity is used under CC-BY-SA 4.0 and Cinzel under the SIL Open Font License 1.1.
