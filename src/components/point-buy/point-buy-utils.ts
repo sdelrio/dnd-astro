@@ -62,3 +62,17 @@ export function canIncrease(scores: Scores, ability: AbilityName): boolean {
 export function canDecrease(scores: Scores, ability: AbilityName): boolean {
   return scores[ability] > MIN_SCORE;
 }
+
+export function increaseScore(scores: Scores, ability: AbilityName): Scores {
+  if (!canIncrease(scores, ability)) {
+    return { ...scores };
+  }
+  return { ...scores, [ability]: scores[ability] + 1 };
+}
+
+export function decreaseScore(scores: Scores, ability: AbilityName): Scores {
+  if (!canDecrease(scores, ability)) {
+    return { ...scores };
+  }
+  return { ...scores, [ability]: scores[ability] - 1 };
+}

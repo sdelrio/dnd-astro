@@ -12,8 +12,11 @@ import {
   pointsRemaining,
   canIncrease,
   canDecrease,
+  increaseScore,
+  decreaseScore,
   calculateModifier,
   formatModifier,
+  type AbilityName,
   type Scores,
 } from './point-buy-utils';
 import {
@@ -143,6 +146,109 @@ describe('resetScores', () => {
     const dirty: Scores = { STR: 15, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 };
     resetScores(dirty);
     expect(dirty.STR).toBe(15);
+  });
+});
+
+describe('increaseScore', () => {
+  it('increases the chosen ability by one', () => {
+    const scores = increaseScore(createDefaultScores(), 'STR');
+    expect(scores.STR).toBe(9);
+    expect(pointsSpent(scores)).toBe(1);
+  });
+
+  it('leaves the other abilities untouched', () => {
+    const scores = increaseScore(createDefaultScores(), 'WIS');
+    expect(scores).toEqual({ STR: 8, DEX: 8, CON: 8, INT: 8, WIS: 9, CHA: 8 });
+  });
+
+  it('does not mutate the allocation passed in', () => {
+    const before = createDefaultScores();
+    increaseScore(before, 'STR');
+    expect(before.STR).toBe(8);
+  });
+
+  it('returns a new allocation even when the increase is blocked', () => {
+    const before: Scores = { STR: 15, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 };
+    const after = increaseScore(before, 'STR');
+    expect(after).toEqual(before);
+    expect(after).not.toBe(before);
+  });
+
+  it('stops at the maximum score', () => {
+    const capped: Scores = { STR: 15, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 };
+    expect(increaseScore(capped, 'STR')).toEqual(capped);
+  });
+
+  it('stops when the remaining points cannot cover the next step', () => {
+    const scores: Scores = { STR: 15, DEX: 14, CON: 14, INT: 11, WIS: 8, CHA: 8 };
+    expect(pointsRemaining(scores)).toBe(1);
+    expect(increaseScore(scores, 'CON')).toEqual(scores);
+
+    const afterInt = increaseScore(scores, 'INT');
+    expect(afterInt.INT).toBe(12);
+    expect(pointsRemaining(afterInt)).toBe(0);
+  });
+
+  it('spends the full pool through a sequence of increases and then blocks further spending', () => {
+    const targets: Record<AbilityName, number> = {
+      STR: 15,
+      DEX: 14,
+      CON: 13,
+      INT: 12,
+      WIS: 10,
+      CHA: 8,
+    };
+    let scores = createDefaultScores();
+    for (const ability of ABILITY_NAMES) {
+      while (scores[ability] < targets[ability]) {
+        scores = increaseScore(scores, ability);
+      }
+    }
+    expect(scores).toEqual(targets);
+    expect(pointsRemaining(scores)).toBe(0);
+    expect(increaseScore(scores, 'CHA')).toEqual(scores);
+  });
+});
+
+describe('decreaseScore', () => {
+  it('decreases the chosen ability by one', () => {
+    const scores: Scores = { STR: 10, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 };
+    expect(decreaseScore(scores, 'STR').STR).toBe(9);
+  });
+
+  it('leaves the other abilities untouched', () => {
+    const scores: Scores = { STR: 10, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 };
+    expect(decreaseScore(scores, 'STR')).toEqual({
+      STR: 9,
+      DEX: 8,
+      CON: 8,
+      INT: 8,
+      WIS: 8,
+      CHA: 8,
+    });
+  });
+
+  it('does not mutate the allocation passed in', () => {
+    const before: Scores = { STR: 10, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 };
+    decreaseScore(before, 'STR');
+    expect(before.STR).toBe(10);
+  });
+
+  it('returns a new allocation even when the decrease is blocked', () => {
+    const before = createDefaultScores();
+    const after = decreaseScore(before, 'STR');
+    expect(after).toEqual(before);
+    expect(after).not.toBe(before);
+  });
+
+  it('stops at the minimum score', () => {
+    expect(decreaseScore(createDefaultScores(), 'STR')).toEqual(createDefaultScores());
+  });
+
+  it('returns points to the pool', () => {
+    const scores: Scores = { STR: 15, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 };
+    expect(pointsRemaining(scores)).toBe(18);
+    expect(pointsRemaining(decreaseScore(scores, 'STR'))).toBe(20);
   });
 });
 
