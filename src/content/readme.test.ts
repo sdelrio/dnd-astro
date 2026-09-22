@@ -33,6 +33,15 @@ function fencedBlock(markdown: string) {
   return match ? match[1] : '';
 }
 
+function headings(markdown: string) {
+  const body = markdown.replace(/```[\s\S]*?```/g, '');
+
+  return [...body.matchAll(/^(#{1,6}) (.+)$/gm)].map((match) => ({
+    level: match[1].length,
+    text: match[2].trim(),
+  }));
+}
+
 function treeEntries(tree: string) {
   const entries: { path: string; line: string }[] = [];
   const stack: { indent: number; segment: string }[] = [];
@@ -363,5 +372,63 @@ describe('README', () => {
     expect(readme).not.toMatch(/[├└]──/);
     expect(readme).not.toContain('src/assets/');
     expect(readme).not.toContain('\u2014');
+  });
+
+  it('lists only commands that exist in package.json scripts or the Makefile', () => {
+    const scripts = Object.keys(
+      JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')).scripts
+    );
+    const makefile = readFileSync(join(repoRoot, 'Makefile'), 'utf8');
+    const commands = section('Commands');
+
+    const rows = [...commands.matchAll(/^\| `([^`]+)` \|/gm)].map((match) => match[1]);
+    expect(rows.length).toBeGreaterThan(0);
+
+    for (const command of rows) {
+      const pnpm = command.match(/^pnpm (\S+)$/);
+
+      if (pnpm !== null) {
+        expect(scripts).toContain(pnpm[1]);
+        continue;
+      }
+
+      const make = command.match(/^make (\S+)$/);
+
+      if (make === null) {
+        expect.fail(`unexpected command in the README table: ${command}`);
+      }
+
+      expect(makefile).toMatch(new RegExp(`^${make[1]}:`, 'm'));
+    }
+  });
+
+  it('has a single H1 and a valid, duplicate-free heading hierarchy', () => {
+    const all = headings(readme);
+
+    expect(all[0]).toEqual({ level: 1, text: 'D&D Companion' });
+    expect(all.filter((heading) => heading.level === 1)).toHaveLength(1);
+
+    const seen = new Set<string>();
+    let previousLevel = 0;
+
+    for (const heading of all) {
+      expect(heading.level).toBeLessThanOrEqual(previousLevel + 1);
+
+      const key = heading.text.toLowerCase();
+      expect(seen.has(key)).toBe(false);
+      seen.add(key);
+      previousLevel = heading.level;
+    }
+  });
+
+  it('reserves rights and points third-party asset licensing at the font docs', () => {
+    const licensing = section('Licensing');
+
+    expect(licensing).toMatch(/all rights reserved/i);
+    expect(licensing).toContain('docs/fonts-licensing.md');
+    expect(licensing).toMatch(/CC-BY-SA 4\.0/);
+
+    expect(existsSync(join(repoRoot, 'LICENSE'))).toBe(false);
+    expect(readme).not.toMatch(/\[[^\]]*\]\(\s*LICENSE\s*\)/);
   });
 });
