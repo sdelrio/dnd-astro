@@ -5,6 +5,13 @@ import { join } from 'node:path';
 const repoRoot = join(__dirname, '../..');
 const readme = readFileSync(join(repoRoot, 'README.md'), 'utf8');
 
+const adrPaths = {
+  icon: 'docs/adr/0001-icon-component.md',
+  admonitions: 'docs/adr/0004-starlight-admonitions.md',
+  tableStriping: 'docs/adr/0005-table-row-striping-pattern.md',
+  mermaid: 'docs/adr/0007-mermaid-rendering-strategy.md',
+};
+
 function section(heading: string) {
   const marker = `## ${heading}\n`;
   const start = readme.indexOf(marker);
@@ -243,20 +250,20 @@ describe('README', () => {
 
     expect(rendering).toContain('IconifyIcon.astro');
     expect(rendering).toMatch(/zero client-side JavaScript/i);
-    expect(rendering).toContain('docs/adr/0001-icon-component.md');
+    expect(rendering).toContain(adrPaths.icon);
 
     expect(rendering).toContain('astro-mermaid');
-    expect(rendering).toContain('docs/adr/0007-mermaid-rendering-strategy.md');
+    expect(rendering).toContain(adrPaths.mermaid);
 
     for (const type of ['note', 'tip', 'caution', 'danger']) {
       expect(rendering).toContain(`:::${type}`);
     }
     expect(rendering).not.toContain(':::info');
     expect(rendering).not.toContain(':::warning');
-    expect(rendering).toContain('docs/adr/0004-starlight-admonitions.md');
+    expect(rendering).toContain(adrPaths.admonitions);
 
     expect(rendering).toMatch(/striped|striping/i);
-    expect(rendering).toContain('docs/adr/0005-table-row-striping-pattern.md');
+    expect(rendering).toContain(adrPaths.tableStriping);
   });
 
   it('resolves every relative Markdown link against the repository', () => {
@@ -268,10 +275,9 @@ describe('README', () => {
       expect(existsSync(join(repoRoot, href.split('#')[0]))).toBe(true);
     }
 
-    expect(links).toContain('docs/adr/0001-icon-component.md');
-    expect(links).toContain('docs/adr/0007-mermaid-rendering-strategy.md');
-    expect(links).toContain('docs/adr/0004-starlight-admonitions.md');
-    expect(links).toContain('docs/adr/0005-table-row-striping-pattern.md');
+    for (const adrPath of Object.values(adrPaths)) {
+      expect(links).toContain(adrPath);
+    }
   });
 
   it('has no Starlight starter remnants or em dashes', () => {
