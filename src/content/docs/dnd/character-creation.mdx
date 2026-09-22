@@ -1,12 +1,11 @@
 ---
+title: Character Creation
 description: Character creation selection guide.
 tags: [character, character-creation, dnd]
 ---
 
-import DnDPointBuy from '@site/src/components/DnD/DnDPointBuy';
-import StatDiceRoller from '@site/src/components/DnD/StatDiceRoller';
-
-# Character Creation
+import PointBuy from '@/components/point-buy/PointBuy.astro';
+import DiceRoller from '@/components/dice-roller/DiceRoller.astro';
 
 Follow these steps to create your character:
 
@@ -24,7 +23,7 @@ The standard array for ability scores is: `15, 14, 13, 12, 10, 8`.
 
 Use the interactive calculator below to allocate your ability scores using the standard D&D 5e point-buy system:
 
-<DnDPointBuy />
+<PointBuy />
 
 ### Point Buy Rules
 
@@ -52,7 +51,7 @@ Use the interactive calculator below to allocate your ability scores using the s
 Can use the command: `/die 4d6k3`
 :::
 
-<StatDiceRoller />
+<DiceRoller />
 
 ### Stat Rolling Rules
 
@@ -68,7 +67,7 @@ Players may discard their rolled ability scores and use the Mulligan array inste
 
 When leveling up, instead of taking the average value, a character rolls its hit point increase.
 
-The character roll its hit die and makes the following adjustment:
+The character rolls its hit die and makes the following adjustment:
 
 #### Classes rolling d6's or d8's
 
@@ -83,5 +82,5 @@ A roll of 3 on a d6 is rounded up to 4. A roll of 2 remains unchanged.
 Add +1 to the roll. The modified total cannot be higher than the highest value of the dice.
 
 :::note[Example]
-E.g. If the player rolls a 6 on a d10, it's increased to 7. If it rolls a 10, the result is unchanged.  
+E.g. If the player rolls a 6 on a d10, it's increased to 7. If it rolls a 10, the result is unchanged.
 :::
