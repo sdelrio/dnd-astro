@@ -7,6 +7,8 @@ const readme = readFileSync(join(repoRoot, 'README.md'), 'utf8');
 
 const adrPaths = {
   icon: 'docs/adr/0001-icon-component.md',
+  infraImport: 'docs/adr/0002-infrastructure-import-existing-resources.md',
+  workers: 'docs/adr/0003-workers-static-assets-over-pages.md',
   admonitions: 'docs/adr/0004-starlight-admonitions.md',
   tableStriping: 'docs/adr/0005-table-row-striping-pattern.md',
   mermaid: 'docs/adr/0007-mermaid-rendering-strategy.md',
@@ -264,6 +266,80 @@ describe('README', () => {
 
     expect(rendering).toMatch(/striped|striping/i);
     expect(rendering).toContain(adrPaths.tableStriping);
+  });
+
+  it('documents content authoring, the sidebar groups, and the admonition restriction', () => {
+    const content = section('Content authoring');
+
+    expect(content).toContain('src/content/docs/');
+    expect(content).toMatch(/MDX/);
+    expect(content).toContain('astro.config.mjs');
+
+    for (const group of ['Guides', 'D&D rule fixes', 'D&D Tools', 'Reference', 'Fantasy Grounds']) {
+      expect(content).toContain(group);
+    }
+
+    for (const type of ['note', 'tip', 'caution', 'danger']) {
+      expect(content).toContain(`:::${type}`);
+    }
+    expect(content).not.toContain(':::info');
+    expect(content).not.toContain(':::warning');
+    expect(content).toMatch(/`info` and `warning`[^.]*not supported/i);
+    expect(content).toContain(adrPaths.admonitions);
+
+    expect(content).toContain('docs/fonts-licensing.md');
+  });
+
+  it('documents the Cloudflare Workers deployment, wrangler config, and Terraform', () => {
+    const deployment = section('Deployment and security');
+
+    expect(deployment).toMatch(/Cloudflare Workers/i);
+    expect(deployment).toMatch(/static assets/i);
+    expect(deployment).toContain(adrPaths.workers);
+
+    expect(deployment).toContain('wrangler.jsonc');
+    expect(deployment).toContain('worker/index.js');
+    expect(deployment).toContain('env.ASSETS.fetch(request)');
+    expect(deployment).toContain('./dist');
+
+    expect(deployment).toContain('terraform/');
+    expect(deployment).toContain('cloudflare_workers_script');
+    expect(deployment).toContain('cloudflare_workers_domain');
+    expect(deployment).toMatch(/custom domain/i);
+    expect(deployment).toContain('terraform import');
+    expect(deployment).toContain(adrPaths.infraImport);
+
+    expect(deployment).toMatch(/Zero Trust/);
+    expect(deployment).toMatch(/Email OTP/i);
+    expect(deployment).toContain('onetimepin');
+
+    expect(deployment).toContain('Node 24');
+  });
+
+  it('indexes the documentation set and the agent conventions', () => {
+    const docs = section('Documentation and workflow');
+
+    expect(docs).toContain('docs/adr/README.md');
+    expect(docs).toContain('docs/specs/README.md');
+    expect(docs).toContain('CONTEXT.md');
+    expect(docs).toContain('docs/agents/issue-tracker.md');
+    expect(docs).toContain('docs/agents/triage-labels.md');
+    expect(docs).toContain('docs/agents/domain.md');
+    expect(docs).toContain('AGENTS.md');
+    expect(docs).toMatch(/canonical/i);
+  });
+
+  it('summarizes spec-driven development and the PR merge workflow', () => {
+    const docs = section('Documentation and workflow');
+
+    expect(docs).toMatch(/spec-driven development/i);
+    expect(docs).toContain('docs/specs/_TEMPLATE.md');
+    expect(docs).toMatch(/tags/);
+    expect(docs).toContain('adr_constraints');
+    expect(docs).toMatch(/archived/);
+    expect(docs).toMatch(/pull request/i);
+    expect(docs).toMatch(/squash/i);
+    expect(docs).toMatch(/never push to master/i);
   });
 
   it('resolves every relative Markdown link against the repository', () => {
