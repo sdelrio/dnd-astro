@@ -47,7 +47,7 @@ describe('PointBuy pool counter', () => {
   });
 
   it('reveals a completion indicator once no points remain', () => {
-    expect(source).toContain('x-show="pointsRemaining(scores) === 0"');
+    expect(source).toContain('x-if="pointsRemaining(scores) === 0"');
     expect(source).toContain('mdi:check-circle');
     expect(source).toContain('All 27 points spent');
   });
