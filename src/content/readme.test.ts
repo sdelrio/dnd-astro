@@ -1,8 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const readme = readFileSync(join(__dirname, '../../README.md'), 'utf8');
+const repoRoot = join(__dirname, '../..');
+const readme = readFileSync(join(repoRoot, 'README.md'), 'utf8');
+
+const adrPaths = {
+  icon: 'docs/adr/0001-icon-component.md',
+  admonitions: 'docs/adr/0004-starlight-admonitions.md',
+  tableStriping: 'docs/adr/0005-table-row-striping-pattern.md',
+  mermaid: 'docs/adr/0007-mermaid-rendering-strategy.md',
+};
 
 function section(heading: string) {
   const marker = `## ${heading}\n`;
@@ -16,6 +24,34 @@ function section(heading: string) {
   const end = rest.search(/\n## /);
 
   return end === -1 ? rest : rest.slice(0, end);
+}
+
+function fencedBlock(markdown: string) {
+  const match = markdown.match(/```[a-z]*\n([\s\S]*?)```/);
+  return match ? match[1] : '';
+}
+
+function treeEntries(tree: string) {
+  const entries: { path: string; line: string }[] = [];
+  const stack: { indent: number; segment: string }[] = [];
+
+  for (const line of tree.split('\n')) {
+    if (line.trim() === '') {
+      continue;
+    }
+
+    const indent = line.length - line.trimStart().length;
+    const segment = line.trim().split(/\s{2,}/)[0];
+
+    while (stack.length > 0 && stack[stack.length - 1].indent >= indent) {
+      stack.pop();
+    }
+
+    stack.push({ indent, segment });
+    entries.push({ path: stack.map((entry) => entry.segment).join(''), line });
+  }
+
+  return entries;
 }
 
 describe('README', () => {
@@ -113,6 +149,135 @@ describe('README', () => {
     }
 
     expect(commands).toContain('`CI=true pnpm typecheck`');
+  });
+
+  it('maps the repository in an annotated tree', () => {
+    const tree = fencedBlock(section('Project structure'));
+    const paths = treeEntries(tree).map((entry) => entry.path);
+
+    const expected = [
+      'docs/',
+      'public/fg/',
+      'public/fg/avatar/',
+      'public/fg/party.json',
+      'public/fonts/',
+      'scripts/',
+      'src/components/',
+      'src/components/dice-roller/',
+      'src/components/feats-explorer/',
+      'src/components/point-buy/',
+      'src/components/xml-viewer/',
+      'src/content/docs/',
+      'src/generated/',
+      'src/pages/fantasy-grounds/characters/[slug].astro',
+      'src/styles/',
+      'src/utils/',
+      'terraform/',
+      'worker/',
+      'astro.config.mjs',
+      'wrangler.jsonc',
+      'devbox.json',
+      'Makefile',
+      'AGENTS.md',
+      'CONTEXT.md',
+      'SPEC.md',
+    ];
+
+    for (const path of expected) {
+      expect(paths).toContain(path);
+    }
+  });
+
+  it('lists tree paths that exist and annotates ignored output', () => {
+    const entries = treeEntries(fencedBlock(section('Project structure')));
+
+    expect(entries.length).toBeGreaterThan(0);
+
+    for (const { path, line } of entries) {
+      if (/gitignored/i.test(line)) {
+        continue;
+      }
+
+      expect(existsSync(join(repoRoot, path.replace(/\/$/, '')))).toBe(true);
+    }
+
+    const generated = entries.find((entry) => entry.path === 'src/generated/');
+    expect(generated?.line).toMatch(/gitignored/i);
+
+    for (const ignored of ['dist/', '.astro/', 'tmp/', '.scratch/']) {
+      for (const { line } of entries.filter((entry) => entry.line.includes(ignored))) {
+        expect(line).toMatch(/gitignored/i);
+      }
+    }
+  });
+
+  it('states the least client-side JavaScript rule and the islands boundary', () => {
+    const architecture = section('Architecture');
+
+    expect(architecture).toMatch(/least client-side JavaScript/i);
+    expect(architecture).toMatch(/islands?/i);
+    expect(architecture).toContain('Alpine.js');
+  });
+
+  it('documents the build-time Fantasy Grounds XML pipeline', () => {
+    const architecture = section('Architecture');
+
+    expect(architecture).toContain('astro:config:setup');
+    expect(architecture).toContain('src/utils/build-xml-characters.ts');
+    expect(architecture).toContain('fast-xml-parser');
+    expect(architecture).toContain('src/generated/characters.json');
+    expect(architecture).toMatch(/gitignore[d]?/i);
+    expect(architecture).toMatch(/(every|each) (dev|build)/i);
+    expect(architecture).toContain('Character sheet');
+    expect(architecture).toContain('Card');
+    expect(architecture).toContain('Character page');
+    expect(architecture).toMatch(/prerender/i);
+  });
+
+  it('uses CONTEXT.md vocabulary for the character viewer', () => {
+    const architecture = section('Architecture');
+
+    expect(architecture).toContain('Character sheet');
+    expect(architecture).toContain('Card');
+    expect(architecture).toContain('Display mode');
+    expect(architecture).toContain('Character page');
+    expect(architecture).toMatch(/Display mode[^.]*small, medium, or large/i);
+    expect(architecture).toMatch(/chosen at build time/i);
+  });
+
+  it('documents rendering conventions linked to their ADRs', () => {
+    const rendering = section('Rendering conventions');
+
+    expect(rendering).toContain('IconifyIcon.astro');
+    expect(rendering).toMatch(/zero client-side JavaScript/i);
+    expect(rendering).toContain(adrPaths.icon);
+
+    expect(rendering).toContain('astro-mermaid');
+    expect(rendering).toContain(adrPaths.mermaid);
+
+    for (const type of ['note', 'tip', 'caution', 'danger']) {
+      expect(rendering).toContain(`:::${type}`);
+    }
+    expect(rendering).not.toContain(':::info');
+    expect(rendering).not.toContain(':::warning');
+    expect(rendering).toContain(adrPaths.admonitions);
+
+    expect(rendering).toMatch(/striped|striping/i);
+    expect(rendering).toContain(adrPaths.tableStriping);
+  });
+
+  it('resolves every relative Markdown link against the repository', () => {
+    const links = [...readme.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)]
+      .map((match) => match[1])
+      .filter((href) => !/^(https?:|#|mailto:)/.test(href));
+
+    for (const href of links) {
+      expect(existsSync(join(repoRoot, href.split('#')[0]))).toBe(true);
+    }
+
+    for (const adrPath of Object.values(adrPaths)) {
+      expect(links).toContain(adrPath);
+    }
   });
 
   it('has no Starlight starter remnants or em dashes', () => {
