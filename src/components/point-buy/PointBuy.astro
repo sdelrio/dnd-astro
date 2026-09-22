@@ -1,0 +1,154 @@
+---
+import IconifyIcon from '@/components/IconifyIcon.astro';
+import {
+  ABILITY_NAMES,
+  calculateModifier,
+  createDefaultScores,
+  formatModifier,
+  getScoreCost,
+  pointsRemaining,
+} from './point-buy-utils';
+
+const initialScores = createDefaultScores();
+---
+
+<div x-data="pointBuy()" class="not-content space-y-6">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {ABILITY_NAMES.map((ability) => (
+      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 text-center">
+        <h3 class="font-bold text-gray-900 dark:text-gray-100">{ability}</h3>
+        <div
+          class="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100"
+          x-text={`scores.${ability}`}
+        >
+          {initialScores[ability]}
+        </div>
+        <div
+          class="text-sm font-medium text-gray-600 dark:text-gray-400"
+          x-text={`formatModifier(calculateModifier(scores.${ability}))`}
+        >
+          {formatModifier(calculateModifier(initialScores[ability]))}
+        </div>
+        <div
+          class="mt-1 text-xs text-gray-500 dark:text-gray-400"
+          x-text={`'Cost: ' + getScoreCost(scores.${ability})`}
+        >
+          Cost: {getScoreCost(initialScores[ability])}
+        </div>
+        <div class="mt-3 flex items-center justify-center gap-3">
+          <button
+            type="button"
+            @click={`decrease('${ability}')`}
+            :disabled={`!canDecrease(scores, '${ability}')`}
+            class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            aria-label={`Decrease ${ability}`}
+          >
+            <IconifyIcon icon="mdi:minus" />
+          </button>
+          <button
+            type="button"
+            @click={`increase('${ability}')`}
+            :disabled={`!canIncrease(scores, '${ability}')`}
+            class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            aria-label={`Increase ${ability}`}
+          >
+            <IconifyIcon icon="mdi:plus" />
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <p class="text-lg font-bold text-gray-900 dark:text-gray-100">
+          <span class="text-(color:--sl-color-accent)" x-text="pointsRemaining(scores)">
+            {pointsRemaining(initialScores)}
+          </span> points remaining
+        </p>
+        <div
+          x-show="pointsRemaining(scores) === 0"
+          class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-(--sl-color-accent-low) border border-(color:--sl-color-accent) text-(color:--sl-color-accent-high) text-sm font-medium"
+        >
+          <IconifyIcon icon="mdi:check-circle" />
+          <span>All 27 points spent</span>
+        </div>
+      </div>
+      <button
+        type="button"
+        @click="reset()"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-(--sl-color-accent) text-(color:--sl-color-text-invert) rounded-lg shadow hover:bg-(--sl-color-accent-high) transition-colors"
+        aria-label="Reset all scores"
+      >
+        <IconifyIcon icon="mdi:restore" />
+        <span>Reset</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+import {
+  calculateModifier,
+  canDecrease,
+  canIncrease,
+  createDefaultScores,
+  decreaseScore,
+  formatModifier,
+  getScoreCost,
+  increaseScore,
+  pointsRemaining,
+  resetScores,
+  type AbilityName,
+} from './point-buy-utils';
+
+declare global {
+  interface Window {
+    calculateModifier: typeof calculateModifier;
+    canDecrease: typeof canDecrease;
+    canIncrease: typeof canIncrease;
+    createDefaultScores: typeof createDefaultScores;
+    decreaseScore: typeof decreaseScore;
+    formatModifier: typeof formatModifier;
+    getScoreCost: typeof getScoreCost;
+    increaseScore: typeof increaseScore;
+    pointsRemaining: typeof pointsRemaining;
+    resetScores: typeof resetScores;
+    pointBuy: typeof pointBuy;
+  }
+}
+
+window.calculateModifier = calculateModifier;
+window.canDecrease = canDecrease;
+window.canIncrease = canIncrease;
+window.createDefaultScores = createDefaultScores;
+window.decreaseScore = decreaseScore;
+window.formatModifier = formatModifier;
+window.getScoreCost = getScoreCost;
+window.increaseScore = increaseScore;
+window.pointsRemaining = pointsRemaining;
+window.resetScores = resetScores;
+window.pointBuy = pointBuy;
+
+function pointBuy() {
+  return {
+    scores: window.createDefaultScores(),
+    calculateModifier: window.calculateModifier,
+    formatModifier: window.formatModifier,
+    getScoreCost: window.getScoreCost,
+    canIncrease: window.canIncrease,
+    canDecrease: window.canDecrease,
+    pointsRemaining: window.pointsRemaining,
+    increase(ability: AbilityName) {
+      this.scores = window.increaseScore(this.scores, ability);
+    },
+    decrease(ability: AbilityName) {
+      this.scores = window.decreaseScore(this.scores, ability);
+    },
+    reset() {
+      this.scores = window.resetScores(this.scores);
+    },
+  };
+}
+</script>
