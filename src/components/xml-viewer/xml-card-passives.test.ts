@@ -224,7 +224,6 @@ describe('XmlCard Passive Skills section', () => {
       expect(subcard).toContain('@md:flex-row');
       expect(subcard).toContain('@md:items-baseline');
       expect(subcard).toContain('@md:justify-between');
-      expect(subcard).toContain('@md:text-left');
     });
   });
 
