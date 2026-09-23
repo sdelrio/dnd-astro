@@ -30,6 +30,58 @@ describe('parseCharacterXML', () => {
     expect(secondWind?.group).toContain('Fighter');
   });
 
+  it('exposes prepared and preparedDomain on powers from a real sheet', () => {
+    const lothirielXml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/lothiriel.xml'), 'utf8');
+    const lothiriel = parseCharacterXML(lothirielXml);
+    const preparedSpell = lothiriel?.powers.find((p) => p.name === 'Lightning Bolt');
+    expect(preparedSpell).toEqual({
+      level: 3,
+      name: 'Lightning Bolt',
+      group: 'Spells',
+      prepared: 1,
+      preparedDomain: 0,
+    });
+    const alwaysPrepared = lothiriel?.powers.find((p) => p.name === "Melf's Slumber Arrows");
+    expect(alwaysPrepared).toEqual({
+      level: 3,
+      name: "Melf's Slumber Arrows",
+      group: 'Spells',
+      prepared: 0,
+      preparedDomain: 1,
+    });
+
+    const tarrulonXml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/tarrulon.xml'), 'utf8');
+    const tarrulon = parseCharacterXML(tarrulonXml);
+    const rage = tarrulon?.powers.find((p) => p.name === 'Rage');
+    expect(rage).toEqual({
+      level: 0,
+      name: 'Rage',
+      group: 'Features',
+      prepared: 4,
+      preparedDomain: 0,
+    });
+  });
+
+  it('defaults missing power prepared fields to zero', () => {
+    const xml = `
+      <root>
+        <character>
+          <powers>
+            <id-00001>
+              <group type="string">Spells</group>
+              <level type="number">1</level>
+              <name type="string">Mystic Arcana</name>
+            </id-00001>
+          </powers>
+        </character>
+      </root>
+    `;
+    const result = parseCharacterXML(xml);
+    expect(result?.powers).toEqual([
+      { level: 1, name: 'Mystic Arcana', group: 'Spells', prepared: 0, preparedDomain: 0 },
+    ]);
+  });
+
   it('parses weapons from the id-keyed weaponlist collection', () => {
     const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
     const result = parseCharacterXML(xml);

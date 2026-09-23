@@ -659,7 +659,7 @@ describe('XmlCard ultra-wide section pairing', () => {
   };
   const carriedItem = { name: 'Rope', count: 1, weight: 10, carried: 1 };
   const feature = { level: 1, name: 'Second Wind', source: 'Fighter' };
-  const power = { level: 1, name: 'Bless', group: 'Cleric' };
+  const power = { level: 1, name: 'Bless', group: 'Cleric', prepared: 1, preparedDomain: 0 };
   const someCoins = { pp: 0, gp: 5, ep: 0, sp: 0, cp: 0 };
 
   async function renderPaired(): Promise<string> {
