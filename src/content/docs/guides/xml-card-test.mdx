@@ -355,6 +355,22 @@ section entirely, with no live switching.
 
 <XmlCard character={alberich} display="large" />
 
+### Features
+
+Large cards render Features as one accent card below the visible "Features"
+heading: the level sub-headings and per-feature expand/collapse rows sit
+inside the vitals-item shell with the colored top line, border, and uniform
+`rounded-[7px]` radius. Akinori's features group by level, each row toggling
+its source and level details. The heading stays above the card, unlike the
+Languages and Feats label-inside-card treatment. Small and medium cards omit
+the section at build time, with no live switching.
+
+```mdx
+<XmlCard character={akinori} display="large" />
+```
+
+<XmlCard character={akinori} display="large" />
+
 ### Overview Group
 
 Large cards group Vitals, Abilities, and Passive Skills under one visible
