@@ -152,6 +152,22 @@ function saveRow(table: string, short: string): string {
   return matches[0];
 }
 
+function languagesSection(html: string): string {
+  const marker = html.indexOf('>Languages</div>');
+  if (marker === -1) return '';
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
+function featsSection(html: string): string {
+  const marker = html.indexOf('>Feats</div>');
+  if (marker === -1) return '';
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
 describe('XmlCard Passive Skills section', () => {
   it('renders in large mode between Abilities and Saving Throws', async () => {
     const html = await renderCard('large');
@@ -372,7 +388,7 @@ describe('XmlCard Equipped Weapons section', () => {
       weapons: [greatsword],
       features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
     });
-    const feats = html.indexOf('>Feats</h2>');
+    const feats = html.indexOf('>Feats</div>');
     const weapons = html.indexOf('>Equipped Weapons</h2>');
     const features = html.indexOf('>Features</h2>');
     expect(feats).toBeGreaterThan(-1);
@@ -676,8 +692,8 @@ describe('XmlCard ultra-wide section pairing', () => {
   it('stacks Languages and Feats under Saving Throws to the right of Overview', async () => {
     const html = await renderPaired();
     const saves = html.indexOf('>Saving Throws</h2>');
-    const languages = html.indexOf('>Languages</h2>');
-    const feats = html.indexOf('>Feats</h2>');
+    const languages = html.indexOf('>Languages</div>');
+    const feats = html.indexOf('>Feats</div>');
     const skills = html.indexOf('>Skills</h2>');
     expect(saves).toBeGreaterThan(-1);
     expect(languages).toBeGreaterThan(saves);
@@ -723,6 +739,71 @@ describe('XmlCard ultra-wide section pairing', () => {
     const html = await renderPaired();
     const borderless = 'pt-4 @6xl:border-t-0 @6xl:pt-0';
     expect(html.split(borderless).length - 1).toBe(6);
+  });
+});
+
+describe('XmlCard Languages and Feats accent cards', () => {
+  const manyLanguages = [
+    'Common',
+    'Draconic',
+    'Elvish',
+    'Dwarvish',
+    'Gnomish',
+    'Halfling',
+    'Orc',
+  ];
+  const someFeats = ['Alert', 'Sentinel'];
+
+  it('renders Languages as one accent card with an uppercase label and pills', async () => {
+    const section = languagesSection(
+      await renderCard('medium', { languages: manyLanguages })
+    );
+    expect(section).not.toContain('<h2');
+    expect(section).toContain('border-t-[3px]');
+    expect(section).toContain('border-t-[#58180d]');
+    expect(section).toContain('rounded-[7px]');
+    expect(section).toContain('border border-gray-300');
+    expect(section).toContain('uppercase tracking-wide">Languages</div>');
+    expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
+    for (const lang of manyLanguages) {
+      expect(section).toContain(`>${lang}</span>`);
+    }
+  });
+
+  it('renders Feats as one accent card with a Feats label', async () => {
+    const section = featsSection(await renderCard('large', { feats: someFeats }));
+    expect(section).not.toContain('<h2');
+    expect(section).toContain('border-t-[3px]');
+    expect(section).toContain('rounded-[7px]');
+    expect(section).toContain('uppercase tracking-wide">Feats</div>');
+    expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
+    for (const feat of someFeats) {
+      expect(section).toContain(`>${feat}</span>`);
+    }
+  });
+
+  it('puts the label left and the wrapping pill list right, stacking on narrow containers', async () => {
+    for (const section of [
+      languagesSection(await renderCard('medium', { languages: manyLanguages })),
+      featsSection(await renderCard('large', { feats: someFeats })),
+    ]) {
+      expect(section).toContain('flex flex-col');
+      expect(section).toContain('flex-wrap');
+      expect(section).toContain('@md:flex-row');
+      expect(section).toContain('@md:justify-between');
+      const labelIndex = section.indexOf('uppercase tracking-wide">');
+      const pillsIndex = section.indexOf('flex flex-wrap gap-2');
+      expect(labelIndex).toBeGreaterThan(-1);
+      expect(pillsIndex).toBeGreaterThan(labelIndex);
+    }
+  });
+
+  it('omits Languages in small mode and Feats below large mode', async () => {
+    expect(await renderCard('small', { languages: manyLanguages })).not.toContain(
+      'uppercase tracking-wide">Languages</div>'
+    );
+    const medium = await renderCard('medium', { feats: someFeats });
+    expect(medium).not.toContain('uppercase tracking-wide">Feats</div>');
   });
 });
 
@@ -869,5 +950,34 @@ describe('XmlCard visual test page', () => {
     expect(body).toContain('Ability');
     expect(body).toContain('Save');
     expect(body).toContain('Proficient');
+  });
+
+  it('documents the Languages accent card subsection', () => {
+    const large = testPageSource.indexOf('## Display: Large');
+    const notes = testPageSource.indexOf('## Notes');
+    const subsection = testPageSource.indexOf('### Languages');
+    expect(large).toBeGreaterThan(-1);
+    expect(subsection).toBeGreaterThan(large);
+    expect(subsection).toBeLessThan(notes);
+    const body = testPageSource.slice(subsection, notes);
+    expectFixedModeCopy(body);
+    expect(body).toContain('accent card');
+    expect(body).toContain('Languages');
+  });
+
+  it('documents the Feats accent card subsection under Display: Large', () => {
+    const large = testPageSource.indexOf('## Display: Large');
+    const notes = testPageSource.indexOf('## Notes');
+    const languages = testPageSource.indexOf('### Languages');
+    const feats = testPageSource.indexOf('### Feats');
+    expect(large).toBeGreaterThan(-1);
+    expect(languages).toBeGreaterThan(large);
+    expect(feats).toBeGreaterThan(languages);
+    expect(feats).toBeLessThan(notes);
+    const body = testPageSource.slice(feats, notes);
+    expect(body).toContain('display="large"');
+    expectFixedModeCopy(body);
+    expect(body).toContain('accent card');
+    expect(body).toContain('Feats');
   });
 });
