@@ -358,22 +358,26 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
 
           {showLanguages && (
             <section class={`border-t border-gray-100 dark:border-gray-700 pt-4${showSaves ? '' : ' @6xl:border-t-0 @6xl:pt-0'}`}>
-              <SectionHeader title="Languages" />
-              <div class="flex flex-wrap gap-2">
-                {languages.map((lang) => (
-                  <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
-                ))}
+              <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
+                <div class="flex flex-wrap gap-2">
+                  {languages.map((lang) => (
+                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
+                  ))}
+                </div>
               </div>
             </section>
           )}
 
           {showFeats && (
             <section class={`border-t border-gray-100 dark:border-gray-700 pt-4${showSaves || showLanguages ? '' : ' @6xl:border-t-0 @6xl:pt-0'}`}>
-              <SectionHeader title="Feats" />
-              <div class="flex flex-wrap gap-2">
-                {feats.map((feat) => (
-                  <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
-                ))}
+              <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
+                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
+                <div class="flex flex-wrap gap-2">
+                  {feats.map((feat) => (
+                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
+                  ))}
+                </div>
               </div>
             </section>
           )}
