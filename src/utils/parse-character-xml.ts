@@ -65,7 +65,7 @@ export interface CharacterData {
   languages: string[];
   feats: string[];
   features: Array<{ level: number; name: string; source: string }>;
-  powers: Array<{ level: number; name: string; group: string }>;
+  powers: Array<{ level: number; name: string; group: string; prepared: number; preparedDomain: number }>;
   weapons: WeaponData[];
   inventory: InventoryItem[];
   coins: Coins;
@@ -227,6 +227,8 @@ export function parseCharacterXML(xml: string): CharacterData | null {
       level: Number(getText(p, 'level') || 0),
       name: getText(p, 'name'),
       group: getText(p, 'group'),
+      prepared: Number(getText(p, 'prepared') || 0),
+      preparedDomain: Number(getText(p, 'preparedDomain') || 0),
     }));
   const weaponsNode = root.weaponlist ?? {};
   const weapons = Object.keys(weaponsNode)
