@@ -160,6 +160,22 @@ function featuresSection(html: string): string {
   return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
 }
 
+function powersSection(html: string): string {
+  const marker = html.indexOf('>Powers</h2>');
+  if (marker === -1) return '';
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
+function powerRow(section: string, name: string): string {
+  const marker = section.indexOf(`>${name}`);
+  expect(marker).toBeGreaterThan(-1);
+  const start = section.lastIndexOf('<div class="py-2', marker);
+  const end = section.indexOf('</div>', section.indexOf('x-transition', marker));
+  return section.slice(start, end === -1 ? undefined : end + '</div>'.length);
+}
+
 function languagesSection(html: string): string {
   const marker = html.indexOf('>Languages</div>');
   if (marker === -1) return '';
@@ -866,6 +882,151 @@ describe('XmlCard Features accent card', () => {
     expect(body).toContain('accent card');
     expect(body).toContain('Features');
     expect(body).toContain('display="large"');
+  });
+});
+
+describe('XmlCard Powers accent card and prepared marks', () => {
+  const preparedSpell = {
+    level: 3,
+    name: 'Bless',
+    group: 'Spells',
+    prepared: 1,
+    preparedDomain: 0,
+  };
+  const domainSpell = {
+    level: 1,
+    name: 'Cure Wounds',
+    group: 'Spells Domain (Life)',
+    prepared: 1,
+    preparedDomain: 1,
+  };
+  const preparedOnlySpell = {
+    level: 2,
+    name: 'Aid',
+    group: 'Spells',
+    prepared: 1,
+    preparedDomain: 0,
+  };
+  const unpreparedSpell = {
+    level: 1,
+    name: 'Guiding Bolt',
+    group: 'Spells',
+    prepared: 0,
+    preparedDomain: 0,
+  };
+  const nonSpell = {
+    level: 1,
+    name: 'Rage',
+    group: 'Barbarian Actions/Effects',
+    prepared: 3,
+    preparedDomain: 0,
+  };
+
+  it('wraps the Powers content in one accent card below the heading', async () => {
+    const section = powersSection(
+      await renderCard('large', { powers: [preparedSpell, nonSpell] })
+    );
+    expect(section).toContain('>Powers</h2>');
+    expect(section).toContain('border-t-[3px]');
+    expect(section).toContain('border-t-[#58180d]');
+    expect(section).toContain('border border-gray-300');
+    expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
+    const headingIndex = section.indexOf('>Powers</h2>');
+    const cardIndex = section.indexOf('rounded-[7px]');
+    expect(cardIndex).toBeGreaterThan(headingIndex);
+    const card = section.slice(cardIndex);
+    expect(card).toContain('>Level 3</h3>');
+    expect(card).toContain('>Spells</h4>');
+    expect(card).toContain('>Bless<span');
+    expect(card).toContain("toggleSection('power-1-0-0')");
+    expect(card).toContain("isExpanded('power-1-0-0')");
+    expect(card).toContain('role="button"');
+    expect(card).toContain('cursor-pointer');
+    expect(card).toContain('x-transition');
+  });
+
+  it('marks a prepared spell with a filled gold dot and Prepared tooltip', async () => {
+    const section = powersSection(await renderCard('large', { powers: [preparedOnlySpell] }));
+    const row = powerRow(section, 'Aid');
+    expect(row).toContain('bg-[#c68000]');
+    expect(row).toContain('title="Prepared"');
+    expect(row).not.toContain('Always prepared');
+  });
+
+  it('marks an always-prepared spell with a hollow accent-ring dot and class tooltip', async () => {
+    const section = powersSection(
+      await renderCard('large', {
+        powers: [{ ...domainSpell, prepared: 0, preparedDomain: 1 }],
+      })
+    );
+    const row = powerRow(section, 'Cure Wounds');
+    expect(row).toContain('border border-[#c68000]');
+    expect(row).toContain('title="Always prepared (class/subclass)"');
+    expect(row).not.toContain('bg-[#c68000]');
+    expect(row).not.toContain('title="Prepared"');
+  });
+
+  it('shows only the always-prepared dot when a spell has both flags', async () => {
+    const section = powersSection(await renderCard('large', { powers: [domainSpell] }));
+    const row = powerRow(section, 'Cure Wounds');
+    expect(row).toContain('title="Always prepared (class/subclass)"');
+    expect(row).not.toContain('title="Prepared"');
+    expect(row).not.toContain('bg-[#c68000]');
+  });
+
+  it('shows no mark on non-spell powers even when prepared is non-zero', async () => {
+    const section = powersSection(
+      await renderCard('large', { powers: [nonSpell, unpreparedSpell] })
+    );
+    const rage = powerRow(section, 'Rage');
+    expect(rage).not.toContain('bg-[#c68000]');
+    expect(rage).not.toContain('border border-[#c68000]');
+    expect(rage).not.toContain('title=');
+    const guiding = powerRow(section, 'Guiding Bolt');
+    expect(guiding).not.toContain('bg-[#c68000]');
+    expect(guiding).not.toContain('border border-[#c68000]');
+  });
+
+  it('renders the bottom legend with the same dot markup only when at least one mark exists', async () => {
+    const withMarks = powersSection(
+      await renderCard('large', { powers: [preparedOnlySpell, domainSpell] })
+    );
+    expect(withMarks).toContain('Prepared');
+    expect(withMarks).toContain('Always prepared (class/subclass)');
+    const legendIndex = withMarks.lastIndexOf('mt-3 pt-2 border-t');
+    expect(legendIndex).toBeGreaterThan(-1);
+    const legend = withMarks.slice(legendIndex);
+    expect(legend).toContain('bg-[#c68000]');
+    expect(legend).toContain('border border-[#c68000]');
+    expect(legend).toContain('title="Prepared"');
+    expect(legend).toContain('title="Always prepared (class/subclass)"');
+
+    const noMarks = powersSection(
+      await renderCard('large', { powers: [unpreparedSpell, nonSpell] })
+    );
+    expect(noMarks).not.toContain('title="Prepared"');
+    expect(noMarks).not.toContain('Always prepared (class/subclass)');
+  });
+
+  it('hides the section in small and medium modes at build time', async () => {
+    expect(await renderCard('small', { powers: [preparedSpell] })).not.toContain('Powers');
+    expect(await renderCard('medium', { powers: [preparedSpell] })).not.toContain('Powers');
+  });
+
+  it('documents the Powers Marks subsection under Display: Large', () => {
+    const large = testPageSource.indexOf('## Display: Large');
+    const notes = testPageSource.indexOf('## Notes');
+    const subsection = testPageSource.indexOf('### Powers Marks');
+    expect(large).toBeGreaterThan(-1);
+    expect(subsection).toBeGreaterThan(large);
+    expect(subsection).toBeLessThan(notes);
+    const body = testPageSource.slice(subsection, notes);
+    expectFixedModeCopy(body);
+    expect(body).toContain('accent card');
+    expect(body).toContain('display="large"');
+    expect(body).toContain('Prepared');
+    expect(body).toContain('Always prepared');
+    expect(body).toContain('legend');
   });
 });
 

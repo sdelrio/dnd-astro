@@ -177,6 +177,18 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
   })),
 }));
 
+function isSpellGroup(group: string): boolean {
+  return /spell|cantrip/i.test(group);
+}
+type PowerMark = 'always' | 'prepared' | null;
+function powerMark(power: { group: string; prepared: number; preparedDomain: number }): PowerMark {
+  if (!isSpellGroup(power.group)) return null;
+  if (power.preparedDomain > 0) return 'always';
+  if (power.prepared > 0) return 'prepared';
+  return null;
+}
+const hasPowerMarks = sortedPowers.some((p) => powerMark(p) !== null);
+
 const showSkills = canShow('skills') && skills.length > 0;
 const showLanguages = canShow('languages') && languages.length > 0;
 const showFeats = canShow('feats') && feats.length > 0;
@@ -562,42 +574,67 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
         {showPowers && (
           <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Powers" />
-            {powersByLevel.map((levelGroup, li) => (
-              <div>
-                <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
-                  Level {levelGroup.level}
-                </h3>
-                {levelGroup.groups.map((group, gi) => (
-                  <div>
-                    <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
-                      {group.name}
-                    </h4>
-                    {group.items.map((power, pi) => (
-                      <div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-                        <div
-                          class="flex items-center justify-between cursor-pointer"
-                          role="button"
-                          tabindex="0"
-                          @click={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
-                          @keydown.enter={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
-                        >
-                          <span class="font-medium text-gray-900 dark:text-gray-100">{power.name}</span>
-                          <span class="text-xs text-gray-500 dark:text-gray-400">{power.group}</span>
+            <div class={vitalsItemClass}>
+              {powersByLevel.map((levelGroup, li) => (
+                <div>
+                  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                    Level {levelGroup.level}
+                  </h3>
+                  {levelGroup.groups.map((group, gi) => (
+                    <div>
+                      <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
+                        {group.name}
+                      </h4>
+                      {group.items.map((power, pi) => {
+                        const mark = powerMark(power);
+                        return (
+                        <div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
+                          <div
+                            class="flex items-center justify-between cursor-pointer"
+                            role="button"
+                            tabindex="0"
+                            @click={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
+                            @keydown.enter={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
+                          >
+                            <span class="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1">
+                              {power.name}
+                              {mark === 'always' && (
+                                <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" title="Always prepared (class/subclass)"></span>
+                              )}
+                              {mark === 'prepared' && (
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Prepared"></span>
+                              )}
+                            </span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">{power.group}</span>
+                          </div>
+                          <div
+                            class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400"
+                            x-show={"isExpanded('power-" + li + '-' + gi + '-' + pi + "')"}
+                            x-transition
+                          >
+                            <p class="m-0">Level: {power.level}</p>
+                            <p class="m-0">Group: {power.group}</p>
+                          </div>
                         </div>
-                        <div
-                          class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400"
-                          x-show={"isExpanded('power-" + li + '-' + gi + '-' + pi + "')"}
-                          x-transition
-                        >
-                          <p class="m-0">Level: {power.level}</p>
-                          <p class="m-0">Group: {power.group}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            ))}
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              ))}
+              {hasPowerMarks && (
+                <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
+                  <span class="inline-flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Prepared"></span>
+                    Prepared
+                  </span>
+                  <span class="inline-flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" title="Always prepared (class/subclass)"></span>
+                    Always prepared (class/subclass)
+                  </span>
+                </div>
+              )}
+            </div>
           </section>
         )}
       </div>
