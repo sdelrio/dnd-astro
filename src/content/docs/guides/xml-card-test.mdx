@@ -324,6 +324,37 @@ live switching.
 
 <XmlCard character={alberich} display="large" />
 
+### Languages
+
+Medium and large cards render Languages as a single accent card instead of a
+heading above a pill row: the uppercase "Languages" label sits on the left
+and the language pills sit on the right, reusing the vitals-item shell with
+the colored top line, border, and uniform `rounded-[7px]` radius. The pill
+list wraps onto new lines when it exceeds the card width; on narrow
+containers the label stacks above the pills, and they share one row at wider
+container widths. Small cards omit the section at build time, with no live
+switching.
+
+```mdx
+<XmlCard character={tanadirian} display="medium" />
+```
+
+<XmlCard character={tanadirian} display="medium" />
+
+### Feats
+
+Large cards render Feats the same way: one accent card with the uppercase
+"Feats" label on the left and the feat pills on the right, wrapping within
+the card and stacking the label above the pills on narrow containers. The
+display mode is fixed at build time, so small and medium cards omit the
+section entirely, with no live switching.
+
+```mdx
+<XmlCard character={alberich} display="large" />
+```
+
+<XmlCard character={alberich} display="large" />
+
 ### Overview Group
 
 Large cards group Vitals, Abilities, and Passive Skills under one visible
