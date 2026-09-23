@@ -152,6 +152,14 @@ function saveRow(table: string, short: string): string {
   return matches[0];
 }
 
+function featuresSection(html: string): string {
+  const marker = html.indexOf('>Features</h2>');
+  if (marker === -1) return '';
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
 function languagesSection(html: string): string {
   const marker = html.indexOf('>Languages</div>');
   if (marker === -1) return '';
@@ -804,6 +812,60 @@ describe('XmlCard Languages and Feats accent cards', () => {
     );
     const medium = await renderCard('medium', { feats: someFeats });
     expect(medium).not.toContain('uppercase tracking-wide">Feats</div>');
+  });
+});
+
+describe('XmlCard Features accent card', () => {
+  const sampleFeatures = [
+    { level: 1, name: 'Second Wind', source: 'Fighter' },
+    { level: 2, name: 'Action Surge', source: 'Fighter' },
+  ];
+
+  it('wraps the Features content in one accent card below the heading', async () => {
+    const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
+    expect(section).toContain('>Features</h2>');
+    expect(section).toContain('border-t-[3px]');
+    expect(section).toContain('border-t-[#58180d]');
+    expect(section).toContain('border border-gray-300');
+    expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
+    const headingIndex = section.indexOf('>Features</h2>');
+    const cardIndex = section.indexOf('rounded-[7px]');
+    expect(cardIndex).toBeGreaterThan(headingIndex);
+  });
+
+  it('keeps level sub-headings and per-feature accordions inside the card', async () => {
+    const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
+    const cardStart = section.indexOf('rounded-[7px]');
+    expect(cardStart).toBeGreaterThan(-1);
+    const card = section.slice(cardStart);
+    expect(card).toContain('>Level 1</h3>');
+    expect(card).toContain('>Level 2</h3>');
+    expect(card).toContain('>Second Wind</span>');
+    expect(card).toContain('>Action Surge</span>');
+    expect(card).toContain("toggleSection('feature-0-0')");
+    expect(card).toContain("isExpanded('feature-0-0')");
+    expect(card).toContain('role="button"');
+    expect(card).toContain('cursor-pointer');
+    expect(card).toContain('x-transition');
+  });
+
+  it('hides the section in small and medium modes at build time', async () => {
+    expect(await renderCard('small', { features: sampleFeatures })).not.toContain('Features');
+    expect(await renderCard('medium', { features: sampleFeatures })).not.toContain('Features');
+  });
+
+  it('documents the Features accent card subsection under Display: Large', () => {
+    const large = testPageSource.indexOf('## Display: Large');
+    const notes = testPageSource.indexOf('## Notes');
+    const subsection = testPageSource.indexOf('### Features');
+    expect(large).toBeGreaterThan(-1);
+    expect(subsection).toBeGreaterThan(large);
+    expect(subsection).toBeLessThan(notes);
+    const body = testPageSource.slice(subsection, notes);
+    expectFixedModeCopy(body);
+    expect(body).toContain('accent card');
+    expect(body).toContain('Features');
+    expect(body).toContain('display="large"');
   });
 });
 
