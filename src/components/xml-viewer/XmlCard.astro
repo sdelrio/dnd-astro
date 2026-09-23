@@ -289,15 +289,15 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
             <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4">
               <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Passive Skills</span>
               <div class="grid grid-cols-3 gap-2 text-center">
-                <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
+                <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:text-left @md:gap-2`}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Perception</div>
                   <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.perception}</div>
                 </div>
-                <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
+                <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:text-left @md:gap-2`}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Investigation</div>
                   <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.investigation}</div>
                 </div>
-                <div class={`${vitalsItemClass} flex items-baseline justify-between gap-2`}>
+                <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:text-left @md:gap-2`}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Insight</div>
                   <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.insight}</div>
                 </div>

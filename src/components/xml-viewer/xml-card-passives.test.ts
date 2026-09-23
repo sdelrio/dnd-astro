@@ -213,6 +213,21 @@ describe('XmlCard Passive Skills section', () => {
     });
   });
 
+  it('stacks label over value on narrow cards and restores the row at @md', async () => {
+    const section = passiveSection(await renderCard('large'));
+    const subcards = passiveSubcards(section);
+    expect(subcards).toHaveLength(3);
+    subcards.forEach((subcard) => {
+      expect(subcard).toContain('flex-col');
+      expect(subcard).toContain('items-center');
+      expect(subcard).toContain('text-center');
+      expect(subcard).toContain('@md:flex-row');
+      expect(subcard).toContain('@md:items-baseline');
+      expect(subcard).toContain('@md:justify-between');
+      expect(subcard).toContain('@md:text-left');
+    });
+  });
+
   it('uses one uniform vitals-item radius on all four corners of each subcard', async () => {
     const section = passiveSection(await renderCard('large'));
     expect(section.match(/rounded-\[7px\]/g)).toHaveLength(3);
