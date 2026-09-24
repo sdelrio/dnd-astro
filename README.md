@@ -126,7 +126,10 @@ The site is statically generated: every page ships as HTML and CSS, and interact
 1. Reads the committed Fantasy Grounds `.xml` sheets under `src/assets`.
 2. Parses each Character sheet with `fast-xml-parser` (through `src/utils/parse-character-xml.ts`) into a `CharacterData` record.
 3. Resolves each avatar path with the `.jpg` -> `.png` -> `faceless.svg` fallback.
-4. Writes `src/generated/characters.json`, which is gitignored and rebuilt on every dev server start and production build.
+4. Writes `src/generated/characters.json`, the single build-time character artifact, which is gitignored and rebuilt on every dev server start and production build.
+5. Removes any stale legacy copy under `.astro/generated/` left by an older dual-write.
+
+Every consumer - Party View, Char Search, character pages, and tests - reads that artifact through the typed loader in `src/utils/generated-characters.ts` (`getCharacters()`, `getCharacter(filename)`), so there is one shape and one source of truth.
 
 `src/generated/characters.json` feeds the Character viewer at build time. A Card (`XmlCard`) renders one Character sheet's data in a Display mode, small, medium, or large, chosen at build time by the page that mounts the Card. The route in `src/pages/fantasy-grounds/characters/[slug].astro` uses `getStaticPaths()` to turn every generated entry into a prerendered Character page: one Character sheet shown as a single full-width large Card, with no server code at runtime.
 

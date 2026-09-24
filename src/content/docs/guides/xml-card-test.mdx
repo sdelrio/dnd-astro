@@ -4,9 +4,9 @@ description: Visual test page for the XmlCard component display modes
 ---
 
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
-import characters from '@/generated/characters.json';
+import { getCharacter } from '@/utils/generated-characters';
 
-export const byFile = (filename) => characters.find((c) => c.filename === filename);
+export const byFile = (filename) => getCharacter(filename);
 export const tanadirian = byFile('tanadirian');
 export const ethir = byFile('ethir');
 export const murky = byFile('murky');
@@ -35,14 +35,15 @@ Card portraits link to character pages. A card whose character has a
 sheet`, so every card on this page opens a real character page. Pass
 `link={false}` to render a plain portrait.
 
-Character data comes from the `src/generated/characters.json` build artifact
-(a single array; look entries up by `filename`):
+Character data comes from the single `src/generated/characters.json` build
+artifact, read through the typed loader `src/utils/generated-characters.ts`
+(look entries up by `filename`):
 
 ```mdx
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
-import characters from '@/generated/characters.json';
+import { getCharacter } from '@/utils/generated-characters';
 
-export const tanadirian = characters.find((c) => c.filename === 'tanadirian');
+export const tanadirian = getCharacter('tanadirian');
 
 <XmlCard character={tanadirian} display="small" />
 ```

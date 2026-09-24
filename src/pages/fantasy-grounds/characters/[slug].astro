@@ -1,12 +1,11 @@
 ---
 import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
-import charactersJson from '@/generated/characters.json';
+import { getCharacters } from '@/utils/generated-characters';
 import type { StoredCharacter } from '@/utils/build-xml-characters';
 
 export function getStaticPaths() {
-  const characters = charactersJson as StoredCharacter[];
-  return characters.map((character) => ({
+  return getCharacters().map((character) => ({
     params: { slug: character.filename },
     props: { character },
   }));

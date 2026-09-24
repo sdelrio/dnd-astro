@@ -12,7 +12,12 @@ import {
 } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { probeAvatarPath, buildXmlCharacters, shouldRebuildXmlCharacters } from './build-xml-characters';
+import {
+  probeAvatarPath,
+  buildXmlCharacters,
+  shouldRebuildXmlCharacters,
+  xmlCharacterArtifactsExist,
+} from './build-xml-characters';
 
 vi.mock('node:fs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs')>();
@@ -60,6 +65,8 @@ describe('build-xml-characters', () => {
   });
 
   describe('buildXmlCharacters', () => {
+    const noopLogger = { log: () => {}, warn: () => {} };
+
     const validXmlSample = `<?xml version="1.0" encoding="utf-8"?>
 <root version="4.5">
   <character>
@@ -104,11 +111,10 @@ describe('build-xml-characters', () => {
   </character>
 </root>`;
 
-    it('parses XML, resolves avatar, and writes to both output targets', () => {
+    it('parses XML, resolves avatar, and writes the single artifact', () => {
       const xmlDir = join(tempDir, 'sheets');
       const avatarDir = join(tempDir, 'avatars');
       const outputFile = join(tempDir, 'generated/characters.json');
-      const astroOutputFile = join(tempDir, '.astro/generated/characters.json');
 
       mkdirSync(xmlDir, { recursive: true });
       mkdirSync(avatarDir, { recursive: true });
@@ -126,7 +132,6 @@ describe('build-xml-characters', () => {
         xmlDir,
         avatarDir,
         outputFile,
-        astroOutputFile,
         logger,
       });
 
@@ -137,7 +142,6 @@ describe('build-xml-characters', () => {
       expect(warnings).toHaveLength(0);
       expect(logs).toContain('[xml-viewer] Parsed 1 character XML files');
 
-      // Verify outputFile (src/generated/characters.json format)
       expect(existsSync(outputFile)).toBe(true);
       const generatedJson = JSON.parse(readFileSync(outputFile, 'utf8'));
       expect(generatedJson).toHaveLength(1);
@@ -148,18 +152,48 @@ describe('build-xml-characters', () => {
         { name: 'Longsword', count: 1, weight: 3, carried: 2 },
       ]);
       expect(generatedJson[0].coins).toEqual({ pp: 0, gp: 15, ep: 0, sp: 0, cp: 0 });
+    });
 
-      // Verify astroOutputFile (.astro/generated/characters.json format)
-      expect(existsSync(astroOutputFile)).toBe(true);
-      const astroJson = JSON.parse(readFileSync(astroOutputFile, 'utf8'));
-      expect(astroJson).toHaveLength(1);
-      expect(astroJson[0].filename).toBe('testhero');
-      expect(astroJson[0].avatarPath).toBe('/fg/avatar/testhero.jpg');
-      expect(astroJson[0].character.name).toBe('Test Hero');
-      expect(astroJson[0].character.inventory).toEqual([
-        { name: 'Longsword', count: 1, weight: 3, carried: 2 },
-      ]);
-      expect(astroJson[0].character.coins).toEqual({ pp: 0, gp: 15, ep: 0, sp: 0, cp: 0 });
+    it('writes no second artifact under .astro/generated', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(join(xmlDir, 'testhero.xml'), validXmlSample);
+
+      buildXmlCharacters({ rootDir: tempDir, xmlDir, avatarDir, outputFile, logger: noopLogger });
+
+      expect(existsSync(outputFile)).toBe(true);
+      expect(existsSync(join(tempDir, '.astro/generated/characters.json'))).toBe(false);
+    });
+
+    it('removes a stale legacy .astro/generated artifact from the old dual-write', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+      const legacyFile = join(tempDir, '.astro/generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      mkdirSync(join(tempDir, '.astro/generated'), { recursive: true });
+      writeFileSync(join(xmlDir, 'testhero.xml'), validXmlSample);
+      writeFileSync(legacyFile, '[]');
+
+      const logs: string[] = [];
+      const result = buildXmlCharacters({
+        rootDir: tempDir,
+        xmlDir,
+        avatarDir,
+        outputFile,
+        logger: { log: (msg: string) => logs.push(msg), warn: () => {} },
+      });
+
+      expect(result).toHaveLength(1);
+      expect(existsSync(outputFile)).toBe(true);
+      expect(existsSync(legacyFile)).toBe(false);
+      expect(logs.some((msg) => msg.includes('legacy'))).toBe(true);
     });
 
     it('skips unparseable or corrupted XML files with warnings', () => {
@@ -194,7 +228,6 @@ describe('build-xml-characters', () => {
       const xmlDir = join(tempDir, 'sheets');
       const avatarDir = join(tempDir, 'avatars');
       const outputFile = join(tempDir, 'generated/characters.json');
-      const astroOutputFile = join(tempDir, '.astro/generated/characters.json');
 
       mkdirSync(xmlDir, { recursive: true });
       mkdirSync(avatarDir, { recursive: true });
@@ -213,7 +246,6 @@ describe('build-xml-characters', () => {
           xmlDir,
           avatarDir,
           outputFile,
-          astroOutputFile,
           logger,
         });
       }).not.toThrow();
@@ -222,7 +254,6 @@ describe('build-xml-characters', () => {
       expect(result[0].filename).toBe('valid');
       expect(warnings.some((w) => w.includes('broken.xml'))).toBe(true);
       expect(existsSync(outputFile)).toBe(true);
-      expect(existsSync(astroOutputFile)).toBe(true);
     });
 
     it('processes sheets in deterministic sorted order even when readdir returns unsorted names', () => {
@@ -268,29 +299,21 @@ describe('build-xml-characters', () => {
       const xmlDir = join(tempDir, 'sheets');
       const avatarDir = join(tempDir, 'avatars');
       const outputFile = join(tempDir, 'generated/characters.json');
-      const astroOutputFile = join(tempDir, '.astro/generated/characters.json');
 
       mkdirSync(xmlDir, { recursive: true });
       mkdirSync(avatarDir, { recursive: true });
       writeFileSync(join(xmlDir, 'valid.xml'), validXmlSample);
 
-      const logger = {
-        log: () => {},
-        warn: () => {},
-      };
-      const options = { xmlDir, avatarDir, outputFile, astroOutputFile, logger };
+      const options = { xmlDir, avatarDir, outputFile, logger: noopLogger };
 
       buildXmlCharacters(options);
       const ancient = new Date('2000-01-01T00:00:00Z');
       utimesSync(outputFile, ancient, ancient);
-      utimesSync(astroOutputFile, ancient, ancient);
       const beforeOutput = statSync(outputFile).mtimeMs;
-      const beforeAstro = statSync(astroOutputFile).mtimeMs;
 
       buildXmlCharacters(options);
 
       expect(statSync(outputFile).mtimeMs).toBe(beforeOutput);
-      expect(statSync(astroOutputFile).mtimeMs).toBe(beforeAstro);
     });
 
     it('warns gracefully when xmlDir does not exist', () => {
@@ -362,8 +385,29 @@ describe('build-xml-characters', () => {
       const nameless = characters.find((c) => c.filename === 'non-existent');
       expect(nameless).toBeUndefined();
 
-      // Check that .astro/generated/characters.json was created
-      expect(existsSync('.astro/generated/characters.json')).toBe(true);
+      // No dual-write: the legacy .astro copy must not exist after a rebuild
+      expect(existsSync('.astro/generated/characters.json')).toBe(false);
+    });
+  });
+
+  describe('xmlCharacterArtifactsExist', () => {
+    it('is true when the single src/generated artifact exists', () => {
+      mkdirSync(join(tempDir, 'src/generated'), { recursive: true });
+      writeFileSync(join(tempDir, 'src/generated/characters.json'), '[]');
+
+      expect(xmlCharacterArtifactsExist(tempDir)).toBe(true);
+    });
+
+    it('is false when the artifact is missing', () => {
+      expect(xmlCharacterArtifactsExist(tempDir)).toBe(false);
+    });
+
+    it('is true from the src artifact alone even when a legacy .astro copy is missing', () => {
+      mkdirSync(join(tempDir, 'src/generated'), { recursive: true });
+      writeFileSync(join(tempDir, 'src/generated/characters.json'), '[]');
+
+      expect(existsSync(join(tempDir, '.astro/generated/characters.json'))).toBe(false);
+      expect(xmlCharacterArtifactsExist(tempDir)).toBe(true);
     });
   });
 });
