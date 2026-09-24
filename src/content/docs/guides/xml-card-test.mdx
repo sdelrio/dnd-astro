@@ -208,7 +208,7 @@ tags at build time.
 ### Feature Grouping
 
 Akinori has 19 features across several levels, showing the per-level
-grouping with expand/collapse details.
+grouping as source-tooltip pills.
 
 ```mdx
 <XmlCard character={akinori} display="large" />
@@ -390,18 +390,22 @@ build time, with no live switching.
 ### Powers Marks
 
 Large cards render Powers as one accent card below the visible "Powers"
-heading, matching the Features treatment: level and group sub-headings and
-per-power expand/collapse rows sit inside the vitals-item shell with the
-colored top line, border, and uniform `rounded-[7px]` radius. Spell rows
-carry a mark after the name: a filled gold dot with a "Prepared" tooltip
-for player-prepared spells, and a hollow accent-ring dot with an
-"Always prepared (class/subclass)" tooltip for always-prepared class or
-subclass spells (domain, oath, patron, and so on). A spell with both flags
-shows only the always-prepared mark. Non-spell powers (class features,
-item powers, feats) never show a mark, even when their parsed prepared
-value is non-zero. A legend at the bottom of the card explains the two
-dots and renders only when at least one mark appears. The display mode is
-fixed at build time, with no live switching.
+heading, matching the Features treatment: the level and group sub-headings
+and non-interactive power pills sit inside the vitals-item shell with the
+colored top line, border, and uniform `rounded-[7px]` radius. The pills
+reuse the Languages and Feats pill styling and group by level then group,
+ordered by level, group, then name; a pill carries its `Group:` value as a
+native tooltip, and a power parsed without a group (rendered under the
+`Other` heading) shows no tooltip. A spell pill also carries a mark after
+the name: a filled gold dot with a "Prepared" tooltip for player-prepared
+spells, and a hollow accent-ring dot with an "Always prepared
+(class/subclass)" tooltip for always-prepared class or subclass spells
+(domain, oath, patron, and so on). A spell with both flags shows only the
+always-prepared mark. Non-spell powers (class features, item powers,
+feats) never show a mark, even when their parsed prepared value is
+non-zero. A legend at the bottom of the card explains the two dots and
+renders only when at least one mark appears. The display mode is fixed at
+build time, with no live switching.
 
 ```mdx
 <XmlCard character={alberich} display="large" />

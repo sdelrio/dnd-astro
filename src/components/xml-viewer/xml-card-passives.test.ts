@@ -177,12 +177,33 @@ function powersSection(html: string): string {
   return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
 }
 
-function powerRow(section: string, name: string): string {
-  const marker = section.indexOf(`>${name}`);
-  expect(marker).toBeGreaterThan(-1);
-  const start = section.lastIndexOf('<div class="py-2', marker);
-  const end = section.indexOf('</div>', section.indexOf('x-transition', marker));
-  return section.slice(start, end === -1 ? undefined : end + '</div>'.length);
+function powerPill(section: string, name: string): string {
+  const nameIndex = section.indexOf(`>${name}`);
+  expect(nameIndex).toBeGreaterThan(-1);
+  const start = section.lastIndexOf('<span class="px-2', nameIndex);
+  expect(start).toBeGreaterThan(-1);
+  let depth = 0;
+  let cursor = start;
+  while (cursor < section.length) {
+    const open = section.indexOf('<span', cursor);
+    const close = section.indexOf('</span>', cursor);
+    if (close === -1) break;
+    if (open !== -1 && open < close) {
+      depth += 1;
+      cursor = open + '<span'.length;
+    } else {
+      depth -= 1;
+      cursor = close + '</span>'.length;
+      if (depth === 0) return section.slice(start, cursor);
+    }
+  }
+  return section.slice(start);
+}
+
+function powerPillNames(section: string): string[] {
+  return [...section.matchAll(/<span class="px-2[^"]*"[^>]*>([^<]+)/g)].map(([, name]) =>
+    name.trim()
+  );
 }
 
 function languagesSection(html: string): string {
@@ -1032,7 +1053,22 @@ describe('XmlCard Features pills card', () => {
   });
 });
 
-describe('XmlCard Powers accent card and prepared marks', () => {
+describe('XmlCard Powers pills card', () => {
+  const pillClass =
+    'px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300';
+  const forbidden = [
+    'role="button"',
+    'tabindex',
+    'aria-expanded',
+    'aria-controls',
+    '@click',
+    '@keydown',
+    'x-show',
+    'x-transition',
+    'cursor-pointer',
+    'focus-visible',
+  ];
+
   const preparedSpell = {
     level: 3,
     name: 'Bless',
@@ -1068,6 +1104,17 @@ describe('XmlCard Powers accent card and prepared marks', () => {
     prepared: 3,
     preparedDomain: 0,
   };
+  const ungrouped = {
+    level: 1,
+    name: 'Unattributed',
+    group: '',
+    prepared: 0,
+    preparedDomain: 0,
+  };
+
+  function powersCard(section: string): string {
+    return section.slice(section.indexOf('rounded-[7px]'));
+  }
 
   it('wraps the Powers content in one accent card below the heading', async () => {
     const section = powersSection(
@@ -1081,42 +1128,75 @@ describe('XmlCard Powers accent card and prepared marks', () => {
     const headingIndex = section.indexOf('>Powers</h2>');
     const cardIndex = section.indexOf('rounded-[7px]');
     expect(cardIndex).toBeGreaterThan(headingIndex);
-    const card = section.slice(cardIndex);
+    const card = powersCard(section);
     expect(card).toContain('>Level 3</h3>');
     expect(card).toContain('>Spells</h4>');
-    expect(card).toContain('>Bless<span');
-    expect(card).toContain("toggleSection('power-1-0-0')");
-    expect(card).toContain("isExpanded('power-1-0-0')");
-    expect(card).toContain('role="button"');
-    expect(card).toContain('cursor-pointer');
-    expect(card).toContain('x-transition');
+    expect(card).toContain('>Bless<');
+    expect(card).toContain('flex flex-wrap gap-2');
   });
 
-  it('announces power row expanded state and links the disclosure panel', async () => {
-    const section = powersSection(await renderCard('large', { powers: [preparedSpell] }));
-    expect(section).toContain('aria-expanded="false"');
-    expect(section).toContain(
-      `:aria-expanded="isExpanded('power-0-0-0') ? 'true' : 'false'"`
+  it('renders every power as a Languages/Feats-style pill with no disclosure', async () => {
+    const card = powersCard(
+      powersSection(await renderCard('large', { powers: [preparedSpell, nonSpell] }))
     );
-    expect(section).toContain('aria-controls="power-0-0-0-panel"');
-    expect(section).toContain('id="power-0-0-0-panel"');
+    const bless = powerPill(card, 'Bless');
+    expect(bless).toContain(`class="${pillClass}`);
+    expect(bless).toContain('title="Group: Spells"');
+    const rage = powerPill(card, 'Rage');
+    expect(rage).toContain(`class="${pillClass}`);
+    expect(rage).toContain('title="Group: Barbarian Actions/Effects"');
+    for (const marker of forbidden) {
+      expect(card).not.toContain(marker);
+    }
   });
 
-  it('activates power rows from the keyboard with Enter and Space and shows focus', async () => {
-    const section = powersSection(await renderCard('large', { powers: [preparedSpell] }));
-    expect(section).toContain('@keydown.enter=');
-    expect(section).toContain('@keydown.space.prevent=');
-    expect(section).toContain('tabindex="0"');
-    expect(section).toContain('focus-visible:outline-2');
-    expect(section).toContain('focus-visible:outline-offset-2');
+  it('shows a Group tooltip only when the parsed group is non-empty', async () => {
+    const section = powersSection(
+      await renderCard('large', { powers: [ungrouped, preparedSpell] })
+    );
+    const ungroupedPill = powerPill(section, 'Unattributed');
+    expect(ungroupedPill).not.toContain('title="Group:');
+    expect(section).not.toContain('title="Group: "');
+    expect(powerPill(section, 'Bless')).toContain('title="Group: Spells"');
+  });
+
+  it('renders an empty-group power under the Other fallback heading', async () => {
+    const section = powersSection(await renderCard('large', { powers: [ungrouped] }));
+    expect(section).toContain('>Other</h4>');
+  });
+
+  it('orders pills by level then group then name under the headings', async () => {
+    const section = powersSection(
+      await renderCard('large', {
+        powers: [
+          { level: 2, name: 'Bravo', group: 'Beta', prepared: 0, preparedDomain: 0 },
+          { level: 2, name: 'Alpha', group: 'Alpha', prepared: 0, preparedDomain: 0 },
+          { level: 2, name: 'Zulu', group: 'Alpha', prepared: 0, preparedDomain: 0 },
+          { level: 1, name: 'Yankee', group: 'Alpha', prepared: 0, preparedDomain: 0 },
+        ],
+      })
+    );
+    expect(powerPillNames(section)).toEqual(['Yankee', 'Alpha', 'Zulu', 'Bravo']);
+  });
+
+  it('leaves no expand/collapse affordance or Alpine state anywhere in the card', async () => {
+    const html = await renderCard('large', { powers: [preparedSpell, nonSpell] });
+    const card = powersCard(powersSection(html));
+    for (const marker of forbidden) {
+      expect(card).not.toContain(marker);
+    }
+    expect(html).not.toContain('expandedSections');
+    expect(html).not.toContain('toggleSection');
+    expect(html).not.toContain('isExpanded');
+    expect(html).not.toContain('x-data');
   });
 
   it('marks a prepared spell with a filled gold dot and Prepared tooltip', async () => {
     const section = powersSection(await renderCard('large', { powers: [preparedOnlySpell] }));
-    const row = powerRow(section, 'Aid');
-    expect(row).toContain('bg-[#c68000]');
-    expect(row).toContain('title="Prepared"');
-    expect(row).not.toContain('Always prepared');
+    const pill = powerPill(section, 'Aid');
+    expect(pill).toContain('bg-[#c68000]');
+    expect(pill).toContain('title="Prepared"');
+    expect(pill).not.toContain('Always prepared');
   });
 
   it('marks an always-prepared spell with a hollow accent-ring dot and class tooltip', async () => {
@@ -1125,30 +1205,31 @@ describe('XmlCard Powers accent card and prepared marks', () => {
         powers: [{ ...domainSpell, prepared: 0, preparedDomain: 1 }],
       })
     );
-    const row = powerRow(section, 'Cure Wounds');
-    expect(row).toContain('border border-[#c68000]');
-    expect(row).toContain('title="Always prepared (class/subclass)"');
-    expect(row).not.toContain('bg-[#c68000]');
-    expect(row).not.toContain('title="Prepared"');
+    const pill = powerPill(section, 'Cure Wounds');
+    expect(pill).toContain('border border-[#c68000]');
+    expect(pill).toContain('title="Always prepared (class/subclass)"');
+    expect(pill).not.toContain('bg-[#c68000]');
+    expect(pill).not.toContain('title="Prepared"');
   });
 
   it('shows only the always-prepared dot when a spell has both flags', async () => {
     const section = powersSection(await renderCard('large', { powers: [domainSpell] }));
-    const row = powerRow(section, 'Cure Wounds');
-    expect(row).toContain('title="Always prepared (class/subclass)"');
-    expect(row).not.toContain('title="Prepared"');
-    expect(row).not.toContain('bg-[#c68000]');
+    const pill = powerPill(section, 'Cure Wounds');
+    expect(pill).toContain('title="Always prepared (class/subclass)"');
+    expect(pill).not.toContain('title="Prepared"');
+    expect(pill).not.toContain('bg-[#c68000]');
   });
 
   it('shows no mark on non-spell powers even when prepared is non-zero', async () => {
     const section = powersSection(
       await renderCard('large', { powers: [nonSpell, unpreparedSpell] })
     );
-    const rage = powerRow(section, 'Rage');
+    const rage = powerPill(section, 'Rage');
     expect(rage).not.toContain('bg-[#c68000]');
     expect(rage).not.toContain('border border-[#c68000]');
-    expect(rage).not.toContain('title=');
-    const guiding = powerRow(section, 'Guiding Bolt');
+    expect(rage).not.toContain('title="Prepared"');
+    expect(rage).not.toContain('title="Always prepared');
+    const guiding = powerPill(section, 'Guiding Bolt');
     expect(guiding).not.toContain('bg-[#c68000]');
     expect(guiding).not.toContain('border border-[#c68000]');
   });
@@ -1179,7 +1260,7 @@ describe('XmlCard Powers accent card and prepared marks', () => {
     expect(await renderCard('medium', { powers: [preparedSpell] })).not.toContain('Powers');
   });
 
-  it('documents the Powers Marks subsection under Display: Large', () => {
+  it('documents the Powers pills and marks subsection under Display: Large', () => {
     const large = testPageSource.indexOf('## Display: Large');
     const notes = testPageSource.indexOf('## Notes');
     const subsection = testPageSource.indexOf('### Powers Marks');
@@ -1189,10 +1270,17 @@ describe('XmlCard Powers accent card and prepared marks', () => {
     const body = testPageSource.slice(subsection, notes);
     expectFixedModeCopy(body);
     expect(body).toContain('accent card');
+    expect(body).toContain('pills');
+    expect(body).toContain('Group:');
+    expect(body).not.toMatch(/expand\/collapse/i);
     expect(body).toContain('display="large"');
     expect(body).toContain('Prepared');
     expect(body).toContain('Always prepared');
     expect(body).toContain('legend');
+  });
+
+  it('no longer describes expand/collapse anywhere in the guide', () => {
+    expect(testPageSource).not.toMatch(/expand\/collapse/i);
   });
 });
 
