@@ -14,10 +14,11 @@ D&D rules, Fantasy Grounds xml visualizer. A static-first Starlight docs site pl
 
 ## Overview
 
-D&D Companion is a static-first SSG compendium that hosts the campaign's house rules alongside three interactive tools:
+D&D Companion is a static-first SSG compendium that hosts the campaign's house rules alongside four interactive tools:
 
 - **Dice Roller**: rolls 4d6-drop-lowest ability scores for character creation.
 - **Feat Explorer**: browses and filters feats by ability, book, and level.
+- **Point Buy**: allocates ability scores with the standard 5e point-buy calculator.
 - **XML Character Viewer**: parses Fantasy Grounds character XML at build time into character cards and pages.
 
 Interactivity runs as Alpine.js islands on top of the static HTML, so the pages ship without a client-side framework runtime.
@@ -137,7 +138,7 @@ Every consumer - Party View, Char Search, character pages, and tests - reads tha
 
 These follow the accepted ADRs under `docs/adr/`:
 
-- **Icons**: render decorative Iconify icons with `IconifyIcon.astro`. The component reads SVG data from local `@iconify-json` packages at build time and ships zero client-side JavaScript. See [ADR 0001](docs/adr/0001-icon-component.md).
+- **Icons**: render decorative Iconify icons with `IconifyIcon.astro`. The component reads SVG data from local `@iconify-json` packages at build time, so no Iconify API network call is made and offline builds still render icons; it ships zero client-side JavaScript. See [ADR 0001](docs/adr/0001-icon-component.md).
 - **Diagrams**: `mermaid` code fences render through the `astro-mermaid` integration registered in `astro.config.mjs`, which loads Mermaid only on pages that contain a diagram. See [ADR 0007](docs/adr/0007-mermaid-rendering-strategy.md).
 - **Admonitions**: Starlight supports exactly four types - `:::note`, `:::tip`, `:::caution`, and `:::danger`. Docusaurus-era `info` and `warning` admonitions are not supported and must not be used. See [ADR 0004](docs/adr/0004-starlight-admonitions.md).
 - **Tables**: Markdown content tables are striped with a transparent header row and alternating gradient data rows in the golden-forest theme. See [ADR 0005](docs/adr/0005-table-row-striping-pattern.md).
@@ -157,7 +158,7 @@ The Starlight sidebar groups are configured in `astro.config.mjs`:
 
 The first three groups autogenerate from their directory, so a new page appears as soon as it lands. The Fantasy Grounds group lists explicit slugs instead, so new pages there must be added to the sidebar by hand.
 
-Starlight supports exactly four admonition types - `:::note`, `:::tip`, `:::caution`, and `:::danger`. Docusaurus-era `info` and `warning` admonitions are not supported and must not be used. See [ADR 0004](docs/adr/0004-starlight-admonitions.md).
+Admonitions follow the restriction listed under [Rendering conventions](#rendering-conventions): only the four Starlight types are allowed.
 
 Fonts are self-hosted; their licenses and provenance are documented in [docs/fonts-licensing.md](docs/fonts-licensing.md).
 
@@ -174,7 +175,7 @@ Infrastructure is managed as code in `terraform/`:
 
 - `terraform/main.tf` declares the `cloudflare_workers_script`, an optional `cloudflare_workers_domain` custom domain with a proxied CNAME `cloudflare_record`, and the Zero Trust Access resources: an Email OTP (`onetimepin`) identity provider, one self-hosted application per protected path, and an allow policy scoped to the configured email list.
 - Resources created in the Cloudflare dashboard are adopted with `terraform import` before the first apply. `terraform/Makefile` wraps the worker, domain, and DNS imports (`make import-worker`, `make import-domain`, `make import-dns`); see [ADR 0002](docs/adr/0002-infrastructure-import-existing-resources.md).
-- Secrets and account identifiers stay out of git: they live in the gitignored `terraform.tfvars` or in environment variables. This README documents the approach only, never the values.
+- Secrets and account identifiers stay out of git: they live in the gitignored `terraform.tfvars` or in environment variables. Copy the committed template [terraform/terraform.tfvars.example](terraform/terraform.tfvars.example) to `terraform/terraform.tfvars` and fill in real values. This README documents the approach only, never the values.
 
 ## Documentation and workflow
 
