@@ -5,7 +5,7 @@ tags: [injury, injuries, healing, dnd]
 ---
 
 
-Lingering injuries represent physical trauma that extends beyond immediate recovery. In real-world medical terms, these are chronic or severe acute conditions—such as compound fractures, deep tissue scarring, or neurological damage—that require specialized treatment and extended periods of rehabilitation. Unlike transient injuries, they often impose long-term functional limitations on the individual.
+Lingering injuries represent physical trauma that extends beyond immediate recovery. In real-world medical terms, these are chronic or severe acute conditions - such as compound fractures, deep tissue scarring, or neurological damage - that require specialized treatment and extended periods of rehabilitation. Unlike transient injuries, they often impose long-term functional limitations on the individual.
 
 A character sustains a lingering injury under the following conditions:
 
