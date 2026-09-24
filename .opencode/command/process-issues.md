@@ -30,7 +30,7 @@ For each ticket, launch a subagent that will:
 
 5. **Verify Astro build** - Make sure the Astro build passes successfully.
 
-6. **Handle GitHub checks** - Wait for GitHub checks to succeed. Fix them if they fail. Merge automatically if no issues; request human input for complex cases.
+6. **Handle GitHub checks** - Wait for the required checks to succeed with `scripts/wait-for-checks.sh <pr-number>`. The Cloudflare Workers build can take a while to register, so this polls until it appears and finishes instead of trusting `gh pr checks` too early. If a check fails, fix the code, push, and wait again. Merge automatically if no issues; request human input for complex cases.
 
 7. **Add review summary** - Add a review summary to a new comment in the PR.
 
