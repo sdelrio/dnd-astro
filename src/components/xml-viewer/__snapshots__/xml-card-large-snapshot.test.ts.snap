@@ -313,8 +313,10 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </section>
 <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-<h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Inventory</h2>
-<p class="m-0 mb-1 text-xs text-gray-500 dark:text-gray-400">56.0 / 270 lb. carried</p>
+<div class="flex flex-col gap-1 mb-2 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2">
+<h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100">Inventory</h2>
+<span class="text-xs text-gray-500 dark:text-gray-400">56.0 / 270 lb. carried</span>
+</div>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <table class="w-full text-sm">
 <thead>
