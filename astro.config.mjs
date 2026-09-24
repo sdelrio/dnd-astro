@@ -70,7 +70,7 @@ export default defineConfig({
         ThemeSelect: './src/components/ThemeSelect.astro',
       },
       social: [
-        { icon: 'github', label: 'GitHub', href: 'https://github.com/withastro/starlight' }
+        { icon: 'github', label: 'GitHub', href: 'https://github.com/sdelrio/dnd-astro' }
       ],
       sidebar: [
         {
