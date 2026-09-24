@@ -134,7 +134,7 @@ The site is statically generated: every page ships as HTML and CSS, and interact
 
 These follow the accepted ADRs under `docs/adr/`:
 
-- **Icons**: render decorative Iconify icons with `IconifyIcon.astro`. The component fetches SVGs at build time and ships zero client-side JavaScript. See [ADR 0001](docs/adr/0001-icon-component.md).
+- **Icons**: render decorative Iconify icons with `IconifyIcon.astro`. The component reads SVG data from local `@iconify-json` packages at build time and ships zero client-side JavaScript. See [ADR 0001](docs/adr/0001-icon-component.md).
 - **Diagrams**: `mermaid` code fences render through the `astro-mermaid` integration registered in `astro.config.mjs`, which loads Mermaid only on pages that contain a diagram. See [ADR 0007](docs/adr/0007-mermaid-rendering-strategy.md).
 - **Admonitions**: Starlight supports exactly four types - `:::note`, `:::tip`, `:::caution`, and `:::danger`. Docusaurus-era `info` and `warning` admonitions are not supported and must not be used. See [ADR 0004](docs/adr/0004-starlight-admonitions.md).
 - **Tables**: Markdown content tables are striped with a transparent header row and alternating gradient data rows in the golden-forest theme. See [ADR 0005](docs/adr/0005-table-row-striping-pattern.md).

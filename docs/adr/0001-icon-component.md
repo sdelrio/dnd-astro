@@ -23,12 +23,12 @@ How should we render Iconify icons in MDX documentation pages without shipping u
 
 ## Considered Options
 
-- **Option A: Pure Astro Component (Server-Rendered)** — Create a lightweight Astro component that fetches SVGs from the Iconify API at build time and renders them as inline HTML. Zero client-side JavaScript is shipped.
-- **Option B: React Island** — Add the `react()` integration to `astro.config.mjs` and wrap each icon usage in a `client:load` React island. This bundles the React runtime (~40KB) into every page that uses icons.
+- **Option A: Pure Astro Component (Server-Rendered)** - Create a lightweight Astro component that reads SVG data from local `@iconify-json` packages (`@iconify-json/game-icons`, `@iconify-json/mdi`) and renders them as inline HTML at build time. Zero client-side JavaScript is shipped.
+- **Option B: React Island** - Add the `react()` integration to `astro.config.mjs` and wrap each icon usage in a `client:load` React island. This bundles the React runtime (~40KB) into every page that uses icons.
 
 ## Decision Outcome
 
-Chosen option: **Option A** — Use `src/components/IconifyIcon.astro`
+Chosen option: **Option A** - Use `src/components/IconifyIcon.astro`
 
 ### Consequences
 
@@ -36,7 +36,7 @@ Chosen option: **Option A** — Use `src/components/IconifyIcon.astro`
 - Good, because Alpine.js is used for all interactive components, keeping the bundle size minimal.
 - Good, because the Astro component produces identical SVG output at build time with 0 bytes of client JS.
 - Good, because no changes to `astro.config.mjs` integrations are required.
-- Neutral, because Icon availability depends on the Iconify API at build time; offline builds will fail to render icons.
+- Good, because icon data ships in local `@iconify-json` packages, so offline builds render icons with no network access to the Iconify API.
 
 ## Usage
 
