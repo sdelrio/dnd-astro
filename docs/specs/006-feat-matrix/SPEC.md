@@ -16,11 +16,11 @@ adr_constraints: []
 
 ## Summary
 
-An Alpine.js component for browsing and filtering D&D feats with fuzzy search, multi-select filters for ability, book, and level. Replaces the React-based FeatBrowser from golden-forest with a lighter, faster Alpine.js implementation that loads on scroll.
+An Alpine.js component for browsing and filtering D&D feats with fuzzy search, multi-select filters for ability, book, and level. Replaces the React-based FeatBrowser from golden-forest with a lighter, faster Alpine.js implementation that mounts eagerly with the feat dataset inlined at build time.
 
 ## Problem Statement
 
-Players need to quickly find feats during character creation and leveling. The golden-forest implementation uses React with Context API for filter state, which adds unnecessary runtime overhead. An Alpine.js implementation can provide instant client-side filtering with zero framework dependencies and deferred loading via intersection observer.
+Players need to quickly find feats during character creation and leveling. The golden-forest implementation uses React with Context API for filter state, which adds unnecessary runtime overhead. An Alpine.js implementation can provide instant client-side filtering with zero framework dependencies.
 
 ## Goals
 
@@ -31,7 +31,7 @@ Players need to quickly find feats during character creation and leveling. The g
 - Filter by level requirement (0, 4+)
 - Show result count for current filters
 - Clear all filters at once
-- Deferred loading via `x-intersect` plugin
+- Eager mount with the feat dataset inlined at build time (no `x-intersect` deferral)
 - Zero React runtime dependency
 
 ## Non-Goals
@@ -111,12 +111,10 @@ function featExplorer() {
     selectedAbility: 'All',
     selectedBook: 'All',
     selectedLevel: 'All',
-    feats: [],           // Loaded from hardcoded data
+    feats: [],           // Inlined at build time from feat-data.js
     filteredFeats: [],   // Computed via filterFeats()
-    isInitialized: false,
 
     // Methods
-    init() { ... },           // Load feat data, set isInitialized=true
     filterFeats() { ... },    // Apply all filters, update filteredFeats
     fuzzyMatch(query, text) { ... },  // Returns boolean
     clearFilters() { ... },   // Reset all filters to defaults
@@ -165,7 +163,7 @@ Run once to generate data, then commit the output file.
 
 Create `src/components/feats-explorer/FeatExplorer.astro`:
 
-1. **Root element**: `<div x-data="featExplorer()" x-intersect.once="init()">`
+1. **Root element**: `<div x-data="featExplorer({...inlined dataset...})">` (eager mount, no `x-intersect` trigger)
 
 2. **Filter controls section**:
    - Search input: `<input type="text" x-model="searchQuery" @input.debounce.300ms="filterFeats()" placeholder="Search feats...">`
@@ -181,8 +179,6 @@ Create `src/components/feats-explorer/FeatExplorer.astro`:
    - Each card shows: name, level badge, ability tags, book source
 
 4. **Empty state**: `<div x-show="filteredFeats.length === 0">No feats match your filters</div>`
-
-5. **Loading state**: `<div x-show="!isInitialized">Loading feats...</div>`
 
 ### Step 3: Create Fuzzy Search Utility
 
@@ -203,9 +199,9 @@ Create `src/components/feats-explorer/feat-explorer.css`:
 - Empty state styling
 - Loading state styling
 
-### Step 5: Add Alpine.js Intersect Plugin
+### Step 5: Register Alpine.js Intersect Plugin
 
-Update `astro.config.mjs` to register the intersect plugin:
+Update `astro.config.mjs` to register the intersect plugin (retained for future viewport-deferred components; Feat Explorer does not use `x-intersect`):
 ```javascript
 import intersect from '@alpinejs/intersect';
 // In Alpine.js setup:
@@ -267,7 +263,7 @@ Search and filter through all available feats.
 4. **Mobile UX**: Filter dropdowns stack vertically on mobile
 5. **Long feat names**: Truncate with ellipsis if > 50 characters
 6. **Rapid typing**: Debounce search input (300ms) to prevent excessive re-renders
-7. **Deferred load**: Show loading state until x-intersect triggers init()
+7. **Eager mount**: Dataset is inlined via `x-data`; no loading state or viewport trigger is required
 
 ## Accessibility
 
@@ -319,6 +315,10 @@ The following deviation from this spec was accepted during implementation (PR #6
 ### 1. Fuzzy search utilities: inline in `FeatExplorer.astro`, no `search-utils.js`
 
 The spec's Step 3 and Files table called for `src/components/feats-explorer/search-utils.js` containing `fuzzyMatch` and `levenshtein`. The implementation defines both functions inline in the `<script>` block of `FeatExplorer.astro` instead. Reason: the `featExplorer()` Alpine component is their only consumer, so keeping them colocated avoids an extra module and import without changing behaviour.
+
+### 2. Eager mount instead of deferred `x-intersect` hydration (#271)
+
+This archived spec originally mandated deferred loading via `x-intersect.once="init()"` with a loading state until the component scrolled into the viewport. The shipped component mounts eagerly: the root element carries `x-data="featExplorer(...)"` with the feat dataset inlined at build time, and there is no `x-intersect` binding, `init()`, or loading state. Reason: with the dataset already inlined, deferred hydration added complexity without a meaningful payload win. Binding text in `SPEC.md` (Component 2) and this spec was amended to match the delivered behavior; the Alpine intersect plugin remains registered in `src/alpine.ts` for future use. No runtime code changed with this edit.
 
 ## Status
 

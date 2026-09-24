@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-// @ts-expect-error - getStaticPaths is exported from the Astro page component
 import { getStaticPaths } from './[slug].astro';
 import charactersJson from '@/generated/characters.json';
 import type { StoredCharacter } from '@/utils/build-xml-characters';
