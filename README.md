@@ -178,6 +178,17 @@ Infrastructure is managed as code in `terraform/`:
 - Secrets and account identifiers stay out of git: they live in the gitignored `terraform.tfvars` or in environment variables. Copy the committed template [terraform/terraform.tfvars.example](terraform/terraform.tfvars.example) to `terraform/terraform.tfvars` and fill in real values. This README documents the approach only, never the values.
 - [terraform/.terraform.lock.hcl](terraform/.terraform.lock.hcl) is committed on purpose so every operator gets the same pinned provider versions. State, plans, tfvars, and `.terraform/` stay ignored. If the lock file goes missing, restore it with `git checkout -- terraform/.terraform.lock.hcl` before running `terraform init`; see `make help` in `terraform/`.
 
+### Pinned wrangler deploy path
+
+The Worker's build settings pin wrangler to an exact version so the same CLI runs on every build:
+
+- Deploy command: `npx wrangler@4.139.0 deploy`
+- Version build command: `npx wrangler@4.139.0 versions upload`
+
+A floating `npx wrangler` must not replace the pin. During the 2026-09-24 deploy, a brand-new wrangler release returned 404 because the npm registry had not finished propagating the new version. A floating specifier re-resolves to the latest release on every build, so it would hit the same race whenever a release is fresh. Bump the pin by hand to a version that is already published and propagated.
+
+Workers Builds configuration is dashboard-only. The Cloudflare Terraform provider in use (v4) has no resource for build or deploy commands, so `terraform/` manages the worker script, custom domain, DNS, and Access only. The dashboard is the single source of truth for the build settings, so a wrangler version bump happens there by hand and Terraform cannot drift-correct it.
+
 ## Documentation and workflow
 
 The repo keeps its documentation next to the code it describes:
