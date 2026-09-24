@@ -571,40 +571,21 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
           <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Features" />
             <div class={vitalsItemClass}>
-              {featuresByLevel.map((group, gi) => (
+              {featuresByLevel.map((group) => (
                 <div>
                   <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
                     Level {group.level}
                   </h3>
-                  {group.items.map((feature, fi) => (
-                    <div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-                      <div
-                        class="flex items-center justify-between cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]"
-                        role="button"
-                        tabindex="0"
-                        aria-expanded="false"
-                        aria-controls={`feature-${gi}-${fi}-panel`}
-                        :aria-expanded={"isExpanded('feature-" + gi + '-' + fi + "') ? 'true' : 'false'"}
-                        @click={"toggleSection('feature-" + gi + '-' + fi + "')"}
-                        @keydown.enter={"toggleSection('feature-" + gi + '-' + fi + "')"}
-                        @keydown.space.prevent={"toggleSection('feature-" + gi + '-' + fi + "')"}
-                      >
-                        <span class="font-medium text-gray-900 dark:text-gray-100">{feature.name}</span>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">{feature.source}</span>
-                      </div>
-                      <div
-                        id={`feature-${gi}-${fi}-panel`}
-                        class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400"
-                        x-show={"isExpanded('feature-" + gi + '-' + fi + "')"}
-                        x-transition
-                      >
-                        <p class="m-0">Source: {feature.source}</p>
-                        <p class="m-0">Gained at level {feature.level}</p>
-                      </div>
-                    </div>
-                  ))}
+                  <div class="flex flex-wrap gap-2">
+                    {group.items.map((feature) => (
+                      <span
+                        class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300"
+                        title={feature.source ? `Source: ${feature.source}` : undefined}
+                      >{feature.name}</span>
+                    ))}
+                  </div>
                 </div>
-               ))}
+              ))}
             </div>
           </section>
         )}
