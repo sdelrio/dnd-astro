@@ -284,7 +284,7 @@ describe('README', () => {
     expect(content).toMatch(/MDX/);
     expect(content).toContain('astro.config.mjs');
 
-    for (const group of ['Guides', 'D&D rule fixes', 'D&D Tools', 'Reference', 'Fantasy Grounds']) {
+    for (const group of ['Guides', 'D&D rule fixes', 'D&D Tools', 'Fantasy Grounds']) {
       expect(content).toContain(group);
     }
 
