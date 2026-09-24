@@ -176,6 +176,7 @@ Infrastructure is managed as code in `terraform/`:
 - `terraform/main.tf` declares the `cloudflare_workers_script`, an optional `cloudflare_workers_domain` custom domain with a proxied CNAME `cloudflare_record`, and the Zero Trust Access resources: an Email OTP (`onetimepin`) identity provider, one self-hosted application per protected path, and an allow policy scoped to the configured email list.
 - Resources created in the Cloudflare dashboard are adopted with `terraform import` before the first apply. `terraform/Makefile` wraps the worker, domain, and DNS imports (`make import-worker`, `make import-domain`, `make import-dns`); see [ADR 0002](docs/adr/0002-infrastructure-import-existing-resources.md).
 - Secrets and account identifiers stay out of git: they live in the gitignored `terraform.tfvars` or in environment variables. Copy the committed template [terraform/terraform.tfvars.example](terraform/terraform.tfvars.example) to `terraform/terraform.tfvars` and fill in real values. This README documents the approach only, never the values.
+- [terraform/.terraform.lock.hcl](terraform/.terraform.lock.hcl) is committed on purpose so every operator gets the same pinned provider versions. State, plans, tfvars, and `.terraform/` stay ignored. If the lock file goes missing, restore it with `git checkout -- terraform/.terraform.lock.hcl` before running `terraform init`; see `make help` in `terraform/`.
 
 ## Documentation and workflow
 
