@@ -372,12 +372,14 @@ section entirely, with no live switching.
 ### Features
 
 Large cards render Features as one accent card below the visible "Features"
-heading: the level sub-headings and per-feature expand/collapse rows sit
-inside the vitals-item shell with the colored top line, border, and uniform
-`rounded-[7px]` radius. Akinori's features group by level, each row toggling
-its source and level details. The heading stays above the card, unlike the
-Languages and Feats label-inside-card treatment. Small and medium cards omit
-the section at build time, with no live switching.
+heading: the level sub-headings and non-interactive feature pills sit inside
+the vitals-item shell with the colored top line, border, and uniform
+`rounded-[7px]` radius. The pills reuse the Languages and Feats pill styling
+and group by level, ordered by level then name; a pill carries its `Source:`
+value as a native tooltip, and features parsed without a source show no
+tooltip. Unlike the Languages and Feats label-inside-card treatment, the
+heading stays above the card. Small and medium cards omit the section at
+build time, with no live switching.
 
 ```mdx
 <XmlCard character={akinori} display="large" />
