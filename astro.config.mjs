@@ -29,6 +29,7 @@ function xmlCharacterViewer() {
 }
 
 export default defineConfig({
+  site: 'https://dnd-companion.lorien.cloud',
   integrations: [
     xmlCharacterViewer(),
     alpinejs({
