@@ -7,8 +7,8 @@
 *.tfvars
 *.tfvars.*
 
-# Terraform lock file
-.terraform.lock.hcl
-
 # Terraform directory
 .terraform/
+
+# .terraform.lock.hcl is intentionally tracked: it pins provider versions
+# for every operator. Do not add it back here.
