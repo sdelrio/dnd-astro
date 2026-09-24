@@ -8,9 +8,9 @@ This project is a high-performance, secure digital compendium for D&D homebrew a
 * **Documentation Base:** Astro Starlight
 * **Runtime Environment:** Node.js 24
 * **Interactivity Tier 1 (Lightweight Client State):** Alpine.js
-* **Interactivity Tier 2 (Complex UI/Data Operations):** React 19+
+* **Interactivity Tier 2 (Complex UI/Data Operations):** Not used - the project is Alpine-only; React is not a dependency and no framework runtime is shipped
 * **Styling:** Tailwind CSS (Integrated natively via Starlight)
-* **Hosting & Security:** Cloudflare Pages (Free Tier) + Cloudflare Zero Trust (Access) via Email OTP
+* **Hosting & Security:** Cloudflare Workers static assets (see [ADR 0003](./docs/adr/0003-workers-static-assets-over-pages.md)) + Cloudflare Zero Trust (Access) via Email OTP
 
 ---
 
@@ -18,15 +18,16 @@ This project is a high-performance, secure digital compendium for D&D homebrew a
 
 ### CI/CD & Deployment Source
 * The canonical source of truth is a **private GitHub Repository**.
-* The deployment target is **Cloudflare Pages**, synchronized natively via Git integration.
-* **Build Command:** `npm run build` (Maps to `astro build`)
-* **Output Directory:** `dist`
-* **Environment Variable Constraint:** `NODE_VERSION=24` must be explicitly configured in the Cloudflare Pages Dashboard.
+* The deployment target is **Cloudflare Workers with static assets** (see [ADR 0003](./docs/adr/0003-workers-static-assets-over-pages.md)), synchronized via Cloudflare Workers Builds Git integration.
+* **Build Command:** `pnpm build` (Maps to `astro build`)
+* **Output Directory:** `dist`, served by Workers via `assets.directory` in `wrangler.jsonc`
+* **Worker Entrypoint:** `worker/index.js` - a static passthrough that returns `env.ASSETS.fetch(request)`
+* **Toolchain:** Node.js 24 and pnpm are pinned by `devbox.json`; no Pages dashboard `NODE_VERSION` setting applies.
 
 ### Network & Security Perimeter
-* **No Server-Side Compute (Zero Node.js Server in Production):** The build output must evaluate strictly to static assets.
-* **Network Gating:** Security is enforced edge-side by Cloudflare Zero Trust Access. 
-* **Ingress Guardrails:** Access policies restrict the entire `.pages.dev` deployment (and any custom domain mapped via Terraform) via Email One-Time Pin (OTP) authentication for up to 50 allowed emails.
+* **No Server-Side Compute (Zero Node.js Server in Production):** The Worker entrypoint only forwards requests to the static asset binding; no application server logic runs at request time.
+* **Network Gating:** Security is enforced edge-side by Cloudflare Zero Trust Access.
+* **Ingress Guardrails:** Access policies restrict the protected paths on the production domain (`*.workers.dev` or any custom domain mapped via Terraform) via Email One-Time Pin (OTP) authentication for up to 50 allowed emails.
 * No cryptographic encryption is needed within the client build because Cloudflare completely gates the asset distribution tier.
 
 ---
@@ -37,7 +38,7 @@ This project is a high-performance, secure digital compendium for D&D homebrew a
 To optimize performance, JavaScript frameworks must not be universally bundled or loaded on documentation pages. Frameworks must be scoped strictly to individual component instances or specific layout islands.
 
 ### Icon Components (Zero-JS / Static Server Hydration)
-Decorative icons from the Iconify ecosystem must be rendered via `src/components/IconifyIcon.astro`, a pure Astro component that fetches SVGs from the Iconify API at build time. See [ADR 0001](./docs/adr/0001-icon-component.md) for full rationale.
+Decorative icons from the Iconify ecosystem must be rendered via `src/components/IconifyIcon.astro`, a pure Astro component that reads SVG data from local `@iconify-json` packages (`@iconify-json/game-icons`, `@iconify-json/mdi`) at build time. No network call to the Iconify API is made, so offline builds still render icons. See [ADR 0001](./docs/adr/0001-icon-component.md) for full rationale.
 
 ```astro
 import IconifyIcon from '../../components/IconifyIcon.astro';
@@ -46,7 +47,7 @@ import IconifyIcon from '../../components/IconifyIcon.astro';
 <IconifyIcon icon="game-icons:bowman" width={iconSize} />
 ```
 
-Do **not** use `@iconify/react` in documentation pages — it requires a React renderer and bundles unnecessary client JS.
+Do **not** use `@iconify/react` in documentation pages - it requires a React renderer and bundles unnecessary client JS.
 
 ### Starlight Native Elements (Zero-JS / Static Server Hydration)
 Standard rule documentation must use built-in Starlight components. These generate pure semantic HTML and CSS during the build step:
