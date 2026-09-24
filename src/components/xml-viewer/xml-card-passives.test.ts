@@ -1278,6 +1278,10 @@ describe('XmlCard Powers pills card', () => {
     expect(body).toContain('Always prepared');
     expect(body).toContain('legend');
   });
+
+  it('no longer describes expand/collapse anywhere in the guide', () => {
+    expect(testPageSource).not.toMatch(/expand\/collapse/i);
+  });
 });
 
 describe('XmlCard display-mode toggle', () => {
