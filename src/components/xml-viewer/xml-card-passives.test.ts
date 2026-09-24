@@ -83,7 +83,8 @@ function skillRows(section: string): string[] {
 function skillRow(section: string, name: string): string {
   const matches = skillRows(section).filter((row) => row.includes(`>${name}<`));
   expect(matches).toHaveLength(1);
-  return matches[0];
+  const end = matches[0].indexOf('</tr>');
+  return end === -1 ? matches[0] : matches[0].slice(0, end + '</tr>'.length);
 }
 
 function rowNames(section: string): string[] {
@@ -328,16 +329,71 @@ describe('XmlCard All-skills section', () => {
     const arcana = skillRow(section, 'Arcana');
     expect(arcana).not.toContain('bg-[#c68000]');
     expect(arcana).not.toContain('title=');
+    expect(arcana).not.toContain('data-prof-rank');
 
     const perception = skillRow(section, 'Perception');
     expect(perception.match(/bg-\[#c68000\]/g)).toHaveLength(1);
     expect(perception).toContain('title="Proficient"');
+    expect(perception).toContain('data-prof-rank="proficient"');
 
     const sleight = skillRow(section, 'Sleight of Hand');
     expect(sleight.match(/bg-\[#c68000\]/g)).toHaveLength(2);
     expect(sleight).toContain('title="Expertise"');
+    expect(sleight).toContain('data-prof-rank="expertise"');
 
     expect(section).not.toContain('<button');
+  });
+
+  it('marks half proficiency (prof 3) with one half-filled gold dot and a data-prof-rank hook', async () => {
+    const allSkills = [
+      { name: 'Arcana', total: 1, prof: 3, stat: 'intelligence' },
+      { name: 'Medicine', total: 4, prof: 3, stat: 'wisdom' },
+      { name: 'Perception', total: 3, prof: 1, stat: 'wisdom' },
+    ];
+    const section = skillsSection(await renderCard('large', { allSkills }));
+
+    const arcana = skillRow(section, 'Arcana');
+    expect(arcana.match(/data-prof-rank="half"/g)).toHaveLength(1);
+    expect(arcana).toContain('title="Half proficiency"');
+    expect(arcana.match(/bg-\[#c68000\]/g)).toHaveLength(1);
+    expect(arcana).toContain('border border-[#c68000]');
+    expect(arcana).toContain('w-1/2');
+
+    const medicine = skillRow(section, 'Medicine');
+    expect(medicine).toContain('data-prof-rank="half"');
+
+    const perception = skillRow(section, 'Perception');
+    expect(perception).toContain('data-prof-rank="proficient"');
+    expect(perception).not.toContain('data-prof-rank="half"');
+
+    expect(section).not.toContain('<button');
+  });
+
+  it('lists the three markers in a legend when any skill is marked, absent when all are untrained', async () => {
+    const marked = skillsSection(
+      await renderCard('large', {
+        allSkills: [
+          { name: 'Athletics', total: 5, prof: 1, stat: 'strength' },
+          { name: 'Sleight of Hand', total: 7, prof: 2, stat: 'dexterity' },
+          { name: 'Arcana', total: 1, prof: 3, stat: 'intelligence' },
+        ],
+      })
+    );
+    const legendIndex = marked.lastIndexOf('mt-3 pt-2 border-t');
+    expect(legendIndex).toBeGreaterThan(-1);
+    const legend = marked.slice(legendIndex);
+    expect(legend).toContain('Proficient');
+    expect(legend).toContain('Expertise');
+    expect(legend).toContain('Half proficiency');
+    expect(legend).toContain('bg-[#c68000]');
+
+    const untrained = skillsSection(
+      await renderCard('large', {
+        allSkills: [{ name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' }],
+      })
+    );
+    expect(untrained).not.toContain('mt-3 pt-2 border-t');
+    expect(untrained).not.toContain('Half proficiency');
   });
 
   it('derives the ability abbreviation from stat, blank when missing', async () => {
@@ -1217,6 +1273,9 @@ describe('XmlCard visual test page', () => {
     const body = testPageSource.slice(subsection, notes);
     expect(body).toContain('ethir');
     expect(body).toContain('tanadirian');
+    expect(body).toContain('akinori');
+    expect(body).toContain('Half proficiency');
+    expect(body).toContain('legend');
     expectFixedModeCopy(body);
   });
 

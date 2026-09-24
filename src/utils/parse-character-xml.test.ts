@@ -396,6 +396,23 @@ describe('parseCharacterXML', () => {
     });
   });
 
+  it('preserves half-proficiency entries on akinori.xml (prof 3)', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/akinori.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.allSkills.find((s) => s.name === 'Arcana')).toEqual({
+      name: 'Arcana',
+      total: 1,
+      prof: 3,
+      stat: 'intelligence',
+    });
+    expect(result?.allSkills.find((s) => s.name === 'Medicine')).toEqual({
+      name: 'Medicine',
+      total: 4,
+      prof: 3,
+      stat: 'wisdom',
+    });
+  });
+
   it('includes custom skills with their governing stat', () => {
     const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/ethir.xml'), 'utf8');
     const result = parseCharacterXML(xml);
