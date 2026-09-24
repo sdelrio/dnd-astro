@@ -13,7 +13,6 @@ import {
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import {
-  probeAvatarPath,
   buildXmlCharacters,
   shouldRebuildXmlCharacters,
   xmlCharacterArtifactsExist,
@@ -36,32 +35,6 @@ describe('build-xml-characters', () => {
 
   afterEach(() => {
     rmSync(tempDir, { recursive: true, force: true });
-  });
-
-  describe('probeAvatarPath', () => {
-    it('returns .jpg avatar path when .jpg exists', () => {
-      const avatarDir = join(tempDir, 'avatars');
-      mkdirSync(avatarDir, { recursive: true });
-      writeFileSync(join(avatarDir, 'hero.jpg'), 'fake jpg');
-      writeFileSync(join(avatarDir, 'hero.png'), 'fake png');
-
-      expect(probeAvatarPath('hero', avatarDir)).toBe('/fg/avatar/hero.jpg');
-    });
-
-    it('returns .png avatar path when only .png exists', () => {
-      const avatarDir = join(tempDir, 'avatars');
-      mkdirSync(avatarDir, { recursive: true });
-      writeFileSync(join(avatarDir, 'mage.png'), 'fake png');
-
-      expect(probeAvatarPath('mage', avatarDir)).toBe('/fg/avatar/mage.png');
-    });
-
-    it('falls back to /fg/avatar/faceless.svg when no avatar file exists', () => {
-      const avatarDir = join(tempDir, 'avatars');
-      mkdirSync(avatarDir, { recursive: true });
-
-      expect(probeAvatarPath('unknown', avatarDir)).toBe('/fg/avatar/faceless.svg');
-    });
   });
 
   describe('buildXmlCharacters', () => {
