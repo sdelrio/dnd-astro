@@ -54,7 +54,7 @@ beforeAll(async () => {
 async function renderCard(
   display: 'small' | 'medium' | 'large',
   overrides: Partial<CharacterData> = {},
-  extraProps: { link?: boolean } = {}
+  extraProps: { link?: boolean; image?: string } = {}
 ): Promise<string> {
   return container.renderToString(XmlCard, {
     props: { character: { ...baseCharacter, ...overrides }, display, ...extraProps },
@@ -1076,6 +1076,28 @@ describe('XmlCard portrait link', () => {
     expect(html).not.toContain('href="/fantasy-grounds/characters/testhero"');
     expect(html).not.toContain('aria-label="View Test Hero character sheet"');
     expect(portraitImg(html)).toContain('title="Test Hero"');
+  });
+});
+
+describe('XmlCard avatar resolution', () => {
+  it('uses an explicit image prop when the avatar file exists', async () => {
+    const html = await renderCard('large', {}, { image: 'antonidas.png' });
+    expect(portraitImg(html)).toContain('src="/fg/avatar/antonidas.png"');
+  });
+
+  it('falls back to faceless.svg when the explicit image file is missing', async () => {
+    const html = await renderCard('large', {}, { image: 'dontexists.jpg' });
+    expect(portraitImg(html)).toContain('src="/fg/avatar/faceless.svg"');
+  });
+
+  it('uses the stored build-pipeline path when no image prop is given', async () => {
+    const html = await renderCard('large', { avatarPath: '/fg/avatar/milo.jpg' });
+    expect(portraitImg(html)).toContain('src="/fg/avatar/milo.jpg"');
+  });
+
+  it('probes the filename slug when neither image prop nor stored path exists', async () => {
+    const html = await renderCard('large', { avatarPath: undefined, filename: 'antonidas' });
+    expect(portraitImg(html)).toContain('src="/fg/avatar/antonidas.png"');
   });
 });
 

@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { tryParseCharacterXml, type CharacterData } from './parse-character-xml';
+import { probeAvatarPath } from './avatar-path';
 
 export interface StoredCharacter extends CharacterData {
   filename: string;
@@ -16,20 +17,6 @@ export interface BuildXmlCharactersOptions {
     log: (msg: string) => void;
     warn: (msg: string, ...args: unknown[]) => void;
   };
-}
-
-/**
- * Probe for an avatar image matching the base filename in the avatar directory.
- * Resolution priority: .jpg -> .png -> faceless.svg
- */
-export function probeAvatarPath(base: string, avatarDir: string): string {
-  if (existsSync(join(avatarDir, `${base}.jpg`))) {
-    return `/fg/avatar/${base}.jpg`;
-  }
-  if (existsSync(join(avatarDir, `${base}.png`))) {
-    return `/fg/avatar/${base}.png`;
-  }
-  return '/fg/avatar/faceless.svg';
 }
 
 /**
