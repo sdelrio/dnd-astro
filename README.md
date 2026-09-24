@@ -84,7 +84,7 @@ public/                  Static assets served as-is
     avatar/              Character portrait images
     party.json           Current party roster
   fonts/                 Self-hosted webfont files
-scripts/                 One-off content extraction scripts
+scripts/                 Content extraction and CI helper scripts
 src/
   components/
     dice-roller/         Dice Roller Alpine.js island
