@@ -167,6 +167,7 @@ Fonts are self-hosted; their licenses and provenance are documented in [docs/fon
 The site deploys to Cloudflare Workers with static assets instead of the legacy Pages workflow, following [ADR 0003](docs/adr/0003-workers-static-assets-over-pages.md).
 
 - `wrangler.jsonc` points `main` at `./worker/index.js` and `assets.directory` at `./dist`, so a deploy uploads the built site and serves it from Workers.
+- `astro.config.mjs` sets `site` to the public origin `https://dnd-companion.lorien.cloud`, the Terraform `custom_domain` value. Starlight's bundled `@astrojs/sitemap` integration needs it to emit `sitemap-index.xml` and absolute canonical URLs; without it the build warns and skips the sitemap. Keep this in sync with `custom_domain` in `terraform/terraform.tfvars`.
 - `worker/index.js` is a static-assets passthrough: its `fetch` handler returns `env.ASSETS.fetch(request)`. It exists because the Terraform `cloudflare_workers_script` resource requires script content; asset routing still comes from `wrangler.jsonc`.
 - The build runs on Node 24, pinned by `devbox.json` (`nodejs_24` plus `pnpm`).
 
