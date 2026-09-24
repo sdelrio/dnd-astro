@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { tryParseCharacterXml, type CharacterData } from './parse-character-xml';
 
@@ -7,18 +7,11 @@ export interface StoredCharacter extends CharacterData {
   avatarPath: string;
 }
 
-export interface CharacterArtifactEntry {
-  filename: string;
-  character: CharacterData;
-  avatarPath: string;
-}
-
 export interface BuildXmlCharactersOptions {
   rootDir?: string;
   xmlDir?: string;
   avatarDir?: string;
   outputFile?: string;
-  astroOutputFile?: string;
   logger?: {
     log: (msg: string) => void;
     warn: (msg: string, ...args: unknown[]) => void;
@@ -54,12 +47,10 @@ export function shouldRebuildXmlCharacters(
 }
 
 /**
- * True when both generated characters.json artifacts already exist under rootDir.
+ * True when the single generated characters.json artifact exists under rootDir.
  */
 export function xmlCharacterArtifactsExist(rootDir: string = process.cwd()): boolean {
-  const outputFile = resolve(rootDir, 'src/generated/characters.json');
-  const astroOutputFile = resolve(rootDir, '.astro/generated/characters.json');
-  return existsSync(outputFile) && existsSync(astroOutputFile);
+  return existsSync(resolve(rootDir, 'src/generated/characters.json'));
 }
 
 function writeJsonIfChanged(filePath: string, data: unknown): void {
@@ -73,17 +64,20 @@ function writeJsonIfChanged(filePath: string, data: unknown): void {
 
 /**
  * Reads all XML character sheets, parses each using tryParseCharacterXml,
- * resolves avatar paths, and writes generated characters.json artifacts.
+ * resolves avatar paths, and writes the single generated characters.json
+ * artifact at src/generated/characters.json (consumed via
+ * `./generated-characters.ts`).
  * Sheet order is sorted so output is deterministic across filesystems.
  * Corrupt sheets are skipped with a warning; they never fail the build.
+ * A stale legacy copy under .astro/generated from the old dual-write is
+ * removed so it cannot drift.
  */
 export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): StoredCharacter[] {
   const rootDir = options.rootDir ?? process.cwd();
   const xmlDir = options.xmlDir ?? resolve(rootDir, 'src/assets/fantasy-grounds-sheets');
   const avatarDir = options.avatarDir ?? resolve(rootDir, 'public/fg/avatar');
   const outputFile = options.outputFile ?? resolve(rootDir, 'src/generated/characters.json');
-  const astroOutputFile =
-    options.astroOutputFile ?? resolve(rootDir, '.astro/generated/characters.json');
+  const legacyAstroOutputFile = resolve(rootDir, '.astro/generated/characters.json');
   const logger = options.logger ?? console;
 
   if (!existsSync(xmlDir)) {
@@ -95,7 +89,6 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
     .filter((f) => f.endsWith('.xml'))
     .sort();
   const characters: StoredCharacter[] = [];
-  const astroArtifact: CharacterArtifactEntry[] = [];
 
   for (const xmlFile of xmlFiles) {
     const xmlPath = join(xmlDir, xmlFile);
@@ -117,23 +110,25 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
 
     const filename = xmlFile.replace(/\.xml$/, '');
     const avatarPath = probeAvatarPath(filename, avatarDir);
-    const stored: StoredCharacter = {
-      ...parsed.character,
-      filename,
-      avatarPath,
-    };
-
-    characters.push(stored);
-    astroArtifact.push({
-      filename,
-      character: parsed.character,
-      avatarPath,
-    });
+    characters.push({ ...parsed.character, filename, avatarPath });
   }
 
   writeJsonIfChanged(outputFile, characters);
-  writeJsonIfChanged(astroOutputFile, astroArtifact);
+  removeLegacyAstroArtifact(legacyAstroOutputFile, logger);
 
   logger.log(`[xml-viewer] Parsed ${characters.length} character XML files`);
   return characters;
+}
+
+function removeLegacyAstroArtifact(
+  legacyPath: string,
+  logger: { log: (msg: string) => void; warn: (msg: string, ...args: unknown[]) => void }
+): void {
+  if (!existsSync(legacyPath)) return;
+  try {
+    rmSync(legacyPath);
+    logger.log('[xml-viewer] Removed legacy dual-write artifact: .astro/generated/characters.json');
+  } catch (err) {
+    logger.warn('[xml-viewer] Warning: Failed to remove legacy artifact:', err);
+  }
 }

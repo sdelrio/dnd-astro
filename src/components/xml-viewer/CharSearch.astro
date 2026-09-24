@@ -1,11 +1,10 @@
 ---
-import charactersJson from '@/generated/characters.json';
-import type { StoredCharacter } from '@/utils/build-xml-characters';
+import { getCharacters } from '@/utils/generated-characters';
 import { toFilterableCharacters } from '@/components/xml-viewer/char-filter';
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
 import IconifyIcon from '@/components/IconifyIcon.astro';
 
-const characters = charactersJson as StoredCharacter[];
+const characters = getCharacters();
 
 const allClasses = [...new Set(characters.flatMap((c) => c.classes.map((cl) => cl.name)))].sort();
 const allRaces = [...new Set(characters.map((c) => c.race))].sort();
