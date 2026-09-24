@@ -87,10 +87,6 @@ export default defineConfig({
           items: [{ autogenerate: { directory: 'dnd-tools' } }],
         },
         {
-          label: 'Reference',
-          items: [{ autogenerate: { directory: 'reference' } }],
-        },
-        {
           label: 'Fantasy Grounds',
           items: [
             { label: 'FG Effects', slug: 'fantasy-grounds/fg-effects' },
