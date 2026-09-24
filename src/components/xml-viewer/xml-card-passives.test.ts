@@ -913,11 +913,36 @@ describe('XmlCard Languages and Feats accent cards', () => {
   });
 });
 
-describe('XmlCard Features accent card', () => {
+describe('XmlCard Features pills card', () => {
   const sampleFeatures = [
     { level: 1, name: 'Second Wind', source: 'Fighter' },
     { level: 2, name: 'Action Surge', source: 'Fighter' },
   ];
+  const pillClass =
+    'px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300';
+  const forbidden = [
+    'role="button"',
+    'tabindex',
+    'aria-expanded',
+    'aria-controls',
+    '@click',
+    '@keydown',
+    'x-show',
+    'x-transition',
+    'cursor-pointer',
+    'focus-visible',
+  ];
+
+  function featureCard(section: string): string {
+    return section.slice(section.indexOf('rounded-[7px]'));
+  }
+
+  function featurePill(section: string, name: string): string {
+    const marker = section.indexOf(`>${name}</span>`);
+    expect(marker).toBeGreaterThan(-1);
+    const start = section.lastIndexOf('<span', marker);
+    return section.slice(start, marker + `>${name}</span>`.length);
+  }
 
   it('wraps the Features content in one accent card below the heading', async () => {
     const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
@@ -931,46 +956,57 @@ describe('XmlCard Features accent card', () => {
     expect(cardIndex).toBeGreaterThan(headingIndex);
   });
 
-  it('keeps level sub-headings and per-feature accordions inside the card', async () => {
+  it('renders every feature as a Languages/Feats-style pill inside the card', async () => {
     const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
-    const cardStart = section.indexOf('rounded-[7px]');
-    expect(cardStart).toBeGreaterThan(-1);
-    const card = section.slice(cardStart);
+    const card = featureCard(section);
     expect(card).toContain('>Level 1</h3>');
     expect(card).toContain('>Level 2</h3>');
-    expect(card).toContain('>Second Wind</span>');
-    expect(card).toContain('>Action Surge</span>');
-    expect(card).toContain("toggleSection('feature-0-0')");
-    expect(card).toContain("isExpanded('feature-0-0')");
-    expect(card).toContain('role="button"');
-    expect(card).toContain('cursor-pointer');
-    expect(card).toContain('x-transition');
+    for (const feature of sampleFeatures) {
+      const pill = featurePill(card, feature.name);
+      expect(pill).toContain(`class="${pillClass}"`);
+      expect(pill).toContain(`title="Source: ${feature.source}"`);
+    }
   });
 
-  it('announces feature row expanded state and links the disclosure panel', async () => {
-    const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
-    const card = section.slice(section.indexOf('rounded-[7px]'));
-    expect(card).toContain('aria-expanded="false"');
-    expect(card).toContain(
-      `:aria-expanded="isExpanded('feature-0-0') ? 'true' : 'false'"`
+  it('shows a Source tooltip only when the parsed source is non-empty', async () => {
+    const section = featuresSection(
+      await renderCard('large', {
+        features: [
+          { level: 1, name: 'Second Wind', source: 'Fighter' },
+          { level: 1, name: 'Unattributed', source: '' },
+        ],
+      })
     );
-    expect(card).toContain('aria-controls="feature-0-0-panel"');
-    expect(card).toContain('id="feature-0-0-panel"');
+    const withSource = featurePill(section, 'Second Wind');
+    expect(withSource).toContain('title="Source: Fighter"');
+    const withoutSource = featurePill(section, 'Unattributed');
+    expect(withoutSource).toContain(`class="${pillClass}"`);
+    expect(withoutSource).not.toContain('title=');
+    expect(section).not.toContain('title="Source: "');
   });
 
-  it('activates feature rows from the keyboard with Enter and Space', async () => {
-    const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
-    const card = section.slice(section.indexOf('rounded-[7px]'));
-    expect(card).toContain("@keydown.enter=");
-    expect(card).toContain("@keydown.space.prevent=");
-    expect(card).toContain('tabindex="0"');
+  it('orders pills by level then name under the Level headings', async () => {
+    const section = featuresSection(
+      await renderCard('large', {
+        features: [
+          { level: 2, name: 'Bravo', source: 'X' },
+          { level: 1, name: 'Zulu', source: 'X' },
+          { level: 2, name: 'Alpha', source: 'X' },
+          { level: 1, name: 'Alpha', source: 'X' },
+        ],
+      })
+    );
+    const order = [...section.matchAll(/>([^<>]+)<\/span>/g)].map(([, name]) => name);
+    expect(order).toEqual(['Alpha', 'Zulu', 'Alpha', 'Bravo']);
   });
 
-  it('shows a visible focus ring on feature row toggles', async () => {
-    const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
-    const card = section.slice(section.indexOf('rounded-[7px]'));
-    expect(card).toContain('focus-visible:outline-2');
-    expect(card).toContain('focus-visible:outline-offset-2');
+  it('leaves no disclosure or interactive binding in the Features card', async () => {
+    const card = featureCard(
+      featuresSection(await renderCard('large', { features: sampleFeatures }))
+    );
+    for (const marker of forbidden) {
+      expect(card).not.toContain(marker);
+    }
   });
 
   it('hides the section in small and medium modes at build time', async () => {
@@ -978,16 +1014,19 @@ describe('XmlCard Features accent card', () => {
     expect(await renderCard('medium', { features: sampleFeatures })).not.toContain('Features');
   });
 
-  it('documents the Features accent card subsection under Display: Large', () => {
+  it('documents the Features pills subsection under Display: Large', () => {
     const large = testPageSource.indexOf('## Display: Large');
     const notes = testPageSource.indexOf('## Notes');
     const subsection = testPageSource.indexOf('### Features');
     expect(large).toBeGreaterThan(-1);
     expect(subsection).toBeGreaterThan(large);
     expect(subsection).toBeLessThan(notes);
-    const body = testPageSource.slice(subsection, notes);
+    const nextSubsection = testPageSource.indexOf('### ', subsection + 1);
+    const body = testPageSource.slice(subsection, nextSubsection);
     expectFixedModeCopy(body);
     expect(body).toContain('accent card');
+    expect(body).toContain('pills');
+    expect(body).not.toMatch(/expand\/collapse/i);
     expect(body).toContain('Features');
     expect(body).toContain('display="large"');
   });
