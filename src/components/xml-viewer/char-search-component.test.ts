@@ -39,6 +39,15 @@ describe('charSearchComponent', () => {
     expect(component.matches(0)).toBe(false);
   });
 
+  it('initial state keeps every card visible with the full count before any filters', () => {
+    const component = makeComponent();
+    characters.forEach((_, index) => {
+      expect(component.matches(index)).toBe(true);
+    });
+    expect(component.matchCount).toBe(characters.length);
+    expect(component.matches(characters.length)).toBe(false);
+  });
+
   it('matchCount counts characters passing the predicate', () => {
     const component = makeComponent();
     expect(component.matchCount).toBe(3);
