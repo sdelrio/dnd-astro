@@ -325,6 +325,15 @@ describe('README', () => {
     expect(deployment).toContain('Node 24');
   });
 
+  it('documents the canonical site URL used for sitemap and canonical links', () => {
+    const deployment = section('Deployment and security');
+
+    expect(deployment).toContain('https://dnd-companion.lorien.cloud');
+    expect(deployment).toMatch(/`site`/);
+    expect(deployment).toMatch(/sitemap/i);
+    expect(deployment).toContain('terraform/terraform.tfvars');
+  });
+
   it('indexes the documentation set and the agent conventions', () => {
     const docs = section('Documentation and workflow');
 
