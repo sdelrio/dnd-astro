@@ -448,35 +448,35 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
 
         {showInventory && (
           <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-            <SectionHeader title="Inventory" />
+            <SectionHeader
+              title="Inventory"
+              trailing={inventoryRows.length > 0
+                ? `${inventoryWeight} / ${inventoryCapacity} lb. carried`
+                : undefined}
+            />
             {inventoryRows.length > 0 && (
-              <>
-                <p class="m-0 mb-1 text-xs text-gray-500 dark:text-gray-400">
-                  {inventoryWeight} / {inventoryCapacity} lb. carried
-                </p>
-                <div class={vitalsItemClass}>
-                  <table class="w-full text-sm">
-                    <thead>
-                      <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                        <th class="text-left font-medium pb-1">Item</th>
-                        <th class="text-right font-medium pb-1">Count</th>
-                        <th class="text-right font-medium pb-1">Weight</th>
-                        <th class="text-left font-medium pb-1">State</th>
+              <div class={vitalsItemClass}>
+                <table class="w-full text-sm">
+                  <thead>
+                    <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                      <th class="text-left font-medium pb-1">Item</th>
+                      <th class="text-right font-medium pb-1">Count</th>
+                      <th class="text-right font-medium pb-1">Weight</th>
+                      <th class="text-left font-medium pb-1">State</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {inventoryRows.map((item) => (
+                      <tr class="border-t border-gray-200 dark:border-gray-700">
+                        <td class="py-1 text-gray-700 dark:text-gray-300">{item.name}</td>
+                        <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.count}</td>
+                        <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.weight}</td>
+                        <td class="py-1 text-gray-500 dark:text-gray-400">{item.state}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {inventoryRows.map((item) => (
-                        <tr class="border-t border-gray-200 dark:border-gray-700">
-                          <td class="py-1 text-gray-700 dark:text-gray-300">{item.name}</td>
-                          <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.count}</td>
-                          <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.weight}</td>
-                          <td class="py-1 text-gray-500 dark:text-gray-400">{item.state}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             )}
             <div class={`mt-2 ${vitalsItemClass}`}>
               <div class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Current Wealth</div>

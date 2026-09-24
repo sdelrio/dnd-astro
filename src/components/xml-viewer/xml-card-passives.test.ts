@@ -124,6 +124,14 @@ function inventoryRows(section: string): string[] {
   return section.split('<tr').slice(1);
 }
 
+function inventoryHeadingRow(section: string): string {
+  const heading = section.indexOf('>Inventory</h2>');
+  if (heading === -1) return '';
+  const start = section.lastIndexOf('<div', heading);
+  const end = section.indexOf('</div>', heading);
+  return section.slice(start, end === -1 ? undefined : end + '</div>'.length);
+}
+
 function savesSection(html: string): string {
   const marker = html.indexOf('>Saving Throws</h2>');
   if (marker === -1) return '';
@@ -479,6 +487,24 @@ describe('XmlCard Inventory section', () => {
   it('shows the carried weight total against STR x 15 capacity', async () => {
     const section = await renderInventory();
     expect(section).toContain('68.0 / 270 lb. carried');
+  });
+
+  it('renders the carried weight on the heading row, right-aligned and baseline-aligned', async () => {
+    const row = inventoryHeadingRow(await renderInventory());
+    expect(row).toContain('>Inventory</h2>');
+    expect(row).toContain('68.0 / 270 lb. carried');
+    expect(row.indexOf('68.0 / 270 lb. carried')).toBeGreaterThan(
+      row.indexOf('>Inventory</h2>')
+    );
+    expect(row).toContain('@md:flex-row');
+    expect(row).toContain('@md:items-baseline');
+    expect(row).toContain('@md:justify-between');
+  });
+
+  it('leaves the Inventory heading alone when nothing is carried', async () => {
+    const section = await renderInventory({ inventory: [droppedGem] });
+    expect(section).toContain('>Inventory</h2>');
+    expect(section).not.toContain('lb. carried');
   });
 
   it('drops carried 0 items from the table and the weight total', async () => {
@@ -1224,6 +1250,8 @@ describe('XmlCard visual test page', () => {
     expect(body).toContain('Current Wealth');
     expect(body).toContain('Item');
     expect(body).toContain('State');
+    expect(body).toMatch(/same row/);
+    expect(body).not.toContain('muted line above the items table');
   });
 
   it('documents the Saving Throws subsection under Display: Large', () => {
