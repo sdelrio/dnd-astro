@@ -4,16 +4,25 @@ import starlight from '@astrojs/starlight';
 import alpinejs from '@astrojs/alpinejs';
 import mermaid from 'astro-mermaid';
 import tailwindcss from '@tailwindcss/vite';
-import { buildXmlCharacters } from './src/utils/build-xml-characters.ts';
+import {
+  buildXmlCharacters,
+  shouldRebuildXmlCharacters,
+  xmlCharacterArtifactsExist,
+} from './src/utils/build-xml-characters.ts';
 
+/** @type {() => import('astro').AstroIntegration} */
 function xmlCharacterViewer() {
   return {
     name: 'xml-character-viewer',
     hooks: {
-      // config:setup runs on every Astro startup (dev and build), so the
-      // generated JSON exists before any page renders in both modes.
-      'astro:config:setup'() {
-        buildXmlCharacters();
+      // config:setup runs on every Astro startup. Render commands (dev,
+      // build) always rebuild so pages get fresh sheet data. Non-render
+      // commands (sync covers astro check/sync, plus preview) only rebuild
+      // when artifacts are missing (fresh clone), otherwise skip.
+      'astro:config:setup'({ command }) {
+        if (shouldRebuildXmlCharacters(command, xmlCharacterArtifactsExist())) {
+          buildXmlCharacters();
+        }
       },
     },
   };

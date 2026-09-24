@@ -97,7 +97,7 @@ const SUBCLASS_NAME_PATTERNS: Record<string, RegExp> = {
   Wizard: /^School of \S.*$|^Bladesinging$|^War Magic$/,
 };
 
-export function parseCharacterXML(xml: string): CharacterData | null {
+function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: '@_',
@@ -295,4 +295,35 @@ export function parseCharacterXML(xml: string): CharacterData | null {
   };
 }
 
+export function parseCharacterXML(xml: string): CharacterData | null {
+  try {
+    return parseCharacterXmlUnsafe(xml);
+  } catch {
+    return null;
+  }
+}
+
 export const parseCharacterXml = parseCharacterXML;
+
+export type ParseCharacterXmlResult =
+  | { ok: true; character: CharacterData }
+  | { ok: false; reason: string };
+
+/**
+ * Total parser: never throws. fast-xml-parser throws on severely malformed
+ * input (e.g. unterminated CDATA); that is reported as `{ ok: false, reason }`
+ * so callers can skip the sheet with a warning instead of failing the build.
+ * Missing <character> nodes are also failures with a reason.
+ */
+export function tryParseCharacterXml(xml: string): ParseCharacterXmlResult {
+  try {
+    const character = parseCharacterXmlUnsafe(xml);
+    if (!character) {
+      return { ok: false, reason: 'no <character> node found' };
+    }
+    return { ok: true, character };
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
+    return { ok: false, reason };
+  }
+}
