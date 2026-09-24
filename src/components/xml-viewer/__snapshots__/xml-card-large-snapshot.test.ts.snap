@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup for the fixture character 1`] = `
-"<div class="not-content @container w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm" x-data="{ expandedSections: {}, toggleSection(s) { this.expandedSections[s] = !this.expandedSections[s]; }, isExpanded(s) { return !!this.expandedSections[s]; } }">
+"<div class="not-content @container w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm">
 <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
 <div class="flex flex-wrap gap-4">
 <a href="/fantasy-grounds/characters/snapshot-hero" aria-label="View Snapshot Hero character sheet" class="flex-shrink-0 rounded-[7px] hover:ring-2 hover:ring-[#58180d]/40 dark:hover:ring-[#c68000]/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]">
@@ -453,30 +453,16 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 1</h3>
 <div>
 <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">Barbarian Actions/Effects</h4>
-<div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-<div class="flex items-center justify-between cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]" role="button" tabindex="0" aria-expanded="false" aria-controls="power-0-0-0-panel" :aria-expanded="isExpanded('power-0-0-0') ? 'true' : 'false'" @click="toggleSection('power-0-0-0')" @keydown.enter="toggleSection('power-0-0-0')" @keydown.space.prevent="toggleSection('power-0-0-0')">
-<span class="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1">Rage</span>
-<span class="text-xs text-gray-500 dark:text-gray-400">Barbarian Actions/Effects</span>
-</div>
-<div id="power-0-0-0-panel" class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400" x-show="isExpanded('power-0-0-0')" x-transition>
-<p class="m-0">Level: 1</p>
-<p class="m-0">Group: Barbarian Actions/Effects</p>
-</div>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1" title="Group: Barbarian Actions/Effects">Rage</span>
 </div>
 </div>
 <div>
 <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">Spells Domain (Life)</h4>
-<div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-<div class="flex items-center justify-between cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]" role="button" tabindex="0" aria-expanded="false" aria-controls="power-0-1-0-panel" :aria-expanded="isExpanded('power-0-1-0') ? 'true' : 'false'" @click="toggleSection('power-0-1-0')" @keydown.enter="toggleSection('power-0-1-0')" @keydown.space.prevent="toggleSection('power-0-1-0')">
-<span class="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1">Cure Wounds<span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" title="Always prepared (class/subclass)">
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1" title="Group: Spells Domain (Life)">Cure Wounds<span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" title="Always prepared (class/subclass)">
 </span>
 </span>
-<span class="text-xs text-gray-500 dark:text-gray-400">Spells Domain (Life)</span>
-</div>
-<div id="power-0-1-0-panel" class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400" x-show="isExpanded('power-0-1-0')" x-transition>
-<p class="m-0">Level: 1</p>
-<p class="m-0">Group: Spells Domain (Life)</p>
-</div>
 </div>
 </div>
 </div>
@@ -484,17 +470,10 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 3</h3>
 <div>
 <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">Spells</h4>
-<div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
-<div class="flex items-center justify-between cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]" role="button" tabindex="0" aria-expanded="false" aria-controls="power-1-0-0-panel" :aria-expanded="isExpanded('power-1-0-0') ? 'true' : 'false'" @click="toggleSection('power-1-0-0')" @keydown.enter="toggleSection('power-1-0-0')" @keydown.space.prevent="toggleSection('power-1-0-0')">
-<span class="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1">Bless<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Prepared">
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1" title="Group: Spells">Bless<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Prepared">
 </span>
 </span>
-<span class="text-xs text-gray-500 dark:text-gray-400">Spells</span>
-</div>
-<div id="power-1-0-0-panel" class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400" x-show="isExpanded('power-1-0-0')" x-transition>
-<p class="m-0">Level: 3</p>
-<p class="m-0">Group: Spells</p>
-</div>
 </div>
 </div>
 </div>
