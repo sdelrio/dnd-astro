@@ -78,4 +78,8 @@ describe('avatar resolution against real assets', () => {
   it('resolves dracarys to the corrected .png portrait', () => {
     expect(probeAvatarPath('dracarys', avatarDir)).toBe('/fg/avatar/dracarys.png');
   });
+
+  it('resolves enanidas to the added .png portrait', () => {
+    expect(probeAvatarPath('enanidas', avatarDir)).toBe('/fg/avatar/enanidas.png');
+  });
 });
