@@ -75,7 +75,7 @@ Single-context. ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
 
 ## Temporary Files
 
-Write all temporary files (PR bodies, issue bodies, scratch files, etc.) to `<repo-root>/tmp/`, e.g. `tmp/pr-<slug>.md`. This directory is gitignored; never use `/tmp` or other system paths.
+Every temporary file (PR bodies, issue bodies, scratch files, notes, etc.) goes to `tmp/` at the repo root - write there first, e.g. `tmp/pr-<slug>.md`. That directory is gitignored; do not use `/tmp` or other system paths.
 
 ### Workflow Steps
 
