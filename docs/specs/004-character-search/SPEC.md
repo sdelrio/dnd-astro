@@ -44,7 +44,7 @@ Users need a way to search and browse all 111 Fantasy Grounds characters by name
 ### Step 1: Create CharSearch.astro Component
 
 Create `src/components/xml-viewer/CharSearch.astro` - an Astro component that:
-- Imports characters from `@/generated/characters.json`
+- Loads characters through the typed loader `src/utils/generated-characters.ts` (`getCharacters()`), which reads the single `src/generated/characters.json` build artifact
 - Extracts unique classes and races for dropdown options
 - Uses Alpine.js `x-data` for reactive state (search, selectedClass, selectedRace)
 - Filters characters client-side based on all active filters

@@ -104,11 +104,10 @@ Add a build hook in `astro.config.mjs` using `astro:build:start` (or `astro:conf
 1. Reads all `.xml` files from `src/assets/fantasy-grounds-sheets/`
 2. Parses each using `parseCharacterXml`
 3. Resolves avatar image paths: probe `public/fg/avatar/{filename}.jpg` → `public/fg/avatar/{filename}.png` → `public/fg/avatar/faceless.svg`
-4. Writes two build artifacts:
+4. Writes one build artifact:
    - `src/generated/characters.json` - a flat array of `StoredCharacter` (`CharacterData` fields plus `filename` and `avatarPath`)
-   - `.astro/generated/characters.json` - an array of `{ filename, character, avatarPath }` entries
 
-The `src/generated/` copy is importable by components during the Astro build (e.g. `import characters from '@/generated/characters.json'`). The `.astro/` copy is read from disk at build time by components that look characters up by `filename`.
+The artifact is importable by components during the Astro build and is read by every consumer through the typed loader in `src/utils/generated-characters.ts` (`getCharacters()`, `getCharacter(filename)`), so Party View, Char Search, and character pages share one shape.
 
 ### Step 4: Create `signed()` Utility
 
@@ -287,14 +286,14 @@ Run the AGENTS.md verification commands from the repo root before opening a PR: 
 
 The following deviations from this spec were accepted during implementation (PR #29, code-review rounds 1–3) and are recorded here to prevent re-flagging in future reviews.
 
-### 1. Build artifacts: both `src/generated/` and `.astro/generated/`
+### 1. Build artifacts: unified at `src/generated/` (issue #273)
 
-The original spec called for a single artifact at `.astro/generated/characters.json`. The implementation writes two artifacts with different shapes, both consumed:
+The original spec called for a single artifact at `.astro/generated/characters.json`. During implementation a dual-write shipped instead, and both copies were consumed:
 
-- `.astro/generated/characters.json` - an array of `{ filename, character, avatarPath }` entries (`CharacterArtifactEntry`). Read from disk at build time by `PartyView.astro` (`src/components/xml-viewer/PartyView.astro`), which looks members up by `filename`.
-- `src/generated/characters.json` - a flat array of `StoredCharacter` (`CharacterData` fields plus `filename` and `avatarPath`). Statically imported by `CharSearch.astro` (`src/components/xml-viewer/CharSearch.astro`) and `src/content/docs/guides/xml-card-test.mdx` via the `@/generated/characters.json` alias.
+- `.astro/generated/characters.json` - an array of `{ filename, character, avatarPath }` entries (`CharacterArtifactEntry`), read from disk by `PartyView.astro`.
+- `src/generated/characters.json` - a flat array of `StoredCharacter`, statically imported by `CharSearch.astro` and `src/content/docs/guides/xml-card-test.mdx`.
 
-Reason both exist: `.astro/` is not module-resolvable by Astro's import system, so components that need the data at import time require the copy under `src/`. `PartyView` reads the `.astro/` copy from disk because it only needs a filename-keyed lookup, and the entry shape keeps `character` separate from `filename` and `avatarPath`; the flat `src/generated/` shape exists for direct imports. Both are written by the same build hook, `buildXmlCharacters()` in `src/utils/build-xml-characters.ts`.
+Issue #273 unified this: `buildXmlCharacters()` now writes only `src/generated/characters.json` and removes any stale `.astro/generated/characters.json` left by the old dual-write. All consumers (Party View, Char Search, character pages, tests) read the single artifact through the typed loader `src/utils/generated-characters.ts`. The `.astro/` location is not module-resolvable by Astro's import system, which is why the surviving artifact lives under `src/`.
 
 ### 2. Role icons: `game-icons:` not `mdi:`
 
