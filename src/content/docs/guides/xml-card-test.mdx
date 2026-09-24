@@ -248,13 +248,18 @@ renders only in large mode; small and medium cards omit it at build time.
 Large mode replaces the prof-only skills grid with one card holding two
 tables of every skill on the sheet, split alphabetically into halves. Each
 row shows the skill name, its ability abbreviation, and the total
-right-aligned in mono. Gold dots mark proficiency: one dot for proficient,
-two for expertise, none for untrained, with a tooltip on each marker. Custom
+right-aligned in mono. Gold dots mark proficiency: one filled dot for
+proficient, two for expertise, a half-filled dot for half proficiency
+(Fantasy Grounds `prof 3`), and none for untrained, with a tooltip on each
+marker. A legend beneath the tables spells out all three marks. Custom
 skills take their ability from the sheet's `stat` field, so ethir's
 `Thieves Tools (Traps)` row reads `INT`. Ethir has 20 skills - two dots
 appear on `Sleight of Hand` and both `Thieves Tools` rows (expertise), one
-dot on the proficient rows. Tanadirian has 18 skills with no expertise, so
-he exercises the one-dot and no-dot cases. Medium cards render the prof-only
+dot on the proficient rows. Akinori carries half proficiency on `Arcana`
+and `Medicine`, so those rows show the half-filled dot and the "Half proficiency"
+tooltip. Tanadirian has 18 skills with no expertise, so
+he exercises the one-dot and no-dot cases; a sheet with no marked skills
+shows no legend. Medium cards render the prof-only
 skills grid instead, and small cards omit the section entirely; the display
 mode is fixed at build time, with no live switching.
 
@@ -263,6 +268,12 @@ mode is fixed at build time, with no live switching.
 ```
 
 <XmlCard character={ethir} display="large" />
+
+```mdx
+<XmlCard character={akinori} display="large" />
+```
+
+<XmlCard character={akinori} display="large" />
 
 ```mdx
 <XmlCard character={tanadirian} display="large" />
