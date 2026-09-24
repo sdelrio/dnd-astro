@@ -96,15 +96,18 @@ describe('README', () => {
     expect(readme).not.toMatch(/actions\/workflows|github\/workflows/);
   });
 
-  it('overviews the static-first compendium and its three tools', () => {
+  it('overviews the static-first compendium and its four tools', () => {
     const overview = section('Overview');
 
     expect(overview).toMatch(/static-first/i);
     expect(overview).toMatch(/SSG/);
     expect(overview).toMatch(/house rules/i);
+    expect(overview).toMatch(/four interactive tools/i);
     expect(overview).toContain('Dice Roller');
     expect(overview).toContain('Feat Explorer');
+    expect(overview).toContain('Point Buy');
     expect(overview).toContain('XML Character Viewer');
+    expect(existsSync(join(repoRoot, 'src/components/point-buy'))).toBe(true);
   });
 
   it('lists the tech stack in a table', () => {
@@ -261,6 +264,7 @@ describe('README', () => {
 
     expect(rendering).toContain('IconifyIcon.astro');
     expect(rendering).toMatch(/zero client-side JavaScript/i);
+    expect(rendering).toMatch(/no Iconify API network call/i);
     expect(rendering).toContain(adrPaths.icon);
 
     expect(rendering).toContain('astro-mermaid');
@@ -271,6 +275,7 @@ describe('README', () => {
     }
     expect(rendering).not.toContain(':::info');
     expect(rendering).not.toContain(':::warning');
+    expect(rendering).toMatch(/`info` and `warning`[^.]*not supported/i);
     expect(rendering).toContain(adrPaths.admonitions);
 
     expect(rendering).toMatch(/striped|striping/i);
@@ -288,15 +293,20 @@ describe('README', () => {
       expect(content).toContain(group);
     }
 
-    for (const type of ['note', 'tip', 'caution', 'danger']) {
-      expect(content).toContain(`:::${type}`);
-    }
-    expect(content).not.toContain(':::info');
-    expect(content).not.toContain(':::warning');
-    expect(content).toMatch(/`info` and `warning`[^.]*not supported/i);
-    expect(content).toContain(adrPaths.admonitions);
+    expect(content).toMatch(
+      /Admonitions follow the restriction listed under \[Rendering conventions\]\(#rendering-conventions\)/
+    );
+    expect(content).not.toContain(adrPaths.admonitions);
 
     expect(content).toContain('docs/fonts-licensing.md');
+  });
+
+  it('states the Starlight admonition restriction exactly once', () => {
+    const occurrences = readme.split(adrPaths.admonitions).length - 1;
+
+    expect(occurrences).toBe(1);
+    expect(readme).not.toContain(':::info');
+    expect(readme).not.toContain(':::warning');
   });
 
   it('documents the Cloudflare Workers deployment, wrangler config, and Terraform', () => {
@@ -323,6 +333,13 @@ describe('README', () => {
     expect(deployment).toContain('onetimepin');
 
     expect(deployment).toContain('Node 24');
+  });
+
+  it('links the committed Terraform tfvars example template', () => {
+    const deployment = section('Deployment and security');
+
+    expect(deployment).toContain('[terraform/terraform.tfvars.example](terraform/terraform.tfvars.example)');
+    expect(existsSync(join(repoRoot, 'terraform/terraform.tfvars.example'))).toBe(true);
   });
 
   it('documents the canonical site URL used for sitemap and canonical links', () => {
