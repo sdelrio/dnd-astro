@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, extname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { probeAvatarPath } from './build-xml-characters';
+import { probeAvatarPath } from './avatar-path';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const publicDir = join(repoRoot, 'public');

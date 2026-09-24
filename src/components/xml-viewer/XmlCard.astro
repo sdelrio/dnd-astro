@@ -1,7 +1,6 @@
 ---
 import type { CharacterData } from '@/utils/parse-character-xml';
-import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { resolveAvatarPath } from '@/utils/avatar-path';
 import { signed } from '@/utils/format';
 import { groupBy } from '@/utils/group-by';
 import { toWeaponRows } from '@/components/xml-viewer/weapon-display';
@@ -84,27 +83,18 @@ const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).
 const vitalsItemClass = 'p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]';
 const portraitClass = 'w-16 h-20 object-cover flex-shrink-0 overflow-hidden border border-gray-300 dark:border-gray-600 [border-top-left-radius:7px] [border-top-right-radius:7px] [border-bottom-left-radius:45%] [border-bottom-right-radius:45%]';
 
-// Build-time avatar resolution: explicit image prop wins when the file exists
-// (missing files fall back to faceless.svg), otherwise probe {base}.jpg ->
-// {base}.png -> faceless.svg, where base is the XML filename when known
-// (golden-forest convention: milo.xml -> milo.jpg) and the name slug
-// otherwise. Frontmatter runs at build time, so existsSync here costs zero
+// Build-time avatar resolution happens in the shared helper: an explicit
+// image prop wins when the file exists (missing files fall back to
+// faceless.svg), otherwise the pre-resolved build-pipeline path, otherwise a
+// {base}.jpg -> {base}.png -> faceless.svg probe, where base is the XML
+// filename when known (golden-forest convention: milo.xml -> milo.jpg) and the
+// name slug otherwise. Frontmatter runs at build time, so this costs zero
 // client JavaScript.
-function probeAvatar(base: string): string {
-  const dir = join(process.cwd(), 'public/fg/avatar');
-  if (existsSync(join(dir, `${base}.jpg`))) return `/fg/avatar/${base}.jpg`;
-  if (existsSync(join(dir, `${base}.png`))) return `/fg/avatar/${base}.png`;
-  return '/fg/avatar/faceless.svg';
-}
-function resolveAvatar(explicit: string | undefined, slug: string): string {
-  if (explicit) {
-    return existsSync(join(process.cwd(), 'public/fg/avatar', explicit))
-      ? `/fg/avatar/${explicit}`
-      : '/fg/avatar/faceless.svg';
-  }
-  return character.avatarPath ?? probeAvatar(slug);
-}
-const avatarSrc = resolveAvatar(image, character.filename ?? name.toLowerCase().replace(/\s+/g, ''));
+const avatarSrc = resolveAvatarPath({
+  explicit: image,
+  storedPath: character.avatarPath,
+  slug: character.filename ?? name.toLowerCase().replace(/\s+/g, ''),
+});
 
 interface AbilityView {
   score: number;
