@@ -536,16 +536,21 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
                   {group.items.map((feature, fi) => (
                     <div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
                       <div
-                        class="flex items-center justify-between cursor-pointer"
+                        class="flex items-center justify-between cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]"
                         role="button"
                         tabindex="0"
+                        aria-expanded="false"
+                        aria-controls={`feature-${gi}-${fi}-panel`}
+                        :aria-expanded={"isExpanded('feature-" + gi + '-' + fi + "') ? 'true' : 'false'"}
                         @click={"toggleSection('feature-" + gi + '-' + fi + "')"}
                         @keydown.enter={"toggleSection('feature-" + gi + '-' + fi + "')"}
+                        @keydown.space.prevent={"toggleSection('feature-" + gi + '-' + fi + "')"}
                       >
                         <span class="font-medium text-gray-900 dark:text-gray-100">{feature.name}</span>
                         <span class="text-xs text-gray-500 dark:text-gray-400">{feature.source}</span>
                       </div>
                       <div
+                        id={`feature-${gi}-${fi}-panel`}
                         class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400"
                         x-show={"isExpanded('feature-" + gi + '-' + fi + "')"}
                         x-transition
@@ -580,11 +585,15 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
                         return (
                         <div class="py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0">
                           <div
-                            class="flex items-center justify-between cursor-pointer"
+                            class="flex items-center justify-between cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]"
                             role="button"
                             tabindex="0"
+                            aria-expanded="false"
+                            aria-controls={`power-${li}-${gi}-${pi}-panel`}
+                            :aria-expanded={"isExpanded('power-" + li + '-' + gi + '-' + pi + "') ? 'true' : 'false'"}
                             @click={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
                             @keydown.enter={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
+                            @keydown.space.prevent={"toggleSection('power-" + li + '-' + gi + '-' + pi + "')"}
                           >
                             <span class="font-medium text-gray-900 dark:text-gray-100 flex items-center gap-1">
                               {power.name}
@@ -598,6 +607,7 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
                             <span class="text-xs text-gray-500 dark:text-gray-400">{power.group}</span>
                           </div>
                           <div
+                            id={`power-${li}-${gi}-${pi}-panel`}
                             class="mt-2 ml-4 text-sm text-gray-600 dark:text-gray-400"
                             x-show={"isExpanded('power-" + li + '-' + gi + '-' + pi + "')"}
                             x-transition
