@@ -1,75 +1,40 @@
 ---
-import type { StoredCharacter } from '@/utils/build-xml-characters';
-import { getCharacter } from '@/utils/generated-characters';
 import { partyStats } from '@/utils/party-stats';
-import { readFileSync } from 'node:fs';
+import {
+  ALL_ROLES,
+  ROLE_CONFIG,
+  readPartyRoster,
+  resolvePartyMembers,
+} from '@/components/xml-viewer/party-roster';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
 import IconifyIcon from '@/components/IconifyIcon.astro';
 
+interface Props {
+  rosterPath?: string;
+}
+
+const { rosterPath } = Astro.props;
+
 const __dirname = join(fileURLToPath(import.meta.url), '..');
 
-const partyJsonPath = resolve(__dirname, '../../../public/fg/party.json');
+const defaultRosterPath = resolve(__dirname, '../../../public/fg/party.json');
 
-const partyData = JSON.parse(readFileSync(partyJsonPath, 'utf8'));
-
-// Role icons use game-icons equivalents (user-confirmed deviation from the
-// spec's mdi: names; IconifyIcon.astro now ships both sets).
-const ROLE_CONFIG = {
-  tank: { icon: 'game-icons:shield', label: 'Tank', color: '#4a90d9' },
-  healer: { icon: 'game-icons:heart-plus', label: 'Healer', color: '#5cb85c' },
-  damage: { icon: 'game-icons:crossed-swords', label: 'Damage Dealer', color: '#d9534f' },
-  support: { icon: 'game-icons:scroll-unfurled', label: 'Support', color: '#f0ad4e' },
-  utility: { icon: 'game-icons:monkey-wrench', label: 'Utility', color: '#9b59b6' },
-} as const;
-
-type Role = keyof typeof ROLE_CONFIG;
-
-interface PartyMember {
-  filename: string;
-  roles: string[];
-  notes?: string;
+const roster = readPartyRoster(rosterPath ?? defaultRosterPath);
+const resolved = resolvePartyMembers(roster.party);
+const warnings = [...roster.warnings, ...resolved.warnings];
+for (const warning of warnings) {
+  console.warn(`[PartyView] ${warning}`);
 }
 
-interface PartyJson {
-  partyName: string;
-  members: PartyMember[];
-}
-
-const party = partyData as PartyJson;
-
-function loadCharacter(filename: string): StoredCharacter | null {
-  const character = getCharacter(filename);
-  if (!character) {
-    console.warn(`[PartyView] Character data missing for "${filename}" - skipping member`);
-    return null;
-  }
-  return character;
-}
-
-const allRoles = Object.keys(ROLE_CONFIG) as Role[];
-
-function validateRoles(filename: string, roles: string[]): Role[] {
-  const valid: Role[] = [];
-  for (const role of roles) {
-    if (Object.hasOwn(ROLE_CONFIG, role)) {
-      valid.push(role as Role);
-    } else {
-      console.warn(`[PartyView] Unknown role "${role}" for "${filename}" - dropping`);
-    }
-  }
-  return valid;
-}
-
-const members = party.members
-  .map((member) => ({ ...member, roles: validateRoles(member.filename, member.roles) }))
-  .filter((member) => member.roles.length > 0)
-  .map((member) => ({ ...member, character: loadCharacter(member.filename) }))
-  .filter((m): m is typeof m & { character: StoredCharacter } => m.character !== null);
+const partyName = roster.party.partyName;
+const members = resolved.members;
+const rosterUnavailable = !roster.ok;
 
 const stats = partyStats(members);
 
+const allRoles = ALL_ROLES;
 const allRolesJson = JSON.stringify(allRoles);
 const roleConfigJson = JSON.stringify(ROLE_CONFIG);
 ---
@@ -81,8 +46,20 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
   data-role-config={roleConfigJson}
 >
   <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-    <h1 class="mt-0 text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{party.partyName}</h1>
+    <h1 class="mt-0 text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{partyName}</h1>
     <p class="mt-0 text-gray-600 dark:text-gray-400 mb-4">{members.length} active members</p>
+
+    {rosterUnavailable && (
+      <p class="mt-0 mb-4 rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950 px-4 py-3 text-sm text-amber-800 dark:text-amber-200" role="status">
+        Party roster unavailable - see the build log for details.
+      </p>
+    )}
+
+    {!rosterUnavailable && members.length === 0 && (
+      <p class="mt-0 mb-4 rounded-lg border border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-950 px-4 py-3 text-sm text-amber-800 dark:text-amber-200" role="status">
+        No members could be resolved - see the build log for details.
+      </p>
+    )}
 
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
       <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 text-center">
