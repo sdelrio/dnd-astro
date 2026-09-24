@@ -11,6 +11,7 @@ import {
   toCoinRows,
   hasInventoryContents,
 } from '@/components/xml-viewer/inventory-display';
+import { skillRank, type SkillRank } from '@/components/xml-viewer/skill-display';
 import SectionHeader from '@/components/xml-viewer/SectionHeader.astro';
 import CompactAbilityGrid from '@/components/xml-viewer/CompactAbilityGrid.astro';
 
@@ -146,6 +147,13 @@ const skillColumns = [
 function abilityAbbr(stat: string): string {
   return stat ? stat.slice(0, 3).toUpperCase() : '';
 }
+
+const SKILL_RANK_LABEL: Record<Exclude<SkillRank, 'none'>, string> = {
+  proficient: 'Proficient',
+  expertise: 'Expertise',
+  half: 'Half proficiency',
+};
+const hasSkillMarks = sortedAllSkills.some((skill) => skillRank(skill.prof) !== 'none');
 
 const weaponRows = toWeaponRows(weapons, abilities, profBonus);
 
@@ -415,32 +423,67 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
                         </tr>
                       </thead>
                       <tbody>
-                        {column.map((skill) => (
-                          <tr class="border-t border-gray-200 dark:border-gray-700">
-                            <td class="py-1 text-gray-700 dark:text-gray-300">
-                              <span class="inline-flex items-center gap-1">
-                                <span class="truncate">{skill.name}</span>
-                                {skill.prof > 0 && (
-                                  <span
-                                    class="inline-flex items-center gap-px"
-                                    title={skill.prof > 1 ? 'Expertise' : 'Proficient'}
-                                  >
-                                    <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
-                                    {skill.prof > 1 && (
-                                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
-                                    )}
-                                  </span>
-                                )}
-                              </span>
-                            </td>
-                            <td class="py-1 text-gray-500 dark:text-gray-400">{abilityAbbr(skill.stat)}</td>
-                            <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</td>
-                          </tr>
-                        ))}
+                        {column.map((skill) => {
+                          const rank = skillRank(skill.prof);
+                          return (
+                            <tr class="border-t border-gray-200 dark:border-gray-700">
+                              <td class="py-1 text-gray-700 dark:text-gray-300">
+                                <span class="inline-flex items-center gap-1">
+                                  <span class="truncate">{skill.name}</span>
+                                  {rank !== 'none' && (
+                                    <span
+                                      class="inline-flex items-center gap-px"
+                                      data-prof-rank={rank}
+                                      title={SKILL_RANK_LABEL[rank]}
+                                    >
+                                      {rank === 'proficient' && (
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                                      )}
+                                      {rank === 'expertise' && (
+                                        <>
+                                          <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                                          <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                                        </>
+                                      )}
+                                      {rank === 'half' && (
+                                        <span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]">
+                                          <span class="block w-1/2 h-full bg-[#c68000]"></span>
+                                        </span>
+                                      )}
+                                    </span>
+                                  )}
+                                </span>
+                              </td>
+                              <td class="py-1 text-gray-500 dark:text-gray-400">{abilityAbbr(skill.stat)}</td>
+                              <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   ))}
                 </div>
+                {hasSkillMarks && (
+                  <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
+                    <span class="inline-flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Proficient"></span>
+                      Proficient
+                    </span>
+                    <span class="inline-flex items-center gap-1">
+                      <span class="inline-flex items-center gap-px" title="Expertise">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                      </span>
+                      Expertise
+                    </span>
+                    <span class="inline-flex items-center gap-1">
+                      <span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]" title="Half proficiency">
+                        <span class="block w-1/2 h-full bg-[#c68000]"></span>
+                      </span>
+                      Half proficiency
+                    </span>
+                  </div>
+                )}
               </div>
             )}
           </section>

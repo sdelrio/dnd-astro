@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "Half-proficiency skill marker"
 author: "opencode"
 date: "2026-09-24"
@@ -190,6 +190,6 @@ pnpm build
 
 ## Status
 
-- [ ] Implementation complete (delivered by #287)
-- [ ] Tests passing
-- [ ] ADR updated (not applicable: no new decision made)
+- [x] Implementation complete (delivered by #287)
+- [x] Tests passing
+- [x] ADR updated (not applicable: no new decision made)
