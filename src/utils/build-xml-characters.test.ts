@@ -1,8 +1,26 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import {
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+  mkdirSync,
+  readFileSync,
+  existsSync,
+  statSync,
+  utimesSync,
+  readdirSync,
+} from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { probeAvatarPath, buildXmlCharacters } from './build-xml-characters';
+import { probeAvatarPath, buildXmlCharacters, shouldRebuildXmlCharacters } from './build-xml-characters';
+
+vi.mock('node:fs', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs')>();
+  return {
+    ...actual,
+    readdirSync: vi.fn(actual.readdirSync),
+  };
+});
 
 describe('build-xml-characters', () => {
   let tempDir: string;
@@ -172,6 +190,109 @@ describe('build-xml-characters', () => {
       expect(warnings.some((w) => w.includes('invalid.xml'))).toBe(true);
     });
 
+    it('skips malformed XML that makes the parser throw, with a warning, and does not fail the build', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+      const astroOutputFile = join(tempDir, '.astro/generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(join(xmlDir, 'valid.xml'), validXmlSample);
+      writeFileSync(join(xmlDir, 'broken.xml'), '<root><character><![CDATA[unterminated</root>');
+
+      const warnings: string[] = [];
+      const logger = {
+        log: () => {},
+        warn: (msg: string) => warnings.push(msg),
+      };
+
+      let result: ReturnType<typeof buildXmlCharacters> = [];
+      expect(() => {
+        result = buildXmlCharacters({
+          xmlDir,
+          avatarDir,
+          outputFile,
+          astroOutputFile,
+          logger,
+        });
+      }).not.toThrow();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].filename).toBe('valid');
+      expect(warnings.some((w) => w.includes('broken.xml'))).toBe(true);
+      expect(existsSync(outputFile)).toBe(true);
+      expect(existsSync(astroOutputFile)).toBe(true);
+    });
+
+    it('processes sheets in deterministic sorted order even when readdir returns unsorted names', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      for (const name of ['charlie', 'alpha', 'bravo']) {
+        writeFileSync(join(xmlDir, `${name}.xml`), validXmlSample);
+      }
+
+      const logger = {
+        log: () => {},
+        warn: () => {},
+      };
+
+      vi.mocked(readdirSync).mockReturnValueOnce([
+        'charlie.xml',
+        'alpha.xml',
+        'bravo.xml',
+      ] as never);
+
+      const result = buildXmlCharacters({
+        xmlDir,
+        avatarDir,
+        outputFile,
+        logger,
+      });
+
+      expect(result.map((c) => c.filename)).toEqual(['alpha', 'bravo', 'charlie']);
+
+      const generatedJson = JSON.parse(readFileSync(outputFile, 'utf8'));
+      expect(generatedJson.map((c: { filename: string }) => c.filename)).toEqual([
+        'alpha',
+        'bravo',
+        'charlie',
+      ]);
+    });
+
+    it('does not rewrite output files when generated content is unchanged', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+      const astroOutputFile = join(tempDir, '.astro/generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(join(xmlDir, 'valid.xml'), validXmlSample);
+
+      const logger = {
+        log: () => {},
+        warn: () => {},
+      };
+      const options = { xmlDir, avatarDir, outputFile, astroOutputFile, logger };
+
+      buildXmlCharacters(options);
+      const ancient = new Date('2000-01-01T00:00:00Z');
+      utimesSync(outputFile, ancient, ancient);
+      utimesSync(astroOutputFile, ancient, ancient);
+      const beforeOutput = statSync(outputFile).mtimeMs;
+      const beforeAstro = statSync(astroOutputFile).mtimeMs;
+
+      buildXmlCharacters(options);
+
+      expect(statSync(outputFile).mtimeMs).toBe(beforeOutput);
+      expect(statSync(astroOutputFile).mtimeMs).toBe(beforeAstro);
+    });
+
     it('warns gracefully when xmlDir does not exist', () => {
       const xmlDir = join(tempDir, 'non-existent-dir');
       const warnings: string[] = [];
@@ -187,6 +308,25 @@ describe('build-xml-characters', () => {
 
       expect(result).toEqual([]);
       expect(warnings.some((w) => w.includes('XML directory does not exist'))).toBe(true);
+    });
+  });
+
+  describe('shouldRebuildXmlCharacters', () => {
+    it('always rebuilds for render commands even when artifacts exist', () => {
+      expect(shouldRebuildXmlCharacters('dev', true)).toBe(true);
+      expect(shouldRebuildXmlCharacters('build', true)).toBe(true);
+      expect(shouldRebuildXmlCharacters('dev', false)).toBe(true);
+      expect(shouldRebuildXmlCharacters('build', false)).toBe(true);
+    });
+
+    it('skips non-render rebuilds when artifacts already exist', () => {
+      expect(shouldRebuildXmlCharacters('sync', true)).toBe(false);
+      expect(shouldRebuildXmlCharacters('preview', true)).toBe(false);
+    });
+
+    it('still builds non-render commands when artifacts are missing', () => {
+      expect(shouldRebuildXmlCharacters('sync', false)).toBe(true);
+      expect(shouldRebuildXmlCharacters('preview', false)).toBe(true);
     });
   });
 

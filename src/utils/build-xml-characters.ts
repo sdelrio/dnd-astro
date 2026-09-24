@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
-import { parseCharacterXml, type CharacterData } from './parse-character-xml';
+import { tryParseCharacterXml, type CharacterData } from './parse-character-xml';
 
 export interface StoredCharacter extends CharacterData {
   filename: string;
@@ -40,8 +40,42 @@ export function probeAvatarPath(base: string, avatarDir: string): string {
 }
 
 /**
- * Reads all XML character sheets, parses each using parseCharacterXml,
+ * Whether the XML character rebuild should run for this Astro config command.
+ * Render commands (dev, build) always rebuild so pages get fresh sheet data.
+ * Non-render commands (sync covers `astro check`/`astro sync`, plus preview)
+ * rebuild only when artifacts are missing (e.g. a fresh clone).
+ */
+export function shouldRebuildXmlCharacters(
+  command: 'dev' | 'build' | 'preview' | 'sync',
+  artifactsExist: boolean
+): boolean {
+  if (command === 'dev' || command === 'build') return true;
+  return !artifactsExist;
+}
+
+/**
+ * True when both generated characters.json artifacts already exist under rootDir.
+ */
+export function xmlCharacterArtifactsExist(rootDir: string = process.cwd()): boolean {
+  const outputFile = resolve(rootDir, 'src/generated/characters.json');
+  const astroOutputFile = resolve(rootDir, '.astro/generated/characters.json');
+  return existsSync(outputFile) && existsSync(astroOutputFile);
+}
+
+function writeJsonIfChanged(filePath: string, data: unknown): void {
+  const content = JSON.stringify(data, null, 2);
+  if (existsSync(filePath) && readFileSync(filePath, 'utf8') === content) {
+    return;
+  }
+  mkdirSync(dirname(filePath), { recursive: true });
+  writeFileSync(filePath, content);
+}
+
+/**
+ * Reads all XML character sheets, parses each using tryParseCharacterXml,
  * resolves avatar paths, and writes generated characters.json artifacts.
+ * Sheet order is sorted so output is deterministic across filesystems.
+ * Corrupt sheets are skipped with a warning; they never fail the build.
  */
 export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): StoredCharacter[] {
   const rootDir = options.rootDir ?? process.cwd();
@@ -57,7 +91,9 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
     return [];
   }
 
-  const xmlFiles = readdirSync(xmlDir).filter((f) => f.endsWith('.xml'));
+  const xmlFiles = readdirSync(xmlDir)
+    .filter((f) => f.endsWith('.xml'))
+    .sort();
   const characters: StoredCharacter[] = [];
   const astroArtifact: CharacterArtifactEntry[] = [];
 
@@ -71,16 +107,18 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
       continue;
     }
 
-    const parsed = parseCharacterXml(xml);
-    if (!parsed) {
-      logger.warn(`[xml-viewer] Warning: Failed to parse character XML file: ${xmlFile}`);
+    const parsed = tryParseCharacterXml(xml);
+    if (!parsed.ok) {
+      logger.warn(
+        `[xml-viewer] Warning: Failed to parse character XML file: ${xmlFile}: ${parsed.reason}`
+      );
       continue;
     }
 
     const filename = xmlFile.replace(/\.xml$/, '');
     const avatarPath = probeAvatarPath(filename, avatarDir);
     const stored: StoredCharacter = {
-      ...parsed,
+      ...parsed.character,
       filename,
       avatarPath,
     };
@@ -88,20 +126,13 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
     characters.push(stored);
     astroArtifact.push({
       filename,
-      character: parsed,
+      character: parsed.character,
       avatarPath,
     });
   }
 
-  if (outputFile) {
-    mkdirSync(dirname(outputFile), { recursive: true });
-    writeFileSync(outputFile, JSON.stringify(characters, null, 2));
-  }
-
-  if (astroOutputFile) {
-    mkdirSync(dirname(astroOutputFile), { recursive: true });
-    writeFileSync(astroOutputFile, JSON.stringify(astroArtifact, null, 2));
-  }
+  writeJsonIfChanged(outputFile, characters);
+  writeJsonIfChanged(astroOutputFile, astroArtifact);
 
   logger.log(`[xml-viewer] Parsed ${characters.length} character XML files`);
   return characters;
