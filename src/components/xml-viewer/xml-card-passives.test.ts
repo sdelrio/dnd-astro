@@ -865,6 +865,32 @@ describe('XmlCard Features accent card', () => {
     expect(card).toContain('x-transition');
   });
 
+  it('announces feature row expanded state and links the disclosure panel', async () => {
+    const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
+    const card = section.slice(section.indexOf('rounded-[7px]'));
+    expect(card).toContain('aria-expanded="false"');
+    expect(card).toContain(
+      `:aria-expanded="isExpanded('feature-0-0') ? 'true' : 'false'"`
+    );
+    expect(card).toContain('aria-controls="feature-0-0-panel"');
+    expect(card).toContain('id="feature-0-0-panel"');
+  });
+
+  it('activates feature rows from the keyboard with Enter and Space', async () => {
+    const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
+    const card = section.slice(section.indexOf('rounded-[7px]'));
+    expect(card).toContain("@keydown.enter=");
+    expect(card).toContain("@keydown.space.prevent=");
+    expect(card).toContain('tabindex="0"');
+  });
+
+  it('shows a visible focus ring on feature row toggles', async () => {
+    const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
+    const card = section.slice(section.indexOf('rounded-[7px]'));
+    expect(card).toContain('focus-visible:outline-2');
+    expect(card).toContain('focus-visible:outline-offset-2');
+  });
+
   it('hides the section in small and medium modes at build time', async () => {
     expect(await renderCard('small', { features: sampleFeatures })).not.toContain('Features');
     expect(await renderCard('medium', { features: sampleFeatures })).not.toContain('Features');
@@ -943,6 +969,25 @@ describe('XmlCard Powers accent card and prepared marks', () => {
     expect(card).toContain('role="button"');
     expect(card).toContain('cursor-pointer');
     expect(card).toContain('x-transition');
+  });
+
+  it('announces power row expanded state and links the disclosure panel', async () => {
+    const section = powersSection(await renderCard('large', { powers: [preparedSpell] }));
+    expect(section).toContain('aria-expanded="false"');
+    expect(section).toContain(
+      `:aria-expanded="isExpanded('power-0-0-0') ? 'true' : 'false'"`
+    );
+    expect(section).toContain('aria-controls="power-0-0-0-panel"');
+    expect(section).toContain('id="power-0-0-0-panel"');
+  });
+
+  it('activates power rows from the keyboard with Enter and Space and shows focus', async () => {
+    const section = powersSection(await renderCard('large', { powers: [preparedSpell] }));
+    expect(section).toContain('@keydown.enter=');
+    expect(section).toContain('@keydown.space.prevent=');
+    expect(section).toContain('tabindex="0"');
+    expect(section).toContain('focus-visible:outline-2');
+    expect(section).toContain('focus-visible:outline-offset-2');
   });
 
   it('marks a prepared spell with a filled gold dot and Prepared tooltip', async () => {
