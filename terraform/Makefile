@@ -36,6 +36,11 @@ help:
 	@echo "  CF_ACCOUNT_ID     Cloudflare account ID"
 	@echo "  CF_ZONE_ID        Cloudflare zone ID"
 	@echo "  CUSTOM_DOMAIN     Custom domain name"
+	@echo ""
+	@echo "Notes:"
+	@echo "  terraform/.terraform.lock.hcl is committed on purpose: it pins provider"
+	@echo "  versions for every operator. Do not delete it; if it was removed, restore"
+	@echo "  it with 'git checkout -- .terraform.lock.hcl' before running terraform init."
 
 plan/%:
 	@echo "Planning $* resources..."
