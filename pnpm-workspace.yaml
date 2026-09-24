@@ -1,6 +1,12 @@
 packages:
   - "."
 
+# Reject versions published less than one day (1440 minutes) ago
+minimumReleaseAge: 1440
+
+# Fail on missing or invalid peer dependencies to catch supply chain issues early
+strictPeerDependencies: true
+
 allowBuilds:
   esbuild: true
   sharp: true
