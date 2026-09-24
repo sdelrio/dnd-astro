@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const indexSource = readFileSync(join(__dirname, '../content/docs/index.mdx'), 'utf8');
+const astroConfig = readFileSync(join(__dirname, '../../astro.config.mjs'), 'utf8');
 
 describe('Companion index page', () => {
   it('links the Rules list Character Creation item to the page', () => {
@@ -17,5 +18,17 @@ describe('Companion index page', () => {
 
     expect(indexSource).toMatch(buttonPattern);
     expect(indexSource.match(new RegExp(buttonPattern.source, 'g'))).toHaveLength(1);
+  });
+
+  it('has no unlinked tool placeholder entries', () => {
+    const strongWithoutLink = /<strong>(?!<a\b)[^<]+<\/strong>/g;
+    expect(indexSource.match(strongWithoutLink)).toBeNull();
+  });
+
+  it('points the Starlight GitHub social link at this repository', () => {
+    expect(astroConfig).toContain(
+      "{ icon: 'github', label: 'GitHub', href: 'https://github.com/sdelrio/dnd-astro' }"
+    );
+    expect(astroConfig).not.toContain('https://github.com/withastro/starlight');
   });
 });
