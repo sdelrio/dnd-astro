@@ -57,10 +57,14 @@ const filterPayload = JSON.stringify(toFilterableCharacters(characters));
 
   <div class="flex items-center justify-between">
     <p class="text-sm text-gray-600 dark:text-gray-400">
-      <span x-text="matchCount"></span> character<span x-show="matchCount !== 1">s</span> found
+      <span x-text="matchCount">{characters.length}</span> character<span
+        hidden={characters.length === 1}
+        :hidden="matchCount === 1"
+      >s</span> found
     </p>
     <button
-      x-show="search || selectedClass || selectedRace"
+      hidden
+      :hidden="!(search || selectedClass || selectedRace)"
       @click="clearFilters()"
       class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
       title="Clear filters"
@@ -72,13 +76,17 @@ const filterPayload = JSON.stringify(toFilterableCharacters(characters));
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {characters.map((char, i) => (
-      <div hidden :hidden={"!matches(" + i + ")"}>
+      <div :hidden={"!matches(" + i + ")"}>
         <XmlCard character={char} display="small" />
       </div>
     ))}
   </div>
 
-  <div x-show="matchCount === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
+  <div
+    hidden={characters.length > 0}
+    :hidden="matchCount !== 0"
+    class="text-center py-12 text-gray-500 dark:text-gray-400"
+  >
     No characters match your filters.
   </div>
 </div>
