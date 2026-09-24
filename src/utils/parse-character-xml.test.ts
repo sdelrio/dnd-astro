@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { parseCharacterXML } from './parse-character-xml';
+import { parseCharacterXML, tryParseCharacterXml } from './parse-character-xml';
 
 describe('parseCharacterXML', () => {
   it('parses draknor.xml correctly', () => {
@@ -517,5 +517,37 @@ describe('parseCharacterXML', () => {
     const xml = `<root><foo>bar</foo></root>`;
     const result = parseCharacterXML(xml);
     expect(result).toBeNull();
+  });
+
+  it('returns null instead of throwing on severely malformed XML', () => {
+    const malformed = '<root><character><![CDATA[unterminated</root>';
+    expect(() => parseCharacterXML(malformed)).not.toThrow();
+    expect(parseCharacterXML(malformed)).toBeNull();
+  });
+
+  it('tryParseCharacterXml reports a failure reason instead of throwing', () => {
+    const malformed = '<root><character><![CDATA[unterminated</root>';
+    const result = tryParseCharacterXml(malformed);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toContain('CDATA');
+    }
+  });
+
+  it('tryParseCharacterXml reports a missing character node as a failure reason', () => {
+    const result = tryParseCharacterXml('<root><foo>bar</foo></root>');
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.reason).toContain('character');
+    }
+  });
+
+  it('tryParseCharacterXml returns the character on valid input', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    const result = tryParseCharacterXml(xml);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.character.name).toBeDefined();
+    }
   });
 });
