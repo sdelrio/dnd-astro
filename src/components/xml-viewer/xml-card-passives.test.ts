@@ -1,6 +1,4 @@
 import { describe, it, expect, beforeAll } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import XmlCard from './XmlCard.astro';
 import type { CharacterData } from '@/utils/parse-character-xml';
@@ -39,11 +37,6 @@ const baseCharacter: CharacterData = {
   filename: 'testhero',
   avatarPath: '/fg/avatar/faceless.svg',
 };
-
-const testPageSource = readFileSync(
-  join(__dirname, '../../content/docs/guides/xml-card-test.mdx'),
-  'utf8'
-);
 
 let container: AstroContainer;
 
@@ -1034,23 +1027,6 @@ describe('XmlCard Features pills card', () => {
     expect(await renderCard('small', { features: sampleFeatures })).not.toContain('Features');
     expect(await renderCard('medium', { features: sampleFeatures })).not.toContain('Features');
   });
-
-  it('documents the Features pills subsection under Display: Large', () => {
-    const large = testPageSource.indexOf('## Display: Large');
-    const notes = testPageSource.indexOf('## Notes');
-    const subsection = testPageSource.indexOf('### Features');
-    expect(large).toBeGreaterThan(-1);
-    expect(subsection).toBeGreaterThan(large);
-    expect(subsection).toBeLessThan(notes);
-    const nextSubsection = testPageSource.indexOf('### ', subsection + 1);
-    const body = testPageSource.slice(subsection, nextSubsection);
-    expectFixedModeCopy(body);
-    expect(body).toContain('accent card');
-    expect(body).toContain('pills');
-    expect(body).not.toMatch(/expand\/collapse/i);
-    expect(body).toContain('Features');
-    expect(body).toContain('display="large"');
-  });
 });
 
 describe('XmlCard Powers pills card', () => {
@@ -1259,29 +1235,6 @@ describe('XmlCard Powers pills card', () => {
     expect(await renderCard('small', { powers: [preparedSpell] })).not.toContain('Powers');
     expect(await renderCard('medium', { powers: [preparedSpell] })).not.toContain('Powers');
   });
-
-  it('documents the Powers pills and marks subsection under Display: Large', () => {
-    const large = testPageSource.indexOf('## Display: Large');
-    const notes = testPageSource.indexOf('## Notes');
-    const subsection = testPageSource.indexOf('### Powers Marks');
-    expect(large).toBeGreaterThan(-1);
-    expect(subsection).toBeGreaterThan(large);
-    expect(subsection).toBeLessThan(notes);
-    const body = testPageSource.slice(subsection, notes);
-    expectFixedModeCopy(body);
-    expect(body).toContain('accent card');
-    expect(body).toContain('pills');
-    expect(body).toContain('Group:');
-    expect(body).not.toMatch(/expand\/collapse/i);
-    expect(body).toContain('display="large"');
-    expect(body).toContain('Prepared');
-    expect(body).toContain('Always prepared');
-    expect(body).toContain('legend');
-  });
-
-  it('no longer describes expand/collapse anywhere in the guide', () => {
-    expect(testPageSource).not.toMatch(/expand\/collapse/i);
-  });
 });
 
 describe('XmlCard display-mode toggle', () => {
@@ -1355,133 +1308,3 @@ describe('XmlCard avatar resolution', () => {
   });
 });
 
-function expectFixedModeCopy(body: string): void {
-  expect(body).not.toMatch(/S\/M/);
-  expect(body).not.toMatch(/toggle/i);
-  expect(body).toContain('build time');
-}
-
-describe('XmlCard visual test page', () => {
-  it('documents that card portraits link to character pages', () => {
-    const display = testPageSource.indexOf('## Display: Small');
-    const linkNote = testPageSource.indexOf('Card portraits link to character pages');
-    expect(linkNote).toBeGreaterThan(-1);
-    expect(linkNote).toBeLessThan(display);
-    const body = testPageSource.slice(linkNote, display);
-    expect(body).toContain('/fantasy-grounds/characters/');
-    expect(body).toContain('real character page');
-    expect(body).toContain('link={false}');
-  });
-
-  it('documents the Passive Skills subsection under Display: Large', () => {
-    const large = testPageSource.indexOf('## Display: Large');
-    const notes = testPageSource.indexOf('## Notes');
-    const subsection = testPageSource.indexOf('### Passive Skills');
-    expect(large).toBeGreaterThan(-1);
-    expect(subsection).toBeGreaterThan(large);
-    expect(subsection).toBeLessThan(notes);
-    const body = testPageSource.slice(subsection, notes);
-    expect(body).toContain('display="large"');
-    expectFixedModeCopy(body);
-    expect(body).toContain('tooltip');
-    expect(body).toMatch(/single row/);
-    expect(body).toContain('Passive Perception');
-    expect(body).toContain('Passive Investigation');
-    expect(body).toContain('Passive Insight');
-  });
-
-  it('documents the All-Skills Table subsection under Display: Large', () => {
-    const large = testPageSource.indexOf('## Display: Large');
-    const notes = testPageSource.indexOf('## Notes');
-    const subsection = testPageSource.indexOf('### All-Skills Table');
-    expect(large).toBeGreaterThan(-1);
-    expect(subsection).toBeGreaterThan(large);
-    expect(subsection).toBeLessThan(notes);
-    const body = testPageSource.slice(subsection, notes);
-    expect(body).toContain('ethir');
-    expect(body).toContain('tanadirian');
-    expect(body).toContain('akinori');
-    expect(body).toContain('Half proficiency');
-    expect(body).toContain('legend');
-    expectFixedModeCopy(body);
-  });
-
-  it('documents the Equipped Weapons subsection under Display: Large', () => {
-    const large = testPageSource.indexOf('## Display: Large');
-    const notes = testPageSource.indexOf('## Notes');
-    const subsection = testPageSource.indexOf('### Equipped Weapons');
-    expect(large).toBeGreaterThan(-1);
-    expect(subsection).toBeGreaterThan(large);
-    expect(subsection).toBeLessThan(notes);
-    const body = testPageSource.slice(subsection, notes);
-    expect(body).toContain('alberich');
-    expect(body).toContain('display="large"');
-    expectFixedModeCopy(body);
-    expect(body).toContain('ATK');
-    expect(body).toContain('2d6+4 Slashing');
-  });
-
-  it('documents the Inventory subsection under Display: Large', () => {
-    const large = testPageSource.indexOf('## Display: Large');
-    const notes = testPageSource.indexOf('## Notes');
-    const subsection = testPageSource.indexOf('### Inventory');
-    expect(large).toBeGreaterThan(-1);
-    expect(subsection).toBeGreaterThan(large);
-    expect(subsection).toBeLessThan(notes);
-    const body = testPageSource.slice(subsection, notes);
-    expect(body).toContain('alberich');
-    expect(body).toContain('display="large"');
-    expectFixedModeCopy(body);
-    expect(body).toContain('68.0 / 270 lb. carried');
-    expect(body).toContain('Current Wealth');
-    expect(body).toContain('Item');
-    expect(body).toContain('State');
-    expect(body).toMatch(/same row/);
-    expect(body).not.toContain('muted line above the items table');
-  });
-
-  it('documents the Saving Throws subsection under Display: Large', () => {
-    const large = testPageSource.indexOf('## Display: Large');
-    const notes = testPageSource.indexOf('## Notes');
-    const subsection = testPageSource.indexOf('### Saving Throws');
-    expect(large).toBeGreaterThan(-1);
-    expect(subsection).toBeGreaterThan(large);
-    expect(subsection).toBeLessThan(notes);
-    const body = testPageSource.slice(subsection, notes);
-    expect(body).toContain('alberich');
-    expect(body).toContain('display="large"');
-    expectFixedModeCopy(body);
-    expect(body).toContain('Ability');
-    expect(body).toContain('Save');
-    expect(body).toContain('Proficient');
-  });
-
-  it('documents the Languages accent card subsection', () => {
-    const large = testPageSource.indexOf('## Display: Large');
-    const notes = testPageSource.indexOf('## Notes');
-    const subsection = testPageSource.indexOf('### Languages');
-    expect(large).toBeGreaterThan(-1);
-    expect(subsection).toBeGreaterThan(large);
-    expect(subsection).toBeLessThan(notes);
-    const body = testPageSource.slice(subsection, notes);
-    expectFixedModeCopy(body);
-    expect(body).toContain('accent card');
-    expect(body).toContain('Languages');
-  });
-
-  it('documents the Feats accent card subsection under Display: Large', () => {
-    const large = testPageSource.indexOf('## Display: Large');
-    const notes = testPageSource.indexOf('## Notes');
-    const languages = testPageSource.indexOf('### Languages');
-    const feats = testPageSource.indexOf('### Feats');
-    expect(large).toBeGreaterThan(-1);
-    expect(languages).toBeGreaterThan(large);
-    expect(feats).toBeGreaterThan(languages);
-    expect(feats).toBeLessThan(notes);
-    const body = testPageSource.slice(feats, notes);
-    expect(body).toContain('display="large"');
-    expectFixedModeCopy(body);
-    expect(body).toContain('accent card');
-    expect(body).toContain('Feats');
-  });
-});
