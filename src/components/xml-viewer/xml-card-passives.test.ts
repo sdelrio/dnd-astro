@@ -873,7 +873,7 @@ describe('XmlCard Saving Throws group split', () => {
     expect(html).toContain('<section class="@container">');
   });
 
-  it('keeps the group in one column when Languages exceed the pill budget', async () => {
+  it('keeps the group in one column when there are too many Languages to fit', async () => {
     const html = await renderCard('large', {
       languages: ['Common', 'Draconic', 'Elvish', 'Dwarvish', 'Gnomish', 'Halfling', 'Orc'],
     });
@@ -881,7 +881,7 @@ describe('XmlCard Saving Throws group split', () => {
     expect(html).not.toContain(splitClass);
   });
 
-  it('keeps the group in one column when Feats exceed the pill budget', async () => {
+  it('keeps the group in one column when there are too many Feats to fit', async () => {
     const html = await renderCard('large', {
       feats: ['Alert', 'Sentinel', 'Lucky', 'Tough', 'Mobile'],
     });

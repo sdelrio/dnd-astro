@@ -197,14 +197,12 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
 
 const SAVES_SPLIT_MAX_LANGUAGES = 6;
 const SAVES_SPLIT_MAX_FEATS = 4;
-const SAVES_SPLIT_MAX_PILLS = 10;
 
 const splitSavesGroup =
   showSaves &&
   (showLanguages || showFeats) &&
   languages.length <= SAVES_SPLIT_MAX_LANGUAGES &&
-  feats.length <= SAVES_SPLIT_MAX_FEATS &&
-  languages.length + feats.length <= SAVES_SPLIT_MAX_PILLS;
+  feats.length <= SAVES_SPLIT_MAX_FEATS;
 ---
 
 <div
