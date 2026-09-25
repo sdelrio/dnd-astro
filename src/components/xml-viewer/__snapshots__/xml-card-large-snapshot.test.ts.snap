@@ -2,27 +2,24 @@
 
 exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup for the fixture character 1`] = `
 "<div class="not-content @container w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm">
-<header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
-<div class="flex flex-wrap gap-4">
-<a href="/fantasy-grounds/characters/snapshot-hero" aria-label="View Snapshot Hero character sheet" class="flex-shrink-0 rounded-[7px] hover:ring-2 hover:ring-[#58180d]/40 dark:hover:ring-[#c68000]/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]">
-<img class="w-16 h-20 object-cover flex-shrink-0 overflow-hidden border border-gray-300 dark:border-gray-600 [border-top-left-radius:7px] [border-top-right-radius:7px] [border-bottom-left-radius:45%] [border-bottom-right-radius:45%]" src="/fg/avatar/faceless.svg" alt="Snapshot Hero portrait" title="Snapshot Hero">
+<header class="char-header">
+<a href="/fantasy-grounds/characters/snapshot-hero" aria-label="View Snapshot Hero character sheet" class="char-portrait-link">
+<img class="char-portrait" src="/fg/avatar/faceless.svg" alt="Snapshot Hero portrait" title="Snapshot Hero">
 </a>
-<div class="flex-1 min-w-0">
-<h3 class="mt-0 text-left text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title="Snapshot Hero - HP: 28 (Temp: 5)">Snapshot Hero</h3>
-<p class="text-left text-sm text-gray-600 dark:text-gray-400 mt-1 truncate" title="Human - Fighter 3 (Battle Master)">Human - Fighter 3<span> (Battle Master)</span>
+<div class="char-id">
+<h3 class="char-name" title="Snapshot Hero - HP: 28 (Temp: 5)">Snapshot Hero</h3>
+<p class="char-meta">Human - Fighter 3<span> (Battle Master)</span>
 </p>
-<p class="mt-2 flex flex-wrap gap-1">
-<span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">Lawful Good</span>
-<span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">Soldier</span>
-<span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">Tempus</span>
+<p class="char-tags">
+<span class="char-pill">Lawful Good</span>
+<span class="char-pill">Soldier</span>
+<span class="char-pill">Tempus</span>
 </p>
 </div>
-<div class="flex-shrink-0 text-center border border-gray-300 dark:border-gray-600 rounded-[7px] px-3 py-1.5 bg-gray-50 dark:bg-gray-900 @max-[400px]:hidden">
-<div class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Hit Points</div>
-<div class="text-lg font-bold text-gray-900 dark:text-gray-100 leading-tight">28</div>
-<div class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Temporary</div>
-<div class="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-tight">5</div>
-</div>
+<div class="char-hp" title="Hit Points: 28 (Temp: 5)">
+<span class="char-hp-label">Hit Points</span>
+<span class="char-hp-value">28</span>
+<span class="char-hp-temp">+5 temp</span>
 </div>
 </header>
 <div class="p-4 space-y-4">

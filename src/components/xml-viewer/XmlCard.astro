@@ -83,7 +83,6 @@ const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
 const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).join(' / ');
 const vitalsItemClass = 'p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]';
 const hoverLabelClass = 'absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10';
-const portraitClass = 'w-16 h-20 object-cover flex-shrink-0 overflow-hidden border border-gray-300 dark:border-gray-600 [border-top-left-radius:7px] [border-top-right-radius:7px] [border-bottom-left-radius:45%] [border-bottom-right-radius:45%]';
 
 // Build-time avatar resolution happens in the shared helper: an explicit
 // image prop wins when the file exists (missing files fall back to
@@ -209,47 +208,32 @@ const splitSavesGroup =
 <div
   class="not-content @container w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
 >
-  <header class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4">
-    <div class="flex flex-wrap gap-4">
-      {character.filename && link ? (
-        <a
-          href={`/fantasy-grounds/characters/${character.filename}`}
-          aria-label={`View ${name} character sheet`}
-          class="flex-shrink-0 rounded-[7px] hover:ring-2 hover:ring-[#58180d]/40 dark:hover:ring-[#c68000]/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#58180d] dark:focus-visible:outline-[#c68000]"
-        >
-          <img class={portraitClass} src={avatarSrc} alt={`${name} portrait`} title={name} />
-        </a>
-      ) : (
-        <img class={portraitClass} src={avatarSrc} alt={`${name} portrait`} title={name} />
-      )}
-      <div class="flex-1 min-w-0">
-        <h3 class="mt-0 text-left text-xl font-bold text-gray-900 dark:text-gray-100 truncate" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h3>
-        <p class="text-left text-sm text-gray-600 dark:text-gray-400 mt-1 truncate" title={`${race} - ${classString}${subclassString ? ` (${subclassString})` : ''}`}>
-          {race} - {classString}
-          {subclassString && display === 'large' && (
-            <span> ({subclassString})</span>
-          )}
+  <header class="char-header">
+    {character.filename && link ? (
+      <a href={`/fantasy-grounds/characters/${character.filename}`} aria-label={`View ${name} character sheet`} class="char-portrait-link">
+        <img class="char-portrait" src={avatarSrc} alt={`${name} portrait`} title={name} />
+      </a>
+    ) : (
+      <img class="char-portrait" src={avatarSrc} alt={`${name} portrait`} title={name} />
+    )}
+    <div class="char-id">
+      <h3 class="char-name" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h3>
+      <p class="char-meta">
+        {race} - {classString}
+        {subclassString && display === 'large' && (<span> ({subclassString})</span>)}
+      </p>
+      {canShow('tags') && (
+        <p class="char-tags">
+          {alignment && display !== 'small' && (<span class="char-pill">{alignment}</span>)}
+          {background && (<span class="char-pill">{background}</span>)}
+          {deity && display !== 'small' && (<span class="char-pill">{deity}</span>)}
         </p>
-        {canShow('tags') && (
-          <p class="mt-2 flex flex-wrap gap-1">
-            {alignment && display !== 'small' && (
-              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{alignment}</span>
-            )}
-            {background && (
-              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{background}</span>
-            )}
-            {deity && display !== 'small' && (
-              <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs">{deity}</span>
-            )}
-          </p>
-        )}
-      </div>
-      <div class="flex-shrink-0 text-center border border-gray-300 dark:border-gray-600 rounded-[7px] px-3 py-1.5 bg-gray-50 dark:bg-gray-900 @max-[400px]:hidden">
-        <div class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Hit Points</div>
-        <div class="text-lg font-bold text-gray-900 dark:text-gray-100 leading-tight">{hp}</div>
-        <div class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Temporary</div>
-        <div class="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-tight">{tempHp}</div>
-      </div>
+      )}
+    </div>
+    <div class="char-hp" title={`Hit Points: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>
+      <span class="char-hp-label">Hit Points</span>
+      <span class="char-hp-value">{hp}</span>
+      <span class="char-hp-temp">+{tempHp} temp</span>
     </div>
   </header>
 
@@ -661,3 +645,151 @@ const splitSavesGroup =
     )}
   </div>
 </div>
+
+<style is:global>
+  .char-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: #f8f6f5;
+    border-bottom: 2px solid #c9ad6a;
+  }
+  .char-portrait-link {
+    display: block;
+    flex-shrink: 0;
+    border-radius: 7px;
+    outline-offset: 2px;
+  }
+  .char-portrait-link:focus-visible {
+    outline: 2px solid #58180d;
+  }
+  .char-portrait {
+    display: block;
+    width: 60px;
+    height: 76px;
+    object-fit: cover;
+    border: 1px solid #c7c0be;
+    background: #f1eceb;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    border-bottom-left-radius: 45%;
+    border-bottom-right-radius: 45%;
+  }
+  .char-id {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .char-name {
+    margin: 0;
+    font-family: Cinzel, 'Bookinsanity', Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    color: #58180d;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .char-meta {
+    margin: 3px 0 0;
+    font-family: 'ScalySans', 'Bookinsanity', Georgia, serif;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #605552;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .char-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0 0;
+  }
+  .char-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    font-family: 'ScalySans', 'Bookinsanity', Georgia, serif;
+    font-size: 11px;
+    line-height: 1.5;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #605552;
+    background: transparent;
+    border: 1px solid #c9ad6a;
+    border-radius: 9999px;
+  }
+  .char-hp {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    padding: 8px 14px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #c9ad6a;
+    border-top: 3px solid #58180d;
+    border-radius: 7px;
+  }
+  .char-hp-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #948985;
+  }
+  .char-hp-value {
+    font-family: 'ScalySans', 'Bookinsanity', Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #58180d;
+    font-variant-numeric: tabular-nums;
+  }
+  .char-hp-temp {
+    font-size: 10px;
+    color: #948985;
+  }
+
+  [data-theme='dark'] .char-header {
+    background: #2e2421;
+    border-bottom-color: #867347;
+  }
+  [data-theme='dark'] .char-portrait-link:focus-visible {
+    outline-color: #c68000;
+  }
+  [data-theme='dark'] .char-portrait {
+    border-color: #605552;
+    background: #3f3632;
+  }
+  [data-theme='dark'] .char-name {
+    color: #f1eceb;
+  }
+  [data-theme='dark'] .char-meta {
+    color: #c7c0be;
+  }
+  [data-theme='dark'] .char-pill {
+    color: #d4c4a8;
+    border-color: #4a403a;
+  }
+  [data-theme='dark'] .char-hp {
+    background: #1b1716;
+    border-color: #4a403a;
+    border-top-color: #c68000;
+  }
+  [data-theme='dark'] .char-hp-value {
+    color: #c68000;
+  }
+
+  @container (max-width: 400px) {
+    .char-hp {
+      display: none;
+    }
+  }
+</style>

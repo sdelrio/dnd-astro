@@ -1,0 +1,6 @@
+{
+  "files": ["src/components/ThemeProvider.astro"],
+  "insertBefore": "<template id=\"theme-icons\">",
+  "commentSyntax": "html",
+  "cspChecked": true
+}
