@@ -42,3 +42,7 @@ check:
 	$(MAKE) typecheck
 	$(MAKE) test
 	$(MAKE) build
+
+upgrade:
+	npx @astrojs/upgrade
+
