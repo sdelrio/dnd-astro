@@ -99,28 +99,30 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
       })}
     </div>
 
-    <div class="flex flex-wrap gap-2 mt-4" role="group" aria-label="Filter by role">
+    <div class="r3-group" role="group" aria-label="Filter by role">
       <button
-        class="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-        :class="activeRoles.length === allRoles.length ? 'active text-white shadow-md' : 'inactive bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"
-        :style="activeRoles.length === allRoles.length ? 'background: #6366f1;' : ''"
+        class="r3-chip"
+        :class="activeRoles.length === allRoles.length ? 'r3-chip is-active' : 'r3-chip'"
+        :style="activeRoles.length === allRoles.length ? 'background: #2a201020; color: #2a2010; border-color: #2a2010;' : ''"
         @click="activeRoles = activeRoles.length === allRoles.length ? [] : [...allRoles]"
         :aria-pressed="activeRoles.length === allRoles.length"
       >
         All
+        <span class="r3-count">{members.length}</span>
       </button>
       {allRoles.map((role) => {
         const config = ROLE_CONFIG[role];
         return (
           <button
-            class="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
-            :class={"isRoleActive('" + role + "') ? 'active text-white shadow-md' : 'inactive bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'"}
-            :style={"isRoleActive('" + role + "') ? 'background: " + config.color + ";' : ''"}
+            class="r3-chip"
+            :class={"isRoleActive('" + role + "') ? 'r3-chip is-active' : 'r3-chip'"}
+            :style={"isRoleActive('" + role + "') ? 'background: " + config.color + "20; color: " + config.color + "; border-color: " + config.color + ";' : ''"}
             @click={"toggleRole('" + role + "')"}
             :aria-pressed={"isRoleActive('" + role + "')"}
           >
-            <IconifyIcon icon={config.icon} width="1em" class="inline-block w-4 h-4 mr-1 align-[-2px]" />
+            <IconifyIcon icon={config.icon} width="1em" class="inline-block w-3.5 h-3.5 align-[-2px]" />
             {config.label}
+            <span class="r3-count">{stats.roleCounts[role] ?? 0}</span>
           </button>
         );
       })}
@@ -185,4 +187,74 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
       };
     }
   </script>
+
+  <style>
+    .r3-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 16px;
+    }
+    .r3-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.5;
+      color: #605552;
+      background: #ffffff;
+      border: 1px solid #d9d3cf;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease,
+        box-shadow 150ms ease;
+    }
+    .r3-chip:hover {
+      background: #f1eceb;
+      color: #2a2010;
+    }
+    .r3-chip:focus-visible {
+      outline: 2px solid #697066;
+      outline-offset: 2px;
+    }
+    .r3-chip.is-active {
+      font-weight: 600;
+    }
+    .r3-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      color: inherit;
+      background: rgb(0 0 0 / 0.08);
+      border-radius: 9999px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    :global([data-theme='dark']) .r3-chip {
+      color: #c7c0be;
+      background: #2e2421;
+      border-color: #3f3632;
+    }
+    :global([data-theme='dark']) .r3-chip:hover {
+      background: #3f3632;
+      color: #f1eceb;
+    }
+    :global([data-theme='dark']) .r3-chip:focus-visible {
+      outline-color: #f7860f;
+    }
+    :global([data-theme='dark']) .r3-count {
+      background: rgb(255 255 255 / 0.12);
+    }
+  </style>
 </div>

@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-25T00:00:00Z",
+  "title": "Design System: D&D Companion",
+  "extensions": {
+    "colorMeta": {
+      "sap": { "role": "primary", "displayName": "Sap Amber", "canonical": "#f7860f", "tonalRamp": ["#3b1e00", "#5c3000", "#7d4300", "#9e5700", "#bf6c00", "#f7860f", "#f9a44a", "#fccf97"] },
+      "sage": { "role": "primary", "displayName": "Sage", "canonical": "#697066", "tonalRamp": ["#1c2119", "#2b3328", "#394036", "#4e5849", "#697066", "#8b9188", "#b9c0b6", "#dfe3dc"] },
+      "oxblood": { "role": "tertiary", "displayName": "Oxblood", "canonical": "#58180d", "tonalRamp": ["#2a0b06", "#3f1109", "#58180d", "#73220f", "#943318", "#b84a2c", "#d6795f", "#eeb7a6"] },
+      "gold": { "role": "tertiary", "displayName": "Gold Leaf", "canonical": "#c68000", "tonalRamp": ["#4a2f00", "#6e4700", "#926000", "#b87900", "#c68000", "#d9a53c", "#e9c777", "#f6e4b8"] },
+      "gold-rule": { "role": "tertiary", "displayName": "Gold Rule", "canonical": "#c9ad6a", "tonalRamp": ["#4d3f1f", "#6f5c31", "#907a45", "#b0995c", "#c9ad6a", "#d9c48d", "#e8dbb4", "#f5efd9"] },
+      "gold-rule-dark": { "role": "tertiary", "displayName": "Gold Rule Dark", "canonical": "#867347", "tonalRamp": ["#2a2313", "#3d3320", "#50442c", "#655638", "#867347", "#a08d63", "#bdaa86", "#dccba8"] },
+      "surface-white": { "role": "neutral", "displayName": "Surface White", "canonical": "#ffffff", "tonalRamp": ["#1b1716", "#2e2421", "#3f3632", "#605552", "#948985", "#c7c0be", "#f1eceb", "#ffffff"] },
+      "parchment": { "role": "neutral", "displayName": "Parchment", "canonical": "#d4c4a8", "tonalRamp": ["#4a3f2c", "#6b5c41", "#8c7958", "#ad966f", "#d4c4a8", "#e2d6c1", "#efe8da", "#f9f5ee"] },
+      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#2a2010", "tonalRamp": ["#1a1308", "#2a2010", "#3d2f17", "#513f1f", "#6b5529", "#94793f", "#c2a876", "#e6d8bb"] },
+      "bark-700": { "role": "neutral", "displayName": "Bark Dark", "canonical": "#3f3632", "tonalRamp": ["#1b1716", "#2e2421", "#3f3632", "#605552", "#948985", "#c7c0be", "#f1eceb", "#f8f6f5"] },
+      "bark-650": { "role": "neutral", "displayName": "Bark 650 Hairline", "canonical": "#4a403a", "tonalRamp": ["#201b18", "#2e2421", "#3f3632", "#4a403a", "#6b5e56", "#948985", "#c7c0be", "#f1eceb"] },
+      "bark-black": { "role": "neutral", "displayName": "Bark Black", "canonical": "#1b1716", "tonalRamp": ["#0d0b0a", "#1b1716", "#2e2421", "#3f3632", "#605552", "#948985", "#c7c0be", "#f1eceb"] },
+      "bark-800": { "role": "neutral", "displayName": "Bark 800", "canonical": "#2e2421", "tonalRamp": ["#161210", "#2e2421", "#3f3632", "#4a403a", "#605552", "#948985", "#c7c0be", "#f1eceb"] },
+      "bark-600": { "role": "neutral", "displayName": "Bark 600", "canonical": "#605552", "tonalRamp": ["#241d19", "#3f3632", "#4a403a", "#605552", "#948985", "#c7c0be", "#e0dad6", "#f1eceb"] },
+      "bark-500": { "role": "neutral", "displayName": "Bark 500", "canonical": "#948985", "tonalRamp": ["#2a231f", "#4a403a", "#605552", "#7d726d", "#948985", "#b5aca6", "#dcd6d1", "#f1eceb"] },
+      "bark-400": { "role": "neutral", "displayName": "Bark 400", "canonical": "#c7c0be", "tonalRamp": ["#332b26", "#4a403a", "#6b5e56", "#948985", "#b5aca6", "#c7c0be", "#e0dad6", "#f4f0ec"] },
+      "bark-200": { "role": "neutral", "displayName": "Bark 200", "canonical": "#f1eceb", "tonalRamp": ["#2a231f", "#605552", "#948985", "#c7c0be", "#dcd6d1", "#e6e0dc", "#f1eceb", "#fbf9f7"] },
+      "bark-100": { "role": "neutral", "displayName": "Bark Paper", "canonical": "#f8f6f5", "tonalRamp": ["#1b1716", "#2e2421", "#3f3632", "#605552", "#948985", "#c7c0be", "#f1eceb", "#f8f6f5"] },
+      "moss-700": { "role": "secondary", "displayName": "Moss", "canonical": "#404521", "tonalRamp": ["#1c1f0b", "#282c10", "#363b17", "#404521", "#5f682c", "#8a974e", "#b7c489", "#e8ede1"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Section headings (h2) and card titles; inscriptional capitals only." },
+      "headline": { "displayName": "Headline", "purpose": "Subsection headings (h3), shipped lighter than Starlight's default at weight 500." },
+      "title": { "displayName": "Title", "purpose": "h4 and component names; regular weight to keep density calm." },
+      "body": { "displayName": "Body", "purpose": "Rules prose, max 55rem at wide viewports." },
+      "table": { "displayName": "Table", "purpose": "Markdown tables and statblock tables; ScalySans." },
+      "card-heading": { "displayName": "Card Heading", "purpose": "The character name in Cinzel - the largest type on a Card and the only display-face use inside a component." },
+      "card-meta": { "displayName": "Card Meta", "purpose": "Race, class and subclass in uppercase ScalySans, tracked out beneath the Cinzel name." },
+      "micro-label": { "displayName": "Micro Label", "purpose": "9px uppercase stat label (Hit Points); the smallest step in the system." },
+      "micro-value": { "displayName": "Micro Value", "purpose": "10px secondary values and statblock legends in the card body." },
+      "pill": { "displayName": "Pill", "purpose": "11px uppercase tag and role-chip text, shared by the card heading and the party filters." },
+      "label": { "displayName": "Label", "purpose": "Uppercase micro-labels above stat values." },
+      "metric": { "displayName": "Metric", "purpose": "Numeric values in stat tiles; monospaced when read as data." }
+    },
+    "shadows": [
+      { "name": "card-rest", "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)", "purpose": "Default card and input resting state (Tailwind shadow-sm)." },
+      { "name": "card-hover", "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)", "purpose": "Hover lift on interactive cards and active chips (Tailwind shadow-md)." },
+      { "name": "aside", "value": "0 0.25em 1.25em -0.5em rgba(0,0,0,0.5)", "purpose": "Advisory callout ribbon; transitions over 400ms ease-in-out." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for color and shadow state transitions." },
+      { "name": "colors", "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Button, chip, and input hover transitions." },
+      { "name": "shadow", "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Card hover lift." },
+      { "name": "aside-shadow", "value": "400ms ease-in-out", "purpose": "Admonition callout shadow." },
+      { "name": "dice-stagger", "value": "300ms roll, 150ms stagger", "purpose": "Dice Roller reveals abilities one at a time." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "container-@md", "value": "28rem" },
+      { "name": "container-@lg", "value": "32rem" },
+      { "name": "container-@6xl", "value": "72rem" },
+      { "name": "container-@7xl", "value": "80rem" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single primary action in a view; Sap Amber fill, dark text, lifts on hover.",
+      "html": "<button class=\"ds-btn-primary\">Roll All Abilities</button>",
+      "css": ".ds-btn-primary { background: var(--sl-color-accent, #f7860f); color: #1b1716; padding: 12px 24px; border: none; border-radius: 8px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); transition: background-color 150ms cubic-bezier(0.4,0,0.2,1), box-shadow 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { background: var(--sl-color-accent-high, #d1dfa5); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); } .ds-btn-primary:focus-visible { outline: 2px solid var(--sl-color-accent, #f7860f); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Outline Icon Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "32px square accent-outlined control for increment/decrement actions.",
+      "html": "<button class=\"ds-btn-outline\" aria-label=\"Decrease Strength\">&#8722;</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: transparent; color: var(--sl-color-accent, #f7860f); border: 1px solid var(--sl-color-accent, #f7860f); border-radius: 8px; font-size: 16px; line-height: 1; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-outline:hover { background: var(--sl-color-accent-low, #293400); } .ds-btn-outline:focus-visible { outline: 2px solid var(--sl-color-accent, #f7860f); outline-offset: 2px; } .ds-btn-outline:disabled { opacity: 0.4; cursor: not-allowed; }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Text/search field with a 14px label above. Screenshot target: focus should be Sap Amber, not the incumbent blue-500 ring.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Search feats</span><input class=\"ds-input\" type=\"text\" placeholder=\"Type a feat name...\" /></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 4px; font-family: ui-sans-serif, system-ui, sans-serif; } .ds-field-label { font-size: 14px; font-weight: 500; color: #c7c0be; } .ds-input { width: 100%; box-sizing: border-box; padding: 8px 16px; font-size: 14px; color: #f1eceb; background: #1b1716; border: 1px solid #3f3632; border-radius: 8px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); transition: border-color 150ms cubic-bezier(0.4,0,0.2,1), box-shadow 150ms cubic-bezier(0.4,0,0.2,1); } .ds-input::placeholder { color: #948985; } .ds-input:focus { outline: none; border-color: var(--sl-color-accent, #f7860f); box-shadow: 0 0 0 2px var(--sl-color-accent, #f7860f); }"
+    },
+    {
+      "name": "Tag / Pill",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Small rounded-full label for languages, feats, features, and powers.",
+      "html": "<span class=\"ds-pill\">Elvish</span>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; background: #3f3632; color: #c7c0be; border-radius: 9999px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.4; }"
+    },
+    {
+      "name": "Stat Tile",
+      "kind": "card",
+      "refersTo": "stat-tile",
+      "description": "The atom of the character Card: a 7px-radius plate with a 3px Gold cap, uppercase label, bold metric.",
+      "html": "<div class=\"ds-stat-tile\"><div class=\"ds-stat-label\">Hit Points</div><div class=\"ds-stat-value\">42</div></div>",
+      "css": ".ds-stat-tile { display: flex; flex-direction: column; gap: 2px; padding: 8px; text-align: center; background: #1b1716; border: 1px solid #3f3632; border-top: 3px solid #c68000; border-radius: 7px; font-family: ui-sans-serif, system-ui, sans-serif; } .ds-stat-label { font-size: 10px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; color: #948985; } .ds-stat-value { font-size: 18px; font-weight: 700; line-height: 1.1; color: #f1eceb; }"
+    },
+    {
+      "name": "Arch Ability Tile",
+      "kind": "card",
+      "refersTo": "stat-tile",
+      "description": "The signature silhouette: 45% top corners, 8px bottom, accent cap, ability modifier over score.",
+      "html": "<div class=\"ds-ability-tile\"><div class=\"ds-ability-label\">STR</div><div class=\"ds-ability-value\">+3</div><div class=\"ds-ability-sub\">16</div></div>",
+      "css": ".ds-ability-tile { display: flex; flex-direction: column; gap: 1px; padding: 8px; text-align: center; background: #1b1716; border: 1px solid #3f3632; border-top: 3px solid #c68000; border-top-left-radius: 45%; border-top-right-radius: 45%; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; font-family: ui-sans-serif, system-ui, sans-serif; } .ds-ability-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: #948985; } .ds-ability-value { font-size: 20px; font-weight: 700; line-height: 1.1; color: #f1eceb; } .ds-ability-sub { font-size: 14px; color: #c7c0be; }"
+    },
+    {
+      "name": "Role Filter Chip",
+      "kind": "chip",
+      "description": "Party role filter; inactive is a muted gray pill, active fills with the role color and lifts.",
+      "html": "<span class=\"ds-role-chip\">Tank</span>\n<span class=\"ds-role-chip ds-role-chip--active\" style=\"--ds-role: #4a90d9;\">Damage Dealer</span>",
+      "css": ".ds-role-chip { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 9999px; background: #3f3632; color: #c7c0be; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4,0,0.2,1), box-shadow 150ms cubic-bezier(0.4,0,0.2,1); } .ds-role-chip:hover { background: #4b4139; } .ds-role-chip--active { background: var(--ds-role, #4a90d9); color: #ffffff; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }"
+    },
+    {
+      "name": "Card Heading (light)",
+      "kind": "card",
+      "refersTo": "card-header",
+      "description": "The character card header: portrait, Cinzel name, ScalySans meta, gold-rule pills, and the capped HP plate.",
+      "html": "<header class=\"ds-char-header\"><img class=\"ds-char-portrait\" src=\"\" alt=\"Valkian portrait\" /><div class=\"ds-char-id\"><h3 class=\"ds-char-name\">Valkian of Balanced Soul</h3><p class=\"ds-char-meta\">Wood Elf - Monk 6 (Warrior of Mercy)</p><p class=\"ds-char-tags\"><span class=\"ds-char-pill\">Neutral Good</span><span class=\"ds-char-pill\">Wayfarer</span></p></div><div class=\"ds-char-hp\"><span class=\"ds-char-hp-label\">Hit Points</span><span class=\"ds-char-hp-value\">58</span><span class=\"ds-char-hp-temp\">+0 temp</span></div></header>",
+      "css": ".ds-char-header { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: #f8f6f5; border-bottom: 2px solid #c9ad6a; font-family: Georgia, serif; } .ds-char-portrait { width: 60px; height: 76px; object-fit: cover; flex-shrink: 0; background: #f1eceb; border: 1px solid #c7c0be; border-top-left-radius: 7px; border-top-right-radius: 7px; border-bottom-left-radius: 45%; border-bottom-right-radius: 45%; } .ds-char-id { flex: 1 1 0; min-width: 0; } .ds-char-name { margin: 0; font-family: Cinzel, Georgia, serif; font-size: 1.35rem; font-weight: 600; line-height: 1.15; letter-spacing: 0.01em; color: #58180d; } .ds-char-meta { margin: 3px 0 0; font-family: 'ScalySans', Georgia, serif; font-size: 0.8125rem; line-height: 1.4; letter-spacing: 0.04em; text-transform: uppercase; color: #605552; } .ds-char-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; } .ds-char-pill { display: inline-flex; align-items: center; padding: 2px 9px; font-family: 'ScalySans', Georgia, serif; font-size: 11px; line-height: 1.5; letter-spacing: 0.04em; text-transform: uppercase; color: #605552; background: transparent; border: 1px solid #c9ad6a; border-radius: 9999px; } .ds-char-hp { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 14px; text-align: center; background: #ffffff; border: 1px solid #c9ad6a; border-top: 3px solid #58180d; border-radius: 7px; } .ds-char-hp-label { font-size: 9px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #948985; } .ds-char-hp-value { font-family: 'ScalySans', Georgia, serif; font-size: 1.35rem; font-weight: 700; line-height: 1; color: #58180d; font-variant-numeric: tabular-nums; } .ds-char-hp-temp { font-size: 10px; color: #948985; }"
+    },
+    {
+      "name": "Card Heading (dark)",
+      "kind": "card",
+      "refersTo": "card-header-dark",
+      "description": "The same heading inverted: the surface steps down, the ink steps up, and the accent swaps from Oxblood to Gold Leaf.",
+      "html": "<header class=\"ds-char-header ds-char-header--dark\"><img class=\"ds-char-portrait\" src=\"\" alt=\"Valkian portrait\" /><div class=\"ds-char-id\"><h3 class=\"ds-char-name\">Valkian of Balanced Soul</h3><p class=\"ds-char-meta\">Wood Elf - Monk 6 (Warrior of Mercy)</p><p class=\"ds-char-tags\"><span class=\"ds-char-pill\">Neutral Good</span><span class=\"ds-char-pill\">Wayfarer</span></p></div><div class=\"ds-char-hp\"><span class=\"ds-char-hp-label\">Hit Points</span><span class=\"ds-char-hp-value\">58</span><span class=\"ds-char-hp-temp\">+0 temp</span></div></header>",
+      "css": ".ds-char-header--dark { background: #2e2421; border-bottom-color: #867347; color: #f1eceb; } .ds-char-header--dark .ds-char-portrait { background: #3f3632; border-color: #605552; } .ds-char-header--dark .ds-char-name { color: #f1eceb; } .ds-char-header--dark .ds-char-meta { color: #c7c0be; } .ds-char-header--dark .ds-char-pill { color: #d4c4a8; border-color: #4a403a; } .ds-char-header--dark .ds-char-hp { background: #1b1716; border-color: #4a403a; border-top-color: #c68000; } .ds-char-header--dark .ds-char-hp-value { color: #c68000; }"
+    },
+    {
+      "name": "Admonition Ribbon",
+      "kind": "custom",
+      "description": "Scroll-like callout: zero radius, 2px top/bottom type border, pointed ribbon ends. Shown as a note.",
+      "html": "<aside class=\"ds-admonition\">Remember that a long rest restores all hit points.</aside>",
+      "css": ".ds-admonition { padding: 8px 16px; background: #1e3a5f; color: #f1eceb; border-top: 2px solid #2563eb; border-bottom: 2px solid #2563eb; border-radius: 0; box-shadow: 0 0.25em 1.25em -0.5em rgba(0,0,0,0.5); clip-path: polygon(0.6em 0, calc(100% - 0.6em) 0, 100% 50%, calc(100% - 0.6em) 100%, 0.6em 100%, 0 50%); font-family: 'ScalySans', Georgia, serif; font-size: 15px; line-height: 1.5; transition: box-shadow 400ms ease-in-out; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Golden Forest Grimoire",
+    "overview": "D&D Companion reads as a campaign grimoire kept in a golden forest: warm bark-brown neutrals for surfaces, an amber sap accent that glows like resin, oxblood and gold-leaf headings, and mossy green stripes running through data tables. It is warm, curious, and handcrafted - closer to a shared notebook carried between sessions than to a product dashboard. The mood is set by the three D&D-inflected webfaces: Cinzel's inscriptional capitals for headings, Bookinsanity for prose, and ScalySans for tables and stat blocks.\n\nThe system is deliberately lifted and tactile. Cards sit on soft ambient shadows and rise slightly on hover; stat tiles wear a 3px accent cap like stamped leather; ability scores are cut into arch-topped plates. Nothing floats in a void - every panel feels placed on a table. Density is high but legible: the character Card is built for scanning mid-session, with compact grids, uppercase micro-labels, and monospaced numbers for anything you might add up.\n\nThe implementation still has a seam between two layers, now uneven. The Starlight documentation layer uses the warm bark/moss palette throughout, and the character Card heading has joined it - Cinzel name, gold rule, warm surfaces, correct dark-theme inversion. What remains on Tailwind's default cool gray scale is the Card *body*: the vitals and ability tiles, the tag chips, and the `blue-500` focus ring on the tool-page inputs. The heading is the reference for where that body is headed.",
+    "keyCharacteristics": [
+      "Warm bark neutrals and an amber \"sap\" accent; oxblood (light) and gold (dark) for headings.",
+      "Inscriptional Cinzel headings over a readable serif body; ScalySans for tabular data.",
+      "Lifted, tactile surfaces: ambient card shadows, hover lift, 3px accent caps, arch-topped tiles.",
+      "High-density stat blocks with uppercase micro-labels and monospaced numerals.",
+      "One warm palette, inverted per theme: the Card heading's light and dark tables are the worked example."
+    ],
+    "rules": [
+      { "name": "The Warm-Only Rule", "body": "No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The character Card heading already complies; the Card body's gray-* tiles and the blue-500 focus ring on the tool inputs are the remaining drift to pull back onto bark and sap.", "section": "colors" },
+      { "name": "The Rarity Rule", "body": "Sap Amber is an action and emphasis color, used on well under a tenth of any screen. Gold Leaf and Oxblood belong to headings and markers, not to large fills.", "section": "colors" },
+      { "name": "The Two-Family Rule", "body": "Cinzel only ever sets headings and card titles; it never sets body text, labels, or numbers. If it is a sentence, it is Bookinsanity; if it is a table, it is ScalySans.", "section": "typography" },
+      { "name": "The One-Voice Heading Rule", "body": "A Card heading is a closed three-part stack - Cinzel name, ScalySans meta, outlined pills - in the warm bark and gold scheme in both themes. Do not reintroduce the system sans stack or Tailwind's cool gray-* scale into it; the heading is the reference for how the rest of the Card should migrate.", "section": "typography" },
+      { "name": "The Lifted-Not-Floating Rule", "body": "Every raised surface still reads as sitting on the page: shadows stay soft and low, and a tile's accent cap or border does the structural work. No hard drop shadows, no glassmorphism, no blur.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep the accent to one role per screen; Sap Amber for actions and selection, Gold Leaf and Oxblood for headings and markers.",
+      "Do use the warm bark ramp for neutrals and let surfaces invert per theme rather than hard-coding a single mode; the Card heading's light and dark tables are the worked example.",
+      "Do give raised surfaces both a soft shadow and a structural cue (accent cap, arch, or border).",
+      "Do set headings in Cinzel, prose in Bookinsanity, and tables in ScalySans - never mix their jobs.",
+      "Do use uppercase micro-labels with tabular monospaced numerals inside stat blocks."
+    ],
+    "donts": [
+      "Don't introduce neon or cyberpunk: no electric purple or cyan, no glassmorphism, no glowing sci-fi gradients or blur.",
+      "Don't reach for Tailwind's default cool gray-* scale or a blue-500 focus ring in new work. The Card heading is already off it; the Card body is the remaining debt.",
+      "Don't put the system sans stack in a Card heading. Cinzel for the name, ScalySans for everything else, in both themes.",
+      "Don't treat Surface White as a general surface or an ink. It is the light-theme HP plate and nothing else.",
+      "Don't use pure black or pure white for text; use Ink and Parchment.",
+      "Don't set body copy or numeric data in Cinzel, or apply the arch/45% radius to ordinary cards.",
+      "Don't fabricate campaign branding, logos, or imagery; the world is built from the existing palette, faces, and real assets only."
+    ]
+  }
+}
