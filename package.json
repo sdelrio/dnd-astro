@@ -15,11 +15,11 @@
   "dependencies": {
     "@alpinejs/intersect": "^3.17.3",
     "@astrojs/alpinejs": "^1.0.0",
-    "@astrojs/starlight": "^0.42.0",
+    "@astrojs/starlight": "^0.42.4",
     "@iconify-json/game-icons": "^1.2.4",
     "@iconify-json/mdi": "^1.2.3",
     "alpinejs": "^3.17.3",
-    "astro": "^7.3.2",
+    "astro": "^7.3.5",
     "astro-mermaid": "^2.1.0",
     "fast-xml-parser": "^5.11.1",
     "he": "^1.2.0",
