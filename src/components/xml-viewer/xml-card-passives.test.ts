@@ -127,7 +127,7 @@ function inventoryHeadingRow(section: string): string {
 }
 
 function savesSection(html: string): string {
-  const marker = html.indexOf('>Saving Throws</h2>');
+  const marker = html.indexOf('>Saving Throws</span>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -654,6 +654,14 @@ describe('XmlCard Saving Throws section', () => {
     ])
   );
 
+  it('labels the saves section with a hover badge instead of a heading', async () => {
+    const large = await renderCard('large');
+    expect(large).toContain('>Saving Throws</span>');
+    expect(large).not.toContain('>Saving Throws</h2>');
+    expect(await renderCard('medium')).toContain('>Saving Throws</span>');
+    expect(await renderCard('small')).not.toContain('>Saving Throws</span>');
+  });
+
   it('renders the all-saves card in large mode only', async () => {
     const large = savesSection(await renderCard('large'));
     expect(large.match(/<table/g)).toHaveLength(2);
@@ -732,7 +740,7 @@ describe('XmlCard Saving Throws section', () => {
   it('stays between Passive Skills and Skills', async () => {
     const html = await renderCard('large');
     const passives = html.indexOf('Passive Skills');
-    const saves = html.indexOf('>Saving Throws</h2>');
+    const saves = html.indexOf('>Saving Throws</span>');
     const skills = html.indexOf('>Skills</h2>');
     expect(passives).toBeGreaterThan(-1);
     expect(saves).toBeGreaterThan(passives);
@@ -741,21 +749,28 @@ describe('XmlCard Saving Throws section', () => {
 });
 
 describe('XmlCard Overview group', () => {
-  it('groups Vitals, Abilities, and Passive Skills under one large-mode heading', async () => {
+  it('groups Vitals, Abilities, and Passive Skills under one large-mode label', async () => {
     const html = await renderCard('large');
-    const overview = html.indexOf('>Overview</h2>');
+    const overview = html.indexOf('>Overview</span>');
     const abilities = html.indexOf('title="Abilities"');
     const passives = html.indexOf('Passive Skills');
-    const saves = html.indexOf('>Saving Throws</h2>');
+    const saves = html.indexOf('>Saving Throws</span>');
     expect(overview).toBeGreaterThan(-1);
     expect(abilities).toBeGreaterThan(overview);
     expect(passives).toBeGreaterThan(abilities);
     expect(saves).toBeGreaterThan(passives);
   });
 
-  it('omits the Overview heading from small and medium cards', async () => {
-    expect(await renderCard('small')).not.toContain('>Overview</h2>');
-    expect(await renderCard('medium')).not.toContain('>Overview</h2>');
+  it('omits the Overview label from small and medium cards', async () => {
+    expect(await renderCard('small')).not.toContain('>Overview</span>');
+    expect(await renderCard('medium')).not.toContain('>Overview</span>');
+  });
+
+  it('labels the Overview group with a hover badge that yields to the subsection badges', async () => {
+    const html = await renderCard('large');
+    expect(html).toContain('>Overview</span>');
+    expect(html).toContain('group-has-[section:hover]/overview:opacity-0!');
+    expect(html).not.toContain('>Overview</h2>');
   });
 
   it('gives the overview and saving throws one half each at ultra-wide container widths', async () => {
@@ -811,7 +826,7 @@ describe('XmlCard ultra-wide section pairing', () => {
 
   it('stacks Languages and Feats under Saving Throws to the right of Overview', async () => {
     const html = await renderPaired();
-    const saves = html.indexOf('>Saving Throws</h2>');
+    const saves = html.indexOf('>Saving Throws</span>');
     const languages = html.indexOf('>Languages</div>');
     const feats = html.indexOf('>Feats</div>');
     const skills = html.indexOf('>Skills</h2>');
@@ -819,7 +834,9 @@ describe('XmlCard ultra-wide section pairing', () => {
     expect(languages).toBeGreaterThan(saves);
     expect(feats).toBeGreaterThan(languages);
     expect(skills).toBeGreaterThan(feats);
-    expect(html.indexOf('<div class="space-y-4"><section class="border-t')).toBeGreaterThan(-1);
+    expect(html).toContain('grid grid-cols-1 gap-2 @7xl:grid-cols-2 @7xl:gap-4');
+    expect(html).toContain('<section class="@container relative group">');
+    expect(html).toContain('<div class="space-y-2"><section>');
   });
 
   it('pairs Skills with Inventory and leaves Equipped Weapons full width', async () => {
@@ -855,10 +872,48 @@ describe('XmlCard ultra-wide section pairing', () => {
     expect(pairingGridCount(noRight)).toBe(1);
   });
 
-  it('gives every paired section a borderless top at ultra-wide widths', async () => {
+  it('gives the major sections a borderless top at ultra-wide widths', async () => {
     const html = await renderPaired();
     const borderless = 'pt-4 @6xl:border-t-0 @6xl:pt-0';
-    expect(html.split(borderless).length - 1).toBe(6);
+    expect(html.split(borderless).length - 1).toBe(5);
+  });
+});
+
+describe('XmlCard Saving Throws group split', () => {
+  const splitClass = '@7xl:grid-cols-2 @7xl:gap-4';
+
+  it('splits Saving Throws from Languages and Feats at @7xl when pills are few', async () => {
+    const html = await renderCard('large', { feats: ['Alert'] });
+    expect(html).toContain(`grid grid-cols-1 gap-2 ${splitClass}`);
+    expect(html).toContain('<section class="@container relative group">');
+  });
+
+  it('keeps the group in one column when there are too many Languages to fit', async () => {
+    const html = await renderCard('large', {
+      languages: ['Common', 'Draconic', 'Elvish', 'Dwarvish', 'Gnomish', 'Halfling', 'Orc'],
+    });
+    expect(html).toContain('Saving Throws');
+    expect(html).not.toContain(splitClass);
+  });
+
+  it('keeps the group in one column when there are too many Feats to fit', async () => {
+    const html = await renderCard('large', {
+      feats: ['Alert', 'Sentinel', 'Lucky', 'Tough', 'Mobile'],
+    });
+    expect(html).not.toContain(splitClass);
+  });
+
+  it('ignores Feats that the current display mode does not render when deciding to split', async () => {
+    const html = await renderCard('medium', {
+      feats: ['Alert', 'Sentinel', 'Lucky', 'Tough', 'Mobile'],
+    });
+    expect(html).toContain(splitClass);
+  });
+
+  it('keeps the group in one column when there are no Languages or Feats to place beside it', async () => {
+    const html = await renderCard('large', { languages: [], feats: [] });
+    expect(html).toContain('Saving Throws');
+    expect(html).not.toContain(splitClass);
   });
 });
 

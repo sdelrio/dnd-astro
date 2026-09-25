@@ -82,6 +82,7 @@ const {
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
 const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).join(' / ');
 const vitalsItemClass = 'p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]';
+const hoverLabelClass = 'absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10';
 const portraitClass = 'w-16 h-20 object-cover flex-shrink-0 overflow-hidden border border-gray-300 dark:border-gray-600 [border-top-left-radius:7px] [border-top-right-radius:7px] [border-bottom-left-radius:45%] [border-bottom-right-radius:45%]';
 
 // Build-time avatar resolution happens in the shared helper: an explicit
@@ -194,6 +195,15 @@ const showWeapons = canShow('weapons') && weaponRows.length > 0;
 const showInventory = canShow('inventory') && hasInventory;
 const showFeatures = canShow('features') && featuresByLevel.length > 0;
 const showPowers = canShow('powers') && powersByLevel.length > 0;
+
+const SAVES_SPLIT_MAX_LANGUAGES = 6;
+const SAVES_SPLIT_MAX_FEATS = 4;
+
+const splitSavesGroup =
+  showSaves &&
+  (showLanguages || showFeats) &&
+  (showLanguages ? languages.length : 0) <= SAVES_SPLIT_MAX_LANGUAGES &&
+  (showFeats ? feats.length : 0) <= SAVES_SPLIT_MAX_FEATS;
 ---
 
 <div
@@ -245,11 +255,13 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
 
   <div class="p-4 space-y-4">
     <div class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
-      <section>
-        {display === 'large' && <SectionHeader title="Overview" />}
-        <div class="space-y-4">
-          <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4 first:border-t-0 first:pt-0">
-            <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Vitals</span>
+      <section class="relative group/overview">
+        {display === 'large' && (
+          <span class={`${hoverLabelClass} group-hover/overview:opacity-100 group-has-[section:hover]/overview:opacity-0!`}>Overview</span>
+        )}
+        <div class="space-y-2">
+          <section class="relative group">
+            <span class={`${hoverLabelClass} group-hover:opacity-100`}>Vitals</span>
             <div class="grid grid-cols-4 gap-2 text-center">
               <div class={vitalsItemClass}>
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">AC</div>
@@ -272,7 +284,7 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
             </div>
           </section>
 
-          <section class="pt-2" title="Abilities">
+          <section title="Abilities">
             {display === 'small' ? (
               <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
             ) : (
@@ -295,8 +307,8 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
           </section>
 
           {canShow('passives') && (
-            <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4">
-              <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Passive Skills</span>
+            <section class="relative group">
+              <span class={`${hoverLabelClass} group-hover:opacity-100`}>Passive Skills</span>
               <div class="grid grid-cols-3 gap-2 text-center">
                 <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Perception</div>
@@ -317,10 +329,10 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
       </section>
 
       {(showSaves || showLanguages || showFeats) && (
-        <div class="space-y-4">
+        <div class={`grid grid-cols-1 gap-2${splitSavesGroup ? ' @7xl:grid-cols-2 @7xl:gap-4' : ''}`}>
           {showSaves && (
-            <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-              <SectionHeader title="Saving Throws" />
+            <section class="@container relative group">
+              <span class={`${hoverLabelClass} group-hover:opacity-100`}>Saving Throws</span>
               {!canShow('allSaves') && (
                 <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
                   {proficientSaves.map((abilityName) => (
@@ -365,30 +377,34 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
             </section>
           )}
 
-          {showLanguages && (
-            <section class={`border-t border-gray-100 dark:border-gray-700 pt-4${showSaves ? '' : ' @6xl:border-t-0 @6xl:pt-0'}`}>
-              <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
-                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
-                <div class="flex flex-wrap gap-2">
-                  {languages.map((lang) => (
-                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
+          {(showLanguages || showFeats) && (
+            <div class="space-y-2">
+              {showLanguages && (
+                <section>
+                  <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
+                    <div class="flex flex-wrap gap-2">
+                      {languages.map((lang) => (
+                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              )}
 
-          {showFeats && (
-            <section class={`border-t border-gray-100 dark:border-gray-700 pt-4${showSaves || showLanguages ? '' : ' @6xl:border-t-0 @6xl:pt-0'}`}>
-              <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
-                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
-                <div class="flex flex-wrap gap-2">
-                  {feats.map((feat) => (
-                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
-                  ))}
-                </div>
-              </div>
-            </section>
+              {showFeats && (
+                <section>
+                  <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
+                    <div class="flex flex-wrap gap-2">
+                      {feats.map((feat) => (
+                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              )}
+            </div>
           )}
         </div>
       )}
