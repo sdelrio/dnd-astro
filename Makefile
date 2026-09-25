@@ -9,7 +9,7 @@ MAGENTA := \033[0;35m
 CYAN    := \033[0;36m
 RESET   := \033[0m
 
-.PHONY: help test lint typecheck build check
+.PHONY: help test lint typecheck build check upgrade
 
 help:
 	@printf "\n"
@@ -44,5 +44,5 @@ check:
 	$(MAKE) build
 
 upgrade:
-	npx @astrojs/upgrade
+	pnpm dlx @astrojs/upgrade
 
