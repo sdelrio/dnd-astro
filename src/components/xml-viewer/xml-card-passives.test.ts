@@ -819,7 +819,9 @@ describe('XmlCard ultra-wide section pairing', () => {
     expect(languages).toBeGreaterThan(saves);
     expect(feats).toBeGreaterThan(languages);
     expect(skills).toBeGreaterThan(feats);
-    expect(html.indexOf('<div class="space-y-2"><section>')).toBeGreaterThan(-1);
+    expect(html).toContain('grid grid-cols-1 gap-2 @7xl:grid-cols-2 @7xl:gap-4');
+    expect(html).toContain('<section class="@container">');
+    expect(html).toContain('<div class="space-y-2"><section>');
   });
 
   it('pairs Skills with Inventory and leaves Equipped Weapons full width', async () => {
@@ -859,6 +861,37 @@ describe('XmlCard ultra-wide section pairing', () => {
     const html = await renderPaired();
     const borderless = 'pt-4 @6xl:border-t-0 @6xl:pt-0';
     expect(html.split(borderless).length - 1).toBe(5);
+  });
+});
+
+describe('XmlCard Saving Throws group split', () => {
+  const splitClass = '@7xl:grid-cols-2 @7xl:gap-4';
+
+  it('splits Saving Throws from Languages and Feats at @7xl when pills are few', async () => {
+    const html = await renderCard('large', { feats: ['Alert'] });
+    expect(html).toContain(`grid grid-cols-1 gap-2 ${splitClass}`);
+    expect(html).toContain('<section class="@container">');
+  });
+
+  it('keeps the group in one column when Languages exceed the pill budget', async () => {
+    const html = await renderCard('large', {
+      languages: ['Common', 'Draconic', 'Elvish', 'Dwarvish', 'Gnomish', 'Halfling', 'Orc'],
+    });
+    expect(html).toContain('Saving Throws');
+    expect(html).not.toContain(splitClass);
+  });
+
+  it('keeps the group in one column when Feats exceed the pill budget', async () => {
+    const html = await renderCard('large', {
+      feats: ['Alert', 'Sentinel', 'Lucky', 'Tough', 'Mobile'],
+    });
+    expect(html).not.toContain(splitClass);
+  });
+
+  it('keeps the group in one column when there are no Languages or Feats to place beside it', async () => {
+    const html = await renderCard('large', { languages: [], feats: [] });
+    expect(html).toContain('Saving Throws');
+    expect(html).not.toContain(splitClass);
   });
 });
 

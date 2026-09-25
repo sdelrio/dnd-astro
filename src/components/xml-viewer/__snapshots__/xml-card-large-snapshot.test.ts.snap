@@ -110,8 +110,8 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </section>
 </div>
 </section>
-<div class="space-y-2">
-<section>
+<div class="grid grid-cols-1 gap-2 @7xl:grid-cols-2 @7xl:gap-4">
+<section class="@container">
 <h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Saving Throws</h2>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
@@ -190,6 +190,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </section>
+<div class="space-y-2">
 <section>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px] flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2">
 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
@@ -208,6 +209,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </section>
+</div>
 </div>
 </div>
 <div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4">

@@ -194,6 +194,17 @@ const showWeapons = canShow('weapons') && weaponRows.length > 0;
 const showInventory = canShow('inventory') && hasInventory;
 const showFeatures = canShow('features') && featuresByLevel.length > 0;
 const showPowers = canShow('powers') && powersByLevel.length > 0;
+
+const SAVES_SPLIT_MAX_LANGUAGES = 6;
+const SAVES_SPLIT_MAX_FEATS = 4;
+const SAVES_SPLIT_MAX_PILLS = 10;
+
+const splitSavesGroup =
+  showSaves &&
+  (showLanguages || showFeats) &&
+  languages.length <= SAVES_SPLIT_MAX_LANGUAGES &&
+  feats.length <= SAVES_SPLIT_MAX_FEATS &&
+  languages.length + feats.length <= SAVES_SPLIT_MAX_PILLS;
 ---
 
 <div
@@ -317,9 +328,9 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
       </section>
 
       {(showSaves || showLanguages || showFeats) && (
-        <div class="space-y-2">
+        <div class={`grid grid-cols-1 gap-2${splitSavesGroup ? ' @7xl:grid-cols-2 @7xl:gap-4' : ''}`}>
           {showSaves && (
-            <section>
+            <section class="@container">
               <SectionHeader title="Saving Throws" />
               {!canShow('allSaves') && (
                 <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
@@ -365,30 +376,34 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
             </section>
           )}
 
-          {showLanguages && (
-            <section>
-              <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
-                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
-                <div class="flex flex-wrap gap-2">
-                  {languages.map((lang) => (
-                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
-                  ))}
-                </div>
-              </div>
-            </section>
-          )}
+          {(showLanguages || showFeats) && (
+            <div class="space-y-2">
+              {showLanguages && (
+                <section>
+                  <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
+                    <div class="flex flex-wrap gap-2">
+                      {languages.map((lang) => (
+                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              )}
 
-          {showFeats && (
-            <section>
-              <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
-                <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
-                <div class="flex flex-wrap gap-2">
-                  {feats.map((feat) => (
-                    <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
-                  ))}
-                </div>
-              </div>
-            </section>
+              {showFeats && (
+                <section>
+                  <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
+                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
+                    <div class="flex flex-wrap gap-2">
+                      {feats.map((feat) => (
+                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              )}
+            </div>
           )}
         </div>
       )}
