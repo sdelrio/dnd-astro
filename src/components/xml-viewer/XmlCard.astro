@@ -254,8 +254,10 @@ const splitSavesGroup =
 
   <div class="p-4 space-y-4">
     <div class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
-      <section>
-        {display === 'large' && <SectionHeader title="Overview" />}
+      <section class="relative group/overview">
+        {display === 'large' && (
+          <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover/overview:opacity-100 group-has-[section:hover]/overview:opacity-0! transition-opacity pointer-events-none whitespace-nowrap z-10">Overview</span>
+        )}
         <div class="space-y-2">
           <section class="relative group">
             <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Vitals</span>
@@ -328,8 +330,8 @@ const splitSavesGroup =
       {(showSaves || showLanguages || showFeats) && (
         <div class={`grid grid-cols-1 gap-2${splitSavesGroup ? ' @7xl:grid-cols-2 @7xl:gap-4' : ''}`}>
           {showSaves && (
-            <section class="@container">
-              <SectionHeader title="Saving Throws" />
+            <section class="@container relative group">
+              <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Saving Throws</span>
               {!canShow('allSaves') && (
                 <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
                   {proficientSaves.map((abilityName) => (

@@ -98,8 +98,8 @@ const fixtureCharacter: CharacterData = {
 };
 
 const SECTION_MARKERS: Array<[label: string, marker: string]> = [
-  ['Overview', '>Overview</h2>'],
-  ['Saving Throws', '>Saving Throws</h2>'],
+  ['Overview', '>Overview</span>'],
+  ['Saving Throws', '>Saving Throws</span>'],
   ['Languages', '>Languages</div>'],
   ['Feats', '>Feats</div>'],
   ['Skills', '>Skills</h2>'],

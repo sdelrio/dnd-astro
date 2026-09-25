@@ -27,8 +27,8 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </header>
 <div class="p-4 space-y-4">
 <div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4">
-<section>
-<h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Overview</h2>
+<section class="relative group/overview">
+<span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover/overview:opacity-100 group-has-[section:hover]/overview:opacity-0! transition-opacity pointer-events-none whitespace-nowrap z-10">Overview</span>
 <div class="space-y-2">
 <section class="relative group">
 <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Vitals</span>
@@ -111,8 +111,8 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </section>
 <div class="grid grid-cols-1 gap-2 @7xl:grid-cols-2 @7xl:gap-4">
-<section class="@container">
-<h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Saving Throws</h2>
+<section class="@container relative group">
+<span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Saving Throws</span>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
 <table class="w-full text-sm">
