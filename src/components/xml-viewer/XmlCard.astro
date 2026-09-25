@@ -247,8 +247,8 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
     <div class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
       <section>
         {display === 'large' && <SectionHeader title="Overview" />}
-        <div class="space-y-4">
-          <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4 first:border-t-0 first:pt-0">
+        <div class="space-y-2">
+          <section class="relative group">
             <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Vitals</span>
             <div class="grid grid-cols-4 gap-2 text-center">
               <div class={vitalsItemClass}>
@@ -272,7 +272,7 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
             </div>
           </section>
 
-          <section class="pt-2" title="Abilities">
+          <section title="Abilities">
             {display === 'small' ? (
               <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
             ) : (
@@ -295,7 +295,7 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
           </section>
 
           {canShow('passives') && (
-            <section class="relative group border-t border-gray-100 dark:border-gray-700 pt-4">
+            <section class="relative group">
               <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">Passive Skills</span>
               <div class="grid grid-cols-3 gap-2 text-center">
                 <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
@@ -317,9 +317,9 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
       </section>
 
       {(showSaves || showLanguages || showFeats) && (
-        <div class="space-y-4">
+        <div class="space-y-2">
           {showSaves && (
-            <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+            <section>
               <SectionHeader title="Saving Throws" />
               {!canShow('allSaves') && (
                 <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
@@ -366,7 +366,7 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
           )}
 
           {showLanguages && (
-            <section class={`border-t border-gray-100 dark:border-gray-700 pt-4${showSaves ? '' : ' @6xl:border-t-0 @6xl:pt-0'}`}>
+            <section>
               <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
                 <div class="flex flex-wrap gap-2">
@@ -379,7 +379,7 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
           )}
 
           {showFeats && (
-            <section class={`border-t border-gray-100 dark:border-gray-700 pt-4${showSaves || showLanguages ? '' : ' @6xl:border-t-0 @6xl:pt-0'}`}>
+            <section>
               <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
                 <div class="flex flex-wrap gap-2">

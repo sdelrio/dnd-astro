@@ -819,7 +819,7 @@ describe('XmlCard ultra-wide section pairing', () => {
     expect(languages).toBeGreaterThan(saves);
     expect(feats).toBeGreaterThan(languages);
     expect(skills).toBeGreaterThan(feats);
-    expect(html.indexOf('<div class="space-y-4"><section class="border-t')).toBeGreaterThan(-1);
+    expect(html.indexOf('<div class="space-y-2"><section>')).toBeGreaterThan(-1);
   });
 
   it('pairs Skills with Inventory and leaves Equipped Weapons full width', async () => {
@@ -855,10 +855,10 @@ describe('XmlCard ultra-wide section pairing', () => {
     expect(pairingGridCount(noRight)).toBe(1);
   });
 
-  it('gives every paired section a borderless top at ultra-wide widths', async () => {
+  it('gives the major sections a borderless top at ultra-wide widths', async () => {
     const html = await renderPaired();
     const borderless = 'pt-4 @6xl:border-t-0 @6xl:pt-0';
-    expect(html.split(borderless).length - 1).toBe(6);
+    expect(html.split(borderless).length - 1).toBe(5);
   });
 });
 
