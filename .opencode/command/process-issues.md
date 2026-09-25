@@ -34,7 +34,7 @@ For each ticket, launch a subagent that will:
 
 7. **Add review summary** - Add a review summary to a new comment in the PR.
 
-8. **Merge the PR** - Squash merge the PR before moving to the next ticket.
+8. **Merge the PR** - Squash merge the PR and delete the branch before moving to the next ticket: `gh pr merge <pr-number> --squash --delete-branch`. This removes both the remote and local branch after the merge.
 
 9. **Move to next ticket** - When current work is fully merged, pull main and start the next ticket.
 
