@@ -75,10 +75,6 @@ export default defineConfig({
       ],
       sidebar: [
         {
-          label: 'Guides',
-          items: [{ autogenerate: { directory: 'guides' } }],
-        },
-        {
           label: 'D&D rule fixes',
           items: [{ autogenerate: { directory: 'dnd' } }],
         },

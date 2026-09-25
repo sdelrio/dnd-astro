@@ -1,6 +1,8 @@
 ---
 title: XmlCard Test Page
 description: Visual test page for the XmlCard component display modes
+sidebar:
+  hidden: true
 ---
 
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
@@ -14,14 +16,11 @@ export const malfunction = byFile('malfunction');
 export const delizan = byFile('delizan');
 export const dorian = byFile('dorian');
 export const dougal = byFile('dougal');
-export const darlo = byFile('darlo');
 export const malagolvir = byFile('malagolvir');
+export const darlo = byFile('darlo');
 export const garaele = byFile('garaele');
-export const milo = byFile('milo');
-export const alioth = byFile('alioth');
 export const antonidas = byFile('antonidas');
 export const akinori = byFile('akinori');
-export const alberich = byFile('alberich');
 
 This page demonstrates the `XmlCard` component in its display modes and
 configuration options. Unlike golden-forest's `XmlChar` (which takes a
@@ -105,14 +104,6 @@ throws, skills, languages, and proficiency bonus. This is the default size.
 
 <XmlCard character={tanadirian} display="medium" />
 
-### Different Character
-
-```mdx
-<XmlCard character={malagolvir} display="medium" />
-```
-
-<XmlCard character={malagolvir} display="medium" />
-
 ### Two Cards (PC Check)
 
 Verify two medium cards display side by side on PC workstation screens.
@@ -129,16 +120,41 @@ Verify two medium cards display side by side on PC workstation screens.
 
 ## Display: Large
 
-The complete card: portrait (floated right), feats, features grouped by
-level, and powers grouped by level and group. The display mode is fixed at
-build time by the `display` prop the mounting page passes; there is no
-in-card toggle.
+The complete card: portrait (floated right), subclass, feats, features grouped
+by level, powers grouped by level and group, passive skills, the full
+all-skills table, equipped weapons, inventory with current wealth, all six
+saving throws, and the Overview group. The display mode is fixed at build time
+by the `display` prop the mounting page passes; there is no in-card toggle.
 
-### Subclass
+The complete card uses Akinori below; four terse edge-case cards follow for
+what Akinori cannot show.
 
-Darlo has a subclass (Oath of Vengeance), shown in parentheses after
-class and level. Large mode is the only mode that displays it; small and
-medium cards omit it at build time.
+### Complete Card
+
+Akinori covers subclass, feats, powers grouped by level and group, features
+grouped by level, passive skills, the full all-skills table (half proficiency
+on Arcana and Medicine), equipped weapons, inventory and current wealth, all
+six saving throws, and the Overview group.
+
+```mdx
+<XmlCard character={akinori} display="large" />
+```
+
+<XmlCard character={akinori} display="large" />
+
+### Edge Cases
+
+Ethir shows skill expertise (on Sleight of Hand and both Thieves Tools rows)
+and the no-feats state.
+
+```mdx
+<XmlCard character={ethir} display="large" />
+```
+
+<XmlCard character={ethir} display="large" />
+
+Darlo shows prepared and always-prepared power dots, and the empty-inventory
+state.
 
 ```mdx
 <XmlCard character={darlo} display="large" />
@@ -146,21 +162,19 @@ medium cards omit it at build time.
 
 <XmlCard character={darlo} display="large" />
 
-Antonidas exercises the feature-entry fallback: his class node has no
-`<specialization>`, so the parser derives `School of Transmutation` from
-the subclass features in the sheet.
+Antonidas shows the feature-entry fallback: his class node has no
+`<specialization>`, so the parser derives `School of Transmutation` from the
+subclass features in the sheet.
 
 ```mdx
 <XmlCard character={antonidas} display="large" />
 ```
 
 <XmlCard character={antonidas} display="large" />
-
-### Fallback Portrait
 
 Garaele has no avatar file, so the build-time probe falls back to
-`faceless.svg`. Forcing a non-existing `image` resolves to the same
-fallback at build time.
+`faceless.svg`. Forcing a non-existing `image` resolves to the same fallback
+at build time.
 
 ```mdx
 <XmlCard character={garaele} image="dontexists.jpg" display="large" />
@@ -168,284 +182,16 @@ fallback at build time.
 
 <XmlCard character={garaele} image="dontexists.jpg" display="large" />
 
-```mdx
-<XmlCard character={garaele} display="large" />
-```
-
-<XmlCard character={garaele} display="large" />
-
-### Default Portrait (JPG, by Filename)
-
-Milo relies on the default naming convention: no `image` prop, so the
-portrait resolves from the XML filename (`milo.xml` → `milo.jpg`).
-
-```mdx
-<XmlCard character={milo} display="large" />
-```
-
-<XmlCard character={milo} display="large" />
-
-### Explicit Portrait (JPG) + Long Deity
-
-Alioth exercises an exceptionally long deity field, rendered as a tag in the
-header for medium and large cards; small cards omit the alignment and deity
-tags at build time.
-
-```mdx
-<XmlCard character={alioth} display="large" image="alioth.jpg" />
-```
-
-<XmlCard character={alioth} display="large" image="alioth.jpg" />
-
-### Explicit Portrait (PNG)
-
-```mdx
-<XmlCard character={antonidas} display="large" image="antonidas.png" />
-```
-
-<XmlCard character={antonidas} display="large" image="antonidas.png" />
-
-### Feature Grouping
-
-Akinori has 19 features across several levels, showing the per-level
-grouping as source-tooltip pills.
-
-```mdx
-<XmlCard character={akinori} display="large" />
-```
-
-<XmlCard character={akinori} display="large" />
-
-### Powers Grouping
-
-Dougal has 2 powers, showing the grouping by level and group.
-
-```mdx
-<XmlCard character={dougal} display="large" />
-```
-
-<XmlCard character={dougal} display="large" />
-
-### Passive Skills
-
-Large mode adds a Passive Skills section between Abilities and Saving Throws.
-The section renders no visible heading: hovering it reveals a "Passive Skills"
-tooltip. It holds three subcards side by side, each a single row with the
-name on the left and the value on the right: Passive Perception,
-Passive Investigation, and Passive Insight. The subcards reuse the
-vitals-item styling, including the same uniform `rounded-[7px]` radius on
-all four corners. Tanadirian's parsed passives are 18 / 11 / 18. The section
-renders only in large mode; small and medium cards omit it at build time.
-
-```mdx
-<XmlCard character={tanadirian} display="large" />
-```
-
-<XmlCard character={tanadirian} display="large" />
-
-### All-Skills Table
-
-Large mode replaces the prof-only skills grid with one card holding two
-tables of every skill on the sheet, split alphabetically into halves. Each
-row shows the skill name, its ability abbreviation, and the total
-right-aligned in mono. Gold dots mark proficiency: one filled dot for
-proficient, two for expertise, a half-filled dot for half proficiency
-(Fantasy Grounds `prof 3`), and none for untrained, with a tooltip on each
-marker. A legend beneath the tables spells out all three marks. Custom
-skills take their ability from the sheet's `stat` field, so ethir's
-`Thieves Tools (Traps)` row reads `INT`. Ethir has 20 skills - two dots
-appear on `Sleight of Hand` and both `Thieves Tools` rows (expertise), one
-dot on the proficient rows. Akinori carries half proficiency on `Arcana`
-and `Medicine`, so those rows show the half-filled dot and the "Half proficiency"
-tooltip. Tanadirian has 18 skills with no expertise, so
-he exercises the one-dot and no-dot cases; a sheet with no marked skills
-shows no legend. Medium cards render the prof-only
-skills grid instead, and small cards omit the section entirely; the display
-mode is fixed at build time, with no live switching.
-
-```mdx
-<XmlCard character={ethir} display="large" />
-```
-
-<XmlCard character={ethir} display="large" />
-
-```mdx
-<XmlCard character={akinori} display="large" />
-```
-
-<XmlCard character={akinori} display="large" />
-
-```mdx
-<XmlCard character={tanadirian} display="large" />
-```
-
-<XmlCard character={tanadirian} display="large" />
-
-### Equipped Weapons
-
-Large mode adds an Equipped Weapons table after Inventory and before Features, listing
-only weapons the sheet marks as equipped (`carried` 2). Each row shows the
-computed ATK, the weapon name, its properties (`-` when the sheet has none),
-and the computed Damage. Alberich exercises the display: with STR 18 and a +2
-proficiency bonus, his Greatsword reads ATK `+6` and damage `2d6+4 Slashing`,
-and his two equipped Handaxes each read ATK `+6` and damage `d6+4 Slashing`.
-Stowed or sold weapons are omitted, and the section disappears entirely when
-nothing is equipped. Small and medium cards omit the section at build time.
-
-```mdx
-<XmlCard character={alberich} display="large" />
-```
-
-<XmlCard character={alberich} display="large" />
-
-### Inventory
-
-Large mode adds an Inventory section after Skills and before Equipped Weapons.
-The carried weight total sits on the same row as the Inventory heading: the
-heading reads on the left and the small muted weight text sits right-aligned on
-the same baseline. It reads the carried weight against the 5e carrying capacity
-of STR x 15; alberich (STR 18) reads `68.0 / 270 lb. carried`. The table columns
-are Item, Count, Weight, and
-State, listing every carried or equipped item (`carried` 1 or 2) in sheet
-order with its name, count, unit weight to one decimal, and a plain-text
-State of `Carried` or `Equipped`. Stowed or dropped items never appear.
-Below it, a Current Wealth card shows the parsed coins in fixed order PP, GP,
-EP, SP, CP. The section disappears entirely when nothing is carried and
-every coin is zero. Small and medium cards omit the section at build time.
-
-```mdx
-<XmlCard character={alberich} display="large" />
-```
-
-<XmlCard character={alberich} display="large" />
-
-### Saving Throws
-
-Large mode replaces the prof-only saving-throw grid with one card holding two
-tables of all six saves in standard ability order. Each table carries
-`Ability` and `Save` headers; the first lists STR, DEX, and CON and the second
-INT, WIS, and CHA. Each row shows the ability abbreviation and the signed
-bonus right-aligned in mono; a proficient save carries a single gold dot with
-a "Proficient" tooltip. Alberich exercises the display: STR `+6` and WIS `+5`
-are proficient, while DEX `+2`, CON `+3`, INT `+1`, and CHA `+1` are not.
-Medium cards render the prof-only saving-throw grid instead, and small cards
-omit the section entirely; the display mode is fixed at build time, with no
-live switching.
-
-```mdx
-<XmlCard character={alberich} display="large" />
-```
-
-<XmlCard character={alberich} display="large" />
-
-### Languages
-
-Medium and large cards render Languages as a single accent card instead of a
-heading above a pill row: the uppercase "Languages" label sits on the left
-and the language pills sit on the right, reusing the vitals-item shell with
-the colored top line, border, and uniform `rounded-[7px]` radius. The pill
-list wraps onto new lines when it exceeds the card width; on narrow
-containers the label stacks above the pills, and they share one row at wider
-container widths. Small cards omit the section at build time, with no live
-switching.
-
-```mdx
-<XmlCard character={tanadirian} display="medium" />
-```
-
-<XmlCard character={tanadirian} display="medium" />
-
-### Feats
-
-Large cards render Feats the same way: one accent card with the uppercase
-"Feats" label on the left and the feat pills on the right, wrapping within
-the card and stacking the label above the pills on narrow containers. The
-display mode is fixed at build time, so small and medium cards omit the
-section entirely, with no live switching.
-
-```mdx
-<XmlCard character={alberich} display="large" />
-```
-
-<XmlCard character={alberich} display="large" />
-
-### Features
-
-Large cards render Features as one accent card below the visible "Features"
-heading: the level sub-headings and non-interactive feature pills sit inside
-the vitals-item shell with the colored top line, border, and uniform
-`rounded-[7px]` radius. The pills reuse the Languages and Feats pill styling
-and group by level, ordered by level then name; a pill carries its `Source:`
-value as a native tooltip, and features parsed without a source show no
-tooltip. Unlike the Languages and Feats label-inside-card treatment, the
-heading stays above the card. Small and medium cards omit the section at
-build time, with no live switching.
-
-```mdx
-<XmlCard character={akinori} display="large" />
-```
-
-<XmlCard character={akinori} display="large" />
-
-### Powers Marks
-
-Large cards render Powers as one accent card below the visible "Powers"
-heading, matching the Features treatment: the level and group sub-headings
-and non-interactive power pills sit inside the vitals-item shell with the
-colored top line, border, and uniform `rounded-[7px]` radius. The pills
-reuse the Languages and Feats pill styling and group by level then group,
-ordered by level, group, then name; a pill carries its `Group:` value as a
-native tooltip, and a power parsed without a group (rendered under the
-`Other` heading) shows no tooltip. A spell pill also carries a mark after
-the name: a filled gold dot with a "Prepared" tooltip for player-prepared
-spells, and a hollow accent-ring dot with an "Always prepared
-(class/subclass)" tooltip for always-prepared class or subclass spells
-(domain, oath, patron, and so on). A spell with both flags shows only the
-always-prepared mark. Non-spell powers (class features, item powers,
-feats) never show a mark, even when their parsed prepared value is
-non-zero. A legend at the bottom of the card explains the two dots and
-renders only when at least one mark appears. The display mode is fixed at
-build time, with no live switching.
-
-```mdx
-<XmlCard character={alberich} display="large" />
-```
-
-<XmlCard character={alberich} display="large" />
-
-### Overview Group
-
-Large cards group Vitals, Abilities, and Passive Skills under one visible
-`Overview` heading; small and medium cards render the same sections without
-the heading. On card containers at least 72rem wide (`@6xl`), the Overview
-group takes the left half of the card while Saving Throws, Languages, and
-Feats stack in the right half; below that width the sections stack in a
-single full-width column. The display mode and the grouping are fixed at
-build time, with no live switching.
-
-```mdx
-<XmlCard character={alberich} display="large" />
-```
-
-<XmlCard character={alberich} display="large" />
-
-### Ultra-Wide Section Pairings
-
-At the same `@6xl` threshold, large cards pair the remaining sections into
-halves: Saving Throws, Languages, and Feats stack in the right half beside
-the Overview group; Skills sits beside Inventory and Current Wealth;
-Equipped Weapons spans the full width; and Features sits beside Powers. When
-a partner stack is empty (no saving throws, no languages, no feats, no
-inventory contents, or no powers), the surviving section keeps the full
-width. Paired sections drop their top rule at ultra-wide widths so both
-columns start level, and everything stacks back into one full-width column
-below 72rem. The pairing is fixed at build time, with no live switching.
-
-```mdx
-<XmlCard character={alberich} display="large" />
-```
-
-<XmlCard character={alberich} display="large" />
+### Ultra-Wide Layout
+
+On card containers at least 72rem wide (`@6xl`), large cards pair their
+sections into two columns: the Overview group sits beside Saving Throws,
+Languages, and Feats; Skills sits beside Inventory and Current Wealth;
+Equipped Weapons spans the full width; and Features sits beside Powers. Below
+72rem the sections stack in a single full-width column. The docs column here
+is narrower than that threshold, so the paired layout never appears on this
+page - open the [Akinori character sheet](/fantasy-grounds/characters/akinori)
+to see it at full width (the portrait on that page links to the same URL).
 
 ## Notes
 
