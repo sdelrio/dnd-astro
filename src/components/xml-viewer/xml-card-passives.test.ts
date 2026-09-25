@@ -903,6 +903,13 @@ describe('XmlCard Saving Throws group split', () => {
     expect(html).not.toContain(splitClass);
   });
 
+  it('ignores Feats that the current display mode does not render when deciding to split', async () => {
+    const html = await renderCard('medium', {
+      feats: ['Alert', 'Sentinel', 'Lucky', 'Tough', 'Mobile'],
+    });
+    expect(html).toContain(splitClass);
+  });
+
   it('keeps the group in one column when there are no Languages or Feats to place beside it', async () => {
     const html = await renderCard('large', { languages: [], feats: [] });
     expect(html).toContain('Saving Throws');
