@@ -82,6 +82,14 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 | `pnpm test` | Run the Vitest unit tests |
 | `pnpm astro` | Run the Astro CLI |
 | `make check` | Run every gate: lint, typecheck, test, build |
+| `make capture` | Write `desktop.png` and `mobile.png` for design review |
+| `make measure` | Measure a rendered page: overflow, contrast, tap, pointer |
+| `make submodule-init` | Check out the pinned Impeccable skill submodule |
+| `make submodule-update` | Bump Impeccable to upstream HEAD and relink |
+| `make submodule-link` | Relink the skill for `IMPECCABLE_PROVIDER=<harness>` |
+| `make upgrade` | Interactive. Upgrades Astro and rewrites `package.json` |
+
+Run `make help` for the full list, grouped the same way.
 
 ## Project structure
 
@@ -118,7 +126,7 @@ worker/                  Cloudflare Worker static assets entrypoint
 astro.config.mjs         Astro, Starlight, Alpine.js, and Mermaid setup plus the XML hook
 wrangler.jsonc           Cloudflare Workers static assets config
 devbox.json              Pinned Node 24 / pnpm toolchain
-Makefile                 Verification gates (make check)
+Makefile                 Verification gates, design review captures, skill submodules, and upgrades; run make help
 AGENTS.md                Agent workflow and repo conventions
 CONTEXT.md               Domain glossary
 SPEC.md                  Technical specification
