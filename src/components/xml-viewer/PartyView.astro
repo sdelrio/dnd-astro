@@ -1,11 +1,7 @@
 ---
 import { partyStats } from '@/utils/party-stats';
-import {
-  ALL_ROLES,
-  ROLE_CONFIG,
-  readPartyRoster,
-  resolvePartyMembers,
-} from '@/components/xml-viewer/party-roster';
+import { readPartyRoster, resolvePartyMembers } from '@/components/xml-viewer/party-roster';
+import { ALL_ROLES, ROLE_CONFIG } from '@/components/xml-viewer/party-roles';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import XmlCard from '@/components/xml-viewer/XmlCard.astro';
