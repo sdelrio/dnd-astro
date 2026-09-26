@@ -11,8 +11,17 @@ import {
   toCoinRows,
   hasInventoryContents,
 } from '@/components/xml-viewer/inventory-display';
-import { skillRank, type SkillRank } from '@/components/xml-viewer/skill-display';
+import { skillRank } from '@/components/xml-viewer/skill-display';
+import { cardPlateClass } from '@/components/xml-viewer/card-plate';
+import SkillsTable from '@/components/xml-viewer/SkillsTable.astro';
+import SavesTable, { type SaveTableRow } from '@/components/xml-viewer/SavesTable.astro';
 import SectionHeader from '@/components/xml-viewer/SectionHeader.astro';
+import {
+  sectionHeadingClass,
+  sectionSubheadingClass,
+  sectionGroupClass,
+  sectionLegendClass,
+} from '@/components/xml-viewer/section-heading';
 import CompactAbilityGrid from '@/components/xml-viewer/CompactAbilityGrid.astro';
 
 interface Props {
@@ -67,7 +76,6 @@ const {
   speed,
   initiative,
   profBonus,
-  skills,
   allSkills,
   passives,
   languages,
@@ -81,15 +89,11 @@ const {
 
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
 const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).join(' / ');
-const vitalsItemClass = 'p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]';
-// Section labels were absolutely-positioned tabs at `opacity-0` that only
-// appeared on hover. That hid them from keyboard focus entirely and from touch
-// users completely, while `title` on the sibling dots gave no text alternative.
-// They are now real, always-visible headings in normal flow: a compact
-// uppercase micro-label on the gold rule, so the section is legible without a
-// pointer and reaches the document outline.
-const sectionHeadingClass =
-  'mt-0 mb-2 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)';
+// Section labels were once absolutely-positioned tabs at `opacity-0` that only
+// appeared on hover, which hid them from keyboard focus and touch alike. They
+// are real, always-visible headings now, and every one of them - here and in
+// SectionHeader - is the same class, so the card reads as a single heading
+// system. See section-heading.ts.
 
 // Build-time avatar resolution happens in the shared helper: an explicit
 // image prop wins when the file exists (missing files fall back to
@@ -121,21 +125,13 @@ function lookupAbility(fullName: string): AbilityView {
   );
 }
 
-const proficientSaves = abilityNames.filter((a) => lookupAbility(a).saveprof > 0);
-const showSaves = canShow('saves') && (proficientSaves.length > 0 || canShow('allSaves'));
-
-interface SaveRow {
-  short: string;
-  save: number;
-  saveprof: number;
-}
-const saveColumns: SaveRow[][] = [abilityEntries.slice(0, 3), abilityEntries.slice(3)].map(
-  (column) =>
-    column.map(({ name, short }) => {
-      const { save, saveprof } = lookupAbility(name);
-      return { short, save, saveprof };
-    })
-);
+// Large lists all six saves; medium lists only the proficient ones. One table
+// component, two row sets - see SavesTable.astro, which owns the row type.
+const allSaveRows: SaveTableRow[] = abilityEntries.map(({ name, short }) => {
+  const { save, saveprof } = lookupAbility(name);
+  return { short, save, saveprof };
+});
+const proficientSaveRows = allSaveRows.filter((row) => row.saveprof > 0);
 
 const sortedFeatures = [...features].sort(
   (a, b) => a.level - b.level || a.name.localeCompare(b.name)
@@ -146,21 +142,11 @@ const featuresByLevel = groupBy(sortedFeatures, (f) => f.level).map((g) => ({
 }));
 
 const sortedAllSkills = [...allSkills].sort((a, b) => a.name.localeCompare(b.name));
-const skillHalf = Math.ceil(sortedAllSkills.length / 2);
-const skillColumns = [
-  sortedAllSkills.slice(0, skillHalf),
-  sortedAllSkills.slice(skillHalf),
-];
-function abilityAbbr(stat: string): string {
-  return stat ? stat.slice(0, 3).toUpperCase() : '';
-}
-
-const SKILL_RANK_LABEL: Record<Exclude<SkillRank, 'none'>, string> = {
-  proficient: 'Proficient',
-  expertise: 'Expertise',
-  half: 'Half proficiency',
-};
-const hasSkillMarks = sortedAllSkills.some((skill) => skillRank(skill.prof) !== 'none');
+// Large lists every skill; medium lists only the ones the character is
+// proficient in. Derived from allSkills rather than the parser's prof-only
+// `skills` list, because the medium card is now the same table as the large one
+// and needs `prof` and `stat` to draw the dots and the ability column.
+const proficientSkills = sortedAllSkills.filter((skill) => skillRank(skill.prof) !== 'none');
 
 const weaponRows = toWeaponRows(weapons, abilities, profBonus);
 
@@ -194,7 +180,8 @@ function powerMark(power: { group: string; prepared: number; preparedDomain: num
 }
 const hasPowerMarks = sortedPowers.some((p) => powerMark(p) !== null);
 
-const showSkills = canShow('skills') && skills.length > 0;
+const showSaves = canShow('saves') && (proficientSaveRows.length > 0 || canShow('allSaves'));
+const showSkills = canShow('skills') && (canShow('allSkills') ? sortedAllSkills.length > 0 : proficientSkills.length > 0);
 const showLanguages = canShow('languages') && languages.length > 0;
 const showFeats = canShow('feats') && feats.length > 0;
 const showWeapons = canShow('weapons') && weaponRows.length > 0;
@@ -252,25 +239,25 @@ const splitSavesGroup =
   <div class="p-4 space-y-4">
     <div class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
       <section class="relative group/overview">
-        {display === 'large' && <h3 class={sectionHeadingClass}>Overview</h3>}
+        {display === 'large' && <h3 class={`${sectionHeadingClass} mb-2`}>Overview</h3>}
         <div class="space-y-2">
           <section class="relative group">
-            <h3 class={sectionHeadingClass}>Vitals</h3>
+            <h3 class={`${sectionHeadingClass} mb-2`}>Vitals</h3>
             <div class="grid grid-cols-4 gap-2 text-center">
-              <div class={vitalsItemClass}>
+              <div class={cardPlateClass}>
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">AC</div>
                 <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{ac}</div>
               </div>
-              <div class={vitalsItemClass}>
+              <div class={cardPlateClass}>
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Speed</div>
                 <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{speed}{display !== 'small' && ' ft'}</div>
               </div>
-              <div class={vitalsItemClass}>
+              <div class={cardPlateClass}>
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Init</div>
                 <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{signed(initiative)}</div>
               </div>
               {canShow('profBonus') && (
-                <div class={vitalsItemClass}>
+                <div class={cardPlateClass}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Prof</div>
                   <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{signed(profBonus)}</div>
                 </div>
@@ -279,7 +266,7 @@ const splitSavesGroup =
           </section>
 
           <section>
-            <h3 class={sectionHeadingClass}>Abilities</h3>
+            <h3 class={`${sectionHeadingClass} mb-2`}>Abilities</h3>
             {display === 'small' ? (
               <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
             ) : (
@@ -303,17 +290,17 @@ const splitSavesGroup =
 
           {canShow('passives') && (
             <section class="relative group">
-              <h3 class={sectionHeadingClass}>Passive Skills</h3>
+              <h3 class={`${sectionHeadingClass} mb-2`}>Passive Skills</h3>
               <div class="grid grid-cols-3 gap-2 text-center">
-                <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
+                <div class={`${cardPlateClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Perception</div>
                   <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.perception}</div>
                 </div>
-                <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
+                <div class={`${cardPlateClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Investigation</div>
                   <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.investigation}</div>
                 </div>
-                <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
+                <div class={`${cardPlateClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Insight</div>
                   <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{passives.insight}</div>
                 </div>
@@ -327,51 +314,11 @@ const splitSavesGroup =
         <div class={`grid grid-cols-1 gap-2${splitSavesGroup ? ' @7xl:grid-cols-2 @7xl:gap-4' : ''}`}>
           {showSaves && (
             <section class="@container relative group">
-              <h3 class={sectionHeadingClass}>Saving Throws</h3>
-              {!canShow('allSaves') && (
-                <div class="grid grid-cols-2 gap-1 @sm:grid-cols-3">
-                  {proficientSaves.map((abilityName) => (
-                    <div class="flex justify-between py-1 px-2 text-sm">
-                      <span class="text-gray-700 dark:text-gray-300">{abilityName}</span>
-                      <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(lookupAbility(abilityName).save)}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {canShow('allSaves') && (
-                <div class={vitalsItemClass}>
-                  <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
-                    {saveColumns.map((column) => (
-                      <table class="w-full text-sm">
-                        <thead>
-                          <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                            <th class="text-left font-medium pb-1">Ability</th>
-                            <th class="text-right font-medium pb-1">Save</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {column.map((row) => (
-                            <tr class="border-t border-gray-200 dark:border-gray-700">
-                              <td class="py-1 text-gray-700 dark:text-gray-300">
-                                <span class="inline-flex items-center gap-1">
-                                  <span>{row.short}</span>
-                                  {row.saveprof > 0 && (
-                                    <>
-                                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                                      <span class="sr-only">Proficient</span>
-                                    </>
-                                  )}
-                                </span>
-                              </td>
-                              <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(row.save)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <h3 class={`${sectionHeadingClass} mb-2`}>Saving Throws</h3>
+              <SavesTable
+                rows={canShow('allSaves') ? allSaveRows : proficientSaveRows}
+                columns={canShow('allSaves') ? 2 : 1}
+              />
             </section>
           )}
 
@@ -379,7 +326,7 @@ const splitSavesGroup =
             <div class="space-y-2">
               {showLanguages && (
                 <section>
-                  <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
+                  <div class={`${cardPlateClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
                     <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
                     <div class="flex flex-wrap gap-2">
                       {languages.map((lang) => (
@@ -392,7 +339,7 @@ const splitSavesGroup =
 
               {showFeats && (
                 <section>
-                  <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
+                  <div class={`${cardPlateClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
                     <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
                     <div class="flex flex-wrap gap-2">
                       {feats.map((feat) => (
@@ -411,94 +358,12 @@ const splitSavesGroup =
     {(showSkills || showInventory) && (
       <div class={showSkills && showInventory ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
         {showSkills && (
-          <section class="@container border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Skills" />
-            {!canShow('allSkills') && (
-              <div class="grid grid-cols-2 gap-1 @sm:grid-cols-3">
-                {skills.map((skill) => (
-                  <div class="flex justify-between py-1 px-2 text-sm">
-                    <span class="text-gray-700 dark:text-gray-300">{skill.name}</span>
-                    <span class="font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {canShow('allSkills') && (
-              <div class={vitalsItemClass}>
-                <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
-                  {skillColumns.map((column) => (
-                    <table class="w-full text-sm">
-                      <thead>
-                        <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                          <th class="text-left font-medium pb-1">Skill</th>
-                          <th class="text-left font-medium pb-1">Abil</th>
-                          <th class="text-right font-medium pb-1">Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {column.map((skill) => {
-                          const rank = skillRank(skill.prof);
-                          return (
-                            <tr class="border-t border-gray-200 dark:border-gray-700">
-                              <td class="py-1 text-gray-700 dark:text-gray-300">
-                                <span class="inline-flex items-center gap-1">
-                                  <span class="truncate">{skill.name}</span>
-                                  {rank !== 'none' && (
-                                    <span
-                                      class="inline-flex items-center gap-px"
-                                      data-prof-rank={rank}
-                                    >
-                                      <span class="sr-only">{SKILL_RANK_LABEL[rank]}</span>
-                                      {rank === 'proficient' && (
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                                      )}
-                                      {rank === 'expertise' && (
-                                        <>
-                                          <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                                          <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                                        </>
-                                      )}
-                                      {rank === 'half' && (
-                                        <span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]" aria-hidden="true">
-                                          <span class="block w-1/2 h-full bg-[#c68000]"></span>
-                                        </span>
-                                      )}
-                                    </span>
-                                  )}
-                                </span>
-                              </td>
-                              <td class="py-1 text-gray-500 dark:text-gray-400">{abilityAbbr(skill.stat)}</td>
-                              <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(skill.total)}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  ))}
-                </div>
-                {hasSkillMarks && (
-                  <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
-                    <span class="inline-flex items-center gap-1">
-                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                      Proficient
-                    </span>
-                    <span class="inline-flex items-center gap-1">
-                      <span class="inline-flex items-center gap-px" aria-hidden="true">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                      </span>
-                      Expertise
-                    </span>
-                    <span class="inline-flex items-center gap-1">
-                      <span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]" aria-hidden="true">
-                        <span class="block w-1/2 h-full bg-[#c68000]"></span>
-                      </span>
-                      Half proficiency
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
+            <SkillsTable
+              rows={canShow('allSkills') ? sortedAllSkills : proficientSkills}
+              columns={canShow('allSkills') ? 2 : 1}
+            />
           </section>
         )}
 
@@ -511,7 +376,7 @@ const splitSavesGroup =
                 : undefined}
             />
             {inventoryRows.length > 0 && (
-              <div class={vitalsItemClass}>
+              <div class={cardPlateClass}>
                 <table class="w-full text-sm">
                   <thead>
                     <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -534,7 +399,7 @@ const splitSavesGroup =
                 </table>
               </div>
             )}
-            <div class={`mt-2 ${vitalsItemClass}`}>
+            <div class={`mt-2 ${cardPlateClass}`}>
               <div class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Current Wealth</div>
               <div class="grid grid-cols-5 gap-1 text-center">
                 {coinRows.map((coin) => (
@@ -553,7 +418,7 @@ const splitSavesGroup =
     {showWeapons && (
       <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
         <SectionHeader title="Equipped Weapons" />
-        <div class={vitalsItemClass}>
+        <div class={cardPlateClass}>
           <table class="w-full text-sm">
             <thead>
               <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -583,10 +448,10 @@ const splitSavesGroup =
         {showFeatures && (
           <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Features" />
-            <div class={vitalsItemClass}>
+            <div class={cardPlateClass}>
               {featuresByLevel.map((group) => (
                 <div>
-                  <h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                  <h4 class={`${sectionSubheadingClass} mt-3 mb-1`}>
                     Level {group.level}
                   </h4>
                   <div class="flex flex-wrap gap-2">
@@ -606,15 +471,15 @@ const splitSavesGroup =
         {showPowers && (
           <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Powers" />
-            <div class={vitalsItemClass}>
+            <div class={cardPlateClass}>
               {powersByLevel.map((levelGroup) => (
                 <div>
-                  <h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                  <h4 class={`${sectionSubheadingClass} mt-3 mb-1`}>
                     Level {levelGroup.level}
                   </h4>
                   {levelGroup.groups.map((group) => (
                     <div>
-                      <h5 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
+                      <h5 class={`${sectionGroupClass} mt-2 mb-1`}>
                         {group.name}
                       </h5>
                       <div class="flex flex-wrap gap-2">
@@ -647,7 +512,7 @@ const splitSavesGroup =
                 </div>
               ))}
               {hasPowerMarks && (
-                <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
+                <div class={`mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 ${sectionLegendClass}`}>
                   <span class="inline-flex items-center gap-1">
                     <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
                     Prepared

@@ -1,7 +1,12 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const source = readFileSync(new URL('./XmlCard.astro', import.meta.url), 'utf8');
+// The Saving Throws and Skills tables moved into their own components when medium
+// gained the same card as large. These guards are about what the card renders, so
+// they read the card and the two tables it delegates to as one source.
+const source = ['XmlCard.astro', 'SavesTable.astro', 'SkillsTable.astro']
+  .map((file) => readFileSync(new URL(file, import.meta.url), 'utf8'))
+  .join('\n');
 
 /**
  * Structural guards for the card's semantics.
@@ -29,11 +34,30 @@ describe('XmlCard section semantics', () => {
     // supplies the h1), so everything under it steps down from there. Sections
     // at h2 made each one an ancestor of the name in the outline.
     expect(source, 'the card name is not an h2').toMatch(/<h2 class="char-name"/);
-    expect(source, 'a section label is not an h3').toMatch(/<h3 class=\{sectionHeadingClass\}>/);
-    expect(source, 'a section label is still an h2').not.toMatch(/<h2 class=\{sectionHeadingClass\}>/);
+    // The margin is appended at the call site, so the class is a template
+    // expression rather than the bare constant.
+    expect(source, 'a section label is not an h3').toMatch(
+      /<h3 class=\{`\$\{sectionHeadingClass\} mb-2`\}>/,
+    );
+    expect(source, 'a section label is still an h2').not.toMatch(
+      /<h2 class=\{`\$\{sectionHeadingClass\} mb-2`\}>/,
+    );
     // No level is skipped on the way down.
     for (const level of [2, 3, 4, 5]) {
       expect(source, `h${level} is unused`).toMatch(new RegExp(`<h${level}[ >]`));
+    }
+  });
+
+  it('does not put conflicting margin utilities in one heading', () => {
+    // `sectionHeadingClass` used to carry `mb-2` and SectionHeader's flex-row
+    // variant appended `mb-0` to cancel it, so the rendered attribute read
+    // `... mb-2 ... mb-0`. Which one won was a function of stylesheet order, not
+    // markup order, which is not a thing to rely on for a heading's rhythm.
+    const headings = [...source.matchAll(/<h[2345][^>]*class="([^"]*)"/g)].map((m) => m[1]);
+    expect(headings.length).toBeGreaterThan(0);
+    for (const className of headings) {
+      const margins = [...className.matchAll(/\bmb-(?!x|y)/g)].map((m) => m[0]);
+      expect(new Set(margins).size, `two bottom margins: ${className}`).toBe(margins.length);
     }
   });
 
