@@ -21,11 +21,15 @@ IMPECCABLE_SKILLS_opencode := .opencode/skills
 IMPECCABLE_SKILLS_claude   := .claude/skills
 IMPECCABLE_SKILLS          := $(IMPECCABLE_SKILLS_$(IMPECCABLE_PROVIDER))
 
-.PHONY: help test lint typecheck build check capture upgrade \
+.PHONY: help test lint typecheck build check capture measure upgrade \
         submodule-init submodule-update submodule-link
 
 # The design review capture command. See ADR-0012.
 CAPTURE := node .opencode/lib/design-review/capture.mjs
+
+# The rendered-verification command: overflow, contrast, tap, pointer.
+# Pass the subcommand and its flags: make measure ARGS='tap --selector ...'
+MEASURE := node .opencode/lib/design-review/measure.mjs
 
 help:
 	@printf "\n"
@@ -40,6 +44,8 @@ help:
 	@printf "\n"
 	@printf "$(MAGENTA)Design review$(RESET)\n"
 	@printf "  $(GREEN)make capture$(RESET)    📸  Write desktop.png (1440) and mobile.png (390) for review\n"
+	@printf "  $(GREEN)make measure$(RESET)    🔬  Measure a rendered page: overflow, contrast, tap, pointer\n"
+	@printf "  $(DIM)                     ARGS='overflow --url http://localhost:4321/dnd-tools/dice-roller/'$(RESET)\n"
 	@printf "\n"
 	@printf "$(MAGENTA)Agent skills$(RESET)\n"
 	@printf "  $(GREEN)make submodule-init$(RESET)    📥  Check out the pinned Impeccable skill\n"
@@ -72,6 +78,11 @@ check:
 # the display font is not genuinely loaded, and writes nothing if it is not.
 capture:
 	$(CAPTURE)
+
+# Answers the three questions a resized viewport or a screenshot cannot. See
+# docs/audits/2026-09-26-rendered-verification-report.md.
+measure:
+	$(MEASURE) $(ARGS)
 
 upgrade:
 	pnpm dlx @astrojs/upgrade

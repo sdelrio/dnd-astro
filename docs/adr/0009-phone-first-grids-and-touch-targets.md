@@ -69,6 +69,30 @@ Gating hover tints rather than resetting them afterwards keeps the dark-theme ov
 
 No browser automation was available, so **none of this was confirmed by a rendered screenshot or synthesized touch input**. The layout arithmetic, the `sm:flex!` cascade, and the pointer gating are all static reasoning over the stylesheet and the shipped Alpine source. Testing on a real phone at 320px and 390px remains outstanding and is the main thing still open.
 
+### Superseded by measurement, partially
+
+The rendered-verification command added in
+[`docs/audits/2026-09-26-rendered-verification-report.md`](../audits/2026-09-26-rendered-verification-report.md)
+answers most of what this section left open, against the built site:
+
+- **No page scrolls horizontally at 320, 360, 390 or 640** on any tool page, measured rather
+  than argued. One element is wider than a 320px viewport and is clipped by an ancestor: the
+  `.char-meta` line on a character card, about 17px past the edge.
+- **The collapsed mobile filter panels open.** A synthesized touch tap on the Filters disclosure
+  in the feat explorer and in character search opens the panel at 320, 360 and 390, and
+  `aria-expanded` flips with it. The `sm:flex!` cascade behaves at 640, where the toggle is
+  hidden by design and the panel is already in a row. This is the check this ADR's first cut
+  failed and a source-string assertion could not catch.
+- **The pointer rules branch as decided** for the two device profiles a browser can be emulated
+  into: the hover tint is gated on `hover: hover`, the press tint is ungated, and the spacing
+  follows the coarse pointer.
+
+Still open, and still needing real hardware: how a real device reports `hover`, `pointer` and
+`any-pointer` (the hybrid profile cannot be emulated at all), whether a finger sees the press
+tint (a held synthesized touch does not put the element into `:active` in this browser), and
+the iOS focus-zoom on the search field. The paragraph above is kept because it records what was
+believed when the decision was taken; the report records what was measured after it.
+
 Decision 4's reasoning is a fact about how `hover` and `pointer` are defined, not about any particular device, so it does not need a hybrid laptop to validate - only a test that the CSS branches as intended. The two tests covering it were mutation-checked: re-gating the press on `hover: none` and reverting the gap to `pointer: coarse` each fail the suite, so neither can silently regress. Confirming the *reported values* on real hybrid hardware remains a good idea and is cheap, but the previous revision of this ADR was wrong about them, which is a stronger reason to prefer the media-query reasoning over an anecdote.
 
 ## References
