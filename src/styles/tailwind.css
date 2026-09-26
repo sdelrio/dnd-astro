@@ -72,6 +72,75 @@
 
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
+/* ---------------------------------------------------------------------------
+   Palette tokens
+
+   DESIGN.md's Warm-Only Rule forbids the cool default scale, but the Card body
+   and every tool input were written against Tailwind's `gray-*` utilities -
+   roughly 340 call sites. Rather than a find-and-replace across every one, the
+   `gray` scale is redefined here onto the bark ramp from DESIGN.md, so those
+   call sites become warm without churn and the palette stays changeable in one
+   place.
+
+   The step *numbers* keep Tailwind's meaning (50 lightest, 900 darkest) so
+   `text-gray-900` on a light surface and `dark:text-gray-100` on a dark one keep
+   working as before.
+
+   Scope note: this reaches further than the character viewer. Starlight's own
+   components use 32 `gray-*` utilities, so the documentation chrome warms too.
+   That is intended - the docs shell is already on the bark ramp via
+   `--sl-color-gray-*` - and no Starlight step crosses a WCAG threshold in either
+   direction. Omitting preflight keeps the *reset* off the docs pages; it is not
+   what contains this change.
+
+   `gray-500` is the one step that needs care. No single mid-tone can clear 4.5:1
+   against both a white surface and a near-black one - the two constraints are
+   mutually exclusive - so it is balanced the way Tailwind's own gray-500 was:
+   #786d6a gives 4.65:1 on the light surface and 3.55:1 on the dark one, against
+   Tailwind's 4.49:1 and 3.68:1. Most call sites already pair it with a
+   `dark:` step; this keeps the light surface, which is where it is most used,
+   above AA. bark-550 is interpolated, not a DESIGN.md value.
+   --------------------------------------------------------------------------- */
+@theme {
+  --color-gray-50: #f8f6f5;   /* bark-100  */
+  --color-gray-100: #f1eceb;  /* bark-200  */
+  --color-gray-200: #e6e0de;  /* bark-250, interpolated */
+  --color-gray-300: #d9d3cf;  /* bark-300, interpolated */
+  --color-gray-400: #9a908c;  /* bark-500, lifted to clear 4.5:1 on bark-800 */
+  --color-gray-500: #786d6a;  /* bark-550, interpolated - see note above */
+  --color-gray-600: #605552;  /* bark-600  */
+  --color-gray-700: #4a403a;  /* bark-650  */
+  --color-gray-800: #2e2421;  /* bark-800  */
+  --color-gray-900: #1b1716;  /* bark-black */
+  /* Tailwind ships an eleventh step. @theme merges rather than replaces, so
+     without this `bg-gray-950` stays Tailwind's cool oklch near-black - it is
+     used by Starlight's own components, not by anything in src/. */
+  --color-gray-950: #0f0d0c;  /* below bark-black, interpolated */
+
+  /* Named aliases, for new code. Prefer these over the `gray` scale so intent
+     is explicit; the scale above exists to retire the existing call sites. */
+  --color-bark-100: #f8f6f5;
+  --color-bark-200: #f1eceb;
+  --color-bark-400: #c7c0be;
+  --color-bark-500: #9a908c;
+  --color-bark-550: #786d6a;
+  --color-bark-600: #605552;
+  --color-bark-700: #3f3632;
+  --color-bark-800: #2e2421;
+  --color-bark-black: #1b1716;
+  --color-moss-100: #e8ede1;
+  --color-moss-700: #404521;
+  --color-moss-800: #363b17;
+  --color-parchment: #d4c4a8;
+  --color-ink: #2a2010;
+  --color-oxblood: #58180d;
+  --color-gold: #c68000;
+  --color-gold-rule: #c9ad6a;
+  --color-sage: #697066;
+  --color-sage-deep: #394036;
+  --color-sage-light: #b9c0b6;
+}
+
 /* Font family custom properties */
 :root {
   --sl-font: 'Bookinsanity', Georgia, serif;
@@ -197,9 +266,12 @@
   border-bottom: none;
 }
 
+/* Light stripes were cool (#d9e0d6/#d0e0d6) while the dark counterparts are
+   moss (#404521/#363b17). ADR 0005 fixes the pattern, not the hues, so the odd
+   row is warmed to sit in the same moss family as its dark counterpart. */
 .sl-markdown-content tbody tr:nth-child(odd):not(:where(.not-content *)) {
   background-color: transparent;
-  background-image: linear-gradient(to right, transparent, #d9e0d6 2%, #d0e0d6 98%, transparent);
+  background-image: linear-gradient(to right, transparent, #dfe4d1 2%, #d5dcc6 98%, transparent);
 }
 
 .sl-markdown-content tbody tr:nth-child(even):not(:where(.not-content *)) {
@@ -282,40 +354,70 @@
   }
 }
 
-.starlight-aside--note {
-  --sl-color-asides-border: #2563eb;
-  background-color: #eff6ff;
+/* D&D admonition palette.
+
+   These were Tailwind's stock blue/green/amber/red, which is off-system and had
+   no warm counterpart. Each type now carries a light and a dark step from the
+   bark/moss/gold/oxblood ramps, keeping the semantic distinction (note is calm
+   neutral, tip is green, caution is gold, danger is oxblood) without leaving the
+   warm family.
+
+   `--sl-color-asides-text-accent` (the aside title colour) is overridden too -
+   Starlight defaults it to blue/purple/orange/red, which is just as off-system.
+   The light rules are scoped with `:root` because Starlight declares the same
+   property on the same class later in its own stylesheet; at equal specificity
+   the later declaration wins, so without the extra `:root` these overrides are
+   silently dead. The dark rules were already specific enough via
+   `:root[data-theme='dark']`.
+   */
+:root .starlight-aside--note {
+  --sl-color-asides-border: #697066;
+  --sl-color-asides-text-accent: #394036;
+  background-color: #f8f6f5;
 }
 
-.starlight-aside--tip {
-  --sl-color-asides-border: #16a34a;
-  background-color: #f0fdf4;
+:root .starlight-aside--tip {
+  --sl-color-asides-border: #404521;
+  --sl-color-asides-text-accent: #363b17;
+  background-color: #e8ede1;
 }
 
-.starlight-aside--caution {
-  --sl-color-asides-border: #d97706;
-  background-color: #fffbeb;
+:root .starlight-aside--caution {
+  --sl-color-asides-border: #a06e00;
+  --sl-color-asides-text-accent: #8a5600;
+  background-color: #faf0dc;
 }
 
-.starlight-aside--danger {
-  --sl-color-asides-border: #dc2626;
-  background-color: #fef2f2;
+:root .starlight-aside--danger {
+  --sl-color-asides-border: #58180d;
+  --sl-color-asides-text-accent: #58180d;
+  background-color: #f7ebe6;
 }
 
-/* Dark mode admonition backgrounds */
+/* Dark mode admonition backgrounds. Each border steps lighter here: the dark
+   fills are close enough to their light-theme border colours that the border
+   disappears against them (tip was 1.17:1, danger 1.10:1). */
 :root[data-theme='dark'] .starlight-aside--note {
-  background-color: #1e3a5f;
+  --sl-color-asides-border: #b9c0b6;
+  --sl-color-asides-text-accent: #b9c0b6;
+  background-color: #2e2421;
 }
 
 :root[data-theme='dark'] .starlight-aside--tip {
-  background-color: #14532d;
+  --sl-color-asides-border: #8fae5c;
+  --sl-color-asides-text-accent: #8fae5c;
+  background-color: #363b17;
 }
 
 :root[data-theme='dark'] .starlight-aside--caution {
-  background-color: #78350f;
+  --sl-color-asides-border: #d99a2b;
+  --sl-color-asides-text-accent: #d99a2b;
+  background-color: #46331d;
 }
 
 :root[data-theme='dark'] .starlight-aside--danger {
-  background-color: #7f1d1d;
+  --sl-color-asides-border: #c2603f;
+  --sl-color-asides-text-accent: #d98a6b;
+  background-color: #3d1f18;
 }
 
