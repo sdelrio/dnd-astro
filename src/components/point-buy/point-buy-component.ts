@@ -13,6 +13,7 @@ export interface PointBuyComponent {
   calculateModifier: typeof pointBuy.calculateModifier;
   formatModifier: typeof pointBuy.formatModifier;
   getScoreCost: typeof pointBuy.getScoreCost;
+  formatCostLine: typeof pointBuy.formatCostLine;
   canIncrease: typeof pointBuy.canIncrease;
   canDecrease: typeof pointBuy.canDecrease;
   pointsRemaining: typeof pointBuy.pointsRemaining;
@@ -37,6 +38,7 @@ export function pointBuyComponent(): PointBuyComponent {
     calculateModifier: pointBuy.calculateModifier,
     formatModifier: pointBuy.formatModifier,
     getScoreCost: pointBuy.getScoreCost,
+    formatCostLine: pointBuy.formatCostLine,
     canIncrease: pointBuy.canIncrease,
     canDecrease: pointBuy.canDecrease,
     pointsRemaining: pointBuy.pointsRemaining,

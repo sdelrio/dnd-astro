@@ -4,43 +4,63 @@ import {
   ABILITY_NAMES,
   calculateModifier,
   createDefaultScores,
+  formatCostLine,
   formatModifier,
-  getScoreCost,
   pointsRemaining,
 } from './point-buy-utils';
 
 const initialScores = createDefaultScores();
 ---
 
-<div x-data="pointBuy" class="not-content space-y-6">
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<div x-data="pointBuy" class="point-buy-needs-js not-content space-y-6">
+  <!-- With scripting off, every control below is inert and the six tiles would
+       read as a real allocation of 27 unspent points. A `<noscript>` block
+       cannot remove them, so the note leads and hides them instead of leaving
+       live-looking steppers that do nothing. `is:inline` is required: Astro
+       would otherwise hoist this stylesheet into the head unconditionally,
+       where it would hide the tool for everyone, scripting enabled or not. -->
+  <noscript>
+    <style is:inline>
+      .point-buy-needs-js > .js-only {
+        display: none !important;
+      }
+    </style>
+    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-300">
+      <p class="font-medium">Point Buy needs JavaScript.</p>
+      <p class="mt-1">Every other page on this site works without it. With it enabled you spend the standard 27-point pool across all six abilities and see the modifier and cost of each score as you go.</p>
+    </div>
+  </noscript>
+
+  <h2 class="sr-only">Ability scores</h2>
+
+  <div class="js-only grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {ABILITY_NAMES.map((ability) => (
       <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 text-center">
         <h3 class="font-bold text-gray-900 dark:text-gray-100">{ability}</h3>
         <div
-          class="mt-2 text-3xl font-bold text-gray-900 dark:text-gray-100"
+          class="mt-2 text-3xl font-bold tabular-nums text-gray-900 dark:text-gray-100"
           x-text={`scores.${ability}`}
         >
           {initialScores[ability]}
         </div>
         <div
-          class="text-sm font-medium text-gray-600 dark:text-gray-400"
+          class="text-sm font-medium tabular-nums text-gray-600 dark:text-gray-400"
           x-text={`formatModifier(calculateModifier(scores.${ability}))`}
         >
           {formatModifier(calculateModifier(initialScores[ability]))}
         </div>
         <div
-          class="mt-1 text-xs text-gray-500 dark:text-gray-400"
-          x-text={`'Cost: ' + getScoreCost(scores.${ability})`}
+          class="mt-1 text-xs tabular-nums text-gray-500 dark:text-gray-400"
+          x-text={`formatCostLine(scores.${ability})`}
         >
-          Cost: {getScoreCost(initialScores[ability])}
+          {formatCostLine(initialScores[ability])}
         </div>
         <div class="mt-3 flex items-center justify-center gap-3">
           <button
             type="button"
             @click={`decrease('${ability}')`}
             :disabled={`!canDecrease(scores, '${ability}')`}
-            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
             aria-label={`Decrease ${ability}`}
           >
             <IconifyIcon icon="mdi:minus" />
@@ -49,7 +69,7 @@ const initialScores = createDefaultScores();
             type="button"
             @click={`increase('${ability}')`}
             :disabled={`!canIncrease(scores, '${ability}')`}
-            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
             aria-label={`Increase ${ability}`}
           >
             <IconifyIcon icon="mdi:plus" />
@@ -59,11 +79,27 @@ const initialScores = createDefaultScores();
     ))}
   </div>
 
-  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4">
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <p class="text-lg font-bold text-gray-900 dark:text-gray-100">
-          <span class="text-(color:--sl-color-accent)" x-text="pointsRemaining(scores)">
+  <!-- The readout is the constraint every press is judged against, so it stays
+       pinned to the bottom of the viewport for the whole length of the grid
+       instead of sitting 1400px below the first tile on a phone. It is the last
+       block in the flow, so nothing is ever trapped behind it: scrolling to the
+       end settles it back into its natural place. The bottom padding follows the
+       home-indicator inset, which is where a phone held at a table actually
+       puts the bar. -->
+  <div class="js-only sticky bottom-0 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <!-- One row at every width. Pinned to the bottom of a phone, this bar is
+         15% of the viewport if it stacks, and it wraps rather than stacks: the
+         completion chip is the only thing that needs a second line, and it
+         only appears once, at the end. -->
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-3">
+        <!-- `String(...)` is not redundancy: the one value this readout takes
+             is 0 on a finished spread, and happy-dom assigns a numeric 0 to
+             textContent as "" rather than "0". A browser paints "0" either
+             way, so the coercion is free here and it keeps the empty-pool state
+             legible to the test DOM. -->
+        <p class="text-lg font-bold tabular-nums text-gray-900 dark:text-gray-100">
+          <span class="text-(color:--sl-color-accent)" x-text="String(pointsRemaining(scores))">
             {pointsRemaining(initialScores)}
           </span> points remaining
         </p>
@@ -77,7 +113,7 @@ const initialScores = createDefaultScores();
       <button
         type="button"
         @click="reset()"
-        class="inline-flex items-center gap-2 px-4 py-2 bg-(--sl-color-accent-contrast) text-(color:--sl-color-text-invert) rounded-lg shadow hover:bg-(--sl-color-accent-high) transition-colors"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-(--sl-color-accent-contrast) text-(color:--sl-color-text-invert) rounded-lg shadow hover:bg-(--sl-color-accent-high) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
         aria-label="Reset all scores"
       >
         <IconifyIcon icon="mdi:restore" />

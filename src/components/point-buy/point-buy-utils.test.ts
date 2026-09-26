@@ -6,6 +6,8 @@ import {
   POINT_BUY_POOL,
   SCORE_COSTS,
   getScoreCost,
+  nextStepCost,
+  formatCostLine,
   createDefaultScores,
   resetScores,
   pointsSpent,
@@ -50,6 +52,47 @@ describe('getScoreCost', () => {
     expect(getScoreCost(13)).toBe(5);
     expect(getScoreCost(14)).toBe(7);
     expect(getScoreCost(15)).toBe(9);
+  });
+});
+
+describe('nextStepCost', () => {
+  it('prices the marginal press, not the score', () => {
+    // The 5e table is not linear, so the delta is the only number that answers
+    // "what does one more cost": 1 per point up to 13, then 2 for each of the
+    // last two.
+    expect(nextStepCost(8)).toBe(1);
+    expect(nextStepCost(12)).toBe(1);
+    expect(nextStepCost(13)).toBe(2);
+    expect(nextStepCost(14)).toBe(2);
+  });
+
+  it('is 0 at the maximum, where there is no next press', () => {
+    expect(nextStepCost(MAX_SCORE)).toBe(0);
+  });
+
+  it('agrees with the bound it guards', () => {
+    // canIncrease refuses a step the pool cannot pay for, and the tile quotes
+    // this same number as the price. One helper, so they cannot disagree.
+    for (let score = MIN_SCORE; score < MAX_SCORE; score++) {
+      const affordable: Scores = { STR: score, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 };
+      const broke: Scores = { ...affordable, DEX: 14, CON: 14, INT: 14 };
+      expect(canIncrease(affordable, 'STR')).toBe(true);
+      if (pointsRemaining(broke) < nextStepCost(score)) {
+        expect(canIncrease(broke, 'STR')).toBe(false);
+      }
+    }
+  });
+});
+
+describe('formatCostLine', () => {
+  it('carries the score cost and the price of the next press', () => {
+    expect(formatCostLine(8)).toBe('Cost 0, next +1');
+    expect(formatCostLine(13)).toBe('Cost 5, next +2');
+    expect(formatCostLine(14)).toBe('Cost 7, next +2');
+  });
+
+  it('says max at the ceiling instead of quoting a price for a press that cannot happen', () => {
+    expect(formatCostLine(MAX_SCORE)).toBe('Cost 9, max');
   });
 });
 
