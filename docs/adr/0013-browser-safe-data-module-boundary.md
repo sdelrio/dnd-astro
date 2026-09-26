@@ -34,12 +34,37 @@ graph used the file read, so the bundler dropped the read and never evaluated
 the stub. Two symptoms, one defect - and the build warning is the cheaper of the
 two signals to check, because it needs no browser.
 
+The gates that already exist are structurally blind to this, for reasons that
+are not oversights. `pnpm lint` has nothing to say: both ends of the edge are
+valid TypeScript. The type checker is the same story - the roster module's
+`readFileSync` is correctly typed for a Node module, and nothing in the type
+system distinguishes an import that will be evaluated in a browser from one that
+will not. The DOM harness mounts components in Node, where `readFileSync`
+resolves perfectly, so the very suite ADR-0010 added to catch broken Alpine
+expressions passes. And the production build tree-shakes the unused read away
+along with its import, so the shipped bundle is clean and the built site works
+correctly. The failure is dev-only. In short, the runtime tools erase the very
+shape of the defect and the compiler permits it, so the browser is the only
+place it appears - and it appears by throwing, before `Alpine.start()`. Because
+evaluation is atomic, that one edge disables interactivity on every page of the
+site rather than on the one component that introduced it: the blast radius is
+the site, not the widget. A test of the module graph is therefore part of this
+decision, not an optional extra that a later ticket may add.
+
 The awkward part is that the shared data is genuinely shared. The role config is
 needed at build time (to render the chips and the pills) and in the browser (as
 the type of a reactive field on the party view component). The obvious
 refactor - move the values out, then re-export them from the roster module so
 existing imports keep working - would have restored a working import path from
 client code to a module that reads the filesystem, which is the whole defect.
+
+To be clear about what is and is not wrong here: the roster module's
+dependency on the filesystem is legitimate in principle. This is a prerendered
+Astro site, and reading a data file off disk at build time is exactly the right
+way to turn that file into HTML. Nothing in this decision argues against
+build-time file reads. The narrower rule is that they do not belong in a module
+the browser can reach, so the read and the data have to live on opposite sides
+of the boundary.
 
 ## Decision Drivers
 
@@ -70,6 +95,17 @@ client code to a module that reads the filesystem, which is the whole defect.
   import could be removed entirely. Rejected as the primary fix: it leaves the
   type unavailable where a consumer needs it, and the issue's shape - a named
   type for one role's config - is the better answer. The dataset stays.
+- **Rely on the suite that already exists.** The DOM harness from ADR-0010
+  already boots a real Alpine over real markup, so it is the obvious place to
+  expect the regression to surface, and adding nothing would be the cheapest
+  outcome. Rejected, and rejected on evidence rather than principle: the harness
+  runs under a Node test environment, so the import that breaks the browser
+  resolves perfectly in the test, every test in the repo passed while the entire
+  site was inert under `astro dev`, and the production build erased the import
+  before it could be observed. No amount of additional coverage in that harness
+  changes where it runs, so the suite cannot be the net. The net has to assert a
+  property of the module graph statically, which is a new kind of test for this
+  repo and is why it is called out as part of the decision.
 - **Split the data into its own import-free module; client components take it as
   a type-only import; the build side imports the values; the build side does not
   re-export.** Chosen.
@@ -108,18 +144,29 @@ A type-only import describes the shape of what came back.
 - Good, because `astro dev` runs the site again, and `make measure` works against
   the dev server, which it previously refused to.
 - Good, because the rule is a property of the module graph, so a test can assert
-  it statically. `party-roles.test.ts` walks the client graph and fails if a
-  `node:` builtin appears anywhere in it, and fails if the type-only import
-  becomes a value import. Both fail loudly if the defect is reintroduced.
+  it statically. `src/alpine-client-graph.test.ts` is the enforcement mechanism
+  for the first rule: it walks first-party imports from `src/alpine.ts`, refuses
+  any Node builtin it finds, and reports the import chain that reached it. It
+  also sweeps the client scripts embedded in `.astro` files, so a self-
+  registering component gets the same net without being wired through the
+  entrypoint, and it does not traverse third-party packages, so a dependency's
+  own internals cannot fail this repo's build. `party-roles.test.ts` covers
+  this module specifically: the data module has no imports of its own, the
+  roster module imports it and does not re-export it, and the client
+  component's import stays type-only. All of them fail loudly if the defect
+  is reintroduced.
 - Good, because the build warning is now a usable regression signal on its own:
   a clean `pnpm build` log is a check that needs no browser.
 - Neutral, because there is one more module and one more indirection to follow
   when looking for the role config.
-- Bad, because nothing in the toolchain enforces the boundary. The boundary is a
-  convention plus a test, so a new build-side module can still be imported from
-  client code and the failure mode is the whole site going inert, not one
-  component. The test guards the party view's graph specifically; extending it to
-  every Alpine behaviour module is the obvious next step and is not done here.
+- Bad, because the boundary is a convention plus a test, not a property the
+  toolchain enforces. A new build-side module can still be imported from client
+  code, and the failure mode when that happens is the whole site going inert
+  rather than one component misbehaving. The graph test is what stands between
+  that mistake and a merge, and it is a lint-style net rather than a proof: it
+  knows which specifiers are first-party and which are type-only, so an edge
+  spelled in a way it does not recognise would pass it. Keeping it accurate is
+  ongoing work, not a one-off.
 - Neutral, because the `Role` and `RoleConfig` types are structurally decoupled
   from the values at the point of use, so a drift between the data attribute the
   view writes and the type the component declares would not be caught by the
@@ -129,8 +176,12 @@ A type-only import describes the shape of what came back.
 ## Links
 
 - [#351](https://github.com/sdelrio/dnd-astro/issues/351) - the inert dev server
+- [#352](https://github.com/sdelrio/dnd-astro/issues/352) - the client graph
+  guard test, the enforcement this decision calls for
 - [#354](https://github.com/sdelrio/dnd-astro/issues/354) - measuring against the dev server, unblocked by this
 - ADR-0010: Register Alpine Components with `Alpine.data`, Never `window` Globals
+  (the cause: it put the party view's behaviour in the client graph, which is
+  what made the roster import reachable from the browser)
 - ADR-0007: Render Mermaid Diagrams with the astro-mermaid Integration (the
   client graph must stay free of Node builtins; the build stays free of a
   headless browser)
