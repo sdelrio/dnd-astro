@@ -175,6 +175,97 @@ describe('DiceRoller ability tile markup', () => {
   });
 });
 
+describe('DiceRoller hardening', () => {
+  it('caps the log and the stats sample so a long session cannot grow unbounded', () => {
+    expect(source).toContain('const LOG_LIMIT = 20;');
+    expect(source).toContain('const SESSION_ROLL_LIMIT = 50;');
+    // The log is newest-first, so it is trimmed at the tail; the sample keeps
+    // the most recent rolls for the same reason.
+    expect(source).toContain('this.resultLog.length = LOG_LIMIT');
+    expect(source).toContain('this.sessionRolls.splice(0, this.sessionRolls.length - SESSION_ROLL_LIMIT)');
+  });
+
+  it('invalidates a pending per-ability roll when a full roll starts', () => {
+    // Without the epoch guard, a re-roll scheduled 300ms earlier landed in the
+    // middle of "Roll All Abilities" and overwrote one of its six tiles.
+    expect(source).toContain('this.rollEpoch++');
+    expect(source).toContain('const epoch = this.rollEpoch;');
+  });
+
+  it('releases the rolling flag on the bail path, not just on success', () => {
+    // The bail returns before `updateAbilityWithRoll`, which is the only thing
+    // that normally forces `rolling: false`. `rollAll` sweeping all six tiles
+    // masks a stranded flag today, so this asserts the invariant rather than
+    // relying on that coincidence to hold.
+    const bail = source.match(/if \(this\.rollEpoch !== epoch\) \{[\s\S]*?\}/);
+    expect(bail).not.toBeNull();
+    expect(bail![0]).toContain('this.abilities[index].rolling = false;');
+  });
+
+  it('announces a refused tap instead of ignoring it', () => {
+    // The tile stays clickable through a roll and after the session's one swap;
+    // a silent return left a control that looked live and did nothing.
+    const select = source.slice(
+      source.indexOf('selectAbility(index: number) {'),
+      source.indexOf('confirmSwap() {')
+    );
+    expect(select).toMatch(/if \(this\.isRolling\) \{[\s\S]*?announce\(/);
+    expect(select).toMatch(/if \(this\.swapUsed\) \{[\s\S]*?announce\(/);
+  });
+
+  it('cancels a staged swap on Escape and stays quiet when nothing is staged', () => {
+    expect(source).toContain('@keydown.escape.window="cancelSwap()"');
+    expect(source).toContain('if (!this.stagedSwap && this.selectedIndex === null) return;');
+  });
+
+  it('does not invent a log line when a swap is staged before the first roll', () => {
+    expect(source).toContain('if (this.resultLog.length > 0) {');
+  });
+
+  it('wraps long log lines', () => {
+    expect(source).toMatch(/font-mono break-words/);
+  });
+});
+
+describe('DiceRoller without JavaScript', () => {
+  it('leads with a note instead of a live-looking dead button', () => {
+    // A `<noscript>` block cannot remove the controls, so the note has to come
+    // first and hide them. Leaving the inert button on screen is the exact
+    // failure this is here to prevent.
+    const noscript = source.slice(
+      source.indexOf('<noscript>'),
+      source.indexOf('</noscript>')
+    );
+    expect(noscript).toContain('needs JavaScript');
+    expect(noscript).toContain('display: none !important');
+    expect(source.indexOf('<noscript>')).toBeLessThan(source.indexOf('rollAll()'));
+  });
+
+  // If Astro hoists this stylesheet out of `<noscript>` into the head, the rule
+  // applies to everyone and every control vanishes on a working page. That is a
+  // silent total failure, so the modifier is pinned.
+  it('keeps the hiding rule inside noscript with is:inline', () => {
+    expect(source).toMatch(/<noscript>[\s\S]*?<style is:inline>/);
+  });
+
+  it('marks every inert region and gives the rule a root to hang off', () => {
+    expect(source).toContain('class="dice-roller-needs-js not-content space-y-6"');
+    // The button, the tile grid, and the stats card. The result log is already
+    // `x-cloak`, which never lifts without Alpine, so it needs no marker.
+    const marked = source.match(/class="js-only[^"]*"/g) ?? [];
+    expect(marked).toHaveLength(3);
+  });
+});
+
+describe('DiceRoller stats window', () => {
+  it('says the sample is a rolling window, since the session is now capped', () => {
+    // Capping `sessionRolls` quietly changed what "Stats" means. A table
+    // comparing tonight's average to an earlier one needs the window stated.
+    expect(source).toContain('last 50 rolls');
+    expect(source).toContain('const SESSION_ROLL_LIMIT = 50;');
+  });
+});
+
 describe('DiceRoller responsive layout', () => {
   // A phone is the context this is read in. Three columns left each tile about
   // 106px on a 360px viewport, but a tile's floor is its four-die row (4*28 +
