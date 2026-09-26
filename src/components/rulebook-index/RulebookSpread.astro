@@ -1,0 +1,740 @@
+---
+/**
+ * The site index, set as an open rulebook spread.
+ *
+ * The incumbent was a flat link list: a row of LinkButtons that repeated six of
+ * the entries printed directly beneath it, then three identical icon-and-text
+ * lists at one level of hierarchy. Everything here follows from refusing that.
+ * The page is a printed sheet with a gutter, the entries carry a citable folio,
+ * and the tools get the one raised surface on the page - the instrument panel a
+ * table reaches for - so the leaf of rules and the panel of tools read as two
+ * different materials rather than as two lists.
+ *
+ * The only motion is the gutter: one scroll-driven probe writes the current
+ * part's numeral and the sheet's scroll fraction onto the root, and CSS
+ * crossfades the numeral and scales the fill. No entrance animation anywhere,
+ * because on an index a row that has not appeared yet is a row the reader
+ * thinks is missing.
+ */
+import IconifyIcon from '../IconifyIcon.astro';
+import { rulebookParts, type RulebookCue, type RulebookPart } from './rulebook-parts';
+
+/** The two printed leaves and the panel. Order is the reading order. */
+const [houseRules, reference, tools] = rulebookParts;
+
+/** Parts I and II are printed matter; Part III is the one raised panel. */
+const printedParts: RulebookPart[] = [houseRules, reference];
+const panelParts: RulebookPart[] = [tools];
+
+const CUE_LABEL: Record<RulebookCue, string> = {
+	table: 'At the table',
+	session: 'Between sessions',
+	build: 'Character creation',
+	lookup: 'Lookup',
+};
+---
+
+<div class="not-content rb" data-rb>
+	{/*
+		The colophon. A book states what it is before it opens; this is the two
+		sentences the incumbent carried, set in the italic because a colophon is
+		set in the italic, and kept factual on purpose. It is the only prose on
+		the page and it is not a pitch.
+	*/}
+	<p class="rb-colophon">
+		This page centralizes Dungeons &amp; Dragons house custom rules, balance patches, and
+		essential mechanics. It serves as a comprehensive reference to ensure consistency and streamline
+		tabletop gameplay.
+	</p>
+
+	<div class="rb-sheet">
+		{/*
+			The gutter. It is a grid column on desktop, between the two leaves,
+			and the same element collapses to a sticky left margin on a phone. One
+			element rather than two: the numeral and the fill are one piece of
+			state, and a second copy would be a second thing to keep in sync.
+			aria-hidden because it reports position only - the part headings
+			already carry the document outline, and naming each part as a region
+			would repeat the same landmark three times over.
+		*/}
+		<div class="rb-gutter" aria-hidden="true">
+			<span class="rb-gutter-numeral" data-rb-numeral>{houseRules.numeral}</span>
+			<span class="rb-gutter-track">
+				<span class="rb-gutter-fill" data-rb-fill></span>
+			</span>
+		</div>
+
+		<div class="rb-leaves">
+			{/* The left leaf: the rulebook itself. */}
+			<div class="rb-leaf">
+				{
+					printedParts.map((part) => (
+						<section class="rb-part" data-rb-part={part.numeral} aria-labelledby={`rb-part-${part.numeral}`}>
+							<h2 class="rb-part-title" id={`rb-part-${part.numeral}`}>
+								<span class="rb-part-numeral">{part.numeral}</span>
+								<span class="rb-part-name">{part.title}</span>
+							</h2>
+							<p class="rb-part-standfirst">{part.standfirst}</p>
+							<ul class="rb-entries">
+								{part.entries.map((entry) => (
+									<li class="rb-entry">
+										<a class="rb-entry-link" href={entry.href}>
+											<span class="rb-entry-folio">{entry.folio}</span>
+											<span class="rb-entry-icon">
+												<IconifyIcon icon={entry.icon} width="1.25em" />
+											</span>
+											<span class="rb-entry-text">
+												<span class="rb-entry-name">{entry.title}</span>
+												<span class="rb-entry-desc">{entry.description}</span>
+											</span>
+											<span class="rb-entry-cue">{CUE_LABEL[entry.cue]}</span>
+										</a>
+									</li>
+								))}
+							</ul>
+						</section>
+					))
+				}
+			</div>
+
+			{/*
+				The right leaf: the standing panel. Its heading sits OUTSIDE the
+				panel box, level with the two headings on the left, so the spread
+				opens on one line. Putting the heading inside the raised box put
+				the panel's border above the left leaf's cap-height and the two
+				leaves started a third of a line apart, which reads as a
+				misalignment rather than as a spread.
+			*/}
+			<div class="rb-leaf rb-leaf--panel">
+				{
+					panelParts.map((part) => (
+						<section data-rb-part={part.numeral} aria-labelledby={`rb-part-${part.numeral}`}>
+							<h2 class="rb-part-title" id={`rb-part-${part.numeral}`}>
+								<span class="rb-part-numeral">{part.numeral}</span>
+								<span class="rb-part-name">{part.title}</span>
+							</h2>
+							<p class="rb-part-standfirst">{part.standfirst}</p>
+							<div class="rb-panel">
+								<ul class="rb-entries">
+									{part.entries.map((entry) => (
+										<li class="rb-entry">
+											<a class="rb-entry-link" href={entry.href}>
+												<span class="rb-entry-folio">{entry.folio}</span>
+												<span class="rb-entry-icon">
+													<IconifyIcon icon={entry.icon} width="1.25em" />
+												</span>
+												<span class="rb-entry-text">
+													<span class="rb-entry-name">{entry.title}</span>
+													<span class="rb-entry-desc">{entry.description}</span>
+												</span>
+												<span class="rb-entry-cue">{CUE_LABEL[entry.cue]}</span>
+											</a>
+										</li>
+									))}
+								</ul>
+							</div>
+						</section>
+					))
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	/* ---------------------------------------------------------------------------
+	   The sheet breaks the 55rem documentation measure.
+
+	   Every other page on the site is capped at 55rem because it is prose. An
+	   index is not prose, it is a two-page spread, and at 880px the two leaves
+	   would be 400px each - narrower than a phone, which is the one width this
+	   page cannot afford to be bad at. So the sheet takes its own wider measure
+	   and centres itself on the content column with the standard
+	   translateX(-50%) breakout.
+
+	   `calc(100vw - 2.5rem)` is the overflow guard, and it is load-bearing: the
+	   breakout is expressed in viewport units, so on a narrow screen it can
+	   exceed the content column and put a horizontal scrollbar on a 320px
+	   phone. 100vw includes the scrollbar gutter, so the 1.25rem of slack per
+	   side is what keeps `make measure overflow` clean at ADR-0009's widths.
+	   --------------------------------------------------------------------------- */
+	.rb {
+		--rb-gutter-w: 1.75rem;
+		--rb-rule: color-mix(in srgb, var(--color-gold-rule) 42%, transparent);
+		--rb-rule-strong: var(--color-gold-rule);
+		--rb-ink: var(--color-ink);
+		--rb-ink-soft: var(--color-bark-600);
+		--rb-heading: var(--color-oxblood);
+		--rb-tint: var(--color-bark-100);
+		--rb-progress: 0;
+
+		position: relative;
+		left: 50%;
+		transform: translateX(-50%);
+		width: min(70rem, calc(100vw - 2.5rem));
+	}
+
+	/* The colophon: the book's own statement of what it is, before it opens. */
+	.rb-colophon {
+		margin: 0 0 2.5rem;
+		max-width: 34rem;
+		font-style: italic;
+		color: var(--rb-ink-soft);
+		text-wrap: pretty;
+	}
+
+	/* Phone first: a single column with a sticky margin. The gutter is the
+	   first column and the leaves the second, in one grid row so the margin
+	   spans all three parts rather than only the first. */
+	.rb-sheet {
+		display: grid;
+		grid-template-columns: var(--rb-gutter-w) minmax(0, 1fr);
+		grid-template-rows: auto;
+	}
+
+	.rb-gutter {
+		grid-column: 1;
+		grid-row: 1;
+		position: sticky;
+		top: 5.5rem;
+		align-self: start;
+		height: calc(100dvh - 8rem);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.75rem;
+		/* Decorative and never interactive: on desktop it sits in the gap
+		   between the leaves, and pointer events there would be surprising. */
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	.rb-gutter-numeral {
+		font-family: var(--sl-font-heading);
+		font-weight: 700;
+		/* DESIGN.md's Label step, 0.75rem. The numeral is marginalia in the
+		   outer margin, not content: it sits in the same place on every scroll,
+		   and the reader learns it in one screen. A larger step crowds a 28px
+		   column and competes with the part heading it is naming. */
+		font-size: 0.75rem;
+		line-height: 1;
+		color: var(--rb-heading);
+		/* Roman numerals are wide in Cinzel; tracking is pulled in rather than
+		   faked with a fixed width, so II and III stay optically even. */
+		letter-spacing: 0.06em;
+		transition: color 200ms ease-out;
+	}
+
+	/* The track is the unvisited rule; the fill is how far through the sheet
+	   the reader is. scaleY keeps this off the layout path entirely. */
+	.rb-gutter-track {
+		flex: 1;
+		width: 2px;
+		/* Fully round, so a 2px rule reads as a drawn line rather than as a
+		   rectangle - the one shape in this vocabulary that is neither a card
+		   nor a chip. */
+		border-radius: 999px;
+		background: var(--rb-rule);
+		overflow: hidden;
+	}
+
+	.rb-gutter-fill {
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: var(--rb-rule-strong);
+		transform: scaleY(var(--rb-progress));
+		transform-origin: top;
+	}
+
+	.rb-leaves {
+		grid-column: 2;
+		grid-row: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+		min-width: 0;
+	}
+
+	.rb-leaf {
+		min-width: 0;
+	}
+
+	/* --- Part headings -----------------------------------------------------
+	   The numeral is part of the title, not a kicker above it. A small
+	   uppercase label sitting over a heading is the one device this page
+	   refuses outright, so the numeral is set at the heading's own scale on the
+	   heading's own baseline and reads as one line: `I  House Rules`.
+	   ------------------------------------------------------------------------ */
+	.rb-part + .rb-part {
+		margin-top: 3rem;
+	}
+
+	.rb-part-title {
+		display: flex;
+		align-items: baseline;
+		gap: 0.625rem;
+		/* The rule after the title stops short of the gutter: run it flush and
+		   it merges with the panel's border two pixels away, which reads as one
+		   accidental line rather than as two leaves meeting. */
+		margin: 0 1rem 0 0;
+		font-family: var(--sl-font-heading);
+		/* DESIGN.md's Display step: the documented 28px h2, at the weight
+		   DESIGN.md gives a Card Heading. It was 2rem from lg up, which is off
+		   the ramp and bought nothing - the spread's scale already comes from
+		   Display over Title over Body. */
+		font-size: 1.75rem;
+		font-weight: 700;
+		line-height: 1.1;
+		color: var(--rb-heading);
+		text-wrap: balance;
+		letter-spacing: 0;
+	}
+
+	.rb-part-numeral {
+		color: var(--color-gold);
+	}
+
+	/* The gold rule that closes a part. The only 2px rule on the page. */
+	.rb-part-title::after {
+		content: '';
+		flex: 1;
+		min-width: 1.5rem;
+		height: 2px;
+		align-self: center;
+		background: var(--rb-rule-strong);
+	}
+
+	/* The part's one clause, under its Display heading. Body step, set in the
+	   italic so it reads as a gloss on the heading rather than as a second
+	   heading - and so the page's only two italic passages (this and the
+	   colophon) are the two places it is speaking in its own voice. */
+	.rb-part-standfirst {
+		margin: 0.5rem 0 1rem;
+		font-size: 1rem;
+		color: var(--rb-ink-soft);
+		font-style: italic;
+		text-wrap: pretty;
+	}
+
+	/* --- Entries ------------------------------------------------------------
+	   Printed contents rows, not cards. A card per entry would put 15 raised
+	   boxes on the page and flatten the one panel that is meant to be the only
+	   raised thing here; the hairline rule does the separating instead.
+	   ------------------------------------------------------------------------ */
+	.rb-entries {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border-top: 1px solid var(--rb-rule);
+	}
+
+	.rb-entry + .rb-entry {
+		border-top: 1px solid var(--rb-rule);
+	}
+
+	.rb-entry-link {
+		display: grid;
+		/* folio | icon | text | cue. The two marginalia columns are their
+		   narrowest here and widen from sm, where there is measure to spare.
+		   At 320 the folio and the icon together were a quarter of the line and
+		   the description - the part that says what is actually on the page -
+		   was left about 190px. */
+		grid-template-columns: 1.25rem 1.25rem minmax(0, 1fr);
+		align-items: start;
+		gap: 0 0.5rem;
+		padding: 0.875rem 0.5rem;
+		/* ADR-0009's 44px floor. The row is taller than that from the
+		   description alone, but a short description must not be able to make
+		   it smaller. */
+		min-height: 2.75rem;
+		color: inherit;
+		text-decoration: none;
+		/* The documented card radius. The hairline separators run the full row
+		   while the hover tint is inset by the row's own padding, so the tint's
+		   corners are the only rounded thing on the page. */
+		border-radius: 8px;
+		transition:
+			background-color 150ms ease-out,
+			box-shadow 150ms ease-out;
+	}
+
+	/* The folio is an address, not a caption, so it carries the same ink as
+	   the description. bark-500 was the obvious choice and fails: that step is
+	   tuned to clear 4.5:1 on the DARK surface and lands near 2.9:1 on white. */
+	.rb-entry-folio {
+		grid-column: 1;
+		grid-row: 1;
+		font-family: var(--sl-font-table);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		font-variant-numeric: tabular-nums;
+		color: var(--rb-ink-soft);
+		padding-top: 0.1875rem;
+		text-align: right;
+	}
+
+	.rb-entry-icon {
+		grid-column: 2;
+		grid-row: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		color: var(--rb-ink-soft);
+		transition: color 150ms ease-out;
+	}
+
+	.rb-entry-text {
+		grid-column: 3;
+		grid-row: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 0.1875rem;
+		min-width: 0;
+	}
+
+	.rb-entry-name {
+		font-family: var(--sl-font-heading);
+		/* DESIGN.md's Title step, 1.25rem, at the Card Heading's weight: the
+		   entry is a link, and a link set at Title weight 400 does not read as
+		   one. */
+		font-size: 1.25rem;
+		font-weight: 600;
+		line-height: 1.25;
+		color: var(--rb-heading);
+		text-decoration: underline;
+		text-decoration-color: var(--rb-rule);
+		text-decoration-thickness: 1px;
+		text-underline-offset: 3px;
+		transition: text-decoration-color 150ms ease-out;
+	}
+
+	.rb-entry-desc {
+		/* Body step. It was 0.875rem, which is off the ramp and small for the
+		   scene this page is built for: a player holding a phone at a table,
+		   where ADR-0009 already refuses to let an input's font drop under
+		   16px for exactly this reason. The description is the part of the row
+		   that says what is actually on the page, so it gets the documented
+		   reading size. Line-height is 1.5 rather than Body's 1.75 because
+		   these are one- and two-line rows, not rules prose. */
+		font-size: 1rem;
+		line-height: 1.5;
+		color: var(--rb-ink-soft);
+		text-wrap: pretty;
+	}
+
+	/* The cue: when a player actually needs the entry. Pill step from
+	   DESIGN.md - uppercase, 11px, 0.04em - and bark ink, because a cue tinted
+	   with a hue cannot clear 4.5:1 on the panel it sits on. */
+	.rb-entry-cue {
+		display: none;
+		grid-column: 4;
+		grid-row: 1;
+		align-self: center;
+		justify-self: end;
+		padding: 0.1875rem 0.5rem;
+		border: 1px solid var(--rb-rule);
+		border-radius: 999px;
+		font-family: var(--sl-font-table);
+		font-size: 0.6875rem;
+		font-weight: 500;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--rb-ink-soft);
+		white-space: nowrap;
+	}
+
+	/* --- States -------------------------------------------------------------
+	   Hover and focus are one treatment. The incumbent's rows were bare
+	   underlined links, so the only affordance a player had was the browser
+	   default; here the row itself answers, and the focus ring is the accent -
+	   never the same value as the ink it outlines.
+	   ------------------------------------------------------------------------ */
+	@media (hover: hover) {
+		.rb-entry-link:hover {
+			background: var(--rb-tint);
+		}
+
+		.rb-entry-link:hover .rb-entry-name {
+			text-decoration-color: var(--color-gold);
+		}
+
+		.rb-entry-link:hover .rb-entry-icon {
+			color: var(--color-gold);
+		}
+	}
+
+	.rb-entry-link:focus-visible {
+		outline: 2px solid var(--sl-color-accent);
+		outline-offset: -2px;
+		background: var(--rb-tint);
+	}
+
+	/* --- The panel: the page's one raised surface ----------------------------
+	   DESIGN.md's stat-tile language, reused: a 3px Oxblood cap, a 1px gold
+	   border, 8px radius, card-rest. It is here to say "these are instruments,
+	   not rules", and it is the only thing on the page allowed to cast a
+	   shadow.
+	   ------------------------------------------------------------------------ */
+	.rb-panel {
+		position: relative;
+		padding: 0.5rem 0.75rem 0.75rem;
+		border: 1px solid var(--rb-rule-strong);
+		border-radius: 8px;
+		background: var(--color-bark-100);
+		box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	}
+
+	/* The cap, drawn over the border so the 1px edge stays continuous. */
+	.rb-panel::before {
+		content: '';
+		position: absolute;
+		inset-inline: -1px;
+		top: -1px;
+		height: 3px;
+		border-radius: 8px 8px 0 0;
+		background: var(--color-oxblood);
+	}
+
+	/* The panel is bark-100, so the leaf's bark-100 hover would vanish on it. */
+	.rb-panel .rb-entry-link:hover {
+		background: var(--color-bark-200);
+	}
+
+	/* --- Dark theme ---------------------------------------------------------
+	   One system inverted, not a second design: the surface steps down, the ink
+	   steps up, and the single accent swaps from Oxblood to Gold Leaf. Nothing
+	   changes shape, size or spacing. The gold rule steps to its dark value for
+	   the same reason the Card heading's border does - the light step is too
+	   dark to read as a rule against bark-black.
+	   ------------------------------------------------------------------------ */
+	:root[data-theme='dark'] .rb {
+		--rb-rule: color-mix(in srgb, #867347 45%, transparent);
+		--rb-rule-strong: #867347;
+		--rb-ink: var(--color-parchment);
+		--rb-ink-soft: var(--color-bark-400);
+		--rb-heading: var(--color-gold);
+		--rb-tint: var(--color-bark-800);
+	}
+
+	:root[data-theme='dark'] .rb-panel {
+		background: var(--color-bark-800);
+		/* No shadow in dark. DESIGN.md's card-rest is 5% black, which cannot
+		   lift a surface off bark-black - so the dark panel was carrying an
+		   undocumented 45% to be visible at all. Dropping it and letting the
+		   1px gold border and the 3px cap do the structural work is both
+		   on-system and DESIGN.md's own Lifted-Not-Floating rule: a raised
+		   surface still reads as sitting on the page, and the cap or border
+		   does the work. */
+		box-shadow: none;
+	}
+
+	:root[data-theme='dark'] .rb-panel::before {
+		background: var(--color-gold);
+	}
+
+	:root[data-theme='dark'] .rb-panel .rb-entry-link:hover {
+		background: var(--color-bark-700);
+	}
+
+	/* --- sm: the cue gets its column, and the marginalia get their measure --- */
+	@media (min-width: 40rem) {
+		.rb-entry-link {
+			grid-template-columns: 1.75rem 1.5rem minmax(0, 1fr) auto;
+			gap: 0 0.75rem;
+		}
+
+		.rb-entry-cue {
+			display: block;
+		}
+	}
+
+	/* --- lg: the spread opens -----------------------------------------------
+	   The gutter moves from the left margin into the middle, between the two
+	   leaves, and widens to carry the numeral at reading size. The inner grid
+	   repeats the outer's template so the gap the gutter sits in lines up with
+	   the column it occupies - two tracks made of the same three declarations
+	   line up without needing subgrid.
+	   ------------------------------------------------------------------------ */
+	@media (min-width: 64rem) {
+		.rb {
+			--rb-gutter-w: 4rem;
+		}
+
+		.rb-sheet {
+			grid-template-columns: minmax(0, 1fr) var(--rb-gutter-w) minmax(0, 1fr);
+		}
+
+		.rb-gutter {
+			grid-column: 2;
+		}
+
+		.rb-leaves {
+			grid-column: 1 / -1;
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) var(--rb-gutter-w) minmax(0, 1fr);
+			gap: 0;
+			align-items: start;
+		}
+
+		.rb-leaf {
+			grid-column: 1;
+		}
+
+		.rb-leaf--panel {
+			grid-column: 3;
+			/* The standing leaf: it holds station while the rulebook scrolls
+			   past, which is the whole argument for giving the tools their own
+			   page. The heading goes with it, so the panel never arrives
+			   nameless. */
+			position: sticky;
+			top: 6rem;
+		}
+
+		.rb-colophon {
+			margin-bottom: 3rem;
+		}
+
+		/* The numeral is the phone's half of this device, and it is retired on
+		   the open spread. Measured, not assumed: the left leaf is about 1.3
+		   viewport-heights tall, so a probe line near the top of the screen
+		   never gets past Part I's start and the numeral sat on "I" for the
+		   entire scroll. A readout that never moves is not a readout, it is a
+		   stuck label - and on the spread the reader can see both leaves at once
+		   anyway, so the numeral has nothing left to disambiguate. The fill
+		   carries the position there on its own, and it does reach its end. */
+		.rb-gutter-numeral {
+			display: none;
+		}
+	}
+</style>
+
+<script>
+	/**
+	 * The one authored moment: the gutter reports where the reader is.
+	 *
+	 * Two values, one scroll listener, one rAF, two writes. An
+	 * IntersectionObserver was the first cut and it was wrong twice over: the
+	 * two leaves put Parts I and III on the same line, so "is this on screen"
+	 * cannot break the tie, and the panel is sticky, so it is on screen for the
+	 * entire scroll. A contents page has to pick its part by which part the
+	 * reader is *past*, which is an ordering question, not an intersection one.
+	 *
+	 * Nothing here reads a bounding rect on scroll. Positions come from
+	 * `offsetTop`, which is layout-derived and therefore unaffected by the
+	 * `position: sticky` that would make a rect lie.
+	 */
+	const root = document.querySelector<HTMLElement>('[data-rb]');
+
+	if (root) {
+		const numeralEl = root.querySelector<HTMLElement>('[data-rb-numeral]');
+		const fillEl = root.querySelector<HTMLElement>('[data-rb-fill]');
+		const sheet = root.querySelector<HTMLElement>('.rb-sheet');
+
+		// The probe line. High enough to sit below Starlight's sticky header,
+		// which is 3.5rem tall, and low enough that a part announces itself
+		// before its heading reaches the top of the screen.
+		const PROBE = 112;
+
+		/**
+		 * Document-space top of an element, ignoring sticky.
+		 *
+		 * `getBoundingClientRect` is the obvious call and it is wrong here: a
+		 * stuck element's rect is pinned, so adding scrollY to it produces a
+		 * number that grows with the scroll for an element that is not moving.
+		 * `offsetTop` is measured against the layout, and a sticky element's
+		 * layout position never changes.
+		 */
+		const flowTop = (el: HTMLElement): number => {
+			let y = 0;
+			for (let node: HTMLElement | null = el; node; node = node.offsetParent as HTMLElement | null) {
+				y += node.offsetTop;
+			}
+			return y;
+		};
+
+		// A part starts where it starts, except that on the open spread Part III
+		// shares a line with Part I. There, "past" has to mean past the whole of
+		// the left leaf, because that is the only order the two leaves are read
+		// in. Taking the max of a part's own top and the bottom of the part
+		// before it expresses that once, and on a phone - where the parts are a
+		// single column and each one already starts below the last - the same
+		// expression returns the part's own top, because they are the same
+		// number. One rule, both layouts, no breakpoint branch.
+		const buildTimeline = () => {
+			const nodes = Array.from(root.querySelectorAll<HTMLElement>('[data-rb-part]'));
+			const out: { numeral: string; at: number }[] = [];
+			let previousBottom = 0;
+
+			for (const node of nodes) {
+				const ownTop = flowTop(node);
+				out.push({ numeral: node.dataset.rbPart ?? '', at: Math.max(ownTop, previousBottom) });
+				previousBottom = ownTop + node.offsetHeight;
+			}
+
+			return out;
+		};
+
+		// Rebuilt on resize, not only at load: the timeline is a function of the
+		// layout, and a phone rotated to landscape re-flows the spread from one
+		// column into two, which moves every part.
+		let timeline = buildTimeline();
+
+		let queued = false;
+
+		const update = () => {
+			queued = false;
+			if (!fillEl || !sheet || !numeralEl) return;
+
+			const scrollY = window.scrollY;
+			const probeDoc = scrollY + PROBE;
+
+			// The part being read: the last one the probe has reached. Before the
+			// sheet arrives that is the first part, which is the correct answer
+			// at the top of the page rather than a blank gutter.
+			let current = timeline[0]?.numeral ?? '';
+			for (const step of timeline) {
+				if (step.at <= probeDoc) current = step.numeral;
+			}
+
+			if (current && numeralEl.textContent?.trim() !== current) {
+				numeralEl.textContent = current;
+			}
+
+			// Progress runs from the sheet's top reaching the bottom of the
+			// viewport - the moment the sheet starts to arrive - to the bottom
+			// of the page.
+			//
+			// Two earlier versions were wrong in ways a screenshot could not
+			// show. Scaling the track to the sheet's own height capped the fill
+			// at 0.38, because the sheet starts some 800px below the fold and the
+			// reader never scrolls a full sheet-height. Starting at the probe
+			// instead left the rule dead for the first 65% of the scroll and
+			// then rushed it to full over the last few hundred pixels. A
+			// progress rule that cannot reach its end is a decoration
+			// pretending to be a measurement, and one that sits at zero while
+			// the page moves is worse.
+			const start = flowTop(sheet) - window.innerHeight;
+			const end = document.documentElement.scrollHeight - window.innerHeight;
+			const span = end - start;
+			const progress = span <= 0 ? 1 : Math.min(1, Math.max(0, (scrollY - start) / span));
+
+			fillEl.style.setProperty('--rb-progress', progress.toFixed(4));
+		};
+
+		const schedule = () => {
+			if (queued) return;
+			queued = true;
+			requestAnimationFrame(update);
+		};
+
+		update();
+		window.addEventListener('scroll', schedule, { passive: true });
+		window.addEventListener('resize', () => {
+			timeline = buildTimeline();
+			schedule();
+		}, { passive: true });
+	}
+</script>
