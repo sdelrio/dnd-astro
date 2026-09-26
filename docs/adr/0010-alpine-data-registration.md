@@ -98,6 +98,14 @@ Two constraints follow from the toolchain, and both are load-bearing:
   party view's components are all exercised by tests that click real buttons in
   a real DOM, which is the coverage #328 lacked.
 - Good, because a missing registration now fails a test rather than a page.
+- Bad, because this refactor made every Alpine behaviour module part of the
+  browser's module graph, and therefore made any of them able to take the whole
+  site down with it. A single bad import edge in one of those modules throws
+  during module evaluation, before `Alpine.start()`, and every page is inert -
+  not only the page with the component that introduced it. This ADR is the
+  cause; [ADR-0013](0013-browser-safe-data-module-boundary.md) is the
+  consequence, and it records the boundary that keeps a browser-bound module
+  from reaching a build-side one.
 - Neutral, because the components are slightly larger files: a view, a
   behaviour module, and a runtime test each.
 - Bad, because an Alpine expression is still a string. Renaming a helper on the
@@ -110,3 +118,7 @@ Two constraints follow from the toolchain, and both are load-bearing:
 - [#334](https://github.com/sdelrio/dnd-astro/issues/334) - the refactor
 - [#328](https://github.com/sdelrio/dnd-astro/issues/328) - the regression whose
   source-scanning tests let it through
+- [#351](https://github.com/sdelrio/dnd-astro/issues/351) - the inert dev server
+  this refactor's import graph made possible
+- ADR-0013: Split Browser-Safe Data Out of Build-Side Modules, and Import It
+  Type-Only (the client-boundary rule this decision's consequence)
