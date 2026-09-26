@@ -150,10 +150,11 @@ A type-only import describes the shape of what came back.
   also sweeps the client scripts embedded in `.astro` files, so a self-
   registering component gets the same net without being wired through the
   entrypoint, and it does not traverse third-party packages, so a dependency's
-  own internals cannot fail this repo's build. `party-roles.test.ts` covers this
-  module specifically: the data module has no imports of its own, the roster
-  module imports it and does not re-export it, and the client component's import
-  stays type-only. All of them fail loudly if the defect is reintroduced.
+  own internals cannot fail this repo's build. `party-roles.test.ts` covers
+  this module specifically: the data module has no imports of its own, the
+  roster module imports it and does not re-export it, and the client
+  component's import stays type-only. All of them fail loudly if the defect
+  is reintroduced.
 - Good, because the build warning is now a usable regression signal on its own:
   a clean `pnpm build` log is a check that needs no browser.
 - Neutral, because there is one more module and one more indirection to follow
