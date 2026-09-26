@@ -33,6 +33,11 @@ A fourth, lower-severity finding: the Party View's role chips carried `:hover` t
 
 **1. The Dice Roller grid becomes `grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4`,** with the die row and tile padding stepping down below `sm` (`w-7 h-7 sm:w-8 sm:h-8`, `p-3 sm:p-4`). Two columns clear a 320px viewport. The 12px base gap is a deliberate departure from the documented 16px, because at two columns on a narrow screen the 4px is what buys the fit.
 
+> **Amended by measurement.** The `lg:grid-cols-6` step has since been removed, because a
+> later change moved the re-roll into a 44x44px box in the tile's corner and six columns no
+> longer fit it. See "Superseded by measurement, partially" below, which keeps the reasoning
+> and the measured numbers. The rest of this decision is unchanged.
+
 The `DESIGN.md` layout and inputs sections are updated in the same change. The Card's own ability grid is untouched: it is container-query driven, so it already measures the Card rather than the viewport.
 
 **2. Every text control carries `min-h-11` and `text-base sm:text-sm`.** The height satisfies WCAG 2.5.8. The 16px base font is not cosmetic: it is the threshold below which iOS Safari zooms on focus, and it is the difference between tapping a search field and losing the page.
@@ -86,6 +91,35 @@ answers most of what this section left open, against the built site:
 - **The pointer rules branch as decided** for the two device profiles a browser can be emulated
   into: the hover tint is gated on `hover: hover`, the press tint is ungated, and the spacing
   follows the coarse pointer.
+- **Decision 1's six-column step is wrong, and is removed.** #328 raised the per-ability
+  re-roll to a 44x44px box anchored `absolute top-1 right-1` in the tile's top-right corner,
+  which no longer fitted the layout decision 1 was written against - that decision assumed the
+  re-roll stayed inline in the heading. The 44px box claims the tile's top-right 48px including
+  the offset, and the ability name is centred in the same row, so the two collide unless the
+  tile is wider than the label plus 96px. The widest label is CHA at 41.58px, so a tile needs
+  more than 137.58px.
+
+  Starlight caps this container at 880px, verified in a browser at 1024, 1280, 1440, 1600, 1920
+  and 2560 - the cap does not move, so no wider breakpoint rescues six columns. Six columns
+  leave 133.33px tiles at 1280 and 102px at 1024, and the re-roll overlapped the name by 16.64px
+  at 1024 (all six tiles) and 0.97px to 2.13px at 1280 (five of six). It also covered 11.5% of
+  the tile's own select button at 1024, so a finger aimed at the top-right of a tile meant to
+  select it hit re-roll instead.
+
+  **The grid is therefore `grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4`,** with no `lg` step. At
+  three columns the tiles are 220px at 1024 and 282.66px at 1280, and the clear gap between the
+  re-roll and the name is 41.22px to 45.22px and 72.55px to 76.55px respectively. The 44px
+  minimum is untouched.
+
+  Two alternatives were measured and rejected. Reserving the button's corner with padding needs
+  36px of right padding at a 102px tile and then clears by 0.2px, which is a coincidence rather
+  than a margin and breaks if the display face's metrics move. Expanding the hit area with a
+  pseudo-element, which is what the design audit recommended, would have put an *invisible* 44px
+  target over the name - worse than a visible overlap, because a visible one at least looks
+  broken. The hit area has to stay out of the name's space, so the tile has to be wide enough.
+
+  This is a real cost and not a free win: the Dice Roller now shows two rows of three on a
+  desktop rather than one row of six. It is the cost of a correct 44px target.
 
 Still open, and still needing real hardware: how a real device reports `hover`, `pointer` and
 `any-pointer` (the hybrid profile cannot be emulated at all), whether a finger sees the press

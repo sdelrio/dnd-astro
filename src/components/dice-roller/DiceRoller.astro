@@ -35,7 +35,12 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
     </button>
   </div>
 
-  <div class="js-only grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+    <!-- #331. No six-column step: the re-roll is a 44px box anchored in the
+         tile's top-right corner, and a centred ability name only clears it when
+         the tile is wider than the label plus 96px. Starlight caps this
+         container at 880px, so six columns would leave 133px tiles and put the
+         button on the name. Three across is the most that fits. -->
+    <div class="js-only grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
 
     <template x-for="(ability, index) in abilities" :key="ability.name">
       <div class="relative">
@@ -81,7 +86,7 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
           type="button"
           @click="rollIndividual(index)"
           :disabled="isRolling || ability.rolling || selectedIndex !== null"
-          class="group absolute top-1 right-1 inline-flex items-center justify-center w-11 h-11 text-xs text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+          class="group absolute top-1 right-1 inline-flex items-center justify-center w-11 h-11 bg-transparent border-0 text-xs text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
           :aria-label="'Re-roll ' + ability.name"
         >
           <IconifyIcon icon="mdi:refresh" width="1em" class="transition-transform duration-200 group-hover:rotate-180" />
