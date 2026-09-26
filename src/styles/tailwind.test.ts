@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { globSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const css = readFileSync(new URL('./tailwind.css', import.meta.url), 'utf8');
@@ -172,6 +173,59 @@ describe('admonition palette', () => {
     const { selector } = rule(`.starlight-aside--${type}`, 'light');
     expect(selector.startsWith(':root '), `"${selector}" needs a :root prefix`).toBe(true);
     expect(specificity(selector)[1]).toBeGreaterThan(1);
+  });
+});
+
+describe('reduced motion', () => {
+  const block = css.match(/@media \(prefers-reduced-motion: reduce\) \{([\s\S]*?)\n\}/)?.[1] ?? '';
+
+  it('is declared at all', () => {
+    expect(block, 'no prefers-reduced-motion block').not.toBe('');
+  });
+
+  // The dice roll's progress bar is `animate-pulse`, which is infinite. There is
+  // no meaningful short form, so iteration count and duration both have to go.
+  it('stops infinite animations rather than only shortening them', () => {
+    expect(block).toMatch(/animation-iteration-count:\s*1\s*!important/);
+    expect(block).toMatch(/animation:\s*none\s*!important/);
+  });
+
+  it('neutralises transform-based motion', () => {
+    expect(block).toMatch(/\[class\*='hover:scale-'\]/);
+    expect(block).toMatch(/transform:\s*none\s*!important/);
+  });
+
+  it('applies to pseudo-elements too, so the admonition shadow ease is covered', () => {
+    expect(block).toMatch(/\*::before/);
+    expect(block).toMatch(/\*::after/);
+  });
+});
+
+describe('x-cloak', () => {
+  it('hides cloaked elements before Alpine boots', () => {
+    expect(css).toMatch(/\[x-cloak\]\s*\{[^}]*display:\s*none\s*!important/);
+  });
+
+  // Only top-level `x-show` regions can flash. Children of <template x-if> and
+  // <template x-for> are inert until Alpine processes them, so they never paint
+  // - the template content is removed from the document entirely.
+  it('is applied to every x-show region that is not inside a template', () => {
+    const offenders: string[] = [];
+    for (const file of globSync('src/components/**/*.astro')) {
+      let source = readFileSync(file, 'utf8');
+      // Remove innermost templates first: a non-greedy strip would stop at the
+      // first `</template>`, which for a nested x-for is the inner one, leaving
+      // the outer template's tail behind and producing phantom offenders.
+      for (;;) {
+        const next = source.replace(/<template\b(?:(?!<template)[\s\S])*?<\/template>/g, '');
+        if (next === source) break;
+        source = next;
+      }
+      for (const m of source.matchAll(/<div([^>]*\bx-show=[^>]*)>/g)) {
+        if (!/\bx-cloak\b/.test(m[1])) offenders.push(`${file}: ${m[0].slice(0, 70)}`);
+      }
+    }
+    expect(offenders, `unguarded x-show: ${offenders.join(' | ')}`).toEqual([]);
   });
 });
 

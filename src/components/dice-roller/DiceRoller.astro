@@ -141,7 +141,7 @@ const abilities: Ability[] = [
     </template>
   </div>
 
-  <div x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900">
+  <div x-cloak x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900">
     <template x-for="(entry, i) in resultLog" :key="i">
       <div class="text-sm text-gray-700 dark:text-gray-300 font-mono" x-text="entry"></div>
     </template>
