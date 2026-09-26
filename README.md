@@ -50,6 +50,18 @@ pnpm install
 pnpm dev
 ```
 
+The [impeccable](https://github.com/pbakaus/impeccable) design skill is vendored
+as a pinned git submodule (see [ADR-0008](docs/adr/0008-vendor-impeccable-skill-as-submodule.md)).
+It is not needed to build or run the site, but agents cannot load the skill
+until it is checked out:
+
+```sh
+git submodule update --init --recursive
+```
+
+or `make submodule-init`. Run `make submodule-update` to deliberately bump the
+pinned version.
+
 Per AGENTS.md, start the dev server in background mode:
 
 ```sh

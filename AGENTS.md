@@ -54,6 +54,22 @@ Template: `docs/specs/_TEMPLATE.md`
 
 ## Agent skills
 
+### Setup
+
+The [impeccable](https://github.com/pbakaus/impeccable) design skill is vendored as a git submodule at `.impeccable-skill`, pinned to one commit. A fresh clone must check it out before the skill resolves, otherwise the committed symlink at `.opencode/skills/impeccable` dangles:
+
+```
+git submodule update --init --recursive
+```
+
+The Makefile wraps this and the relink step:
+
+- `make submodule-init` - check out the pinned submodule, then link it if needed
+- `make submodule-update` - bump to upstream HEAD, then link it if needed
+- `make submodule-link` - link only; pass `IMPECCABLE_PROVIDER=claude` (or another harness) to change agent
+
+Never run `git submodule add` for `.impeccable-skill`. The gitlink is already committed, so adding it again fails with `already exists in the index`. To move the pin, use `make submodule-update` and commit the gitlink.
+
 ### Issue tracker
 
 GitHub Issues via `gh` CLI. See `docs/agents/issue-tracker.md`.
