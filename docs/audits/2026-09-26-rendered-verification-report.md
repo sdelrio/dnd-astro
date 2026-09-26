@@ -16,16 +16,22 @@ ADR-0009 closed with a paragraph admitting what had not been checked:
 > source. Testing on a real phone at 320px and 390px remains outstanding.
 
 This report records what that tooling can now answer, what it answered, and what it cannot.
-Everything below was produced by one command against the built site
-(`pnpm build` then `astro preview`, 128 pages). No figure here is computed from a token
-value, a source string, or a declaration in a stylesheet.
+Sections 1 to 4 were produced by one command against the built site
+(`pnpm build` then `astro preview`, 128 pages). Section 5 was added later, for issue #331, and
+drives the same dependency-free CDP stack directly, because the questions there are bounding
+boxes and text extents rather than one of the four verdicts `measure` reports. Its figures
+were taken against the dev server, which has been valid for measurement since #357 fixed
+`node:fs` in the client graph, and every run asserts Alpine booted and no `x-cloak` survived
+before reading a box. No figure in either part is computed from a token value, a source string,
+or a declaration in a stylesheet.
 
 ## What this closes, and what it does not
 
 The ticket this came from closes three questions at the level of **the tooling can now answer
 it**. It does not close them at the level of **the underlying defect is fixed**. Two findings
 below are open defects this report discovered and did not fix, because fixing them is a
-component change with its own ticket. One finding is a limit of the tooling itself.
+component change with its own ticket. One finding is a limit of the tooling itself. Section 5,
+added for #331, is the one part that went on to fix what it measured.
 
 ## The command
 
@@ -58,6 +64,14 @@ Default widths are ADR-0009's own: 320, 360, 390, 640.
 | `/dnd-tools/dice-roller/` | clean | clean | clean | clean |
 | `/dnd-tools/point-buy/` | clean | clean | clean | clean |
 | `/fantasy-grounds/characters/abbath/` | **one element past the edge** | clean | clean | clean |
+
+The `/dnd-tools/point-buy/` row was first written when that page did not exist (it arrived
+in #362), so the 404 it answered with is trivially "clean" and the row proved nothing. It
+has been re-measured against the real page, which now renders the calculator and its six
+ability cards. It is clean, and this time that is a statement about the page.
+
+The dice roller and the party page were re-measured for #331, after the 44px touch-target
+work, and are clean at all four widths.
 
 No page scrolls horizontally at any measured width. The Dice Roller ability grid - the defect
 that started this - does not overflow at 320 or 360.
@@ -123,6 +137,12 @@ in dark. Against the accent text that is 4.44:1 in light - just under the 4.5:1 
 class list. This is a defect in the two components, not in the measurement, and it is the reason
 `measure contrast` exits non-zero.
 
+The cause is worth naming, because it is not a missing class but a deliberate one:
+`src/styles/tailwind.css` omits Tailwind's preflight so the global reset cannot restyle
+Starlight's documentation pages, and preflight is what resets a button's background and border.
+Every control that does not declare its own keeps the browser's. The dice roller's per-ability
+re-roll was the same defect and is now fixed - see section 5.
+
 ## 3. A synthesized touch tap
 
 `Input.dispatchTouchEvent`, entering the browser the way a finger does rather than calling
@@ -170,6 +190,177 @@ from a later rule at the same specificity and the tints are invisible on it.
 | A *held touch* puts the chip into `:active` | **not settled** - this browser does not match `:active` for a held synthesized touch, so the finger-side press is unobservable here |
 | The hybrid profile (`hover: hover` **and** `any-pointer: coarse`) | **not settled** - Chrome replaces the primary pointer when touch emulation is enabled, so no flag combination reports both |
 
+## 5. The 44px touch targets, measured (issue #331)
+
+#328 raised every interactive control to the WCAG 2.5.8 44px minimum without a browser
+available, so three visual consequences were unverified. A resized viewport and a screenshot
+verify layout; overlap and layout shift are numeric, so these were measured by reading
+bounding boxes out of a rendered page. Where a box could report a line-box edge rather than a
+glyph, the text's tight extent was taken from a `Range` over the text node instead, because
+that distinction is the difference between "the button touches the name" and "the button
+touches the name's side bearing".
+
+One methodological note that changes numbers: emulating `prefers-color-scheme` does **not**
+darken this site. `ThemeProvider.astro` reads `localStorage['starlight-theme']` and defaults it
+to `'light'`, so a dark run that only sets the media feature silently measures light. Both the
+stored preference and `documentElement.dataset.theme` have to be set, as `measure contrast`
+already does. Every figure below was taken with both.
+
+### Item 1 - the point-buy layout: passes, unchanged
+
+| Measure | 375 light | 375 dark | 1280 light | 1280 dark |
+|---------|-----------|----------|------------|-----------|
+| Card height (all six identical) | 206.75px | 206.75px | 206.75px | 206.75px |
+| `+`/`-` pair | 44x44 | 44x44 | 44x44 | 44x44 |
+| Pair gap | 12px | 12px | 12px | 12px |
+| Clear space, pair to card bottom | 17px | 17px | 17px | 17px |
+| Clear space, grid to the points-remaining card | 24px | 24px | 24px | 24px |
+| Horizontal scroll | none | none | none | none |
+
+The card is taller than a 32px pair made it, and it does not crowd the readout: the score,
+modifier and cost stack above the pair, and the "N points remaining" card is a separate block
+24px below the grid. The card is 206.75px at both widths, because `grid-cols-1` below `sm` and
+`sm:grid-cols-2` above it do not change what is inside a card. Measured on both mounts -
+`/dnd-tools/point-buy/` and the guide's calculator - and identical, as the same component
+renders both.
+
+### Item 2 - the party filter row: passes
+
+| Measure | 375 light | 375 dark | 1280 light | 1280 dark |
+|---------|-----------|----------|------------|-----------|
+| Chip height (all six) | 44px | 44px | 44px | 44px |
+| Wrap rows | 3 | 3 | 1 | 1 |
+| Filter row height | 148px | 148px | 44px | 44px |
+| Stat tile to chip row | 16px | 16px | 16px | 16px |
+| Chip row to member grid | 49px | 49px | 49px | 49px |
+| First member card top | 809px | 809px | 521.39px | 521.39px |
+| Horizontal scroll | none | none | none | none |
+
+The ticket expected the wrap to change. It does not, and the reason is worth recording: the
+chips wrap by **width**, and the 44px change was to `min-height`, so the widths are unchanged
+and so is the wrap. Injecting the pre-#328 `min-height: 22px` and re-measuring gives the same
+three rows at 375px.
+
+So the cost is a uniform vertical growth, not a reflow. The filter row goes from 83.5px to
+148px, and everything below it moves down by exactly 64.5px: the first member card goes from
+744.5px to 809px. Nothing is displaced sideways, nothing re-wraps, and the 16px gap above and
+49px gap below are unchanged. Part of that 16px above is #355's deletion of the duplicate role
+breakdown row, which is expected.
+
+The audit's recommended fallback - keep the 22px visual, expand the hit area with a
+pseudo-element - was also measured, and it produces **the same 83.5px** as the small chip, so
+the 64.5px is fully recoverable. It was not applied: at 44px the chips read as comfortable
+targets rather than as tall pills with lost 11px text, no overlap, and the growth is uniform
+rather than crowding. Whether 64.5px of uniform growth is worth 44px targets is a product
+judgement, not a measurement, and the measurements do not argue against it.
+
+### Item 3 - the re-roll button: failed, fixed
+
+This one was real. The re-roll is `absolute top-1 right-1 w-11 h-11`, so its box claims the
+tile's top-right 48px including the 4px offset, and the ability name is centred in that same
+row. They collide whenever the tile is narrower than the label plus 96px - twice the 48px,
+once for each side of a centred box. The widest label is CHA at 41.58px, so the floor is
+137.58px.
+
+The ability grid had a `lg:grid-cols-6` step. The container is Starlight's and is **capped at
+880px**, verified at 1024, 1280, 1440, 1600, 1920 and 2560 - the cap does not move, so no
+wider breakpoint rescues it. Six columns therefore always failed:
+
+| Viewport | Columns | Tile width | Glyph overlap | Clear gap |
+|----------|---------|-----------|---------------|-----------|
+| 375 | 2 | 165.5px | none | 13.97px - 17.97px |
+| 640 | 3 | 192px | none | 27.22px - 31.22px |
+| 768 | 3 | 229.33px | none | 45.88px - 49.89px |
+| 1024 | 6 | 102px | **13.78px - 17.78px** | 0px |
+| 1280 | 6 | 133.33px | **0.3px - 2.13px** | 0px |
+
+At 1024 the button sat across the last glyph of every one of the six names. At 1280 it took a
+sliver, 0.3px on WIS and 2.13px on CHA. Five of six tiles intersected at 1280 and all six at
+1024. The re-roll also covered 11.5% of the tile's own select button at 1024, so a finger
+aimed near the top-right of a tile meant to select it hit re-roll instead.
+
+**The fix is not the audit's pseudo-element fallback, and deliberately so.** Expanding a hit
+area with a pseudo-element that reaches left would have put an *invisible* 44px target over the
+name, which is worse than a visible one: the visible overlap at least looks broken. The hit
+area has to stay out of the name's space, so the tile has to be wide enough. Three columns is
+the most that fits the 880px cap:
+
+| Viewport | Columns | Tile width | Glyph overlap | Clear gap | Re-roll share of tile |
+|----------|---------|-----------|---------------|-----------|------------------------|
+| 375 | 2 | 165.5px | none | 13.97px - 17.97px | 9.1% |
+| 1024 | 3 | 220px | none | 41.22px - 45.22px | 6.4% |
+| 1280 | 3 | 282.66px | none | 72.55px - 76.55px | 5% |
+
+The 44px minimum is untouched; the re-roll is still `w-11 h-11`. What changed is the tile
+count, so the button no longer lands on the name. A padding reservation was rejected: at a
+102px tile it needs 36px of right padding and then clears by 0.2px, which is not a margin, it
+is a coincidence that breaks if the display face's metrics move by two pixels.
+
+**A second defect on the same control, found while measuring it.** Preflight is off, so the
+button painted the browser's default form fill *and* border - a grey rounded box, which is what
+made the overlap visible in a screenshot. Sampled:
+
+| `button[aria-label^="Re-roll"]` | Light | Dark |
+|--------------------------------|-------|------|
+| Before | **4.44:1, fails AA** on `rgb(239,239,239)` | **2.12:1, fails AA** on `rgb(107,107,107)` |
+| After | 5.11:1, AA on `rgb(255,255,255)` | 7.09:1, AAA on `rgb(27,23,22)` |
+
+This is the same root cause as the open Filters-button finding above, and the same fix
+(`bg-transparent border-0`).
+
+### The two unverified details from the same PR
+
+**The 14% `color-mix` tint is exactly a 14% alpha blend.** Checked by computing the blend and
+comparing it with what Chrome resolved, per surface, in both themes. Chrome reports
+`color-mix(in srgb, ...)` as an opaque `color(srgb r g b)` with **0-1 components, not bytes** -
+comparing those against a byte blend without scaling is a false mismatch, which is how this
+looks wrong if you do not scale first. Scaled and rounded, the delta is **0, 0, 0** on every
+tinted surface in both themes:
+
+| Surface | Hue | Rendered | Expected at 14% |
+|---------|-----|----------|-----------------|
+| `.r3-role-pill`, `.r3-chip.is-active` light | `#a06e00` over white | `rgb(242,235,219)` | `rgb(242,235,219)` |
+| `.r3-role-pill`, `.r3-chip.is-active` dark | `#d99a2b` over `#2e2421` | `rgb(70,53,34)` | `rgb(70,53,34)` |
+| `.r3-chip-all.is-active` light | `#2a2010` over white | `rgb(225,224,222)` | `rgb(225,224,222)` |
+| `.r3-chip-all.is-active` dark | `#f1eceb` over `#2e2421` | `rgb(73,64,61)` | `rgb(73,64,61)` |
+
+**The role chip colours, sampled from rendered pixels, pass in both themes.** The audit had
+computed these from declared token values; these are read off the rendered paint, with the
+background resolved by the ancestor walk:
+
+| Selector | Light | Dark | Grade |
+|----------|-------|------|-------|
+| `.r3-chip.is-active` (11px) | 12.13:1 | 8.61:1 | AAA both |
+| `.r3-role-pill` (12px) | 6.06:1 | 6.53:1 | AA both |
+| `.r3-count` (10px bold) | 10.17:1 | 6.02:1 | AAA / AA |
+
+The resting chip was measured too, by toggling "All" off first, since the default all-selected
+state never renders one: `#605552` on `#ffffff` light, `#c7c0be` on `#2e2421` dark.
+
+### The screen-reader outline: the reported problem does not reproduce
+
+The ticket expected the six ability `<h3>`s to leave the document outline, because they are
+inside a `<button>` whose name comes from its `aria-label`. CDP's own accessibility tree says
+otherwise - `Accessibility.getFullAXTree` reports all six as `role: heading` with
+`ignored: false`, alongside `h1 Dice Roller` and `h3 Stats`:
+
+```
+h1 Dice Roller   ignored=false
+h3 Stats         ignored=false
+h3 STR           ignored=false
+h3 DEX           ignored=false
+h3 CON           ignored=false
+h3 INT           ignored=false
+h3 WIS           ignored=false
+h3 CHA           ignored=false
+```
+
+So the headings are exposed. That is a statement about Chrome's computed tree, which is what
+feeds a screen reader on Chrome - it is **not** a screen-reader pass, and it does not cover how
+a name and a heading inside one button are announced in sequence, which is the part a reader
+would actually notice. A real pass with VoiceOver or NVDA is still worth its own ticket; this
+does not substitute for one, it only removes the specific claim that the headings are gone.
+
 ## What the tooling settles, and what still needs a real device
 
 **Settled by measurement, against the built site:**
@@ -179,13 +370,24 @@ from a later rule at the same specificity and the tints are invisible on it.
   synthesized touch tap, at every width below `sm`, and the `sm:flex!` cascade behaves at `sm`.
 - The hover tint is gated on `hover: hover`; the press tint is ungated; the chip spacing follows
   the coarse pointer. All three read off the rendered paint, not off the stylesheet.
+- The 44px touch targets do not overlap what they sit next to, at 375px or 1280px, in either
+  theme. The party chips grow the filter row by a uniform 64.5px without re-wrapping it, and the
+  point-buy card has 17px below the `+`/`-` pair and 24px to the readout.
+- The dice roller's re-roll button no longer lands on an ability name, and no longer paints the
+  default form control.
 
 **Answered, but with a defect found and not fixed:**
 
 - The Filters disclosure button renders below AA in both themes, because it has no declared
-  background and paints the browser's default form fill.
+  background and paints the browser's default form fill. The dice roller's re-roll was the same
+  defect and is now fixed; this one is still open.
 - A `.char-meta` line on a character card runs about 17px past a 320px viewport, clipped by an
   ancestor.
+
+**Corrected since first written:**
+
+- The `/dnd-tools/point-buy/` overflow row was measured against a 404 and proved nothing. It is
+  now measured against the real page, and is clean.
 
 **Still needs real hardware, and this tooling does not pretend otherwise:**
 
