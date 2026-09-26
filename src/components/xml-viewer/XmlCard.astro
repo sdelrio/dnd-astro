@@ -224,7 +224,7 @@ const splitSavesGroup =
       <img class="char-portrait" src={avatarSrc} alt={`${name} portrait`} title={name} />
     )}
     <div class="char-id">
-      <h3 class="char-name" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h3>
+      <h2 class="char-name" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h2>
       <p class="char-meta">
         {race} - {classString}
         {subclassString && display === 'large' && (<span> ({subclassString})</span>)}
@@ -246,11 +246,11 @@ const splitSavesGroup =
 
   <div class="p-4 space-y-4">
     <div class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
-      <section class="relative group/overview" aria-label="Overview">
-        {display === 'large' && <h2 class={sectionHeadingClass}>Overview</h2>}
+      <section class="relative group/overview">
+        {display === 'large' && <h3 class={sectionHeadingClass}>Overview</h3>}
         <div class="space-y-2">
-          <section class="relative group" aria-label="Vitals">
-            <h2 class={sectionHeadingClass}>Vitals</h2>
+          <section class="relative group">
+            <h3 class={sectionHeadingClass}>Vitals</h3>
             <div class="grid grid-cols-4 gap-2 text-center">
               <div class={vitalsItemClass}>
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">AC</div>
@@ -273,7 +273,8 @@ const splitSavesGroup =
             </div>
           </section>
 
-          <section aria-label="Abilities">
+          <section>
+            <h3 class={sectionHeadingClass}>Abilities</h3>
             {display === 'small' ? (
               <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
             ) : (
@@ -296,8 +297,8 @@ const splitSavesGroup =
           </section>
 
           {canShow('passives') && (
-            <section class="relative group" aria-label="Passive Skills">
-              <h2 class={sectionHeadingClass}>Passive Skills</h2>
+            <section class="relative group">
+              <h3 class={sectionHeadingClass}>Passive Skills</h3>
               <div class="grid grid-cols-3 gap-2 text-center">
                 <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Perception</div>
@@ -320,8 +321,8 @@ const splitSavesGroup =
       {(showSaves || showLanguages || showFeats) && (
         <div class={`grid grid-cols-1 gap-2${splitSavesGroup ? ' @7xl:grid-cols-2 @7xl:gap-4' : ''}`}>
           {showSaves && (
-            <section class="@container relative group" aria-label="Saving Throws">
-              <h2 class={sectionHeadingClass}>Saving Throws</h2>
+            <section class="@container relative group">
+              <h3 class={sectionHeadingClass}>Saving Throws</h3>
               {!canShow('allSaves') && (
                 <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
                   {proficientSaves.map((abilityName) => (
@@ -372,7 +373,7 @@ const splitSavesGroup =
           {(showLanguages || showFeats) && (
             <div class="space-y-2">
               {showLanguages && (
-                <section aria-label="Languages">
+                <section>
                   <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
                     <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
                     <div class="flex flex-wrap gap-2">
@@ -385,7 +386,7 @@ const splitSavesGroup =
               )}
 
               {showFeats && (
-                <section aria-label="Feats">
+                <section>
                   <div class={`${vitalsItemClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
                     <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
                     <div class="flex flex-wrap gap-2">
@@ -405,7 +406,7 @@ const splitSavesGroup =
     {(showSkills || showInventory) && (
       <div class={showSkills && showInventory ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
         {showSkills && (
-          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0" aria-label="Skills">
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Skills" />
             {!canShow('allSkills') && (
               <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
@@ -497,7 +498,7 @@ const splitSavesGroup =
         )}
 
         {showInventory && (
-          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0" aria-label="Inventory">
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader
               title="Inventory"
               trailing={inventoryRows.length > 0
@@ -545,7 +546,7 @@ const splitSavesGroup =
     )}
 
     {showWeapons && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0" aria-label="Equipped Weapons">
+      <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
         <SectionHeader title="Equipped Weapons" />
         <div class={vitalsItemClass}>
           <table class="w-full text-sm">
@@ -575,14 +576,14 @@ const splitSavesGroup =
     {(showFeatures || showPowers) && (
       <div class={showFeatures && showPowers ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
         {showFeatures && (
-          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0" aria-label="Features">
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Features" />
             <div class={vitalsItemClass}>
               {featuresByLevel.map((group) => (
                 <div>
-                  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                  <h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
                     Level {group.level}
-                  </h3>
+                  </h4>
                   <div class="flex flex-wrap gap-2">
                     {group.items.map((feature) => (
                       <span
@@ -598,19 +599,19 @@ const splitSavesGroup =
         )}
 
         {showPowers && (
-          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0" aria-label="Powers">
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Powers" />
             <div class={vitalsItemClass}>
               {powersByLevel.map((levelGroup) => (
                 <div>
-                  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                  <h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
                     Level {levelGroup.level}
-                  </h3>
+                  </h4>
                   {levelGroup.groups.map((group) => (
                     <div>
-                      <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
+                      <h5 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
                         {group.name}
-                      </h4>
+                      </h5>
                       <div class="flex flex-wrap gap-2">
                         {group.items.map((power) => {
                           const mark = powerMark(power);

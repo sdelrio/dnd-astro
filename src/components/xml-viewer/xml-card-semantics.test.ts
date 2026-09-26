@@ -19,18 +19,35 @@ describe('XmlCard section semantics', () => {
     expect(source, 'hoverLabelClass still exists').not.toContain('hoverLabelClass');
     for (const label of ['Overview', 'Vitals', 'Passive Skills', 'Saving Throws']) {
       expect(source, `${label} is not a heading`).toMatch(
-        new RegExp(`<h2[^>]*>${label}</h2>`),
+        new RegExp(`<h3[^>]*>${label}</h3>`),
       );
     }
   });
 
-  it('names every section landmark', () => {
-    // `title` on a <section> is a tooltip, not an accessible name, and two
-    // sections had no name at all.
+  it('steps the heading levels down from the card name', () => {
+    // The card name is the top-level heading on the page (Starlight's frontmatter
+    // supplies the h1), so everything under it steps down from there. Sections
+    // at h2 made each one an ancestor of the name in the outline.
+    expect(source, 'the card name is not an h2').toMatch(/<h2 class="char-name"/);
+    expect(source, 'a section label is not an h3').toMatch(/<h3 class=\{sectionHeadingClass\}>/);
+    expect(source, 'a section label is still an h2').not.toMatch(/<h2 class=\{sectionHeadingClass\}>/);
+    // No level is skipped on the way down.
+    for (const level of [2, 3, 4, 5]) {
+      expect(source, `h${level} is unused`).toMatch(new RegExp(`<h${level}[ >]`));
+    }
+  });
+
+  it('leaves the card subdivisions unnamed, so they are not landmarks', () => {
+    // The party page renders six cards. Naming every subdivision produced
+    // "Vitals" as a landmark once per card - a landmark list no screen reader
+    // user can navigate. A <section> maps to `region` only when it has an
+    // accessible name; unnamed, it is a plain container. The heading carries
+    // the navigation, which is what the heading is for.
+    const named = [...source.matchAll(/<section([^>]*)>/g)]
+      .map((m) => m[1])
+      .filter((a) => /aria-label|aria-labelledby/.test(a));
+    expect(named, `named <section>: ${named.join(' | ')}`).toEqual([]);
     expect(source, 'a <section> still uses title=').not.toMatch(/<section[^>]*\stitle=/);
-    const sections = [...source.matchAll(/<section([^>]*)>/g)].map((m) => m[1]);
-    const unnamed = sections.filter((a) => !/aria-label=/.test(a));
-    expect(unnamed, `unnamed <section>: ${unnamed.join(' | ')}`).toEqual([]);
   });
 });
 

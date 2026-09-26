@@ -62,7 +62,7 @@ function passiveSection(html: string): string {
 }
 
 function skillsSection(html: string): string {
-  const marker = html.indexOf('>Skills</h2>');
+  const marker = html.indexOf('>Skills</h3>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -95,7 +95,7 @@ function passiveSubcards(section: string): string[] {
 }
 
 function weaponsSection(html: string): string {
-  const marker = html.indexOf('>Equipped Weapons</h2>');
+  const marker = html.indexOf('>Equipped Weapons</h3>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -107,7 +107,7 @@ function weaponRows(section: string): string[] {
 }
 
 function inventorySection(html: string): string {
-  const marker = html.indexOf('>Inventory</h2>');
+  const marker = html.indexOf('>Inventory</h3>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -119,7 +119,7 @@ function inventoryRows(section: string): string[] {
 }
 
 function inventoryHeadingRow(section: string): string {
-  const heading = section.indexOf('>Inventory</h2>');
+  const heading = section.indexOf('>Inventory</h3>');
   if (heading === -1) return '';
   const start = section.lastIndexOf('<div', heading);
   const end = section.indexOf('</div>', heading);
@@ -127,7 +127,7 @@ function inventoryHeadingRow(section: string): string {
 }
 
 function savesSection(html: string): string {
-  const marker = html.indexOf('>Saving Throws</h2>');
+  const marker = html.indexOf('>Saving Throws</h3>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -155,7 +155,7 @@ function saveRow(table: string, short: string): string {
 }
 
 function featuresSection(html: string): string {
-  const marker = html.indexOf('>Features</h2>');
+  const marker = html.indexOf('>Features</h3>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -163,7 +163,7 @@ function featuresSection(html: string): string {
 }
 
 function powersSection(html: string): string {
-  const marker = html.indexOf('>Powers</h2>');
+  const marker = html.indexOf('>Powers</h3>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -218,7 +218,7 @@ function featsSection(html: string): string {
 describe('XmlCard Passive Skills section', () => {
   it('renders in large mode between Abilities and Saving Throws', async () => {
     const html = await renderCard('large');
-    const abilities = html.indexOf('aria-label="Abilities"');
+    const abilities = html.indexOf('>Abilities</h3>');
     const passives = html.indexOf('Passive Skills');
     const saves = html.indexOf('Saving Throws');
     expect(abilities).toBeGreaterThan(-1);
@@ -254,7 +254,7 @@ describe('XmlCard Passive Skills section', () => {
     // Was `opacity-0` until `group-hover`, which hid it from keyboard focus and
     // from touch entirely. P2 finding in the design audit.
     const section = passiveSection(await renderCard('large'));
-    expect(section).toContain('>Passive Skills</h2>');
+    expect(section).toContain('>Passive Skills</h3>');
     expect(section).not.toContain('opacity-0');
     expect(section).not.toContain('group-hover:opacity-100');
   });
@@ -490,8 +490,8 @@ describe('XmlCard Equipped Weapons section', () => {
       features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
     });
     const feats = html.indexOf('>Feats</div>');
-    const weapons = html.indexOf('>Equipped Weapons</h2>');
-    const features = html.indexOf('>Features</h2>');
+    const weapons = html.indexOf('>Equipped Weapons</h3>');
+    const features = html.indexOf('>Features</h3>');
     expect(feats).toBeGreaterThan(-1);
     expect(weapons).toBeGreaterThan(feats);
     expect(features).toBeGreaterThan(weapons);
@@ -560,10 +560,10 @@ describe('XmlCard Inventory section', () => {
 
   it('renders the carried weight on the heading row, right-aligned and baseline-aligned', async () => {
     const row = inventoryHeadingRow(await renderInventory());
-    expect(row).toContain('>Inventory</h2>');
+    expect(row).toContain('>Inventory</h3>');
     expect(row).toContain('68.0 / 270 lb. carried');
     expect(row.indexOf('68.0 / 270 lb. carried')).toBeGreaterThan(
-      row.indexOf('>Inventory</h2>')
+      row.indexOf('>Inventory</h3>')
     );
     expect(row).toContain('@md:flex-row');
     expect(row).toContain('@md:items-baseline');
@@ -572,7 +572,7 @@ describe('XmlCard Inventory section', () => {
 
   it('leaves the Inventory heading alone when nothing is carried', async () => {
     const section = await renderInventory({ inventory: [droppedGem] });
-    expect(section).toContain('>Inventory</h2>');
+    expect(section).toContain('>Inventory</h3>');
     expect(section).not.toContain('lb. carried');
   });
 
@@ -606,7 +606,7 @@ describe('XmlCard Inventory section', () => {
 
   it('hides the section when nothing is carried and all coins are zero', async () => {
     const html = await renderCard('large', { inventory: [droppedGem] });
-    expect(html).not.toContain('>Inventory</h2>');
+    expect(html).not.toContain('>Inventory</h3>');
     expect(html).not.toContain('Current Wealth');
   });
 
@@ -634,10 +634,10 @@ describe('XmlCard Inventory section', () => {
       }],
       features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
     });
-    const skills = html.indexOf('>Skills</h2>');
-    const inventory = html.indexOf('>Inventory</h2>');
-    const weapons = html.indexOf('>Equipped Weapons</h2>');
-    const features = html.indexOf('>Features</h2>');
+    const skills = html.indexOf('>Skills</h3>');
+    const inventory = html.indexOf('>Inventory</h3>');
+    const weapons = html.indexOf('>Equipped Weapons</h3>');
+    const features = html.indexOf('>Features</h3>');
     expect(skills).toBeGreaterThan(-1);
     expect(inventory).toBeGreaterThan(skills);
     expect(weapons).toBeGreaterThan(inventory);
@@ -655,8 +655,8 @@ describe('XmlCard Saving Throws section', () => {
 
   it('labels the saves section with a heading in large and medium mode', async () => {
     const large = await renderCard('large');
-    expect(large).toContain('>Saving Throws</h2>');
-    expect(await renderCard('medium')).toContain('>Saving Throws</h2>');
+    expect(large).toContain('>Saving Throws</h3>');
+    expect(await renderCard('medium')).toContain('>Saving Throws</h3>');
     expect(await renderCard('small')).not.toContain('aria-label="Saving Throws"');
   });
 
@@ -738,8 +738,8 @@ describe('XmlCard Saving Throws section', () => {
   it('stays between Passive Skills and Skills', async () => {
     const html = await renderCard('large');
     const passives = html.indexOf('Passive Skills');
-    const saves = html.indexOf('>Saving Throws</h2>');
-    const skills = html.indexOf('>Skills</h2>');
+    const saves = html.indexOf('>Saving Throws</h3>');
+    const skills = html.indexOf('>Skills</h3>');
     expect(passives).toBeGreaterThan(-1);
     expect(saves).toBeGreaterThan(passives);
     expect(skills).toBeGreaterThan(saves);
@@ -749,10 +749,10 @@ describe('XmlCard Saving Throws section', () => {
 describe('XmlCard Overview group', () => {
   it('groups Vitals, Abilities, and Passive Skills under one large-mode label', async () => {
     const html = await renderCard('large');
-    const overview = html.indexOf('>Overview</h2>');
-    const abilities = html.indexOf('aria-label="Abilities"');
+    const overview = html.indexOf('>Overview</h3>');
+    const abilities = html.indexOf('>Abilities</h3>');
     const passives = html.indexOf('Passive Skills');
-    const saves = html.indexOf('>Saving Throws</h2>');
+    const saves = html.indexOf('>Saving Throws</h3>');
     expect(overview).toBeGreaterThan(-1);
     expect(abilities).toBeGreaterThan(overview);
     expect(passives).toBeGreaterThan(abilities);
@@ -760,13 +760,13 @@ describe('XmlCard Overview group', () => {
   });
 
   it('omits the Overview label from small and medium cards', async () => {
-    expect(await renderCard('small')).not.toContain('>Overview</h2>');
-    expect(await renderCard('medium')).not.toContain('>Overview</h2>');
+    expect(await renderCard('small')).not.toContain('>Overview</h3>');
+    expect(await renderCard('medium')).not.toContain('>Overview</h3>');
   });
 
   it('labels the Overview group with an always-visible heading', async () => {
     const html = await renderCard('large');
-    expect(html).toContain('>Overview</h2>');
+    expect(html).toContain('>Overview</h3>');
     expect(html).not.toContain('group-has-[section:hover]/overview:opacity-0!');
   });
 
@@ -823,25 +823,25 @@ describe('XmlCard ultra-wide section pairing', () => {
 
   it('stacks Languages and Feats under Saving Throws to the right of Overview', async () => {
     const html = await renderPaired();
-    const saves = html.indexOf('>Saving Throws</h2>');
+    const saves = html.indexOf('>Saving Throws</h3>');
     const languages = html.indexOf('>Languages</div>');
     const feats = html.indexOf('>Feats</div>');
-    const skills = html.indexOf('>Skills</h2>');
+    const skills = html.indexOf('>Skills</h3>');
     expect(saves).toBeGreaterThan(-1);
     expect(languages).toBeGreaterThan(saves);
     expect(feats).toBeGreaterThan(languages);
     expect(skills).toBeGreaterThan(feats);
     expect(html).toContain('grid grid-cols-1 gap-2 @7xl:grid-cols-2 @7xl:gap-4');
-    expect(html).toContain('<section class="@container relative group" aria-label="Saving Throws">');
-    expect(html).toContain('<div class="space-y-2"><section class="relative group" aria-label="Vitals"');
+    expect(html).toContain('<section class="@container relative group">');
+    expect(html).toContain('<div class="space-y-2"><section class="relative group">');
   });
 
   it('pairs Skills with Inventory and leaves Equipped Weapons full width', async () => {
     const html = await renderPaired();
-    const skills = html.indexOf('>Skills</h2>');
-    const inventory = html.indexOf('>Inventory</h2>');
+    const skills = html.indexOf('>Skills</h3>');
+    const inventory = html.indexOf('>Inventory</h3>');
     const wealth = html.indexOf('Current Wealth');
-    const weapons = html.indexOf('>Equipped Weapons</h2>');
+    const weapons = html.indexOf('>Equipped Weapons</h3>');
     expect(skills).toBeGreaterThan(-1);
     expect(inventory).toBeGreaterThan(skills);
     expect(wealth).toBeGreaterThan(inventory);
@@ -850,8 +850,8 @@ describe('XmlCard ultra-wide section pairing', () => {
 
   it('pairs Features with Powers', async () => {
     const html = await renderPaired();
-    const features = html.indexOf('>Features</h2>');
-    const powers = html.indexOf('>Powers</h2>');
+    const features = html.indexOf('>Features</h3>');
+    const powers = html.indexOf('>Powers</h3>');
     expect(features).toBeGreaterThan(-1);
     expect(powers).toBeGreaterThan(features);
   });
@@ -882,7 +882,7 @@ describe('XmlCard Saving Throws group split', () => {
   it('splits Saving Throws from Languages and Feats at @7xl when pills are few', async () => {
     const html = await renderCard('large', { feats: ['Alert'] });
     expect(html).toContain(`grid grid-cols-1 gap-2 ${splitClass}`);
-    expect(html).toContain('<section class="@container relative group" aria-label="Saving Throws">');
+    expect(html).toContain('<section class="@container relative group">');
   });
 
   it('keeps the group in one column when there are too many Languages to fit', async () => {
@@ -1012,12 +1012,12 @@ describe('XmlCard Features pills card', () => {
 
   it('wraps the Features content in one accent card below the heading', async () => {
     const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
-    expect(section).toContain('>Features</h2>');
+    expect(section).toContain('>Features</h3>');
     expect(section).toContain('border-t-[3px]');
     expect(section).toContain('border-t-[#58180d]');
     expect(section).toContain('border border-gray-300');
     expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
-    const headingIndex = section.indexOf('>Features</h2>');
+    const headingIndex = section.indexOf('>Features</h3>');
     const cardIndex = section.indexOf('rounded-[7px]');
     expect(cardIndex).toBeGreaterThan(headingIndex);
   });
@@ -1025,8 +1025,8 @@ describe('XmlCard Features pills card', () => {
   it('renders every feature as a Languages/Feats-style pill inside the card', async () => {
     const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
     const card = featureCard(section);
-    expect(card).toContain('>Level 1</h3>');
-    expect(card).toContain('>Level 2</h3>');
+    expect(card).toContain('>Level 1</h4>');
+    expect(card).toContain('>Level 2</h4>');
     for (const feature of sampleFeatures) {
       const pill = featurePill(card, feature.name);
       expect(pill).toContain(`class="${pillClass}"`);
@@ -1148,17 +1148,17 @@ describe('XmlCard Powers pills card', () => {
     const section = powersSection(
       await renderCard('large', { powers: [preparedSpell, nonSpell] })
     );
-    expect(section).toContain('>Powers</h2>');
+    expect(section).toContain('>Powers</h3>');
     expect(section).toContain('border-t-[3px]');
     expect(section).toContain('border-t-[#58180d]');
     expect(section).toContain('border border-gray-300');
     expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
-    const headingIndex = section.indexOf('>Powers</h2>');
+    const headingIndex = section.indexOf('>Powers</h3>');
     const cardIndex = section.indexOf('rounded-[7px]');
     expect(cardIndex).toBeGreaterThan(headingIndex);
     const card = powersCard(section);
-    expect(card).toContain('>Level 3</h3>');
-    expect(card).toContain('>Spells</h4>');
+    expect(card).toContain('>Level 3</h4>');
+    expect(card).toContain('>Spells</h5>');
     expect(card).toContain('>Bless<');
     expect(card).toContain('flex flex-wrap gap-2');
   });
@@ -1190,7 +1190,7 @@ describe('XmlCard Powers pills card', () => {
 
   it('renders an empty-group power under the Other fallback heading', async () => {
     const section = powersSection(await renderCard('large', { powers: [ungrouped] }));
-    expect(section).toContain('>Other</h4>');
+    expect(section).toContain('>Other</h5>');
   });
 
   it('orders pills by level then group then name under the headings', async () => {
