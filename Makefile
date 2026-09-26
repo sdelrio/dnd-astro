@@ -52,6 +52,10 @@ help:
 	@printf "  $(GREEN)make submodule-update$(RESET)  ⬆️  Bump Impeccable to upstream HEAD and relink\n"
 	@printf "  $(GREEN)make submodule-link$(RESET)    🔗  Relink for IMPECCABLE_PROVIDER=<harness> (default opencode)\n"
 	@printf "\n"
+	@printf "$(MAGENTA)Maintenance$(RESET)\n"
+	@printf "  $(GREEN)make upgrade$(RESET)       ⚠️  Interactive. Upgrades Astro and rewrites package.json\n"
+	@printf "  $(DIM)                         Changes your dependencies - read the diff$(RESET)\n"
+	@printf "\n"
 	@printf "$(DIM)Wrap the pnpm scripts documented in AGENTS.md$(RESET)\n"
 	@printf "\n"
 
