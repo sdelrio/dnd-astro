@@ -14,9 +14,27 @@ const abilities: Ability[] = [
 
 <div
   x-data={`diceRoller(${JSON.stringify(abilities)})`}
-  class="not-content space-y-6"
+  @keydown.escape.window="cancelSwap()"
+  class="dice-roller-needs-js not-content space-y-6"
 >
-  <div class="flex justify-center">
+  <!-- With scripting off, every control below is inert. A `<noscript>` block
+       cannot remove them, so the note leads and hides them instead of leaving a
+       live-looking button that does nothing. `is:inline` is required: Astro would
+       otherwise hoist this stylesheet into the head unconditionally, where it
+       would hide the controls for everyone, scripting enabled or not. -->
+  <noscript>
+    <style is:inline>
+      .dice-roller-needs-js > .js-only {
+        display: none !important;
+      }
+    </style>
+    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-300">
+      <p class="font-medium">The Dice Roller needs JavaScript.</p>
+      <p class="mt-1">Every other page on this site works without it. With it enabled you get 4d6, drop the lowest die, and add the remaining three per ability.</p>
+    </div>
+  </noscript>
+
+  <div class="js-only flex justify-center">
     <button
       @click="rollAll()"
       :disabled="isRolling"
@@ -27,7 +45,8 @@ const abilities: Ability[] = [
     </button>
   </div>
 
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+  <div class="js-only grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+
     <template x-for="(ability, index) in abilities" :key="ability.name">
       <div class="relative">
         <button
@@ -111,8 +130,14 @@ const abilities: Ability[] = [
     </template>
    </div>
 
-  <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 max-w-sm mx-auto mt-6">
-    <h3 class="font-bold text-gray-900 dark:text-gray-100 mb-2">Stats</h3>
+  <div class="js-only bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 max-w-sm mx-auto mt-6">
+    <div class="flex items-baseline justify-between gap-2 mb-2">
+      <h3 class="font-bold text-gray-900 dark:text-gray-100">Stats</h3>
+      <!-- The sample is capped, so "Stats" is a rolling window rather than the
+           whole session. A table comparing tonight's average against an earlier
+           one needs to know it is a window, and how wide. -->
+      <span class="text-xs text-gray-500 dark:text-gray-400">last 50 rolls</span>
+    </div>
     <template x-if="!stats || !stats.average || sessionRolls.length === 0">
       <div class="flex flex-col items-center justify-center p-6 text-gray-500 dark:text-gray-400 text-center">
         <IconifyIcon icon="game-icons:dice-twenty-faces-twenty" width="2.25rem" class="text-(color:--sl-color-accent)" />
@@ -141,9 +166,16 @@ const abilities: Ability[] = [
     </template>
   </div>
 
+  <noscript>
+    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-300">
+      <p class="font-medium">The Dice Roller needs JavaScript.</p>
+      <p class="mt-1">Every other page on this site works without it. With it enabled you get 4d6, drop the lowest die, and add the remaining three per ability.</p>
+    </div>
+  </noscript>
+
   <div x-cloak x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900">
     <template x-for="(entry, i) in resultLog" :key="i">
-      <div class="text-sm text-gray-700 dark:text-gray-300 font-mono" x-text="entry"></div>
+      <div class="text-sm text-gray-700 dark:text-gray-300 font-mono break-words" x-text="entry"></div>
     </template>
   </div>
 
@@ -262,6 +294,16 @@ window.swapAbilities = swapAbilities;
 window.diceRoller = diceRoller;
 
 // Define the diceRoller function for Alpine.js
+/**
+ * A session is unbounded - a table can roll all six abilities a hundred times
+ * over, and both the log and the sample feeding the Stats card grew for as
+ * long as the tab stayed open. The log is a recall aid for the current
+ * conversation, and the stats only need a recent sample to be meaningful, so
+ * both are capped. The log is newest-first (`unshift`), so it keeps the head.
+ */
+const LOG_LIMIT = 20;
+const SESSION_ROLL_LIMIT = 50;
+
 function diceRoller(abilities: Ability[]) {
   return {
      abilities: abilities,
@@ -275,6 +317,13 @@ function diceRoller(abilities: Ability[]) {
     swapUsed: false,
     announcement: '',
     /**
+     * Bumped by every "Roll All Abilities". A re-roll timer captures the value
+     * it was scheduled under and bails if it has moved, so a pending
+     * per-ability roll cannot land in the middle of a full roll and overwrite
+     * one of its six tiles with a stale result.
+     */
+    rollEpoch: 0,
+    /**
      * Writes to the polite live region. Clearing first and restoring on the
      * next tick means an identical repeat (re-rolling the same total) is still
      * announced, which a plain assignment would swallow.
@@ -285,9 +334,14 @@ function diceRoller(abilities: Ability[]) {
         this.announcement = message;
       }, 50);
     },
+    pushLog(entry: string) {
+      this.resultLog.unshift(entry);
+      if (this.resultLog.length > LOG_LIMIT) this.resultLog.length = LOG_LIMIT;
+    },
     rollAll() {
       if (this.isRolling) return;
       this.isRolling = true;
+      this.rollEpoch++;
       this.selectedIndex = null;
       this.stagedSwap = null;
       this.swapUsed = false;
@@ -296,9 +350,12 @@ function diceRoller(abilities: Ability[]) {
       const rollNext = () => {
         if (index >= this.abilities.length) {
            this.isRolling = false;
-          this.resultLog.unshift(window.formatResultLog(this.abilities));
+          this.pushLog(window.formatResultLog(this.abilities));
           const sums = this.abilities.map(a => a.sum);
           this.sessionRolls.push(sums);
+          if (this.sessionRolls.length > SESSION_ROLL_LIMIT) {
+            this.sessionRolls.splice(0, this.sessionRolls.length - SESSION_ROLL_LIMIT);
+          }
           const allSums = this.sessionRolls.flat();
           this.stats = window.formatStats(window.calculateStats(allSums));
           const scores = this.abilities
@@ -322,8 +379,18 @@ function diceRoller(abilities: Ability[]) {
     rollIndividual(index: number) {
       if (this.isRolling || this.abilities[index].rolling) return;
       this.abilities[index].rolling = true;
+      const epoch = this.rollEpoch;
       
       setTimeout(() => {
+        // Release the flag this function set before bailing. `rollAll` currently
+        // sweeps all six tiles and would clear it anyway, so leaving it set is
+        // masked today - but the bail path owns the flag it set, and any future
+        // caller that bumps the epoch without a full sweep would strand the tile
+        // pulsing forever.
+        if (this.rollEpoch !== epoch) {
+          this.abilities[index].rolling = false;
+          return;
+        }
         const result = window.rollAbility();
         this.abilities[index] = window.updateAbilityWithRoll(this.abilities[index], result);
         const rolled = this.abilities[index];
@@ -331,7 +398,18 @@ function diceRoller(abilities: Ability[]) {
       }, 300);
     },
     selectAbility(index: number) {
-      if (this.swapUsed || this.isRolling) return;
+      // The tile stays clickable through a roll and after the session's one
+      // swap, so both refusals are announced. Silently ignoring the tap left a
+      // control that looked live and did nothing, and no sighted user gets any
+      // other signal about why.
+      if (this.isRolling) {
+        this.announce('Wait for the current roll to finish before swapping.');
+        return;
+      }
+      if (this.swapUsed) {
+        this.announce('This session has already used its swap. Roll all abilities to start a new one.');
+        return;
+      }
       if (this.selectedIndex === null) {
         this.selectedIndex = index;
         this.announce(`${this.abilities[index].name} selected. Choose a second ability to stage a swap.`);
@@ -345,7 +423,7 @@ function diceRoller(abilities: Ability[]) {
       this.stagedSwap = { index1: this.selectedIndex, index2: index };
       const a = this.abilities[this.selectedIndex].name;
       const b = this.abilities[index].name;
-      this.announce(`Swap ${a} with ${b} staged. Confirm or cancel.`);
+      this.announce(`Swap ${a} with ${b} staged. Confirm or cancel, or press Escape to cancel.`);
     },
     confirmSwap() {
       if (!this.stagedSwap) return;
@@ -356,17 +434,27 @@ function diceRoller(abilities: Ability[]) {
       this.selectedIndex = null;
       this.stagedSwap = null;
       this.swapUsed = true;
-      this.resultLog[0] = window.formatResultLog(this.abilities);
+      // Only rewrite the newest entry when there is one. A swap staged before
+      // the first roll would otherwise invent a log line of six zeroes.
+      if (this.resultLog.length > 0) {
+        this.resultLog[0] = window.formatResultLog(this.abilities);
+      }
       this.announce(`Swapped ${a} and ${b}. ${this.abilities.map(x => `${x.name} ${x.sum}`).join(', ')}.`);
     },
+    /**
+     * Also bound to Escape on the window, so a staged swap is recoverable
+     * without hunting for the cancel button. A no-op when nothing is staged -
+     * Escape must not speak over the page on every keypress.
+     */
     cancelSwap() {
+      if (!this.stagedSwap && this.selectedIndex === null) return;
       const staged = this.stagedSwap;
       this.selectedIndex = null;
       this.stagedSwap = null;
       this.announce(
         staged
           ? `Swap of ${this.abilities[staged.index1].name} and ${this.abilities[staged.index2].name} cancelled.`
-          : 'Swap cancelled.'
+          : 'Selection cleared.'
       );
     }
   };
