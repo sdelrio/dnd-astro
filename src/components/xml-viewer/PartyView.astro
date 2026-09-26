@@ -243,11 +243,12 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
         color 150ms ease,
         box-shadow 150ms ease;
     }
-    /* Touch gets pressed feedback instead: `:hover` sticks after a tap on iOS
-       and never fires at all with a stylus, so every hover tint is gated on a
-       real hover-capable pointer and coarse pointers get their own press. The
-       rules stay inside the media query rather than being reset later, so the
-       dark-theme overrides below are unaffected. */
+    /* Hover tints are gated on a hover-capable pointer: `:hover` sticks after a
+       tap on iOS and never fires for a stylus, so an ungated tint goes stale on
+       exactly the device that needs a different channel. The rules live inside
+       the media query rather than being reset later, so the dark-theme
+       overrides below stay intact - an unscoped reset would repaint a dark chip
+       with the light resting fill. */
     @media (hover: hover) {
       .r3-chip:hover {
         background: #f1eceb;
@@ -258,18 +259,25 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
         color: #f1eceb;
       }
     }
-    @media (hover: none) {
-      .r3-chip:active {
-        background: #f1eceb;
-        color: #2a2010;
-      }
-      :global([data-theme='dark']) .r3-chip:active {
-        background: #3f3632;
-        color: #f1eceb;
-      }
+    /* Press feedback is deliberately NOT gated. `:active` is correct for every
+       input method - a mouse still gets a press while held, a finger gets one
+       on contact - so gating it would only ever cost a hybrid touchscreen
+       laptop its feedback. A hybrid reports `hover: hover` *and* `pointer:
+       fine`, because the trackpad is the primary device, so an
+       `@media (hover: none)` wrapper never matches there. */
+    .r3-chip:active {
+      background: #f1eceb;
+      color: #2a2010;
     }
-    /* 44px targets 4px apart read as one control under a thumb. */
-    @media (pointer: coarse) {
+    :global([data-theme='dark']) .r3-chip:active {
+      background: #3f3632;
+      color: #f1eceb;
+    }
+    /* `any-pointer`, not `pointer`: a hybrid's primary pointer is `fine`, so
+       `pointer: coarse` misses it even though a finger can reach the control.
+       This asks the question the spacing is actually about - does the device
+       have touch at all - rather than which device is primary. */
+    @media (any-pointer: coarse) {
       .r3-group {
         gap: 8px;
       }

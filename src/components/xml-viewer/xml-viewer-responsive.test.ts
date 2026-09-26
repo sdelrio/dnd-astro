@@ -38,21 +38,36 @@ describe('CharSearch phone adaptation', () => {
 });
 
 describe('PartyView touch behaviour', () => {
+  // The stylesheet's comments quote the constructs they explain, so assertions
+  // about what is or is not present have to look at CSS, not prose.
+  const css = partyView.replace(/\/\*[\s\S]*?\*\//g, '');
+
   // `:hover` sticks after a tap on iOS and never fires for a stylus, so the
-  // tints are gated on a hover-capable pointer and coarse pointers press.
+  // tints are gated on a hover-capable pointer.
   it('gates hover tints behind a hover-capable pointer', () => {
-    expect(partyView).toMatch(/@media \(hover: hover\)\s*\{[\s\S]*?\.r3-chip:hover/);
-    expect(partyView).toMatch(/@media \(hover: none\)\s*\{[\s\S]*?\.r3-chip:active/);
+    expect(css).toMatch(/@media \(hover: hover\)\s*\{[\s\S]*?\.r3-chip:hover/);
+  });
+
+  // A hybrid touchscreen laptop reports `hover: hover` *and* `pointer: fine`,
+  // because the trackpad is the primary device. Gating the press on
+  // `hover: none` therefore never matches there, so the press must stand
+  // ungated: it is correct for a mouse held down and for a finger alike.
+  it('leaves press feedback ungated so a hybrid laptop is not left out', () => {
+    expect(css).toMatch(/\n {4}\.r3-chip:active\s*\{/);
+    expect(css).not.toMatch(/@media \(hover: none\)/);
   });
 
   it('keeps both themes covered by the pointer gating', () => {
-    const hoverBlock = partyView.match(/@media \(hover: hover\)\s*\{[\s\S]*?\n {4}\}/)![0];
-    expect(hoverBlock).toContain("[data-theme='dark']) .r3-chip:hover");
-    const pressBlock = partyView.match(/@media \(hover: none\)\s*\{[\s\S]*?\n {4}\}/)![0];
-    expect(pressBlock).toContain("[data-theme='dark']) .r3-chip:active");
+    expect(css).toMatch(
+      /@media \(hover: hover\)\s*\{[\s\S]*?\[data-theme='dark'\]\) \.r3-chip:hover/
+    );
+    expect(css).toMatch(/:global\(\[data-theme='dark'\]\) \.r3-chip:active/);
   });
 
-  it('separates 44px chips under a coarse pointer', () => {
-    expect(partyView).toMatch(/@media \(pointer: coarse\)\s*\{[\s\S]*?gap: 8px/);
+  // `pointer: coarse` describes the primary device, so a hybrid reports `fine`
+  // and never picks up the wider gap despite being tappable by finger.
+  it('widens chip spacing on any-pointer coarse, not the primary pointer', () => {
+    expect(css).toMatch(/@media \(any-pointer: coarse\)\s*\{[\s\S]*?gap: 8px/);
+    expect(css).not.toMatch(/@media \(pointer: coarse\)/);
   });
 });
