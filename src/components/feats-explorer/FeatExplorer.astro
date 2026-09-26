@@ -30,8 +30,13 @@ const initialData = {
 
       <!-- Below sm the three selects collapse behind a toggle: four stacked
            full-width controls pushed the first result card off a phone screen.
-           The panel keeps `sm:flex!` so the sm+ row is unaffected, and the
-           important flag is what outranks Alpine's inline `display:none`. -->
+           The panel must NOT carry a `hidden` class. `x-show` hides by writing
+           inline `display:none` and, on show, *removes* the inline display
+           instead of setting one - so a class-based `display:none` would win
+           again the moment the panel opened and the toggle would do nothing on
+           a phone. `x-cloak` already covers the pre-boot paint, and
+           `sm:flex!` is what outranks the inline `display:none` at sm+, keeping
+           the three selects in a row there. -->
       <button
         type="button"
         x-cloak
@@ -54,7 +59,7 @@ const initialData = {
         id="feat-filter-panel"
         x-cloak
         x-show="filtersOpen"
-        class="hidden sm:flex! sm:flex-row sm:items-start gap-4"
+        class="sm:flex! sm:flex-row sm:items-start gap-4"
       >
       <div class="sm:w-32">
         <label for="ability-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ability</label>

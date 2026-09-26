@@ -11,8 +11,18 @@ describe('CharSearch phone adaptation', () => {
   it('collapses the two selects behind a toggle below sm', () => {
     expect(charSearch).toContain('id="char-filter-panel"');
     expect(charSearch).toContain('x-show="filtersOpen"');
-    expect(charSearch).toContain('class="hidden sm:flex! sm:flex-row sm:items-start gap-4"');
+    expect(charSearch).toContain('class="sm:flex! sm:flex-row sm:items-start gap-4"');
     expect(charSearch).toContain('aria-controls="char-filter-panel"');
+  });
+
+  // Alpine's x-show reveals by removing its own inline display, so a
+  // class-based display:none on the panel would win again once filtersOpen
+  // went true and the toggle would be dead on a phone.
+  it('leaves the panel hidden below sm only via x-show, never via a class', () => {
+    const panel = charSearch.match(/<div\s+id="char-filter-panel"[\s\S]*?>/)![0];
+    expect(panel).toContain('x-show="filtersOpen"');
+    expect(panel).toContain('x-cloak');
+    expect(panel).not.toMatch(/\bclass="[^"]*\bhidden\b/);
   });
 
   // `py-2 text-sm` is a 38px control, and a sub-16px input font makes iOS

@@ -29,8 +29,11 @@ const filterPayload = JSON.stringify(toFilterableCharacters(characters));
     </div>
 
     <!-- Same collapse as FeatExplorer: two full-width selects stacked under the
-         search box pushed the first card off a phone screen. `sm:flex!` outranks
-         Alpine's inline `display:none` so the sm+ row is unaffected. -->
+         search box pushed the first card off a phone screen. No `hidden` class
+         on the panel: `x-show` reveals by removing its own inline display, so a
+         class-based `display:none` would win again and the toggle would be dead
+         on a phone. `x-cloak` covers the pre-boot paint and `sm:flex!` outranks
+         the inline `display:none` so the sm+ row stays inline. -->
     <button
       type="button"
       x-cloak
@@ -53,7 +56,7 @@ const filterPayload = JSON.stringify(toFilterableCharacters(characters));
       id="char-filter-panel"
       x-cloak
       x-show="filtersOpen"
-      class="hidden sm:flex! sm:flex-row sm:items-start gap-4"
+      class="sm:flex! sm:flex-row sm:items-start gap-4"
     >
     <div class="sm:w-48">
       <label for="class-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Class</label>

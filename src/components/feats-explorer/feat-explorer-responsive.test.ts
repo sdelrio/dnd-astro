@@ -10,9 +10,20 @@ describe('FeatExplorer phone adaptation', () => {
   it('collapses the three selects behind a toggle below sm', () => {
     expect(source).toContain('id="feat-filter-panel"');
     expect(source).toContain('x-show="filtersOpen"');
-    expect(source).toContain('class="hidden sm:flex! sm:flex-row sm:items-start gap-4"');
+    expect(source).toContain('class="sm:flex! sm:flex-row sm:items-start gap-4"');
     expect(source).toContain('x-show="!filtersOpen"');
     expect(source).toContain('aria-controls="feat-filter-panel"');
+  });
+
+  // Alpine's x-show reveals by *removing* its own inline display rather than
+  // setting one, so a class-based display:none on the panel would win again
+  // once filtersOpen went true and the toggle would do nothing on a phone.
+  // Visibility below sm has to come from x-show alone; x-cloak covers pre-boot.
+  it('leaves the panel hidden below sm only via x-show, never via a class', () => {
+    const panel = source.match(/<div\s+id="feat-filter-panel"[\s\S]*?>/)![0];
+    expect(panel).toContain('x-show="filtersOpen"');
+    expect(panel).toContain('x-cloak');
+    expect(panel).not.toMatch(/\bclass="[^"]*\bhidden\b/);
   });
 
   it('reports the active select count on the toggle', () => {
