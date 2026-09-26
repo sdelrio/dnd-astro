@@ -233,7 +233,12 @@ const splitSavesGroup =
         <p class="char-tags">
           {alignment && display !== 'small' && (<span class="char-pill">{alignment}</span>)}
           {background && (<span class="char-pill">{background}</span>)}
-          {deity && display !== 'small' && (<span class="char-pill">{deity}</span>)}
+          {/* Deity is large-only, like the subclass above it: both are long
+              free-text identity values that fit a full-width character sheet
+              but turn into a two-line block inside the ~200px identity column
+              of a two-column roster card. The full value stays on the
+              character page. */}
+          {deity && display === 'large' && (<span class="char-pill">{deity}</span>)}
         </p>
       )}
     </div>
@@ -324,7 +329,7 @@ const splitSavesGroup =
             <section class="@container relative group">
               <h3 class={sectionHeadingClass}>Saving Throws</h3>
               {!canShow('allSaves') && (
-                <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
+                <div class="grid grid-cols-2 gap-1 @sm:grid-cols-3">
                   {proficientSaves.map((abilityName) => (
                     <div class="flex justify-between py-1 px-2 text-sm">
                       <span class="text-gray-700 dark:text-gray-300">{abilityName}</span>
@@ -406,10 +411,10 @@ const splitSavesGroup =
     {(showSkills || showInventory) && (
       <div class={showSkills && showInventory ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
         {showSkills && (
-          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+          <section class="@container border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Skills" />
             {!canShow('allSkills') && (
-              <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
+              <div class="grid grid-cols-2 gap-1 @sm:grid-cols-3">
                 {skills.map((skill) => (
                   <div class="flex justify-between py-1 px-2 text-sm">
                     <span class="text-gray-700 dark:text-gray-300">{skill.name}</span>
@@ -703,9 +708,12 @@ const splitSavesGroup =
     line-height: 1.15;
     letter-spacing: 0.01em;
     color: #58180d;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* The name is the card's primary element, so it wraps rather than
+       ellipsises: in a two-column roster the identity block is ~200px wide and
+       "COPPER DRAGONBORN" was losing its tail. The meta line below still
+       truncates, because it repeats the full race and class on the character
+       page and is not the thing being scanned for. */
+    overflow-wrap: break-word;
   }
   .char-meta {
     margin: 3px 0 0;
@@ -728,6 +736,8 @@ const splitSavesGroup =
   .char-pill {
     display: inline-flex;
     align-items: center;
+    max-width: 100%;
+    overflow-wrap: break-word;
     padding: 2px 9px;
     font-family: 'ScalySans', 'Bookinsanity', Georgia, serif;
     font-size: 11px;
