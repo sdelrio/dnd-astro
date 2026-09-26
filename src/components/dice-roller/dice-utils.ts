@@ -1,3 +1,10 @@
+/**
+ * The six abilities, in the order both the dice roller and the point buy lay
+ * them out. One list, so a card cannot end up with a seventh ability the other
+ * has never heard of.
+ */
+export const ABILITY_NAMES = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'] as const;
+
 export function rollDie(sides = 6): number {
   return Math.floor(Math.random() * sides) + 1;
 }

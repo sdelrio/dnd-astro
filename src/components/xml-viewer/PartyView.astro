@@ -41,7 +41,7 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
 
 <div
   class="not-content space-y-6"
-  x-data="partyView($el)"
+  x-data="partyView"
   data-all-roles={allRolesJson}
   data-role-config={roleConfigJson}
   data-member-count={members.length}
@@ -168,51 +168,6 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
     })}
   </section>
 
-  <script is:inline>
-    window.partyView = function(el) {
-      const allRoles = JSON.parse(el.dataset.allRoles);
-      const roleConfig = JSON.parse(el.dataset.roleConfig);
-      const memberCount = Number(el.dataset.memberCount);
-      const memberRoles = JSON.parse(el.dataset.memberRoles);
-      return {
-        allRoles,
-        roleConfig,
-        memberCount,
-        memberRoles,
-        activeRoles: [...allRoles],
-        toggleRole(role) {
-          if (this.activeRoles.includes(role)) {
-            this.activeRoles = this.activeRoles.filter((r) => r !== role);
-          } else {
-            this.activeRoles.push(role);
-          }
-        },
-        isRoleActive(role) {
-          return this.activeRoles.includes(role);
-        },
-        hasActiveRole(roles) {
-          return roles.some((role) => this.isRoleActive(role));
-        },
-        /**
-         * Announced after every filter change. Pure on purpose: assigning to
-         * reactive state from inside an `x-text` expression re-triggers the
-         * effect that called it.
-         */
-        statusMessage() {
-          const total = this.memberCount;
-          const visible = this.memberRoles.filter((roles) => this.hasActiveRole(roles)).length;
-          if (this.activeRoles.length === this.allRoles.length) {
-            return `Filter: all roles. ${visible} members shown.`;
-          }
-          if (this.activeRoles.length === 0) {
-            return `Filter: no roles. 0 of ${total} members shown.`;
-          }
-          const names = this.activeRoles.map((r) => this.roleConfig[r].label).join(', ');
-          return `Filter: ${names}. ${visible} of ${total} members shown.`;
-        },
-      };
-    }
-  </script>
 
   <style>
     .r3-group {

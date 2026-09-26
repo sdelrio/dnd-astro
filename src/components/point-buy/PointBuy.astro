@@ -12,7 +12,7 @@ import {
 const initialScores = createDefaultScores();
 ---
 
-<div x-data="pointBuy()" class="not-content space-y-6">
+<div x-data="pointBuy" class="not-content space-y-6">
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
     {ABILITY_NAMES.map((ability) => (
       <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 text-center">
@@ -88,92 +88,3 @@ const initialScores = createDefaultScores();
 
   <p class="sr-only" role="status" aria-live="polite" x-text="announcement"></p>
 </div>
-
-<script>
-import {
-  calculateModifier,
-  canDecrease,
-  canIncrease,
-  createDefaultScores,
-  decreaseScore,
-  formatModifier,
-  getScoreCost,
-  increaseScore,
-  pointsRemaining,
-  resetScores,
-  type AbilityName,
-} from './point-buy-utils';
-
-declare global {
-  interface Window {
-    calculateModifier: typeof calculateModifier;
-    canDecrease: typeof canDecrease;
-    canIncrease: typeof canIncrease;
-    createDefaultScores: typeof createDefaultScores;
-    decreaseScore: typeof decreaseScore;
-    formatModifier: typeof formatModifier;
-    getScoreCost: typeof getScoreCost;
-    increaseScore: typeof increaseScore;
-    pointsRemaining: typeof pointsRemaining;
-    resetScores: typeof resetScores;
-    pointBuy: typeof pointBuy;
-  }
-}
-
-window.calculateModifier = calculateModifier;
-window.canDecrease = canDecrease;
-window.canIncrease = canIncrease;
-window.createDefaultScores = createDefaultScores;
-window.decreaseScore = decreaseScore;
-window.formatModifier = formatModifier;
-window.getScoreCost = getScoreCost;
-window.increaseScore = increaseScore;
-window.pointsRemaining = pointsRemaining;
-window.resetScores = resetScores;
-window.pointBuy = pointBuy;
-
-function pointBuy() {
-  return {
-    scores: window.createDefaultScores(),
-    calculateModifier: window.calculateModifier,
-    formatModifier: window.formatModifier,
-    getScoreCost: window.getScoreCost,
-    canIncrease: window.canIncrease,
-    canDecrease: window.canDecrease,
-    pointsRemaining: window.pointsRemaining,
-    announcement: '',
-    /**
-     * Writes to the polite live region. Clearing first and restoring on the
-     * next tick means a repeated value (buys that net zero) is still
-     * announced, which a plain assignment would swallow.
-     */
-    announce(message: string) {
-      this.announcement = '';
-      setTimeout(() => {
-        this.announcement = message;
-      }, 50);
-    },
-    announceScore(ability: AbilityName) {
-      const value = this.scores[ability];
-      this.announce(
-        `${ability} ${value}, modifier ${window.formatModifier(window.calculateModifier(value))}. ` +
-          `${window.pointsRemaining(this.scores)} points remaining.`
-      );
-    },
-    increase(ability: AbilityName) {
-      this.scores = window.increaseScore(this.scores, ability);
-      this.announceScore(ability);
-    },
-    decrease(ability: AbilityName) {
-      this.scores = window.decreaseScore(this.scores, ability);
-      this.announceScore(ability);
-    },
-    reset() {
-      this.scores = window.resetScores(this.scores);
-      this.announce(
-        `All scores reset. ${window.pointsRemaining(this.scores)} points remaining.`
-      );
-    },
-  };
-}
-</script>

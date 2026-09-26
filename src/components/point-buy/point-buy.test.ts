@@ -2,18 +2,37 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const source = readFileSync(new URL('./PointBuy.astro', import.meta.url), 'utf8');
+const component = readFileSync(new URL('./point-buy-component.ts', import.meta.url), 'utf8');
+const registration = readFileSync(new URL('../../alpine.ts', import.meta.url), 'utf8');
 
 describe('PointBuy Alpine wiring', () => {
-  it('roots the component in the pointBuy factory with the not-content class', () => {
-    expect(source).toContain('x-data="pointBuy()"');
+  it('roots the component in the registered pointBuy data provider', () => {
+    // `x-data="pointBuy"` names an `Alpine.data` registration rather than
+    // calling a global, so the component works with no `window` at all.
+    expect(source).toContain('x-data="pointBuy"');
     expect(source).toContain('not-content');
   });
 
   it('delegates score transitions and reset to the pure helpers', () => {
-    expect(source).toContain('window.increaseScore');
-    expect(source).toContain('window.decreaseScore');
-    expect(source).toContain('window.resetScores');
-    expect(source).toContain('window.pointBuy = pointBuy');
+    expect(registration).toContain("Alpine.data('pointBuy', pointBuyComponent)");
+    expect(component).toContain('pointBuy.increaseScore(this.scores, ability)');
+    expect(component).toContain('pointBuy.decreaseScore(this.scores, ability)');
+    expect(component).toContain('pointBuy.resetScores(this.scores)');
+  });
+
+  // Every helper used to be a `window` global so an inline `x-data` string
+  // could reach it. Eleven globals on one page collide with anything else,
+  // are invisible to the type checker, and survive a rename of the helper.
+  it('publishes no window globals', () => {
+    // Comments are stripped first: the prose above explains what the globals
+    // were, and an assertion that trips on its own explanation is one nobody
+    // trusts.
+    const code = (file: string) =>
+      file.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+    for (const file of [source, component, registration]) {
+      expect(code(file), 'a window global').not.toMatch(/window\s*\./);
+      expect(file).not.toContain('declare global');
+    }
   });
 });
 
