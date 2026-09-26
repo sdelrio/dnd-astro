@@ -40,7 +40,7 @@ const initialScores = createDefaultScores();
             type="button"
             @click={`decrease('${ability}')`}
             :disabled={`!canDecrease(scores, '${ability}')`}
-            class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             aria-label={`Decrease ${ability}`}
           >
             <IconifyIcon icon="mdi:minus" />
@@ -49,7 +49,7 @@ const initialScores = createDefaultScores();
             type="button"
             @click={`increase('${ability}')`}
             :disabled={`!canIncrease(scores, '${ability}')`}
-            class="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             aria-label={`Increase ${ability}`}
           >
             <IconifyIcon icon="mdi:plus" />
@@ -85,6 +85,8 @@ const initialScores = createDefaultScores();
       </button>
     </div>
   </div>
+
+  <p class="sr-only" role="status" aria-live="polite" x-text="announcement"></p>
 </div>
 
 <script>
@@ -139,14 +141,38 @@ function pointBuy() {
     canIncrease: window.canIncrease,
     canDecrease: window.canDecrease,
     pointsRemaining: window.pointsRemaining,
+    announcement: '',
+    /**
+     * Writes to the polite live region. Clearing first and restoring on the
+     * next tick means a repeated value (buys that net zero) is still
+     * announced, which a plain assignment would swallow.
+     */
+    announce(message: string) {
+      this.announcement = '';
+      setTimeout(() => {
+        this.announcement = message;
+      }, 50);
+    },
+    announceScore(ability: AbilityName) {
+      const value = this.scores[ability];
+      this.announce(
+        `${ability} ${value}, modifier ${window.formatModifier(window.calculateModifier(value))}. ` +
+          `${window.pointsRemaining(this.scores)} points remaining.`
+      );
+    },
     increase(ability: AbilityName) {
       this.scores = window.increaseScore(this.scores, ability);
+      this.announceScore(ability);
     },
     decrease(ability: AbilityName) {
       this.scores = window.decreaseScore(this.scores, ability);
+      this.announceScore(ability);
     },
     reset() {
       this.scores = window.resetScores(this.scores);
+      this.announce(
+        `All scores reset. ${window.pointsRemaining(this.scores)} points remaining.`
+      );
     },
   };
 }

@@ -29,25 +29,20 @@ const abilities: Ability[] = [
 
   <div class="grid grid-cols-3 lg:grid-cols-6 gap-4">
     <template x-for="(ability, index) in abilities" :key="ability.name">
-      <div>
-        <div
+      <div class="relative">
+        <button
+          type="button"
           @click="selectAbility(index)"
-          class="bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative"
+          :aria-pressed="selectedIndex === index"
+          :aria-label="'Select ' + ability.name + ' for swap'"
+          class="block w-full h-full text-left bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
           :class="selectedIndex === index ? 'border-(color:--sl-color-accent) ring-2 ring-(color:--sl-color-accent-low)' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-(color:--sl-color-accent-high)' : 'border-gray-200 dark:border-gray-700'"
         >
           <div class="p-4">
             <div class="flex items-center justify-center gap-1 mb-2">
               <h3 class="font-bold text-gray-900 dark:text-gray-100" x-text="ability.name"></h3>
-              <button
-                @click.stop="rollIndividual(index)"
-                :disabled="isRolling || ability.rolling || selectedIndex !== null"
-                class="group inline-flex items-center gap-1 text-xs text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
-                aria-label="Re-roll ability score"
-              >
-                <IconifyIcon icon="mdi:refresh" width="1em" class="transition-transform duration-200 group-hover:rotate-180" />
-              </button>
             </div>
-            
+
             <div x-show="ability.dice.length > 0" class="space-y-2">
               <div class="flex gap-1 justify-center">
                 <template x-for="(die, i) in ability.dice" :key="i">
@@ -58,7 +53,7 @@ const abilities: Ability[] = [
                   ></span>
                 </template>
               </div>
-              
+
               <div class="text-center">
                 <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   <span x-text="ability.topThree.join(' + ')"></span> = <span x-text="ability.sum" class="font-bold"></span>
@@ -66,32 +61,45 @@ const abilities: Ability[] = [
                 <div class="text-lg font-bold text-gray-900 dark:text-gray-100" x-text="formatModifier(ability.modifier)"></div>
               </div>
             </div>
-            
+
             <div x-show="ability.dice.length === 0" class="text-center py-4 text-gray-500 dark:text-gray-400">
               Roll to generate
             </div>
           </div>
-          
-          <div
-            x-show="ability.rolling"
-            class="absolute left-0 right-0 bottom-0 h-1 bg-(--sl-color-accent) animate-pulse"
-            style="z-index: 5"
-          ></div>
-        </div>
+        </button>
+
+        <button
+          type="button"
+          @click="rollIndividual(index)"
+          :disabled="isRolling || ability.rolling || selectedIndex !== null"
+          class="group absolute top-1 right-1 inline-flex items-center justify-center w-11 h-11 text-xs text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+          :aria-label="'Re-roll ' + ability.name"
+        >
+          <IconifyIcon icon="mdi:refresh" width="1em" class="transition-transform duration-200 group-hover:rotate-180" />
+        </button>
+
+        <div
+          x-show="ability.rolling"
+          class="absolute left-0 right-0 bottom-0 h-1 bg-(--sl-color-accent) animate-pulse"
+          style="z-index: 5"
+        ></div>
+
         <template x-if="stagedSwap && stagedSwap.index1 === index">
-          <div class="mt-2 bg-(--sl-color-accent-low) border border-(color:--sl-color-accent) rounded-lg p-2 text-center text-sm">
+          <div class="dice-swap-panel rounded-lg p-2 text-center text-sm">
             <div class="text-(color:--sl-color-accent-high) font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
             <div class="flex justify-center gap-2 not-content">
               <button
+                type="button"
                 @click="confirmSwap()"
-                class="p-1.5 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
+                class="dice-round-btn dice-round-btn--confirm"
                 aria-label="Confirm swap"
               >
                 <IconifyIcon icon="mdi:check" width="1em" />
               </button>
               <button
+                type="button"
                 @click="cancelSwap()"
-                class="p-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                class="dice-round-btn dice-round-btn--cancel"
                 aria-label="Cancel swap"
               >
                 <IconifyIcon icon="mdi:close" width="1em" />
@@ -139,11 +147,90 @@ const abilities: Ability[] = [
     </template>
   </div>
 
+  <p class="sr-only" role="status" aria-live="polite" x-text="announcement"></p>
+
   <div class="text-center text-sm text-gray-500 dark:text-gray-400">
     <p>Roll 4d6-drop-lowest for each ability score.</p>
   </div>
 
 </div>
+
+<style>
+  /* The swap panel and its confirm/cancel pair guard the tool's only
+     destructive action, so both are painted from the DESIGN.md bark/gold ramp
+     rather than the live --sl-color-accent tokens.
+
+     Why not the tokens: --sl-color-accent is #f7860f in dark and #697066 in
+     light, and --sl-color-text-invert is --sl-color-accent-low, not white.
+     That pairing gives 5.28:1 in dark but only 2.74:1 in light - the light
+     theme is the one that fails (see #329). Using the accent for the panel
+     fill is worse still: in light it is #b9c0b6, which leaves the gold confirm
+     button at 1.74:1 and the cancel button at 1.59:1, i.e. neither button
+     keeps a perceivable boundary (WCAG 1.4.11).
+
+     Every pairing below is at or above its bar, at rest and on hover:
+       confirm fill vs panel  3.00:1 light, 4.67:1 dark   (1.4.11 shape)
+       confirm glyph on fill 5.50:1 rest, 4.34:1 hover   (1.4.11, the glyph is
+                                                        an SVG graphic and the
+                                                        accessible name comes
+                                                        from aria-label)
+       cancel border/panel  6.68:1 light, 8.42:1 dark    (1.4.11 shape)
+       focus ring vs fill   5.50:1 light, 3.00:1 dark    (2.4.11)
+
+     The confirm fill sits exactly on the 3:1 shape boundary against the light
+     panel, so there is no headroom to lighten on hover - a lighter gold drops
+     the button to 2.26:1 and its edge disappears. The hover therefore darkens to
+     #b06f00, which holds every bar in both themes rather than only at rest.
+     The ring is never the same value as the button it outlines. */
+  .dice-swap-panel {
+    margin-top: 8px;
+    background: #f8f6f5;
+    border: 1px solid #c9ad6a;
+  }
+  .dice-round-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .dice-round-btn:focus-visible {
+    outline: 2px solid #1b1716;
+    outline-offset: 2px;
+  }
+  .dice-round-btn--confirm {
+    background: #c68000;
+    color: #1b1716;
+  }
+  .dice-round-btn--confirm:hover {
+    background: #b06f00;
+  }
+  .dice-round-btn--cancel {
+    background: transparent;
+    color: #2a2010;
+    border-color: #605552;
+  }
+  .dice-round-btn--cancel:hover {
+    background: #f1eceb;
+  }
+  :global([data-theme='dark']) .dice-swap-panel {
+    background: #2e2421;
+    border-color: #867347;
+  }
+  :global([data-theme='dark']) .dice-round-btn:focus-visible {
+    outline-color: #f8f6f5;
+  }
+  :global([data-theme='dark']) .dice-round-btn--cancel {
+    color: #f1eceb;
+    border-color: #c7c0be;
+  }
+  :global([data-theme='dark']) .dice-round-btn--cancel:hover {
+    background: #3f3632;
+  }
+</style>
 
 
 <script>
@@ -186,6 +273,18 @@ function diceRoller(abilities: Ability[]) {
     selectedIndex: null as number | null,
     stagedSwap: null as { index1: number; index2: number } | null,
     swapUsed: false,
+    announcement: '',
+    /**
+     * Writes to the polite live region. Clearing first and restoring on the
+     * next tick means an identical repeat (re-rolling the same total) is still
+     * announced, which a plain assignment would swallow.
+     */
+    announce(message: string) {
+      this.announcement = '';
+      setTimeout(() => {
+        this.announcement = message;
+      }, 50);
+    },
     rollAll() {
       if (this.isRolling) return;
       this.isRolling = true;
@@ -202,6 +301,10 @@ function diceRoller(abilities: Ability[]) {
           this.sessionRolls.push(sums);
           const allSums = this.sessionRolls.flat();
           this.stats = window.formatStats(window.calculateStats(allSums));
+          const scores = this.abilities
+            .map(a => `${a.name} ${a.sum} (${window.formatModifier(a.modifier)})`)
+            .join(', ');
+          this.announce(`All abilities rolled. ${scores}.`);
           return;
         }
         this.currentRollingIndex = index;
@@ -223,32 +326,48 @@ function diceRoller(abilities: Ability[]) {
       setTimeout(() => {
         const result = window.rollAbility();
         this.abilities[index] = window.updateAbilityWithRoll(this.abilities[index], result);
+        const rolled = this.abilities[index];
+        this.announce(`${rolled.name} rolled ${rolled.sum}, modifier ${window.formatModifier(rolled.modifier)}.`);
       }, 300);
     },
     selectAbility(index: number) {
       if (this.swapUsed || this.isRolling) return;
       if (this.selectedIndex === null) {
         this.selectedIndex = index;
+        this.announce(`${this.abilities[index].name} selected. Choose a second ability to stage a swap.`);
         return;
       }
       if (this.selectedIndex === index) {
         this.selectedIndex = null;
+        this.announce(`${this.abilities[index].name} deselected.`);
         return;
       }
       this.stagedSwap = { index1: this.selectedIndex, index2: index };
+      const a = this.abilities[this.selectedIndex].name;
+      const b = this.abilities[index].name;
+      this.announce(`Swap ${a} with ${b} staged. Confirm or cancel.`);
     },
     confirmSwap() {
       if (!this.stagedSwap) return;
       const { index1, index2 } = this.stagedSwap;
+      const a = this.abilities[index1].name;
+      const b = this.abilities[index2].name;
       this.abilities = window.swapAbilities(this.abilities, index1, index2);
       this.selectedIndex = null;
       this.stagedSwap = null;
       this.swapUsed = true;
       this.resultLog[0] = window.formatResultLog(this.abilities);
+      this.announce(`Swapped ${a} and ${b}. ${this.abilities.map(x => `${x.name} ${x.sum}`).join(', ')}.`);
     },
     cancelSwap() {
+      const staged = this.stagedSwap;
       this.selectedIndex = null;
       this.stagedSwap = null;
+      this.announce(
+        staged
+          ? `Swap of ${this.abilities[staged.index1].name} and ${this.abilities[staged.index2].name} cancelled.`
+          : 'Swap cancelled.'
+      );
     }
   };
 };

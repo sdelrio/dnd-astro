@@ -742,7 +742,7 @@ const splitSavesGroup =
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #948985;
+    color: #605552;
   }
   .char-hp-value {
     font-family: 'ScalySans', 'Bookinsanity', Georgia, serif;
@@ -754,7 +754,7 @@ const splitSavesGroup =
   }
   .char-hp-temp {
     font-size: 10px;
-    color: #948985;
+    color: #605552;
   }
 
   [data-theme='dark'] .char-header {
@@ -785,6 +785,14 @@ const splitSavesGroup =
   }
   [data-theme='dark'] .char-hp-value {
     color: #c68000;
+  }
+  /* The HP plate is near-black in dark, so the bark-600 label step that clears
+     7.20:1 on the white light-theme plate only reaches 2.47:1 here. The label
+     and temp value need their own dark step, the way .char-hp-value already
+     does. */
+  [data-theme='dark'] .char-hp-label,
+  [data-theme='dark'] .char-hp-temp {
+    color: #c7c0be;
   }
 
   @container (max-width: 400px) {
