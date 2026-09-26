@@ -1,9 +1,13 @@
-import { ROLE_CONFIG, type Role } from './party-roster';
+// TYPE-ONLY, and that is the fix. This module is in the browser's graph; the
+// party roster module is not (it reads the roster file from disk). A value
+// import here is what pulled `node:fs` into the client bundle in #351 and left
+// the whole site inert under `astro dev`. `party-roles.test.ts` guards it.
+import type { Role, RoleConfig } from './party-roles';
 
 export interface PartyViewComponent {
   $el: { dataset: Record<string, string | undefined> };
   allRoles: Role[];
-  roleConfig: Record<Role, (typeof ROLE_CONFIG)[Role]>;
+  roleConfig: Record<Role, RoleConfig>;
   memberCount: number;
   memberRoles: Role[][];
   activeRoles: Role[];
