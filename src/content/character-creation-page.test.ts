@@ -13,6 +13,9 @@ describe('Character Creation page', () => {
   });
 
   it('mounts the Point Buy and Dice Roller components', () => {
+    // The guide is one of two mount points for the Point Buy calculator; the
+    // other is the /dnd-tools/point-buy/ tool page. Neither asserts exclusivity.
+
     expect(pageSource).toContain("import PointBuy from '@/components/point-buy/PointBuy.astro';");
     expect(pageSource).toContain(
       "import DiceRoller from '@/components/dice-roller/DiceRoller.astro';"
