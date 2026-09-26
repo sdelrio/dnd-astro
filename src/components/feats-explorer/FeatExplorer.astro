@@ -24,7 +24,7 @@ const initialData = {
           x-model="searchQuery"
           @input.debounce.300ms="filterFeats()"
           placeholder="Type a feat name..."
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         />
       </div>
       
@@ -34,7 +34,7 @@ const initialData = {
           id="ability-filter"
           x-model="selectedAbility"
           @change="filterFeats()"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         >
           <option value="All">All Abilities</option>
           <template x-for="ability in abilities" :key="ability">
@@ -49,7 +49,7 @@ const initialData = {
           id="book-filter"
           x-model="selectedBook"
           @change="filterFeats()"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         >
           <option value="All">All Books</option>
           <template x-for="(label, code) in books" :key="code">
@@ -64,7 +64,7 @@ const initialData = {
           id="level-filter"
           x-model="selectedLevel"
           @change="filterFeats()"
-          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
         >
           <option value="All">All Levels</option>
           {LEVEL_BUCKETS.map((bucket) => (
@@ -82,7 +82,7 @@ const initialData = {
       <button
         x-show="hasActiveFilters()"
         @click="clearFilters()"
-        class="inline-flex items-center justify-center w-11 h-11 -mr-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+        class="inline-flex items-center justify-center w-11 h-11 -mr-2 text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) transition-colors"
         title="Clear filters"
         aria-label="Clear all filters"
       >
@@ -99,7 +99,7 @@ const initialData = {
               <h3 class="font-bold text-gray-900 dark:text-gray-100" x-text="feat.name"></h3>
               <span 
                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                :class="feat.level === 0 ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : feat.level >= 19 ? 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200' : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'"
+                :class="feat.level === 0 ? 'bg-moss-100 dark:bg-moss-800 text-ink dark:text-parchment' : feat.level >= 19 ? 'bg-bark-200 dark:bg-bark-800 text-ink dark:text-parchment' : 'bg-bark-100 dark:bg-bark-700 text-ink dark:text-parchment'"
                 x-text="feat.level === 0 ? 'Origin' : feat.level >= 19 ? 'Epic Boon' : 'General'"
               ></span>
             </div>
@@ -126,7 +126,7 @@ const initialData = {
     </div>
     
   <!-- Empty state -->
-  <div x-show="filteredFeats.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
+  <div x-cloak x-show="filteredFeats.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
     No feats match your filters.
   </div>
 </div>

@@ -82,7 +82,14 @@ const {
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
 const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).join(' / ');
 const vitalsItemClass = 'p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]';
-const hoverLabelClass = 'absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10';
+// Section labels were absolutely-positioned tabs at `opacity-0` that only
+// appeared on hover. That hid them from keyboard focus entirely and from touch
+// users completely, while `title` on the sibling dots gave no text alternative.
+// They are now real, always-visible headings in normal flow: a compact
+// uppercase micro-label on the gold rule, so the section is legible without a
+// pointer and reaches the document outline.
+const sectionHeadingClass =
+  'mt-0 mb-2 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)';
 
 // Build-time avatar resolution happens in the shared helper: an explicit
 // image prop wins when the file exists (missing files fall back to
@@ -217,7 +224,7 @@ const splitSavesGroup =
       <img class="char-portrait" src={avatarSrc} alt={`${name} portrait`} title={name} />
     )}
     <div class="char-id">
-      <h3 class="char-name" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h3>
+      <h2 class="char-name" title={`${name} - HP: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>{name}</h2>
       <p class="char-meta">
         {race} - {classString}
         {subclassString && display === 'large' && (<span> ({subclassString})</span>)}
@@ -233,19 +240,17 @@ const splitSavesGroup =
     <div class="char-hp" title={`Hit Points: ${hp}${tempHp ? ` (Temp: ${tempHp})` : ''}`}>
       <span class="char-hp-label">Hit Points</span>
       <span class="char-hp-value">{hp}</span>
-      <span class="char-hp-temp">+{tempHp} temp</span>
+      {tempHp > 0 && <span class="char-hp-temp">+{tempHp} temp</span>}
     </div>
   </header>
 
   <div class="p-4 space-y-4">
     <div class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
       <section class="relative group/overview">
-        {display === 'large' && (
-          <span class={`${hoverLabelClass} group-hover/overview:opacity-100 group-has-[section:hover]/overview:opacity-0!`}>Overview</span>
-        )}
+        {display === 'large' && <h3 class={sectionHeadingClass}>Overview</h3>}
         <div class="space-y-2">
           <section class="relative group">
-            <span class={`${hoverLabelClass} group-hover:opacity-100`}>Vitals</span>
+            <h3 class={sectionHeadingClass}>Vitals</h3>
             <div class="grid grid-cols-4 gap-2 text-center">
               <div class={vitalsItemClass}>
                 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">AC</div>
@@ -268,7 +273,8 @@ const splitSavesGroup =
             </div>
           </section>
 
-          <section title="Abilities">
+          <section>
+            <h3 class={sectionHeadingClass}>Abilities</h3>
             {display === 'small' ? (
               <CompactAbilityGrid abilities={abilities} entries={abilityEntries} />
             ) : (
@@ -292,7 +298,7 @@ const splitSavesGroup =
 
           {canShow('passives') && (
             <section class="relative group">
-              <span class={`${hoverLabelClass} group-hover:opacity-100`}>Passive Skills</span>
+              <h3 class={sectionHeadingClass}>Passive Skills</h3>
               <div class="grid grid-cols-3 gap-2 text-center">
                 <div class={`${vitalsItemClass} flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2`}>
                   <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Perception</div>
@@ -316,7 +322,7 @@ const splitSavesGroup =
         <div class={`grid grid-cols-1 gap-2${splitSavesGroup ? ' @7xl:grid-cols-2 @7xl:gap-4' : ''}`}>
           {showSaves && (
             <section class="@container relative group">
-              <span class={`${hoverLabelClass} group-hover:opacity-100`}>Saving Throws</span>
+              <h3 class={sectionHeadingClass}>Saving Throws</h3>
               {!canShow('allSaves') && (
                 <div class="grid grid-cols-2 gap-1 sm:grid-cols-3">
                   {proficientSaves.map((abilityName) => (
@@ -345,7 +351,10 @@ const splitSavesGroup =
                                 <span class="inline-flex items-center gap-1">
                                   <span>{row.short}</span>
                                   {row.saveprof > 0 && (
-                                    <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Proficient"></span>
+                                    <>
+                                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
+                                      <span class="sr-only">Proficient</span>
+                                    </>
                                   )}
                                 </span>
                               </td>
@@ -433,19 +442,19 @@ const splitSavesGroup =
                                     <span
                                       class="inline-flex items-center gap-px"
                                       data-prof-rank={rank}
-                                      title={SKILL_RANK_LABEL[rank]}
                                     >
+                                      <span class="sr-only">{SKILL_RANK_LABEL[rank]}</span>
                                       {rank === 'proficient' && (
-                                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
                                       )}
                                       {rank === 'expertise' && (
                                         <>
-                                          <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
-                                          <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                                          <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
+                                          <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
                                         </>
                                       )}
                                       {rank === 'half' && (
-                                        <span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]">
+                                        <span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]" aria-hidden="true">
                                           <span class="block w-1/2 h-full bg-[#c68000]"></span>
                                         </span>
                                       )}
@@ -465,18 +474,18 @@ const splitSavesGroup =
                 {hasSkillMarks && (
                   <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
                     <span class="inline-flex items-center gap-1">
-                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Proficient"></span>
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
                       Proficient
                     </span>
                     <span class="inline-flex items-center gap-1">
-                      <span class="inline-flex items-center gap-px" title="Expertise">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]"></span>
+                      <span class="inline-flex items-center gap-px" aria-hidden="true">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
                       </span>
                       Expertise
                     </span>
                     <span class="inline-flex items-center gap-1">
-                      <span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]" title="Half proficiency">
+                      <span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]" aria-hidden="true">
                         <span class="block w-1/2 h-full bg-[#c68000]"></span>
                       </span>
                       Half proficiency
@@ -572,9 +581,9 @@ const splitSavesGroup =
             <div class={vitalsItemClass}>
               {featuresByLevel.map((group) => (
                 <div>
-                  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                  <h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
                     Level {group.level}
-                  </h3>
+                  </h4>
                   <div class="flex flex-wrap gap-2">
                     {group.items.map((feature) => (
                       <span
@@ -595,14 +604,14 @@ const splitSavesGroup =
             <div class={vitalsItemClass}>
               {powersByLevel.map((levelGroup) => (
                 <div>
-                  <h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
+                  <h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">
                     Level {levelGroup.level}
-                  </h3>
+                  </h4>
                   {levelGroup.groups.map((group) => (
                     <div>
-                      <h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
+                      <h5 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">
                         {group.name}
-                      </h4>
+                      </h5>
                       <div class="flex flex-wrap gap-2">
                         {group.items.map((power) => {
                           const mark = powerMark(power);
@@ -613,10 +622,16 @@ const splitSavesGroup =
                             >
                               {power.name}
                               {mark === 'always' && (
-                                <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" title="Always prepared (class/subclass)"></span>
+                                <>
+                                  <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" aria-hidden="true"></span>
+                                  <span class="sr-only">Always prepared (class/subclass)</span>
+                                </>
                               )}
                               {mark === 'prepared' && (
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Prepared"></span>
+                                <>
+                                  <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
+                                  <span class="sr-only">Prepared</span>
+                                </>
                               )}
                             </span>
                           );
@@ -629,11 +644,11 @@ const splitSavesGroup =
               {hasPowerMarks && (
                 <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
                   <span class="inline-flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Prepared"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
                     Prepared
                   </span>
                   <span class="inline-flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" title="Always prepared (class/subclass)"></span>
+                    <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" aria-hidden="true"></span>
                     Always prepared (class/subclass)
                   </span>
                 </div>

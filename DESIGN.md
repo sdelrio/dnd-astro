@@ -157,7 +157,7 @@ D&D Companion reads as a campaign grimoire kept in a golden forest: warm bark-br
 
 The system is deliberately lifted and tactile. Cards sit on soft ambient shadows and rise slightly on hover; stat tiles wear a 3px accent cap like stamped leather; ability scores are cut into arch-topped plates. Nothing floats in a void - every panel feels placed on a table. Density is high but legible: the character Card is built for scanning mid-session, with compact grids, uppercase micro-labels, and monospaced numbers for anything you might add up.
 
-The implementation still has a seam between two layers, now uneven. The Starlight documentation layer uses the warm bark/moss palette throughout, and the character Card heading has joined it - Cinzel name, gold rule, warm surfaces, correct dark-theme inversion. What remains on Tailwind's default cool gray scale is the Card *body*: the vitals and ability tiles, the tag chips, and the `blue-500` focus ring on the tool-page inputs. The heading is the reference for where that body is headed.
+The implementation still has a seam between two layers, now uneven. The Starlight documentation layer uses the warm bark/moss palette throughout, and the character Card heading has joined it - Cinzel name, gold rule, warm surfaces, correct dark-theme inversion. The Card *body* has since joined it: the `gray` scale is redefined onto the bark ramp in `@theme`, so the vitals and ability tiles, the tag chips, and the tool-page focus rings are all warm. The heading remains the reference implementation.
 
 **Key Characteristics:**
 - Warm bark neutrals and an amber "sap" accent; oxblood (light) and gold (dark) for headings.
@@ -239,7 +239,7 @@ the admonition pairings and the stripe stops, so the mapping cannot drift
 silently.
 
 ### Named Rules
-**The Warm-Only Rule.** No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The `gray` scale is now bark, the `blue-500` focus rings on the tool inputs are the remaining drift, and the admonition palette has been pulled onto the bark/moss/gold/oxblood ramps. Admonitions set both `--sl-color-asides-border` and `--sl-color-asides-text-accent`; Starlight's own defaults for both are cool.
+**The Warm-Only Rule.** No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The `gray` scale is now bark, the tool-input focus rings and the feat-tier chips are on the accent and the moss/bark ramps, and the admonition palette has been pulled onto the bark/moss/gold/oxblood ramps. There is no remaining named drift; `tailwind.test.ts` fails on any cool utility class or blue-dominant hex in a component or page. Admonitions set both `--sl-color-asides-border` and `--sl-color-asides-text-accent`; Starlight's own defaults for both are cool.
 
 **Specificity over order for third-party overrides.** Starlight declares
 `--sl-color-asides-text-accent` on the same bare class our rules target, later in
@@ -310,7 +310,7 @@ Corners are gently rounded and occasionally arched. Cards, buttons, inputs, and 
 - **Focus ring:** Never the same value as the control it outlines, in either theme. Bark-black `#1b1716` in light, bark-100 `#f8f6f5` in dark - 5.50:1 and 3.00:1 against the gold fill. An accent-coloured ring on an accent-filled button is invisible at 1.00:1, and gold-rule on gold is only 1.49:1.
 
 ### Chips
-- **Style:** `rounded-full` pills. **Role chips** carry a light and a dark hue step (`ROLE_CONFIG` in `party-roster.ts`) exposed as the `--role-light` / `--role-dark` custom properties. The hue is used **only** for a 14% background tint and the border; the label text stays bark (`#605552` light, `#c7c0be` dark) and clears 4.5:1 in both themes. Tinting with the hue *and* colouring the text with the same hue cannot reach 4.5:1 - a saturated colour on a tint of itself is too light. Non-role chips use pale gray fill with gray text at `text-xs`.
+- **Style:** `rounded-full` pills. Tier chips (Origin / Epic Boon / General) use moss-100 / bark-200 / bark-100 in light and moss-800 / bark-800 / bark-700 in dark, with ink and parchment text. **Role chips** carry a light and a dark hue step (`ROLE_CONFIG` in `party-roster.ts`) exposed as the `--role-light` / `--role-dark` custom properties. The hue is used **only** for a 14% background tint and the border; the label text stays bark (`#605552` light, `#c7c0be` dark) and clears 4.5:1 in both themes. Tinting with the hue *and* colouring the text with the same hue cannot reach 4.5:1 - a saturated colour on a tint of itself is too light. Non-role chips use pale gray fill with gray text at `text-xs`.
 - **State:** Role filter chips are outlined when inactive (gray fill, subtle hover) and filled with the role hue when active; selection is also carried by `aria-pressed` and font weight, never by colour alone. A horizontal 1-3 dot marker denotes proficiency tiers.
 
 ### Role hues
@@ -324,6 +324,24 @@ Defined once in `ROLE_CONFIG` (`src/components/xml-viewer/party-roster.ts`) and 
 | Support | `#9a5410` | `#d08a4a` |
 | Utility | `#6b2f4c` | `#b07a94` |
 
+### Card sections
+The card's subdivisions are headed, not labelled by tooltip or hover. Heading
+levels step down from the card name, which is the `h2` (Starlight supplies the
+page `h1`): sections are `h3`, and the "Level N" groups inside Features and Powers
+are `h4` with the group name at `h5`.
+
+Two treatments, both real headings:
+- **Micro-label** (`sectionHeadingClass`): 0.7rem uppercase, 0.08em tracking, in
+  `accent-high`. Used for Overview, Vitals, Abilities, Passive Skills and Saving
+  Throws, which sit in the card's dense upper region.
+- **`SectionHeader`**: 1rem semibold. Used for Skills, Inventory, Equipped
+  Weapons, Features and Powers, which are full-width blocks lower down.
+
+The subdivisions are `<section>` elements but are deliberately **unnamed**. A
+`<section>` maps to a `region` landmark only when it has an accessible name, and
+the party page renders six cards - naming them produced "Vitals" as a landmark six
+times over, which is worse than no names. The heading carries the navigation.
+
 ### Cards / Containers
 - **Corner Style:** 8px (`rounded-lg`).
 - **Background:** White in light mode, `gray-800` in dark mode; the Card header is a slightly recessed surface (`gray-50` / `gray-900`).
@@ -333,7 +351,7 @@ Defined once in `ROLE_CONFIG` (`src/components/xml-viewer/party-roster.ts`) and 
 
 ### Inputs / Fields
 - **Style:** White or `gray-800` fill, 1px `gray-300` / `gray-600` stroke, 8px radius, `text-sm`, `shadow-sm`.
-- **Focus:** Currently a 2px blue-500 ring and border shift - the one element that reads as generic SaaS. The intended direction is a Sap Amber ring so focus matches the accent.
+- **Focus:** A 2px ring and border shift in the accent (`--sl-color-accent`), so focus matches the accent in both themes. This replaced a `blue-500` ring, the last element that read as generic SaaS.
 - **Labels:** Uppercase micro-labels are for stat tiles; form fields use a 14px medium label above the control.
 
 ### Navigation
@@ -386,7 +404,7 @@ Defined once in `ROLE_CONFIG` (`src/components/xml-viewer/party-roster.ts`) and 
 
 ### Don't:
 - **Don't** introduce neon or cyberpunk: no electric purple or cyan, no glassmorphism, no glowing sci-fi gradients or blur.
-- **Don't** reach for Tailwind's default cool `gray-*` scale or a `blue-500` focus ring in new work. The Card heading is already off it; the Card body is the remaining debt.
+- **Don't** reach for Tailwind's default cool `gray-*` scale or a `blue-500` focus ring in new work. The `gray` scale is already remapped onto bark, but a hardcoded cool hex in new markup will still render cool. `tailwind.test.ts` fails the build on either.
 - **Don't** put the system sans stack in a Card heading. Cinzel for the name, ScalySans for everything else, in both themes.
 - **Don't** treat Surface White as a general surface or an ink. It is the light-theme HP plate and nothing else.
 - **Don't** use pure black or pure white for text; use Ink and Parchment.

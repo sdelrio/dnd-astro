@@ -7,7 +7,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <img class="char-portrait" src="/fg/avatar/faceless.svg" alt="Snapshot Hero portrait" title="Snapshot Hero">
 </a>
 <div class="char-id">
-<h3 class="char-name" title="Snapshot Hero - HP: 28 (Temp: 5)">Snapshot Hero</h3>
+<h2 class="char-name" title="Snapshot Hero - HP: 28 (Temp: 5)">Snapshot Hero</h2>
 <p class="char-meta">Human - Fighter 3<span> (Battle Master)</span>
 </p>
 <p class="char-tags">
@@ -25,10 +25,10 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <div class="p-4 space-y-4">
 <div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4">
 <section class="relative group/overview">
-<span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10 group-hover/overview:opacity-100 group-has-[section:hover]/overview:opacity-0!">Overview</span>
+<h3 class="mt-0 mb-2 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)">Overview</h3>
 <div class="space-y-2">
 <section class="relative group">
-<span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10 group-hover:opacity-100">Vitals</span>
+<h3 class="mt-0 mb-2 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)">Vitals</h3>
 <div class="grid grid-cols-4 gap-2 text-center">
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">AC</div>
@@ -48,7 +48,8 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </section>
-<section title="Abilities">
+<section>
+<h3 class="mt-0 mb-2 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)">Abilities</h3>
 <div class="grid grid-cols-3 @lg:grid-cols-6 gap-1">
 <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
 <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">STR</div>
@@ -89,7 +90,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </section>
 <section class="relative group">
-<span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10 group-hover:opacity-100">Passive Skills</span>
+<h3 class="mt-0 mb-2 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)">Passive Skills</h3>
 <div class="grid grid-cols-3 gap-2 text-center">
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px] flex flex-col items-center text-center gap-1 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2">
 <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Passive Perception</div>
@@ -109,7 +110,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </section>
 <div class="grid grid-cols-1 gap-2 @7xl:grid-cols-2 @7xl:gap-4">
 <section class="@container relative group">
-<span class="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-2 py-0.5 rounded opacity-0 transition-opacity pointer-events-none whitespace-nowrap z-10 group-hover:opacity-100">Saving Throws</span>
+<h3 class="mt-0 mb-2 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)">Saving Throws</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
 <table class="w-full text-sm">
@@ -124,8 +125,9 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <td class="py-1 text-gray-700 dark:text-gray-300">
 <span class="inline-flex items-center gap-1">
 <span>STR</span>
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Proficient">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
+<span class="sr-only">Proficient</span>
 </span>
 </td>
 <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">+6</td>
@@ -142,8 +144,9 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <td class="py-1 text-gray-700 dark:text-gray-300">
 <span class="inline-flex items-center gap-1">
 <span>CON</span>
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Proficient">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
+<span class="sr-only">Proficient</span>
 </span>
 </td>
 <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">+4</td>
@@ -211,7 +214,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 <div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4">
 <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-<h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Skills</h2>
+<h3 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Skills</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
 <table class="w-full text-sm">
@@ -245,8 +248,9 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <td class="py-1 text-gray-700 dark:text-gray-300">
 <span class="inline-flex items-center gap-1">
 <span class="truncate">Athletics</span>
-<span class="inline-flex items-center gap-px" data-prof-rank="proficient" title="Proficient">
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]">
+<span class="inline-flex items-center gap-px" data-prof-rank="proficient">
+<span class="sr-only">Proficient</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
 </span>
 </span>
@@ -269,10 +273,11 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <td class="py-1 text-gray-700 dark:text-gray-300">
 <span class="inline-flex items-center gap-1">
 <span class="truncate">Perception</span>
-<span class="inline-flex items-center gap-px" data-prof-rank="expertise" title="Expertise">
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]">
+<span class="inline-flex items-center gap-px" data-prof-rank="expertise">
+<span class="sr-only">Expertise</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
 </span>
 </span>
@@ -284,8 +289,9 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <td class="py-1 text-gray-700 dark:text-gray-300">
 <span class="inline-flex items-center gap-1">
 <span class="truncate">Stealth</span>
-<span class="inline-flex items-center gap-px" data-prof-rank="proficient" title="Proficient">
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]">
+<span class="inline-flex items-center gap-px" data-prof-rank="proficient">
+<span class="sr-only">Proficient</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
 </span>
 </span>
@@ -297,8 +303,9 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <td class="py-1 text-gray-700 dark:text-gray-300">
 <span class="inline-flex items-center gap-1">
 <span class="truncate">Survival</span>
-<span class="inline-flex items-center gap-px" data-prof-rank="proficient" title="Proficient">
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]">
+<span class="inline-flex items-center gap-px" data-prof-rank="proficient">
+<span class="sr-only">Proficient</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
 </span>
 </span>
@@ -311,17 +318,17 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
 <span class="inline-flex items-center gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Proficient">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>Proficient</span>
 <span class="inline-flex items-center gap-1">
-<span class="inline-flex items-center gap-px" title="Expertise">
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]">
+<span class="inline-flex items-center gap-px" aria-hidden="true">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
 </span>Expertise</span>
 <span class="inline-flex items-center gap-1">
-<span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]" title="Half proficiency">
+<span class="w-1.5 h-1.5 overflow-hidden rounded-full border border-[#c68000]" aria-hidden="true">
 <span class="block w-1/2 h-full bg-[#c68000]">
 </span>
 </span>Half proficiency</span>
@@ -330,7 +337,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </section>
 <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
 <div class="flex flex-col gap-1 mb-2 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2">
-<h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100">Inventory</h2>
+<h3 class="mt-0 font-semibold text-gray-900 dark:text-gray-100">Inventory</h3>
 <span class="text-xs text-gray-500 dark:text-gray-400">56.0 / 270 lb. carried</span>
 </div>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
@@ -399,7 +406,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </section>
 </div>
 <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-<h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Equipped Weapons</h2>
+<h3 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Equipped Weapons</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <table class="w-full text-sm">
 <thead>
@@ -429,16 +436,16 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </section>
 <div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4">
 <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-<h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Features</h2>
+<h3 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Features</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div>
-<h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 1</h3>
+<h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 1</h4>
 <div class="flex flex-wrap gap-2">
 <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300" title="Source: Fighter">Second Wind</span>
 </div>
 </div>
 <div>
-<h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 2</h3>
+<h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 2</h4>
 <div class="flex flex-wrap gap-2">
 <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300" title="Source: Fighter">Action Surge</span>
 </div>
@@ -446,42 +453,44 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </section>
 <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-<h2 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Powers</h2>
+<h3 class="mt-0 font-semibold text-gray-900 dark:text-gray-100 mb-2">Powers</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div>
-<h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 1</h3>
+<h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 1</h4>
 <div>
-<h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">Barbarian Actions/Effects</h4>
+<h5 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">Barbarian Actions/Effects</h5>
 <div class="flex flex-wrap gap-2">
 <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1" title="Group: Barbarian Actions/Effects">Rage</span>
 </div>
 </div>
 <div>
-<h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">Spells Domain (Life)</h4>
+<h5 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">Spells Domain (Life)</h5>
 <div class="flex flex-wrap gap-2">
-<span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1" title="Group: Spells Domain (Life)">Cure Wounds<span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" title="Always prepared (class/subclass)">
+<span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1" title="Group: Spells Domain (Life)">Cure Wounds<span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" aria-hidden="true">
 </span>
+<span class="sr-only">Always prepared (class/subclass)</span>
 </span>
 </div>
 </div>
 </div>
 <div>
-<h3 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 3</h3>
+<h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mt-3 mb-1">Level 3</h4>
 <div>
-<h4 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">Spells</h4>
+<h5 class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-1">Spells</h5>
 <div class="flex flex-wrap gap-2">
-<span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1" title="Group: Spells">Bless<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Prepared">
+<span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1" title="Group: Spells">Bless<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>
+<span class="sr-only">Prepared</span>
 </span>
 </div>
 </div>
 </div>
 <div class="mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
 <span class="inline-flex items-center gap-1">
-<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" title="Prepared">
+<span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true">
 </span>Prepared</span>
 <span class="inline-flex items-center gap-1">
-<span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" title="Always prepared (class/subclass)">
+<span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" aria-hidden="true">
 </span>Always prepared (class/subclass)</span>
 </div>
 </div>

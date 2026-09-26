@@ -98,15 +98,15 @@ const fixtureCharacter: CharacterData = {
 };
 
 const SECTION_MARKERS: Array<[label: string, marker: string]> = [
-  ['Overview', '>Overview</span>'],
-  ['Saving Throws', '>Saving Throws</span>'],
+  ['Overview', '>Overview</h3>'],
+  ['Saving Throws', '>Saving Throws</h3>'],
   ['Languages', '>Languages</div>'],
   ['Feats', '>Feats</div>'],
-  ['Skills', '>Skills</h2>'],
-  ['Inventory', '>Inventory</h2>'],
-  ['Equipped Weapons', '>Equipped Weapons</h2>'],
-  ['Features', '>Features</h2>'],
-  ['Powers', '>Powers</h2>'],
+  ['Skills', '>Skills</h3>'],
+  ['Inventory', '>Inventory</h3>'],
+  ['Equipped Weapons', '>Equipped Weapons</h3>'],
+  ['Features', '>Features</h3>'],
+  ['Powers', '>Powers</h3>'],
 ];
 
 let container: AstroContainer;
