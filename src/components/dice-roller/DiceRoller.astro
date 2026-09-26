@@ -27,7 +27,7 @@ const abilities: Ability[] = [
     </button>
   </div>
 
-  <div class="grid grid-cols-3 lg:grid-cols-6 gap-4">
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
     <template x-for="(ability, index) in abilities" :key="ability.name">
       <div class="relative">
         <button
@@ -38,7 +38,7 @@ const abilities: Ability[] = [
           class="block w-full h-full text-left bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
           :class="selectedIndex === index ? 'border-(color:--sl-color-accent) ring-2 ring-(color:--sl-color-accent-low)' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-(color:--sl-color-accent-high)' : 'border-gray-200 dark:border-gray-700'"
         >
-          <div class="p-4">
+          <div class="p-3 sm:p-4">
             <div class="flex items-center justify-center gap-1 mb-2">
               <h3 class="font-bold text-gray-900 dark:text-gray-100" x-text="ability.name"></h3>
             </div>
@@ -47,7 +47,7 @@ const abilities: Ability[] = [
               <div class="flex gap-1 justify-center">
                 <template x-for="(die, i) in ability.dice" :key="i">
                   <span
-                    class="w-8 h-8 flex items-center justify-center rounded border text-sm font-medium"
+                    class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded border text-xs sm:text-sm font-medium"
                     :class="ability.topThreeIndices.includes(i) ? 'bg-(--sl-color-accent-low) border-(color:--sl-color-accent) text-(color:--sl-color-accent-high)' : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 line-through'"
                     x-text="die"
                   ></span>
