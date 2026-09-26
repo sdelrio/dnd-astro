@@ -12,6 +12,12 @@ describe('Companion index page', () => {
     );
   });
 
+  it('links the Tools list Point Buy item to the tool page', () => {
+    expect(indexSource).toContain('<strong><a href="/dnd-tools/point-buy/">Point Buy</a></strong>');
+    // The action button row stays as it was; Point Buy is listed, not promoted to a button.
+    expect(indexSource).not.toMatch(/<LinkButton href="\/dnd-tools\/point-buy\/"/);
+  });
+
   it('adds a secondary Character Creation button to the top action row', () => {
     const buttonPattern =
       /<LinkButton href="\/dnd\/character-creation\/" variant="secondary">\s*<IconifyIcon icon="mdi:account-plus" width="1\.5em" \/>\s*Character Creation\s*<\/LinkButton>/;
