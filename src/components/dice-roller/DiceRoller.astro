@@ -34,6 +34,7 @@ const abilities: Ability[] = [
           type="button"
           @click="selectAbility(index)"
           :aria-pressed="selectedIndex === index"
+          :aria-label="'Select ' + ability.name + ' for swap'"
           class="block w-full h-full text-left bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
           :class="selectedIndex === index ? 'border-(color:--sl-color-accent) ring-2 ring-(color:--sl-color-accent-low)' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-(color:--sl-color-accent-high)' : 'border-gray-200 dark:border-gray-700'"
         >
@@ -82,30 +83,31 @@ const abilities: Ability[] = [
           class="absolute left-0 right-0 bottom-0 h-1 bg-(--sl-color-accent) animate-pulse"
           style="z-index: 5"
         ></div>
-      </div>
-      <template x-if="stagedSwap && stagedSwap.index1 === index">
-        <div class="mt-2 bg-(--sl-color-accent-low) border border-(color:--sl-color-accent) rounded-lg p-2 text-center text-sm">
-          <div class="text-(color:--sl-color-accent-high) font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
-          <div class="flex justify-center gap-2 not-content">
-            <button
-              type="button"
-              @click="confirmSwap()"
-              class="inline-flex items-center justify-center w-11 h-11 bg-(--sl-color-accent) text-(color:--sl-color-text-invert) rounded-full hover:bg-(--sl-color-accent-high) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
-              aria-label="Confirm swap"
-            >
-              <IconifyIcon icon="mdi:check" width="1em" />
-            </button>
-            <button
-              type="button"
-              @click="cancelSwap()"
-              class="inline-flex items-center justify-center w-11 h-11 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
-              aria-label="Cancel swap"
-            >
-              <IconifyIcon icon="mdi:close" width="1em" />
-            </button>
+
+        <template x-if="stagedSwap && stagedSwap.index1 === index">
+          <div class="mt-2 bg-(--sl-color-accent-low) border border-(color:--sl-color-accent) rounded-lg p-2 text-center text-sm">
+            <div class="text-(color:--sl-color-accent-high) font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
+            <div class="flex justify-center gap-2 not-content">
+              <button
+                type="button"
+                @click="confirmSwap()"
+                class="dice-round-btn dice-round-btn--confirm"
+                aria-label="Confirm swap"
+              >
+                <IconifyIcon icon="mdi:check" width="1em" />
+              </button>
+              <button
+                type="button"
+                @click="cancelSwap()"
+                class="dice-round-btn dice-round-btn--cancel"
+                aria-label="Cancel swap"
+              >
+                <IconifyIcon icon="mdi:close" width="1em" />
+              </button>
+            </div>
           </div>
-        </div>
-      </template>
+        </template>
+      </div>
     </template>
    </div>
 
@@ -152,6 +154,62 @@ const abilities: Ability[] = [
   </div>
 
 </div>
+
+<style>
+  /* The swap confirm/cancel pair guards the tool's only destructive action, so
+     it is painted from DESIGN.md's gold and bark rather than the live
+     --sl-color-accent token. That token resolves to sap #f7860f in dark, and
+     white-on-sap measures 2.51:1 - worse than the green-600 it replaced. The
+     outline is bark-black on gold (7.09:1) because an accent-coloured ring on
+     an accent-filled button is invisible at 1.00:1. */
+  .dice-round-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+  .dice-round-btn:focus-visible {
+    outline: 2px solid #1b1716;
+    outline-offset: 2px;
+  }
+  .dice-round-btn--confirm {
+    background: #c68000;
+    color: #1b1716;
+  }
+  .dice-round-btn--confirm:hover {
+    background: #d99a2b;
+  }
+  .dice-round-btn--cancel {
+    background: #f1eceb;
+    color: #2a2010;
+    border-color: #c7c0be;
+  }
+  .dice-round-btn--cancel:hover {
+    background: #e2dbd9;
+  }
+  :global([data-theme='dark']) .dice-round-btn:focus-visible {
+    outline-color: #c9ad6a;
+  }
+  :global([data-theme='dark']) .dice-round-btn--confirm {
+    background: #c68000;
+    color: #1b1716;
+  }
+  :global([data-theme='dark']) .dice-round-btn--confirm:hover {
+    background: #d99a2b;
+  }
+  :global([data-theme='dark']) .dice-round-btn--cancel {
+    background: #3f3632;
+    color: #f1eceb;
+    border-color: #605552;
+  }
+  :global([data-theme='dark']) .dice-round-btn--cancel:hover {
+    background: #4a403a;
+  }
+</style>
 
 
 <script>

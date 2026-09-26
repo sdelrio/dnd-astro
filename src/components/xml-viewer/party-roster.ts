@@ -7,9 +7,9 @@ import { getCharacter } from '@/utils/generated-characters';
 //
 // Each role carries a light and a dark hue step rather than one flat color.
 // The hue is only ever used for the chip border and a 14% background tint -
-// never as the text color - because a saturated hue on a 14% tint of itself
-// cannot reach 4.5:1 in either theme. Every pair below is verified at >=3:1
-// border (WCAG 1.4.11) and >=5.7:1 label text against its own tinted surface.
+// never as the text color - because a saturated hue on a tint of itself cannot
+// reach 4.5:1 in either theme. Every pair below verifies at >=3:1 border
+// (WCAG 1.4.11) and >=5.6:1 label text against its own tinted surface.
 export const ROLE_CONFIG = {
   tank: { icon: 'game-icons:shield', label: 'Tank', light: '#a06e00', dark: '#d99a2b' },
   healer: { icon: 'game-icons:heart-plus', label: 'Healer', light: '#4a6b1f', dark: '#8fae5c' },

@@ -170,7 +170,9 @@ function pointBuy() {
     },
     reset() {
       this.scores = window.resetScores(this.scores);
-      this.announce('All scores reset. 27 points remaining.');
+      this.announce(
+        `All scores reset. ${window.pointsRemaining(this.scores)} points remaining.`
+      );
     },
   };
 }

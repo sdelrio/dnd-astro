@@ -252,26 +252,26 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
       font-weight: 600;
     }
     /* The role hue only tints the fill and the border - the label stays bark so
-       the chip clears 4.5:1 in both themes. */
-    .r3-chip.is-active,
-    .r3-role-pill {
-      color: #605552;
-      background: color-mix(in srgb, var(--role-light) 14%, #ffffff);
-      border-color: var(--role-light);
-    }
-    .r3-chip-all.is-active {
-      color: #2a2010;
-      background: color-mix(in srgb, #2a2010 14%, #ffffff);
-      border-color: #2a2010;
-    }
+       the chip clears 4.5:1 in both themes. Layout-only pill rules come first:
+       a later `border` shorthand here would reset the hue border above it. */
     .r3-role-pill {
       display: inline-flex;
       align-items: center;
       padding: 2px 10px;
       font-size: 12px;
       font-weight: 500;
-      border: 1px solid transparent;
       border-radius: 9999px;
+    }
+    .r3-chip.is-active,
+    .r3-role-pill {
+      color: #605552;
+      background: color-mix(in srgb, var(--role-light) 14%, #ffffff);
+      border: 1px solid var(--role-light);
+    }
+    .r3-chip-all.is-active {
+      color: #2a2010;
+      background: color-mix(in srgb, #2a2010 14%, #ffffff);
+      border-color: #2a2010;
     }
     .r3-count {
       display: inline-flex;
@@ -302,15 +302,12 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
     :global([data-theme='dark']) .r3-role-pill {
       color: #c7c0be;
       background: color-mix(in srgb, var(--role-dark) 14%, #2e2421);
-      border-color: var(--role-dark);
+      border: 1px solid var(--role-dark);
     }
     :global([data-theme='dark']) .r3-chip-all.is-active {
       color: #f1eceb;
       background: color-mix(in srgb, #f1eceb 14%, #2e2421);
       border-color: #c7c0be;
-    }
-    :global([data-theme='dark']) .r3-role-pill {
-      border-color: transparent;
     }
     :global([data-theme='dark']) .r3-chip:focus-visible {
       outline-color: #f7860f;

@@ -252,11 +252,24 @@ Corners are gently rounded and occasionally arched. Cards, buttons, inputs, and 
 - **Shape:** Rounded 8px (`rounded-lg`).
 - **Primary:** Sap Amber background with dark text, `padding: 12px 24px`. Used for "Roll All Abilities", "Reset", and other single primary actions per view.
 - **Hover / Focus:** Hover shifts to Sap Light (dark theme) or Sage Deep (light theme) over a 150ms color transition. Disabled drops to 50% opacity with a not-allowed cursor.
-- **Outline / Icon:** Transparent background, Sap Amber border and glyph, 32px square, rounded 8px; used for the point-buy +/− controls. Swap controls use circular mini-buttons (`rounded-full`, 6px padding) tinted green for confirm and gray for cancel.
+- **Outline / Icon:** Transparent background, Sap Amber border and glyph, rounded 8px; used for the point-buy +/− controls. All controls carry a **44×44px minimum target** (WCAG 2.5.8) - where the visual is smaller than that, the hit area expands via padding or a pseudo-element rather than growing the control.
+- **Round icon buttons:** Circular (`rounded-full`) 44px swap confirm/cancel buttons. Confirm is Gold `#c68000` with bark-black `#1b1716` glyph (5.50:1); cancel is bark-200 `#f1eceb` with ink `#2a2010` in light, bark-700 `#3f3632` with bark-200 in dark. These are painted from the gold/bark ramp, **not** from `--sl-color-accent`, which resolves to sap `#f7860f` in dark and yields only 2.51:1 against a light glyph.
+- **Focus ring:** Never the same value as the control's own background. Confirm is ringed in bark-black (7.09:1 on gold); in dark, gold-rule `#c9ad6a`. An accent-coloured ring on an accent-filled button is invisible at 1.00:1.
 
 ### Chips
-- **Style:** 2-px-rounded pills (`rounded-full`), pale Gray background with gray text at `text-xs`; role chips tint with 12% alpha of the role color and set the text to the full color.
-- **State:** Role filter chips are outlined when inactive (gray fill, subtle hover) and filled with the role color plus `shadow-md` when active; a horizontal 1-3 dot marker denotes proficiency tiers.
+- **Style:** `rounded-full` pills. **Role chips** carry a light and a dark hue step (`ROLE_CONFIG` in `party-roster.ts`) exposed as the `--role-light` / `--role-dark` custom properties. The hue is used **only** for a 14% background tint and the border; the label text stays bark (`#605552` light, `#c7c0be` dark) and clears 4.5:1 in both themes. Tinting with the hue *and* colouring the text with the same hue cannot reach 4.5:1 - a saturated colour on a tint of itself is too light. Non-role chips use pale gray fill with gray text at `text-xs`.
+- **State:** Role filter chips are outlined when inactive (gray fill, subtle hover) and filled with the role hue when active; selection is also carried by `aria-pressed` and font weight, never by colour alone. A horizontal 1-3 dot marker denotes proficiency tiers.
+
+### Role hues
+Defined once in `ROLE_CONFIG` (`src/components/xml-viewer/party-roster.ts`) and surfaced to CSS as `--role-light` / `--role-dark`. All five are warm, satisfying the Warm-Only Rule. The light step is used on white surfaces, the dark step on the bark-800 card surface.
+
+| Role | Light | Dark |
+|---|---|---|
+| Tank | `#a06e00` | `#d99a2b` |
+| Healer | `#4a6b1f` | `#8fae5c` |
+| Damage Dealer | `#8f2f12` | `#c2603f` |
+| Support | `#9a5410` | `#d08a4a` |
+| Utility | `#6b2f4c` | `#b07a94` |
 
 ### Cards / Containers
 - **Corner Style:** 8px (`rounded-lg`).
