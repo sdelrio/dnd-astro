@@ -269,7 +269,8 @@ prefix to outrank it - the dark rules were already specific enough via
 - **Card Heading** (600, 1.35rem, letter-spacing 0.01em, line-height 1.15): The character name in Cinzel, the single largest type on a Card. It is the only place the display face appears inside a component.
 - **Card Meta** (400, 0.8125rem, letter-spacing 0.04em, uppercase, line-height 1.4): Race, class, and subclass in ScalySans, tracked out and set small so the Cinzel name keeps the top of the hierarchy.
 - **Label** (500, 0.75rem, letter-spacing 0.05em, uppercase): Micro-labels above stat values in the documentation layer.
-- **Micro Label** (600, 0.5625rem/9px, letter-spacing 0.08em, uppercase): The card-scale label, as small as the design goes. Used for "Hit Points" on the plate; **Micro Value** (400, 0.625rem/10px) covers secondary values and statblock legends, and **Pill** (500, 0.6875rem/11px, letter-spacing 0.04em, uppercase) covers tags and role chips. Together 9/10/11px are the card ramp, distinct from the documentation layer's 12px Label.
+- **Section Label** (600, 0.7rem/11.2px, letter-spacing 0.08em, uppercase): The heading of every card section, on the gold rule. One step above **Pill** and the largest of the card ramp's small steps, because a section heading has to out-rank the values it labels. It is one class, `sectionHeadingClass`, at every display mode - see *Card sections*.
+- **Micro Label** (600, 0.5625rem/9px, letter-spacing 0.08em, uppercase): The card-scale label, as small as the design goes. Used for "Hit Points" on the plate; **Micro Value** (400, 0.625rem/10px) covers secondary values and statblock legends, and **Pill** (500, 0.6875rem/11px, letter-spacing 0.04em, uppercase) covers tags and role chips. Together 9/10/11/11.2px are the card ramp, distinct from the documentation layer's 12px Label.
 - **Metric** (700, 1.125rem-1.5rem): Numeric values in stat tiles and metric cards, monospaced (`font-mono`) when they are read as data (saves, skills, attack bonuses). The card's HP value is ScalySans at 1.35rem with tabular numerals rather than the sans stack.
 
 ### Named Rules
@@ -331,12 +332,34 @@ levels step down from the card name, which is the `h2` (Starlight supplies the
 page `h1`): sections are `h3`, and the "Level N" groups inside Features and Powers
 are `h4` with the group name at `h5`.
 
-Two treatments, both real headings:
-- **Micro-label** (`sectionHeadingClass`): 0.7rem uppercase, 0.08em tracking, in
-  `accent-high`. Used for Overview, Vitals, Abilities, Passive Skills and Saving
-  Throws, which sit in the card's dense upper region.
-- **`SectionHeader`**: 1rem semibold. Used for Skills, Inventory, Equipped
-  Weapons, Features and Powers, which are full-width blocks lower down.
+One treatment, and it is one class: `sectionHeadingClass` in
+`section-heading.ts`, 0.7rem uppercase semibold with 0.08em tracking in
+`accent-high` - the **Section Label** step, one notch above Pill. Every section
+heading is it - Overview, Vitals, Abilities, Passive Skills, Saving Throws,
+Skills, Inventory, Equipped Weapons, Features and Powers - at every display
+mode. Below a section heading the ramp steps down once, to 0.625rem: the
+`Level N` groups inside Features and Powers, the power group name beneath them,
+the value on a heading's baseline, and the proficiency and prepared-dot legends.
+Case and weight carry the last step, not size.
+
+There used to be two treatments, a micro-label for the dense upper region and a
+1rem `SectionHeader` for the full-width blocks lower down. The `SectionHeader`
+heading declared no font-size, so it inherited Starlight's content `h3` at
+16.38px and rendered in sentence case - 1.5x the micro-label, against it in the
+same card. Medium mode showed the split inside one column, since Saving Throws
+carried the micro-label and Skills carried the other. The split is gone and the
+"Card Heading" reference unit is the only heading scale in a Card.
+
+A section's *contents* are one design per section, too. Skills
+(`SkillsTable.astro`) and Saving Throws (`SavesTable.astro`) are each a single
+table on a single `cardPlateClass` plate, and display mode only chooses the rows
+and the column count. Medium used to swap in a bare name/value grid instead: no
+plate, no ability column, no proficiency dots, no legend. The section therefore
+read as one thing at large and another at medium, and a medium reader had no way
+to tell an expertise dot from a proficient one because medium had none. The rule
+is that a display mode may shorten a section, never re-style it: medium lists the
+proficient skills and the proficient saves, large lists all of them, and both
+render the same table.
 
 The subdivisions are `<section>` elements but are deliberately **unnamed**. A
 `<section>` maps to a `region` landmark only when it has an accessible name, and
@@ -365,7 +388,7 @@ times over, which is worse than no names. The heading carries the navigation.
 - **Stat Tile:** A 7px-radius plate with a 3px Oxblood/Gold top cap, an uppercase 12px label, and a bold metric. It is the atom of the character Card.
 - **Arch Ability Tile:** A 45%-top-radius plate holding an abbreviated ability, its modifier, score, and save; it is the system's most recognizable silhouette.
 - **Admonition Ribbon:** A full-width callout with zero radius, 2px top and bottom borders, triangle-notched ends, and a per-type border color (note blue, tip green, caution amber, danger red) with tinted light/dark backgrounds.
-- **Character Card:** The largest composition - a container-query card whose sections appear by display mode (small/medium/large), from portrait-plus-vitals up to full skills, inventory, weapons, features, and powers.
+- **Character Card:** The largest composition - a container-query card whose sections appear by display mode (small/medium/large), from portrait-plus-vitals up to full skills, inventory, weapons, features, and powers. Display mode selects which sections appear and how many rows they list; it does not select a different design for one. Skills and Saving Throws render the same table card at medium and large, and medium passes only the proficient rows where large passes all of them.
 - **Card Heading (the reference unit):** The header of every Card, in `.char-*`. It is a flex row - portrait, identity block, HP plate - on a single 16px gap, 16px/20px padding, square corners, closed by a 2px gold bottom rule. Below 400px of container width the HP plate is dropped and the identity block takes the row.
 
   **Light theme**
