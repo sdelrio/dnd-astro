@@ -1,6 +1,8 @@
 import { globSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
+import { contrast, luminance } from './contrast';
+
 const css = readFileSync(new URL('./tailwind.css', import.meta.url), 'utf8');
 
 /**
@@ -10,22 +12,6 @@ const css = readFileSync(new URL('./tailwind.css', import.meta.url), 'utf8');
  * break a filter looking for a dark-theme rule.
  */
 const parsed = css.replace(/\/\*[\s\S]*?\*\//g, '');
-
-/** Relative luminance per WCAG 2.x. */
-function luminance(hex: string): number {
-  const n = parseInt(hex.slice(1), 16);
-  const channel = (v: number) => {
-    const s = v / 255;
-    return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
-  };
-  const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(channel);
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
-function contrast(a: string, b: string): number {
-  const [x, y] = [luminance(a), luminance(b)];
-  return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
-}
 
 /** CSS specificity as [ids, classes + pseudo-classes + attrs, elements]. */
 function specificity(selector: string): [number, number, number] {
@@ -62,6 +48,81 @@ const prop = (body: string, name: string) => {
   if (!value) throw new Error(`no ${name} declaration`);
   return value;
 };
+
+/**
+ * The resolved hex value of a custom property in one theme.
+ *
+ * Dark is the bare `:root` block, light is the `[data-theme='light']` one. The
+ * blocks are matched on their exact selector rather than through `rule()`,
+ * because that helper treats any `data-theme` selector as dark and both
+ * accents live in a `data-theme` block.
+ */
+function token(name: string, mode: 'light' | 'dark'): string {
+  const selector = mode === 'light' ? ":root[data-theme='light']" : ':root';
+  for (const m of parsed.matchAll(/([^{}]+)\{([^}]*)\}/g)) {
+    if (m[1].trim() !== selector) continue;
+    const value = m[2].match(new RegExp(`${name}:\\s*(#[0-9a-f]{6})`, 'i'))?.[1];
+    if (value) return value.toLowerCase();
+  }
+  throw new Error(`no ${mode} declaration of ${name}`);
+}
+
+describe('primary button accent', () => {
+  // #329. A primary button paints `--sl-color-text-invert` on the accent, and
+  // text-invert is `--sl-color-accent-low`, not white. On `--sl-color-accent`
+  // that reaches 5.28:1 in dark but only 2.74:1 in light. The accent token
+  // itself also drives borders, focus rings and highlights, so repainting it
+  // would move all of those; the fix is a dedicated fill that is only ever
+  // used behind text.
+  //
+  // Shoelace resolves text-invert upstream rather than in tailwind.css, so the
+  // theme's accent-low is what a test has to read to know the painted colour.
+  it('clears 4.5:1 against the inverted text in both themes', () => {
+    for (const mode of ['light', 'dark'] as const) {
+      const fill = token('--sl-color-accent-contrast', mode);
+      const text = token('--sl-color-accent-low', mode);
+      expect(contrast(text, fill), `primary button text on fill, ${mode}`)
+        .toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  it('keeps the button legible on hover too, where the fill moves to accent-high', () => {
+    for (const mode of ['light', 'dark'] as const) {
+      const hover = token('--sl-color-accent-high', mode);
+      const text = token('--sl-color-accent-low', mode);
+      expect(contrast(text, hover), `primary button text on hover fill, ${mode}`)
+        .toBeGreaterThanOrEqual(4.5);
+    }
+  });
+
+  it('does not leave the hover fill identical to the rest fill', () => {
+    for (const mode of ['light', 'dark'] as const) {
+      expect(token('--sl-color-accent-contrast', mode)).not.toBe(
+        token('--sl-color-accent-high', mode),
+      );
+    }
+  });
+
+  // The fix is only real if every control painting inverted text on an accent
+  // fill points at the new token. Both primary buttons are the single most
+  // prominent control in their tool, and the feat count badge is the one other
+  // badge in the set; the pairing regressed precisely because nothing tied them
+  // to the token.
+  it.each([
+    'src/components/dice-roller/DiceRoller.astro',
+    'src/components/point-buy/PointBuy.astro',
+    'src/components/feats-explorer/FeatExplorer.astro',
+  ])('paints inverted text on accent-contrast, not plain accent, in %s', (file) => {
+    const source = readFileSync(file, 'utf8');
+    const inverted = [...source.matchAll(/bg-\(--sl-color-accent[^)" ]*\)[^"]*text-\(color:--sl-color-text-invert\)/g)];
+    expect(inverted.length, `no accent-filled control with inverted text in ${file}`).toBeGreaterThan(0);
+    for (const m of inverted) {
+      expect(m[0], `${file} paints text-invert on plain --sl-color-accent`).toContain(
+        'bg-(--sl-color-accent-contrast)',
+      );
+    }
+  });
+});
 
 describe('gray scale is redefined onto the bark ramp', () => {
   // DESIGN.md's Warm-Only Rule forbids the cool default scale, but 823 call

@@ -99,13 +99,13 @@ spacing:
   lg: "24px"
 components:
   button-primary:
-    backgroundColor: "{colors.sap}"
-    textColor: "{colors.bark-black}"
+    backgroundColor: "{colors.accent-contrast}"
+    textColor: "var(--sl-color-text-invert)"
     rounded: "{rounded.lg}"
     padding: "12px 24px"
   button-primary-hover:
-    backgroundColor: "{colors.sap-light}"
-    textColor: "{colors.bark-black}"
+    backgroundColor: "{colors.accent-high}"
+    textColor: "var(--sl-color-text-invert)"
     rounded: "{rounded.lg}"
     padding: "12px 24px"
   button-outline:
@@ -178,6 +178,7 @@ The palette is a forest floor: warm bark browns, resin amber, and moss, with oxb
 ### Secondary
 - **Sage** (#697066): The light-theme accent - a muted forest gray-green for buttons and outlines when the grimoire is opened in daylight.
 - **Sage Deep** (#394036): Sage's text-strength partner for hover and high-contrast accent text.
+- **Accent Contrast** (`--sl-color-accent-contrast`): The only accent step painted behind text - Sap Amber `#f7860f` in dark, a deep moss `#3f4a3a` in light. It exists because the label colour is `--sl-color-text-invert`, which Shoelace resolves to `--sl-color-accent-low` and **not** to white: on the accent itself that pairing reaches 5.28:1 in dark but only 2.74:1 in light. The step is separate rather than a repaint of the accent because the accent also drives borders, focus rings and highlights. See [#329](https://github.com/sdelrio/dnd-astro/issues/329).
 
 ### Tertiary
 - **Oxblood** (#58180d): Light-theme heading ink and the 3px cap on stat tiles. A dried-blood brown-red; the grimoire's ink.
@@ -302,10 +303,10 @@ Corners are gently rounded and occasionally arched. Cards, buttons, inputs, and 
 
 ### Buttons
 - **Shape:** Rounded 8px (`rounded-lg`).
-- **Primary:** Sap Amber background with dark text, `padding: 12px 24px`. Used for "Roll All Abilities", "Reset", and other single primary actions per view.
+- **Primary:** `--sl-color-accent-contrast` background with `--sl-color-text-invert` text, `padding: 12px 24px`. Used for "Roll All Abilities", "Reset", and other single primary actions per view. The fill is the contrast step rather than the accent: the label is `--sl-color-text-invert`, which resolves to `--sl-color-accent-low` and **not** to white, so on the accent itself the pairing reaches 5.28:1 in dark but only 2.74:1 in light. On the contrast step it is 5.28:1 dark and 5.01:1 light, and on hover 9.34:1 dark and 5.75:1 light.
 - **Hover / Focus:** Hover shifts to Sap Light (dark theme) or Sage Deep (light theme) over a 150ms color transition. Disabled drops to 50% opacity with a not-allowed cursor.
 - **Outline / Icon:** Transparent background, Sap Amber border and glyph, rounded 8px; used for the point-buy +/− controls. All controls carry a **44×44px minimum target** (WCAG 2.5.8) - where the visual is smaller than that, the hit area expands via padding or a pseudo-element rather than growing the control.
-- **Round icon buttons:** Circular (`rounded-full`) 44px swap confirm/cancel buttons. Confirm is a filled Gold `#c68000` circle with a bark-black `#1b1716` glyph (5.50:1 in both themes); cancel is an outlined circle, bark-600 border `#605552` with an ink `#2a2010` glyph in light, bark-400 border `#c7c0be` with bark-200 in dark. Neither is painted from `--sl-color-accent`: that token is `#f7860f` in dark and `#697066` in light, and `--sl-color-text-invert` is `--sl-color-accent-low`, **not** white, so the pairing reaches 5.28:1 in dark but only 2.74:1 in light.
+- **Round icon buttons:** Circular (`rounded-full`) 44px swap confirm/cancel buttons. Confirm is a filled Gold `#c68000` circle with a bark-black `#1b1716` glyph (5.50:1 in both themes); cancel is an outlined circle, bark-600 border `#605552` with an ink `#2a2010` glyph in light, bark-400 border `#c7c0be` with bark-200 in dark. Neither is painted from `--sl-color-accent`, for the reason given under Primary above.
 - **Panel behind the pair:** Bark-100 `#f8f6f5` with a gold-rule `#c9ad6a` border in light, bark-800 `#2e2421` with `#867347` in dark. Needed because an accent-filled panel leaves the gold button at 1.74:1 and the cancel button at 1.59:1 against it, i.e. neither keeps a perceivable boundary.
 - **Focus ring:** Never the same value as the control it outlines, in either theme. Bark-black `#1b1716` in light, bark-100 `#f8f6f5` in dark - 5.50:1 and 3.00:1 against the gold fill. An accent-coloured ring on an accent-filled button is invisible at 1.00:1, and gold-rule on gold is only 1.49:1.
 

@@ -197,10 +197,28 @@
 /* Accent: Hue 220, Chroma 0.15 */
 /* Gray: Hue 40, Chroma 0.015 */
 /* Contrast Level: AAA */
+
+/* --sl-color-accent-contrast is the only accent step that is ever painted
+   behind text. The button label is --sl-color-text-invert, which Shoelace
+   resolves to --sl-color-accent-low and not to white, so the pairing has to be
+   checked against that step in both themes: on --sl-color-accent it reaches
+   5.28:1 in dark but only 2.74:1 in light (#329).
+
+   The contrast step is separate from the accent rather than a repaint of it,
+   because --sl-color-accent also drives borders, focus rings and highlights,
+   which have to stay where they are. Per theme, against accent-low:
+
+     dark  accent-contrast #f7860f  5.28:1   hover accent-high #d1dfa5  9.34:1
+     light accent-contrast #3f4a3a  5.01:1   hover accent-high #394036  5.75:1
+
+   The light step is a moss one notch above Sage Deep, so it is darker than
+   --sl-color-accent-high: the hover direction is "darken" in light and
+   "lighten" in dark, and both move away from the rest fill. */
 :root {
   --sl-color-accent-low: #293400;
   --sl-color-accent:  #f7860f;
   --sl-color-accent-high: #d1dfa5;
+  --sl-color-accent-contrast: #f7860f;
   --sl-color-white: #ffffff;
   --sl-color-gray-1: #f1eceb;
   --sl-color-gray-2: #c7c0be;
@@ -218,6 +236,7 @@
   --sl-color-accent-low: #b9c0b6;
   --sl-color-accent: #697066;
   --sl-color-accent-high: #394036;
+  --sl-color-accent-contrast: #3f4a3a;
   --sl-color-white: #1b1716;
   --sl-color-gray-1: #2e2421;
   --sl-color-gray-2: #3f3632;
