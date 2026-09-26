@@ -22,6 +22,9 @@ help:
 	@printf "  $(GREEN)make test$(RESET)       🧪  Vitest unit tests\n"
 	@printf "  $(GREEN)make build$(RESET)      🏗️  Production build to ./dist/\n"
 	@printf "\n"
+	@printf "  $(GREEN)make submodule-init$(RESET)      🏗️  Impeccable skill to ./impeccable-skill\n"
+	@printf "  $(GREEN)make submodule-update$(RESET)    🏗️  Update Impeccable skill from git\n"
+	@printf "\n"
 	@printf "$(DIM)Wrap the pnpm scripts documented in AGENTS.md$(RESET)\n"
 	@printf "\n"
 
@@ -45,4 +48,12 @@ check:
 
 upgrade:
 	pnpm dlx @astrojs/upgrade
+
+submodule-init:
+	git submodule add https://github.com/pbakaus/impeccable .impeccable-skill
+	npx impeccable link --source=.impeccable-skill --providers=opencode
+
+submodule-update:
+	git submodule update --remote .impeccable-skill
+	npx impeccable link --source=.impeccable-skill --providers=opencode
 
