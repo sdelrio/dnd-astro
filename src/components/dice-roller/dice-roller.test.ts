@@ -4,6 +4,9 @@ import { describe, expect, it } from 'vitest';
 import { contrast } from '../../styles/contrast';
 
 const source = readFileSync(new URL('./DiceRoller.astro', import.meta.url), 'utf8');
+/** The behaviour lives here now, so the guards read this rather than the markup. */
+const component = readFileSync(new URL('./dice-roller-component.ts', import.meta.url), 'utf8');
+const registration = readFileSync(new URL('../../alpine.ts', import.meta.url), 'utf8');
 
 describe('DiceRoller theme colors', () => {
   it('does not use hardcoded blue utility classes', () => {
@@ -540,21 +543,50 @@ describe('DiceRoller round button contrast', () => {
   );
 });
 
+describe('DiceRoller Alpine wiring', () => {
+  it('roots the component in the registered diceRoller data provider', () => {
+    // `x-data="diceRoller"` names an `Alpine.data` registration rather than
+    // calling a global, so the card works with no `window` at all.
+    expect(source).toContain('x-data="diceRoller"');
+    expect(registration).toContain("Alpine.data('diceRoller', diceRollerComponent)");
+  });
+
+  // Every helper used to be a `window` global so an inline `x-data` string could
+  // reach it: eight of them plus the factory. They collide with anything else on
+  // the page and no call site is type checked.
+  it('publishes no window globals', () => {
+    // Comments are stripped first: the prose above explains what the globals
+    // were, and an assertion that trips on its own explanation is one nobody
+    // trusts.
+    const code = (file: string) =>
+      file.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
+    for (const file of [source, component, registration]) {
+      expect(code(file), 'a window global').not.toMatch(/window\s*\./);
+      expect(file).not.toContain('declare global');
+    }
+  });
+
+  it('exposes formatModifier, the one helper the template calls, on the component', () => {
+    expect(component).toContain('formatModifier: dice.formatModifier');
+    expect(source).toContain('x-text="formatModifier(ability.modifier)"');
+  });
+});
+
 describe('DiceRoller hardening', () => {
   it('caps the log and the stats sample so a long session cannot grow unbounded', () => {
-    expect(source).toContain('const LOG_LIMIT = 20;');
-    expect(source).toContain('const SESSION_ROLL_LIMIT = 50;');
+    expect(component).toContain('const LOG_LIMIT = 20;');
+    expect(component).toContain('const SESSION_ROLL_LIMIT = 50;');
     // The log is newest-first, so it is trimmed at the tail; the sample keeps
     // the most recent rolls for the same reason.
-    expect(source).toContain('this.resultLog.length = LOG_LIMIT');
-    expect(source).toContain('this.sessionRolls.splice(0, this.sessionRolls.length - SESSION_ROLL_LIMIT)');
+    expect(component).toContain('this.resultLog.length = LOG_LIMIT');
+    expect(component).toContain('this.sessionRolls.splice(0, this.sessionRolls.length - SESSION_ROLL_LIMIT)');
   });
 
   it('invalidates a pending per-ability roll when a full roll starts', () => {
     // Without the epoch guard, a re-roll scheduled 300ms earlier landed in the
     // middle of "Roll All Abilities" and overwrote one of its six tiles.
-    expect(source).toContain('this.rollEpoch++');
-    expect(source).toContain('const epoch = this.rollEpoch;');
+    expect(component).toContain('this.rollEpoch++');
+    expect(component).toContain('const epoch = this.rollEpoch;');
   });
 
   it('releases the rolling flag on the bail path, not just on success', () => {
@@ -562,7 +594,7 @@ describe('DiceRoller hardening', () => {
     // that normally forces `rolling: false`. `rollAll` sweeping all six tiles
     // masks a stranded flag today, so this asserts the invariant rather than
     // relying on that coincidence to hold.
-    const bail = source.match(/if \(this\.rollEpoch !== epoch\) \{[\s\S]*?\}/);
+    const bail = component.match(/if \(this\.rollEpoch !== epoch\) \{[\s\S]*?\}/);
     expect(bail).not.toBeNull();
     expect(bail![0]).toContain('this.abilities[index].rolling = false;');
   });
@@ -570,9 +602,9 @@ describe('DiceRoller hardening', () => {
   it('announces a refused tap instead of ignoring it', () => {
     // The tile stays clickable through a roll and after the session's one swap;
     // a silent return left a control that looked live and did nothing.
-    const select = source.slice(
-      source.indexOf('selectAbility(index: number) {'),
-      source.indexOf('confirmSwap() {')
+    const select = component.slice(
+      component.indexOf('selectAbility(index: number) {'),
+      component.indexOf('confirmSwap() {')
     );
     expect(select).toMatch(/if \(this\.isRolling\) \{[\s\S]*?announce\(/);
     expect(select).toMatch(/if \(this\.swapUsed\) \{[\s\S]*?announce\(/);
@@ -580,11 +612,11 @@ describe('DiceRoller hardening', () => {
 
   it('cancels a staged swap on Escape and stays quiet when nothing is staged', () => {
     expect(source).toContain('@keydown.escape.window="cancelSwap()"');
-    expect(source).toContain('if (!this.stagedSwap && this.selectedIndex === null) return;');
+    expect(component).toContain('if (!this.stagedSwap && this.selectedIndex === null) return;');
   });
 
   it('does not invent a log line when a swap is staged before the first roll', () => {
-    expect(source).toContain('if (this.resultLog.length > 0) {');
+    expect(component).toContain('if (this.resultLog.length > 0) {');
   });
 
   it('wraps long log lines', () => {
@@ -627,7 +659,7 @@ describe('DiceRoller stats window', () => {
     // Capping `sessionRolls` quietly changed what "Stats" means. A table
     // comparing tonight's average to an earlier one needs the window stated.
     expect(source).toContain('last 50 rolls');
-    expect(source).toContain('const SESSION_ROLL_LIMIT = 50;');
+    expect(component).toContain('const SESSION_ROLL_LIMIT = 50;');
   });
 });
 
