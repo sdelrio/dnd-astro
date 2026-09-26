@@ -15,6 +15,7 @@ import { skillRank, type SkillRank } from '@/components/xml-viewer/skill-display
 import { cardPlateClass } from '@/components/xml-viewer/card-plate';
 import { sectionLegendClass } from '@/components/xml-viewer/section-heading';
 import { signed } from '@/utils/format';
+import { chunk } from '@/utils/chunk';
 
 export interface SkillTableRow {
   name: string;
@@ -39,11 +40,6 @@ const SKILL_RANK_LABEL: Record<Exclude<SkillRank, 'none'>, string> = {
 
 function abilityAbbr(stat: string): string {
   return stat ? stat.slice(0, 3).toUpperCase() : '';
-}
-
-function chunk(list: SkillTableRow[], count: number): SkillTableRow[][] {
-  const perColumn = Math.ceil(list.length / count);
-  return Array.from({ length: count }, (_, i) => list.slice(i * perColumn, (i + 1) * perColumn));
 }
 
 const skillColumns = chunk(rows, columns);

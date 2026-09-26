@@ -11,6 +11,7 @@
 // it shows is a dot by definition; large passes all six.
 import { cardPlateClass } from '@/components/xml-viewer/card-plate';
 import { signed } from '@/utils/format';
+import { chunk } from '@/utils/chunk';
 
 export interface SaveTableRow {
   short: string;
@@ -25,11 +26,6 @@ interface Props {
 }
 
 const { rows, columns = 2 } = Astro.props;
-
-function chunk(list: SaveTableRow[], count: number): SaveTableRow[][] {
-  const perColumn = Math.ceil(list.length / count);
-  return Array.from({ length: count }, (_, i) => list.slice(i * perColumn, (i + 1) * perColumn));
-}
 
 const saveColumns = chunk(rows, columns);
 ---

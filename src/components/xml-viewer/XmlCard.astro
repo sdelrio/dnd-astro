@@ -14,7 +14,7 @@ import {
 import { skillRank } from '@/components/xml-viewer/skill-display';
 import { cardPlateClass } from '@/components/xml-viewer/card-plate';
 import SkillsTable from '@/components/xml-viewer/SkillsTable.astro';
-import SavesTable from '@/components/xml-viewer/SavesTable.astro';
+import SavesTable, { type SaveTableRow } from '@/components/xml-viewer/SavesTable.astro';
 import SectionHeader from '@/components/xml-viewer/SectionHeader.astro';
 import {
   sectionHeadingClass,
@@ -125,14 +125,9 @@ function lookupAbility(fullName: string): AbilityView {
   );
 }
 
-interface SaveRow {
-  short: string;
-  save: number;
-  saveprof: number;
-}
 // Large lists all six saves; medium lists only the proficient ones. One table
-// component, two row sets - see SavesTable.astro.
-const allSaveRows: SaveRow[] = abilityEntries.map(({ name, short }) => {
+// component, two row sets - see SavesTable.astro, which owns the row type.
+const allSaveRows: SaveTableRow[] = abilityEntries.map(({ name, short }) => {
   const { save, saveprof } = lookupAbility(name);
   return { short, save, saveprof };
 });

@@ -269,7 +269,8 @@ prefix to outrank it - the dark rules were already specific enough via
 - **Card Heading** (600, 1.35rem, letter-spacing 0.01em, line-height 1.15): The character name in Cinzel, the single largest type on a Card. It is the only place the display face appears inside a component.
 - **Card Meta** (400, 0.8125rem, letter-spacing 0.04em, uppercase, line-height 1.4): Race, class, and subclass in ScalySans, tracked out and set small so the Cinzel name keeps the top of the hierarchy.
 - **Label** (500, 0.75rem, letter-spacing 0.05em, uppercase): Micro-labels above stat values in the documentation layer.
-- **Micro Label** (600, 0.5625rem/9px, letter-spacing 0.08em, uppercase): The card-scale label, as small as the design goes. Used for "Hit Points" on the plate; **Micro Value** (400, 0.625rem/10px) covers secondary values and statblock legends, and **Pill** (500, 0.6875rem/11px, letter-spacing 0.04em, uppercase) covers tags and role chips. Together 9/10/11px are the card ramp, distinct from the documentation layer's 12px Label.
+- **Section Label** (600, 0.7rem/11.2px, letter-spacing 0.08em, uppercase): The heading of every card section, on the gold rule. One step above **Pill** and the largest of the card ramp's small steps, because a section heading has to out-rank the values it labels. It is one class, `sectionHeadingClass`, at every display mode - see *Card sections*.
+- **Micro Label** (600, 0.5625rem/9px, letter-spacing 0.08em, uppercase): The card-scale label, as small as the design goes. Used for "Hit Points" on the plate; **Micro Value** (400, 0.625rem/10px) covers secondary values and statblock legends, and **Pill** (500, 0.6875rem/11px, letter-spacing 0.04em, uppercase) covers tags and role chips. Together 9/10/11/11.2px are the card ramp, distinct from the documentation layer's 12px Label.
 - **Metric** (700, 1.125rem-1.5rem): Numeric values in stat tiles and metric cards, monospaced (`font-mono`) when they are read as data (saves, skills, attack bonuses). The card's HP value is ScalySans at 1.35rem with tabular numerals rather than the sans stack.
 
 ### Named Rules
@@ -333,12 +334,13 @@ are `h4` with the group name at `h5`.
 
 One treatment, and it is one class: `sectionHeadingClass` in
 `section-heading.ts`, 0.7rem uppercase semibold with 0.08em tracking in
-`accent-high`. Every section heading is it - Overview, Vitals, Abilities, Passive
-Skills, Saving Throws, Skills, Inventory, Equipped Weapons, Features and Powers -
-at every display mode. Below a section heading the ramp steps down once, to
-0.625rem: the `Level N` groups inside Features and Powers, the power group name
-beneath them, the value on a heading's baseline, and the proficiency and
-prepared-dot legends. Case and weight carry the last step, not size.
+`accent-high` - the **Section Label** step, one notch above Pill. Every section
+heading is it - Overview, Vitals, Abilities, Passive Skills, Saving Throws,
+Skills, Inventory, Equipped Weapons, Features and Powers - at every display
+mode. Below a section heading the ramp steps down once, to 0.625rem: the
+`Level N` groups inside Features and Powers, the power group name beneath them,
+the value on a heading's baseline, and the proficiency and prepared-dot legends.
+Case and weight carry the last step, not size.
 
 There used to be two treatments, a micro-label for the dense upper region and a
 1rem `SectionHeader` for the full-width blocks lower down. The `SectionHeader`
