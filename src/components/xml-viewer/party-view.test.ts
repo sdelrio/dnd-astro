@@ -45,6 +45,32 @@ describe('PartyView', () => {
     expect(html).toContain('Drakknor');
   });
 
+  it('renders every member as a medium card closed by its own role band', async () => {
+    const html = await render();
+    const cells = memberCards(html);
+    expect(cells.length).toBeGreaterThan(0);
+    for (const cell of cells) {
+      expect(cell).toContain('class="party-cell');
+      // The band is inside the cell, after the card, so it reads as the card's
+      // own footer rather than a sibling caption.
+      expect(cell).toContain('party-cell-meta');
+      expect(cell.indexOf('party-cell-meta')).toBeGreaterThan(cell.indexOf('char-name'));
+      // Medium shows saving throws and languages; small shows neither.
+      expect(cell).toContain('Saving Throws');
+      expect(cell).toContain('Languages');
+    }
+  });
+
+  it('drops the sm step so a medium card never lands in a ~300px cell', async () => {
+    const html = await render();
+    const roster = html.match(/<section class="([^"]*grid[^"]*)" role="list"/);
+    expect(roster).not.toBeNull();
+    const classes = roster?.[1] ?? '';
+    expect(classes).toContain('lg:grid-cols-2');
+    expect(classes).not.toContain('sm:grid-cols');
+    expect(classes).not.toContain('grid-cols-3');
+  });
+
   it('renders an empty state instead of crashing when the roster file is missing', async () => {
     const html = await render(join(tempDir, 'missing-party.json'));
     expect(memberCards(html)).toHaveLength(0);
