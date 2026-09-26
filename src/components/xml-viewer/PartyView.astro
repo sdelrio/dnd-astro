@@ -120,10 +120,18 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
       step would hand it ~300px. Below `lg` the roster is one column. */}
   <section class="grid grid-cols-1 lg:grid-cols-2 gap-4" role="list" aria-label="Party members">
     {members.map((member) => {
+      // `hidden!` and not `hidden`. #369 gave `.party-cell` a `display: flex`,
+      // and that rule and `.hidden` are both a single class at (0,1,0) - the
+      // `:where()` Astro wraps a scope attribute in adds nothing - while Astro
+      // emits this component's style *after* the global Tailwind bundle. So
+      // `flex` won on source order and the class Alpine toggles on every filter
+      // change did nothing. ADR-0009 decision 3 is the same escape on the filter
+      // panels, as `sm:flex!`, and its lesson carries over: the flag is
+      // load-bearing, so nothing here may reintroduce a bare utility beside it.
       return (
         <div
           class="party-cell transition-opacity duration-200"
-          :class={"{ hidden: !hasActiveRole(" + JSON.stringify(member.roles) + ") }"}
+          :class={"{ 'hidden!': !hasActiveRole(" + JSON.stringify(member.roles) + ") }"}
           role="listitem"
         >
           <XmlCard
