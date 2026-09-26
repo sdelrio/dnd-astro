@@ -1,0 +1,68 @@
+---
+// The Saving Throws table, shared by both display modes.
+//
+// Same story as SkillsTable: the markup lived in XmlCard.astro and only the
+// large display reached it, while medium fell back to a bare name/value grid of
+// the proficient saves. So the section's furniture - the plate, the ruled rows,
+// the gold dot - appeared and disappeared with the display mode, and a medium
+// card had no way to say "proficient" the way a large one did.
+//
+// Now there is one table. Medium passes the proficient saves only, so every row
+// it shows is a dot by definition; large passes all six.
+import { cardPlateClass } from '@/components/xml-viewer/card-plate';
+import { signed } from '@/utils/format';
+
+export interface SaveTableRow {
+  short: string;
+  save: number;
+  saveprof: number;
+}
+
+interface Props {
+  rows: SaveTableRow[];
+  /** 2 splits the list into two side-by-side tables (large); 1 stacks it. */
+  columns?: 1 | 2;
+}
+
+const { rows, columns = 2 } = Astro.props;
+
+function chunk(list: SaveTableRow[], count: number): SaveTableRow[][] {
+  const perColumn = Math.ceil(list.length / count);
+  return Array.from({ length: count }, (_, i) => list.slice(i * perColumn, (i + 1) * perColumn));
+}
+
+const saveColumns = chunk(rows, columns);
+---
+
+<div class={cardPlateClass}>
+  <div class={columns === 2 ? 'grid grid-cols-1 @lg:grid-cols-2 gap-2' : 'grid grid-cols-1 gap-2'}>
+    {saveColumns.map((column) => (
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+            <th class="text-left font-medium pb-1">Ability</th>
+            <th class="text-right font-medium pb-1">Save</th>
+          </tr>
+        </thead>
+        <tbody>
+          {column.map((row) => (
+            <tr class="border-t border-gray-200 dark:border-gray-700">
+              <td class="py-1 text-gray-700 dark:text-gray-300">
+                <span class="inline-flex items-center gap-1">
+                  <span>{row.short}</span>
+                  {row.saveprof > 0 && (
+                    <>
+                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
+                      <span class="sr-only">Proficient</span>
+                    </>
+                  )}
+                </span>
+              </td>
+              <td class="py-1 text-right font-mono font-semibold text-gray-900 dark:text-gray-100">{signed(row.save)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    ))}
+  </div>
+</div>

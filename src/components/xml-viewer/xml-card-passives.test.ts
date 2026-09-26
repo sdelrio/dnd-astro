@@ -308,7 +308,7 @@ describe('XmlCard All-skills section', () => {
     { name: 'Stealth', total: 4, prof: 1, stat: 'dexterity' },
   ];
 
-  it('renders one card with two alphabetical tables in large mode only', async () => {
+  it('renders one card of two alphabetical tables in large mode', async () => {
     const large = skillsSection(await renderCard('large', { allSkills: fiveSkills }));
     expect(large.match(/<table/g)).toHaveLength(2);
     expect(large).toContain('>Skill</th>');
@@ -326,9 +326,49 @@ describe('XmlCard All-skills section', () => {
     expect(skillsSection(await renderCard('small', { allSkills: fiveSkills }))).not.toContain(
       '<table'
     );
+  });
+
+  it('renders the same card in medium mode, listing only the proficient skills', async () => {
+    // Medium used to be a bare name/value grid with no plate, no ability column
+    // and no dots, so the same section read as two different designs depending on
+    // the display mode. It is now the large card with the untrained rows removed.
     const medium = skillsSection(await renderCard('medium', { allSkills: fiveSkills }));
-    expect(medium).not.toContain('<table');
-    expect(medium).not.toContain('Abil');
+    expect(medium).toContain('>Skill</th>');
+    expect(medium).toContain('>Abil</th>');
+    expect(medium).toContain('>Total</th>');
+    expect(medium.match(/rounded-\[7px\]/g)).toHaveLength(1);
+    expect(rowNames(medium)).toEqual(['Athletics', 'Perception', 'Stealth']);
+    // One table, not the large display's two-column split.
+    expect(medium.match(/<table/g)).toHaveLength(1);
+  });
+
+  it('keeps the proficiency marks and the legend in medium mode', async () => {
+    const medium = skillsSection(
+      await renderCard('medium', {
+        allSkills: [
+          { name: 'Athletics', total: 5, prof: 1, stat: 'strength' },
+          { name: 'Sleight of Hand', total: 7, prof: 2, stat: 'dexterity' },
+          { name: 'Arcana', total: 1, prof: 3, stat: 'intelligence' },
+        ],
+      })
+    );
+    expect(skillRow(medium, 'Athletics')).toContain('data-prof-rank="proficient"');
+    expect(skillRow(medium, 'Sleight of Hand')).toContain('data-prof-rank="expertise"');
+    expect(skillRow(medium, 'Arcana')).toContain('data-prof-rank="half"');
+    expect(medium).toContain('<span class="sr-only">Half proficiency</span>');
+    expect(medium).toContain('>Expertise<');
+  });
+
+  it('omits the section in medium mode when no skill is proficient', async () => {
+    const untrained = await renderCard('medium', {
+      allSkills: [
+        { name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' },
+        { name: 'Insight', total: 2, prof: 0, stat: 'wisdom' },
+      ],
+    });
+    expect(skillsSection(untrained)).toBe('');
+    // Large still lists them, since the untrained rows are the point there.
+    expect(skillsSection(await renderCard('large', { allSkills: fiveSkills }))).not.toBe('');
   });
 
   it('marks proficiency with gold dots: none for prof 0, one for 1, two for 2', async () => {
@@ -419,16 +459,17 @@ describe('XmlCard All-skills section', () => {
     expect(skillRow(section, 'Mystery Skill')).toMatch(/>\s*<\/td>/);
   });
 
-  it('renders the prof-only skills grid in medium mode but not in large mode', async () => {
-    const profOnly = { name: 'Prof Only Skill', total: 9 };
-    const medium = skillsSection(await renderCard('medium', { skills: [profOnly] }));
-    expect(medium).toContain('Prof Only Skill');
-    expect(medium).toContain('font-mono');
-    expect(medium).not.toContain('<table');
-
-    const large = skillsSection(await renderCard('large', { skills: [profOnly] }));
-    expect(large).not.toContain('Prof Only Skill');
-    expect(large).toContain('<table');
+  it('ignores the parser prof-only list, which cannot carry a rank or a stat', async () => {
+    // Medium's rows come from allSkills now, because the card it renders is the
+    // large one and needs `prof` to draw the dots and `stat` for the Abil column.
+    // A `skills`-only sheet still renders every skill at large and only the
+    // proficient ones at medium, so the two agree on what the character knows.
+    const allSkills = [
+      { name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' },
+      { name: 'Perception', total: 3, prof: 1, stat: 'wisdom' },
+    ];
+    const medium = skillsSection(await renderCard('medium', { skills: [], allSkills }));
+    expect(rowNames(medium)).toEqual(['Perception']);
   });
 });
 
@@ -660,7 +701,7 @@ describe('XmlCard Saving Throws section', () => {
     expect(await renderCard('small')).not.toContain('aria-label="Saving Throws"');
   });
 
-  it('renders the all-saves card in large mode only', async () => {
+  it('renders the all-saves card in large mode', async () => {
     const large = savesSection(await renderCard('large'));
     expect(large.match(/<table/g)).toHaveLength(2);
     expect(large).toContain('>Ability</th>');
@@ -668,9 +709,17 @@ describe('XmlCard Saving Throws section', () => {
     expect(large).not.toContain('>Strength<');
 
     expect(savesSection(await renderCard('small'))).toBe('');
+  });
+
+  it('renders the same card in medium mode, listing only the proficient saves', async () => {
     const medium = savesSection(await renderCard('medium'));
-    expect(medium).not.toContain('<table');
-    expect(medium).not.toContain('Ability');
+    expect(medium).toContain('>Ability</th>');
+    expect(medium).toContain('>Save</th>');
+    expect(medium.match(/rounded-\[7px\]/g)).toHaveLength(1);
+    // One table, not the large display's 3+3 split, and only STR and CON of the
+    // four the base character is proficient in.
+    expect(medium.match(/<table/g)).toHaveLength(1);
+    expect(saveRowShorts(medium)).toEqual(['STR', 'CON']);
   });
 
   it('splits the six saves 3+3 in standard order inside one card', async () => {
@@ -725,14 +774,18 @@ describe('XmlCard Saving Throws section', () => {
     expect(medium).not.toContain('Saving Throws');
   });
 
-  it('keeps the unchanged prof-only grid in medium mode', async () => {
+  it('marks every medium save proficient and keeps the totals in mono', async () => {
+    // Every medium row is a proficient save by construction, so the dot is on
+    // all of them - the same mark the large card uses, not a plain name/value.
     const medium = savesSection(await renderCard('medium'));
-    expect(medium).toContain('Strength');
-    expect(medium).toContain('Constitution');
-    expect(medium).not.toContain('Dexterity');
-    expect(medium).toContain('justify-between');
+    for (const short of ['STR', 'CON']) {
+      const row = saveRow(medium, short);
+      expect(row.match(/bg-\[#c68000\]/g)).toHaveLength(1);
+      expect(row).toContain('<span class="sr-only">Proficient</span>');
+    }
+    expect(medium).toContain('>+5</td>');
+    expect(medium).toContain('>+4</td>');
     expect(medium).toContain('font-mono');
-    expect(medium).not.toContain('<table');
   });
 
   it('stays between Passive Skills and Skills', async () => {
