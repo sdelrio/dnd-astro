@@ -240,15 +240,10 @@ same dev-server boundary (`--start-dev-server` is still the explicit opt-in),
 and exits non-zero on a finding, so a run can be a gate. `--no-fail` makes it a
 report.
 
-**Measure the built site, not the dev server.** Under `astro dev`, Vite
-externalises `node:fs` for the browser, `src/alpine.ts` pulls in a module that
-imports it, the page module throws on evaluation and Alpine never boots - so
-`x-cloak` is never removed and every `x-show` element reads as `display: none`.
-The command refuses in that state and says why. Use:
+The measure commands work against either the dev server or a preview build.
 
 ```
-pnpm build && astro preview --port 4322
-make measure ARGS='tap --url http://localhost:4322/dnd-tools/feat-explorer/ --selector "button[aria-controls=\"feat-filter-panel\"]"'
+make measure ARGS='tap --url http://localhost:4321/dnd-tools/feat-explorer/ --selector "button[aria-controls=\"feat-filter-panel\"]"'
 ```
 
 What a synthesized tap and an emulated pointer profile do and do not establish
