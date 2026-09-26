@@ -48,7 +48,10 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
   data-member-roles={JSON.stringify(members.map((m) => m.roles))}
 >
   <section class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
-    <h1 class="mt-0 text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{partyName}</h1>
+    {/* Starlight renders the page's frontmatter title ("Current Party") as the
+        document h1, so the roster's own name is an h2. Two h1s on one page is
+        invalid and splits the outline. */}
+    <h2 class="mt-0 text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{partyName}</h2>
     <p class="mt-0 text-gray-600 dark:text-gray-400 mb-4">{members.length} active members</p>
 
     {rosterUnavailable && (

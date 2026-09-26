@@ -115,7 +115,7 @@ const abilities: Ability[] = [
     <h3 class="font-bold text-gray-900 dark:text-gray-100 mb-2">Stats</h3>
     <template x-if="!stats || !stats.average || sessionRolls.length === 0">
       <div class="flex flex-col items-center justify-center p-6 text-gray-500 dark:text-gray-400 text-center">
-        <span style="font-size: 2.25rem;">🎲</span>
+        <IconifyIcon icon="game-icons:dice-twenty-faces-twenty" width="2.25rem" class="text-(color:--sl-color-accent)" />
         <p class="mt-2 text-gray-500 dark:text-gray-400">No stats yet!<br>Roll all abilities to see your results.</p>
       </div>
     </template>
@@ -141,7 +141,7 @@ const abilities: Ability[] = [
     </template>
   </div>
 
-  <div x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900">
+  <div x-cloak x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900">
     <template x-for="(entry, i) in resultLog" :key="i">
       <div class="text-sm text-gray-700 dark:text-gray-300 font-mono" x-text="entry"></div>
     </template>

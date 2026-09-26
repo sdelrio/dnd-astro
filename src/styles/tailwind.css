@@ -148,6 +148,46 @@
   --sl-font-table: 'ScalySans', 'Bookinsanity', Georgia, serif;
 }
 
+/* Hide Alpine-managed elements until Alpine boots.
+   Without this, a top-level `x-show` region is painted at its pre-Alpine state
+   and then swapped: the feat explorer's "No feats match your filters." and the
+   dice result log both flash on load. Paired with the `x-cloak` attribute on
+   those elements. Regions inside <template x-if> / <template x-for> cannot flash
+   - template content is not rendered until Alpine processes it. */
+[x-cloak] {
+  display: none !important;
+}
+
+/* Reduced motion.
+
+   The site ships an infinite `animate-pulse` on the dice roll, a `hover:scale-105`
+   on the re-roll control, a `group-hover:rotate-180` on its icon, 150-200ms colour
+   transitions throughout the tools, and a 400ms shadow ease on every admonition.
+   None of it carries meaning, so it is suppressed rather than shortened - an
+   infinite pulse has no meaningful "short" form.
+
+   Deliberately broad: motion is applied by utility class at each call site, so one
+   block is the only place that can catch all of it. `!important` is needed because
+   the utilities re-declare `animation` and `transform` on the same elements. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [class*='animate-'],
+  .animate-pulse {
+    animation: none !important;
+  }
+  [class*='hover:scale-'],
+  [class*='group-hover:rotate-'] {
+    transform: none !important;
+  }
+}
+
 @media (min-width: 72rem) {
   :root {
     --sl-content-width: 55rem;
