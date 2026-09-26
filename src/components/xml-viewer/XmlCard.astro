@@ -319,7 +319,6 @@ const splitSavesGroup =
                 rows={canShow('allSaves') ? allSaveRows : proficientSaveRows}
                 columns={canShow('allSaves') ? 2 : 1}
               />
->>>>>>> aa80b25 (fix(xml-card): one heading scale, and a medium card that matches large)
             </section>
           )}
 
@@ -359,13 +358,12 @@ const splitSavesGroup =
     {(showSkills || showInventory) && (
       <div class={showSkills && showInventory ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
         {showSkills && (
-          <section class="@container border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
             <SectionHeader title="Skills" />
             <SkillsTable
               rows={canShow('allSkills') ? sortedAllSkills : proficientSkills}
               columns={canShow('allSkills') ? 2 : 1}
             />
->>>>>>> aa80b25 (fix(xml-card): one heading scale, and a medium card that matches large)
           </section>
         )}
 
