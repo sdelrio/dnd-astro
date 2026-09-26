@@ -70,13 +70,6 @@ const TYPE_ONLY_EDGES = /^\s*(?:import|export)\s+type\s[\s\S]*?;/gm;
 /** The client half of a `.astro` file: every `<script>` block, frontmatter excluded. */
 const ASTRO_SCRIPT = /<script[^>]*>([\s\S]*?)<\/script>/g;
 
-type Specifier = {
-  /** The module the specifier names, verbatim. */
-  specifier: string;
-  /** True for an `import type`, which the compiler erases. */
-  typeOnly: boolean;
-};
-
 function read(file: string): string {
   return readFileSync(file, 'utf8');
 }
@@ -90,24 +83,34 @@ function clientSource(file: string): string {
     .join('\n');
 }
 
-/** Every specifier in `source`, with its type-only ones flagged. */
-function edgesIn(source: string): Specifier[] {
-  const typeOnlySpans: [number, number][] = [...source.matchAll(TYPE_ONLY_EDGES)].map(
-    (match) => [match.index ?? 0, (match.index ?? 0) + match[0].length]
-  );
+/**
+ * Every value-edge specifier in `source`, in source order and deduped.
+ *
+ * The `import type` spans are measured first and then skipped by position, so a
+ * type-only statement is removed even when its specifier is the only one in the
+ * file. An inline `import { type Role }` modifier is not recognised and is
+ * counted as a value edge: over-reporting a type-only import is the safe
+ * direction, because it can only send someone to look at a line that is
+ * already correct.
+ */
+function edgesIn(source: string): string[] {
+  const typeOnlySpans: [number, number][] = [...source.matchAll(TYPE_ONLY_EDGES)].map((match) => [
+    match.index ?? 0,
+    (match.index ?? 0) + match[0].length,
+  ]);
   const inside = (index: number): boolean =>
     typeOnlySpans.some(([start, end]) => index >= start && index < end);
 
-  const edges: Specifier[] = [];
+  const edges = new Set<string>();
   for (const pattern of VALUE_EDGES) {
     pattern.lastIndex = 0;
     let match: RegExpExecArray | null;
     while ((match = pattern.exec(source)) !== null) {
       if (inside(match.index)) continue;
-      edges.push({ specifier: match[1], typeOnly: false });
+      edges.add(match[1]);
     }
   }
-  return edges;
+  return [...edges];
 }
 
 /** Repo-relative, forward-slashed, so a failure message reads as a path. */
@@ -190,7 +193,7 @@ function walk(entry: string): Walk {
   while (queue.length > 0) {
     const current = queue.shift() as string;
     visited.push(current);
-    for (const { specifier } of edgesIn(clientSource(current))) {
+    for (const specifier of edgesIn(clientSource(current))) {
       const kind = classify(specifier);
       if (kind === 'node-builtin') {
         leaks.push({ specifier, chain: chainTo(current, cameFrom) });
@@ -249,9 +252,7 @@ const walkFromAlpine = walk(ALPINE_ENTRY);
 describe('the browser-bound graph (issue #352)', () => {
   describe('the scanner', () => {
     it('reads a value import as an edge', () => {
-      expect(edgesIn("import { readFileSync } from 'node:fs';").map((e) => e.specifier)).toEqual([
-        'node:fs',
-      ]);
+      expect(edgesIn("import { readFileSync } from 'node:fs';")).toEqual(['node:fs']);
     });
 
     it('does not read a type-only import as an edge, because the compiler erases it', () => {
@@ -261,18 +262,16 @@ describe('the browser-bound graph (issue #352)', () => {
         "import type { Role, RoleConfig } from './party-roles';",
         "import { partyViewComponent } from './party-view-component';",
       ].join('\n');
-      expect(edgesIn(source).map((e) => e.specifier)).toEqual(['./party-view-component']);
+      expect(edgesIn(source)).toEqual(['./party-view-component']);
     });
 
     it('reads a re-export as an edge, because a re-export pulls the module in', () => {
       const source = "export { ROLE_CONFIG } from './party-roles';";
-      expect(edgesIn(source).map((e) => e.specifier)).toEqual(['./party-roles']);
+      expect(edgesIn(source)).toEqual(['./party-roles']);
     });
 
     it('reads a dynamic import as an edge', () => {
-      expect(edgesIn("const m = await import('node:fs');").map((e) => e.specifier)).toEqual([
-        'node:fs',
-      ]);
+      expect(edgesIn("const m = await import('node:fs');")).toEqual(['node:fs']);
     });
 
     it('spells a Node builtin the same way with or without the node: prefix', () => {
@@ -358,7 +357,7 @@ describe('the browser-bound graph (issue #352)', () => {
 
   describe('the client scripts embedded in .astro files', () => {
     const scripts = astroFiles()
-      .map((file) => ({ file, specifiers: edgesIn(clientSource(file)).map((e) => e.specifier) }))
+      .map((file) => ({ file, specifiers: edgesIn(clientSource(file)) }))
       .filter(({ specifiers }) => specifiers.length > 0);
 
     it('finds the embedded client scripts, so the sweep is not empty', () => {
