@@ -735,9 +735,26 @@ describe('DiceRoller responsive layout', () => {
   // under AA, and that box is what made the overlap above visible in the first
   // place. Declaring both is the fix - what the re-roll then reveals is the
   // tile's own card, which the tile already paints.
+  //
+  // Asserted as the invariant and not as the markup. The re-roll has moved
+  // through three shapes: `bg-transparent border-0` in its Tailwind class list,
+  // then a `.dice-reroll-btn` rule owning both, now a utility `border` for the
+  // edge plus the rule for the background. A test pinning any one of those
+  // would have failed on a correct refactor and passed on the grey pill above -
+  // the failure ADR-0009 warns about, where the assertion is written against
+  // the string that happens to be there rather than against the thing that must
+  // be true. So each half accepts either home and only the outcome is pinned.
   it('declares the re-roll fill and border so it cannot paint the default form control', () => {
     const reroll = source.match(/@click="rollIndividual\(index\)"[\s\S]*?>/)![0];
-    expect(reroll).toMatch(/\bbg-transparent\b/);
-    expect(reroll).toMatch(/\bborder-0\b/);
+    const fill =
+      /\bbg-transparent\b/.test(reroll) ||
+      /\.dice-reroll-btn\s*\{[^}]*background:\s*transparent/.test(source);
+    expect(fill, 'the re-roll must declare a transparent background').toBe(true);
+
+    const edge =
+      /\bborder-0\b/.test(reroll) ||
+      /\bborder\b/.test(reroll) ||
+      /\.dice-reroll-btn\s*\{[^}]*border:\s*1px solid/.test(source);
+    expect(edge, 'the re-roll must declare its own border').toBe(true);
   });
 });

@@ -160,11 +160,15 @@
 
 /* Reduced motion.
 
-   The site ships an infinite `animate-pulse` on the dice roll, a `hover:scale-105`
-   on the re-roll control, a `group-hover:rotate-180` on its icon, 150-200ms colour
-   transitions throughout the tools, and a 400ms shadow ease on every admonition.
-   None of it carries meaning, so it is suppressed rather than shortened - an
-   infinite pulse has no meaningful "short" form.
+   The site ships an infinite `animate-pulse` on the dice roll, a
+   `group-hover:rotate-180` on the dice re-roll's icon, hover transforms and
+   150-200ms colour transitions throughout the tools, and a 400ms shadow ease
+   on every admonition. None of it carries meaning, so it is suppressed rather
+   than shortened - an infinite pulse has no meaningful "short" form.
+
+   The transform selectors are kept as general guards rather than trimmed to
+   their current call sites: a hover scale is exactly the kind of thing a later
+   change adds back, and the rule costs one selector to keep. */
 
    Deliberately broad: motion is applied by utility class at each call site, so one
    block is the only place that can catch all of it. `!important` is needed because

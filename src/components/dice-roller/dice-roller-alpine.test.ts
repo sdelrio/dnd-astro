@@ -168,15 +168,16 @@ describe('DiceRoller at runtime', () => {
     await advance(FULL_ROLL_MS);
 
     const body = shown(doc().body);
-    expect(body).toContain('Average:');
-    expect(body).toContain('Median:');
-    // The label and the value sit in sibling spans with no whitespace between,
-    // so each line reads as one run of text. Six identical totals: lowest and
-    // highest are both 12, each seen six times.
-    expect(body).toContain('Average:12.0');
-    expect(body).toContain('Median:12');
-    expect(body).toContain('Lowest:12 (x6)');
-    expect(body).toContain('Highest:12 (x6)');
+    // The four figures are stat tiles now: an uppercase micro-label stacked over
+    // its value, so the labels carry no trailing colon - a colon after a stacked
+    // label is a dangling mark. The harness reports no inter-element whitespace,
+    // so each tile reads as its label run straight into its value; asserting
+    // that adjacency is also what pins the two into one tile. Six identical
+    // totals: lowest and highest are both 12, each seen six times.
+    expect(body).toContain('Average12.0');
+    expect(body).toContain('Median12');
+    expect(body).toContain('Lowest12 (x6)');
+    expect(body).toContain('Highest12 (x6)');
     expect(body).toContain('STR 12 (+1)');
     expect(doc().querySelector('[aria-live="polite"]')?.textContent).toBe(
       'All abilities rolled. STR 12 (+1), DEX 12 (+1), CON 12 (+1), INT 12 (+1), WIS 12 (+1), CHA 12 (+1).'
