@@ -43,7 +43,14 @@ The `!` is load-bearing and the absence of `hidden` is load-bearing, in opposite
 
 The first implementation shipped `hidden sm:flex!` and the toggle did nothing. A code review caught it, not a test - one of the new tests asserted the exact buggy class string and so passed on broken markup. Both panels now carry a regression test asserting the panel class list contains no `hidden`, plus an inline comment at each call site. The transferable lesson: a source-string assertion is only as good as the string it was written against, and a test drafted from the same reading that produced the bug will not catch it. Write the test against the invariant ("visibility below `sm` comes from `x-show` alone"), not against the markup you happened to write.
 
-**4. Hover tints move inside `@media (hover: hover)`,** with a matching `:active` press inside `@media (hover: none)`, both themes, and chip spacing widening to 8px under `@media (pointer: coarse)`. Gating the rules rather than resetting them afterwards keeps the dark-theme overrides intact, since a later unscoped reset would repaint dark chips with the light resting fill.
+**4. Pointer feedback is split by question, not by device.** Hover tints live inside `@media (hover: hover)`. Press feedback is **ungated** - `.r3-chip:active` sits at the top level - and chip spacing widens under `@media (any-pointer: coarse)`, not `pointer: coarse`.
+
+The asymmetry is deliberate. `hover` and `pointer` describe the *primary* pointing device, so a touchscreen laptop reports `hover: hover` and `pointer: fine` because its trackpad is primary, while the digitizer only appears in the `any-*` features. Two consequences follow:
+
+- Gating the press on `hover: none` never matches a hybrid, because the trackpad makes `hover` true. Leaving `:active` ungated is correct everywhere instead: a mouse still shows a press while held, a finger shows one on contact, and a hybrid gets both channels.
+- Gating the spacing on `pointer: coarse` misses the same hybrid, which is tappable by finger. `any-pointer: coarse` asks the question the spacing is actually about - does this device have touch at all.
+
+Gating hover tints rather than resetting them afterwards keeps the dark-theme overrides intact, since a later unscoped reset would repaint dark chips with the light resting fill.
 
 ### Consequences
 
@@ -54,13 +61,15 @@ The first implementation shipped `hidden sm:flex!` and the toggle did nothing. A
 - Neutral, because the Dice Roller shows 2 columns on a phone where the Card shows 3; they are different components with different content floors, and the container-query Card is unaffected
 - Neutral, because `text-base` below `sm` makes the filter labels optically larger on a phone; this is the intended trade
 - Bad, because the `sm:flex!` plus no-`hidden` combination is easy to reintroduce by accident, and the failure is silent. It is now documented here and in `DESIGN.md`, commented at both call sites, and asserted by a test in each component
-- Bad, because a hybrid touchscreen laptop reports `hover: hover` *and* `pointer: coarse`, so it takes the 8px gap but only hover feedback. Pairing `any-hover` with `any-pointer` would cover it; settling that needs a real hybrid device, so it is left and reported rather than guessed at
+- Bad, because the first cut of decision 4 used `hover: none` and `pointer: coarse` and was wrong for hybrid hardware in both places. The mistake was treating `hover`/`pointer` as "what input methods exist" rather than "what is the primary device"
 
 ## Verification
 
 `pnpm lint`, `pnpm typecheck`, `pnpm test` (517 tests) and `pnpm build` pass.
 
-No browser automation was available, so **none of this was confirmed by a rendered screenshot or synthesized touch input**. The layout arithmetic, the `sm:flex!` cascade, and the pointer gating are all static reasoning over the stylesheet and the shipped Alpine source. Testing on a real phone at 320px and 390px remains outstanding, and it is the only way to close the last bullet above.
+No browser automation was available, so **none of this was confirmed by a rendered screenshot or synthesized touch input**. The layout arithmetic, the `sm:flex!` cascade, and the pointer gating are all static reasoning over the stylesheet and the shipped Alpine source. Testing on a real phone at 320px and 390px remains outstanding and is the main thing still open.
+
+Decision 4's reasoning is a fact about how `hover` and `pointer` are defined, not about any particular device, so it does not need a hybrid laptop to validate - only a test that the CSS branches as intended. The two tests covering it were mutation-checked: re-gating the press on `hover: none` and reverting the gap to `pointer: coarse` each fail the suite, so neither can silently regress. Confirming the *reported values* on real hybrid hardware remains a good idea and is cheap, but the previous revision of this ADR was wrong about them, which is a stronger reason to prefer the media-query reasoning over an anecdote.
 
 ## References
 
