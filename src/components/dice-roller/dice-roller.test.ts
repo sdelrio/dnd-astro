@@ -668,8 +668,12 @@ describe('DiceRoller responsive layout', () => {
   // 106px on a 360px viewport, but a tile's floor is its four-die row (4*28 +
   // 3*4 = 124px) plus p-3 either side, so the grid forced the page to scroll
   // sideways mid-session. Two columns plus the smaller base die is the fit.
+  //
+  // There is deliberately no six-column step, which is a second finding rather
+  // than an oversight - see the re-roll geometry test below.
   it('never puts three ability tiles on a phone-width screen', () => {
-    expect(source).toContain('grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6');
+    expect(source).toContain('grid grid-cols-2 sm:grid-cols-3');
+    expect(source).not.toMatch(/grid-cols-6/);
   });
 
   it('shrinks the die row and tile padding below sm so two columns clear 320px', () => {
@@ -683,5 +687,57 @@ describe('DiceRoller responsive layout', () => {
   it('keeps a 44px hit area on the per-ability re-roll', () => {
     const reroll = source.match(/@click="rollIndividual\(index\)"[\s\S]*?>/);
     expect(reroll![0]).toContain('w-11 h-11');
+  });
+
+  // #331. The re-roll is anchored `absolute top-1 right-1`, so its 44px box
+  // occupies the tile's top-right 48px including the offset. The ability name is
+  // centred in the same row, so the two collide unless the tile is wider than
+  // the label plus 96px (twice the 48px the button claims, once for each side of
+  // a centred box). The widest label is CHA at 41.58px, so a tile needs >137.58px.
+  //
+  // The container is Starlight's, and it is capped at 880px: six columns give
+  // 133.33px tiles at 1280 and 102px at 1024, measured in a real browser. Six
+  // across therefore overlapped the name by 16.64px at 1024 and 0.97px at 1280 -
+  // and no wider breakpoint rescues it, because the cap does not move. This
+  // asserts the consequence, so restoring a six-column step fails loudly rather
+  // than reintroducing the overlap.
+  it('keeps every ability tile wider than its re-roll box plus its name', () => {
+    // Measured in a real browser, not derived: Starlight's content cap, the
+    // widest ability name's tight text extent, and the re-roll's footprint
+    // (44px plus the 4px `right-1` offset).
+    const CONTAINER_CAP = 880;
+    const GAP = 16;
+    const BUTTON_FOOTPRINT = 48;
+    const WIDEST_LABEL = 41.58;
+    const MIN_TILE = BUTTON_FOOTPRINT * 2 + WIDEST_LABEL;
+
+    // Read the column counts the markup actually asks for, so this is one
+    // assertion about the grid rather than a list that has to be kept in step
+    // with it.
+    const classes = source.match(/class="js-only grid([^"]*)"/)![1];
+    const columns = [...classes.matchAll(/grid-cols-(\d+)/g)].map((m) => Number(m[1]));
+
+    expect(columns.length, 'the ability grid declares no column count').toBeGreaterThan(0);
+    for (const count of columns) {
+      const tile = (CONTAINER_CAP - GAP * (count - 1)) / count;
+      expect(
+        tile,
+        `${count} columns leaves ${tile}px tiles in a ${CONTAINER_CAP}px container, ` +
+          `under the ${MIN_TILE}px the re-roll and the name need`
+      ).toBeGreaterThan(MIN_TILE);
+    }
+  });
+
+  // #331. Preflight is deliberately off (see src/styles/tailwind.css), so a
+  // button that declares neither a background nor a border keeps the browser's
+  // own: measured as rgb(239,239,239) on rgb(107,107,107) here, in a rounded
+  // grey box. The accent glyph then sits at 4.44:1 light and 2.12:1 dark, both
+  // under AA, and that box is what made the overlap above visible in the first
+  // place. Declaring both is the fix - what the re-roll then reveals is the
+  // tile's own card, which the tile already paints.
+  it('declares the re-roll fill and border so it cannot paint the default form control', () => {
+    const reroll = source.match(/@click="rollIndividual\(index\)"[\s\S]*?>/)![0];
+    expect(reroll).toMatch(/\bbg-transparent\b/);
+    expect(reroll).toMatch(/\bborder-0\b/);
   });
 });
