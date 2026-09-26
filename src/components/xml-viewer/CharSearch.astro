@@ -24,15 +24,46 @@ const filterPayload = JSON.stringify(toFilterableCharacters(characters));
         type="text"
         x-model="search"
         placeholder="Type a character name..."
-        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+        class="w-full min-h-11 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-base sm:text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
       />
     </div>
+
+    <!-- Same collapse as FeatExplorer: two full-width selects stacked under the
+         search box pushed the first card off a phone screen. No `hidden` class
+         on the panel: `x-show` reveals by removing its own inline display, so a
+         class-based `display:none` would win again and the toggle would be dead
+         on a phone. `x-cloak` covers the pre-boot paint and `sm:flex!` outranks
+         the inline `display:none` so the sm+ row stays inline. -->
+    <button
+      type="button"
+      x-cloak
+      x-show="!filtersOpen"
+      @click="filtersOpen = true"
+      class="sm:hidden min-h-11 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) font-medium transition-colors"
+      aria-controls="char-filter-panel"
+      :aria-expanded="filtersOpen ? 'true' : 'false'"
+    >
+      <IconifyIcon icon="mdi:tune-variant" width="1.25em" />
+      <span>Filters</span>
+      <span
+        x-show="activeFilterCount() > 0"
+        x-text="activeFilterCount()"
+        class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-(--sl-color-accent) text-(color:--sl-color-text-invert) text-xs font-bold"
+      ></span>
+    </button>
+
+    <div
+      id="char-filter-panel"
+      x-cloak
+      x-show="filtersOpen"
+      class="sm:flex! sm:flex-row sm:items-start gap-4"
+    >
     <div class="sm:w-48">
       <label for="class-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Class</label>
       <select
         id="class-filter"
         x-model="selectedClass"
-        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+        class="w-full min-h-11 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-base sm:text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
       >
         <option value="">All Classes</option>
         {allClasses.map((cls) => (
@@ -45,13 +76,14 @@ const filterPayload = JSON.stringify(toFilterableCharacters(characters));
       <select
         id="race-filter"
         x-model="selectedRace"
-        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+        class="w-full min-h-11 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-base sm:text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
       >
         <option value="">All Races</option>
         {allRaces.map((race) => (
           <option value={race}>{race}</option>
         ))}
       </select>
+    </div>
     </div>
   </div>
 
