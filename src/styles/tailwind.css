@@ -77,7 +77,7 @@
 
    DESIGN.md's Warm-Only Rule forbids the cool default scale, but the Card body
    and every tool input were written against Tailwind's `gray-*` utilities -
-   823 usages across ten steps. Rather than a 823-site find-and-replace, the
+   roughly 340 call sites. Rather than a find-and-replace across every one, the
    `gray` scale is redefined here onto the bark ramp from DESIGN.md, so those
    call sites become warm without churn and the palette stays changeable in one
    place.
@@ -85,6 +85,13 @@
    The step *numbers* keep Tailwind's meaning (50 lightest, 900 darkest) so
    `text-gray-900` on a light surface and `dark:text-gray-100` on a dark one keep
    working as before.
+
+   Scope note: this reaches further than the character viewer. Starlight's own
+   components use 32 `gray-*` utilities, so the documentation chrome warms too.
+   That is intended - the docs shell is already on the bark ramp via
+   `--sl-color-gray-*` - and no Starlight step crosses a WCAG threshold in either
+   direction. Omitting preflight keeps the *reset* off the docs pages; it is not
+   what contains this change.
 
    `gray-500` is the one step that needs care. No single mid-tone can clear 4.5:1
    against both a white surface and a near-black one - the two constraints are
@@ -105,6 +112,10 @@
   --color-gray-700: #4a403a;  /* bark-650  */
   --color-gray-800: #2e2421;  /* bark-800  */
   --color-gray-900: #1b1716;  /* bark-black */
+  /* Tailwind ships an eleventh step. @theme merges rather than replaces, so
+     without this `bg-gray-950` stays Tailwind's cool oklch near-black - it is
+     used by Starlight's own components, not by anything in src/. */
+  --color-gray-950: #0f0d0c;  /* below bark-black, interpolated */
 
   /* Named aliases, for new code. Prefer these over the `gray` scale so intent
      is explicit; the scale above exists to retire the existing call sites. */

@@ -200,23 +200,43 @@ sites name intent rather than a hex. `bark-*`, `moss-*`, `gold`, `gold-rule`,
 
 The `gray` scale is **redefined onto the bark ramp** rather than left as
 Tailwind's cool default. The Card body and every tool input were written against
-`gray-*` (823 call sites across ten steps), and a find-and-replace would have to
-be redone every time the palette moved. Redefining the scale in `@theme` warms all
-of them from one place, so the palette is now changeable in one file. The step
-*numbers* keep Tailwind's meaning - 50 lightest, 900 darkest - so
-`text-gray-900` on a light surface and `dark:text-gray-100` on a dark one behave
-as before. New code should prefer the named tokens.
+`gray-*` - roughly 340 call sites across eleven steps - and a find-and-replace
+would have to be redone every time the palette moved. Redefining the scale in
+`@theme` warms all of them from one place, so the palette is now changeable in
+one file. The step *numbers* keep Tailwind's meaning - 50 lightest, 950 darkest -
+so `text-gray-900` on a light surface and `dark:text-gray-100` on a dark one
+behave as before. New code should prefer the named tokens.
 
-`gray-200`, `gray-300` and `gray-500` are interpolated and have no DESIGN.md
-counterpart; the other seven are literal palette values. `gray-500` in particular
-is balanced rather than pure: no single mid-tone can clear 4.5:1 against both a
-white surface and a near-black one, so `#786d6a` gives 4.65:1 light and 3.55:1
-dark, against Tailwind's own 4.49:1 and 3.68:1. Every `text-gray-N` call site
-carries a `dark:` counterpart, so each step only has to clear the theme it is
-used in.
+All eleven steps Tailwind ships are redefined. `@theme` merges rather than
+replaces, so a step left undefined silently keeps its cool built-in - which is
+what `gray-950` did until it was pinned.
 
-`src/styles/tailwind.test.ts` pins all ten values and the derived-step comments,
-so the mapping cannot drift silently.
+Scope: this reaches further than the character viewer. Starlight's own components
+use 32 `gray-*` utilities, so the documentation chrome warms too. That is
+intended - the docs shell is already on the bark ramp via `--sl-color-gray-*` -
+and no Starlight step crosses a WCAG threshold in either direction. Omitting
+preflight keeps the *reset* off the docs pages; it is not what contains this
+change.
+
+`gray-200`, `gray-300`, `gray-500` and `gray-950` are interpolated and have no
+DESIGN.md counterpart; the rest are literal palette values. `gray-500` in
+particular is balanced rather than pure: no single mid-tone can clear 4.5:1
+against both a white surface and a near-black one, so on the surfaces it is
+actually used with:
+
+| | `gray-50` (light) | `gray-900` (dark) |
+|---|---|---|
+| Tailwind `#6b7280` | 4.49:1 | 3.68:1 |
+| this system `#786d6a` | 4.65:1 | 3.55:1 |
+
+Neither theme regresses, and the light surface - where `gray-500` is
+overwhelmingly used - is above AA. Every `text-gray-N` call site carries a `dark:`
+counterpart (verified: 112 sites, none without one), so each step only has to
+clear the theme it appears in.
+
+`src/styles/tailwind.test.ts` pins all eleven values, the derived-step comments,
+the admonition pairings and the stripe stops, so the mapping cannot drift
+silently.
 
 ### Named Rules
 **The Warm-Only Rule.** No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The `gray` scale is now bark, the `blue-500` focus rings on the tool inputs are the remaining drift, and the admonition palette has been pulled onto the bark/moss/gold/oxblood ramps. Admonitions set both `--sl-color-asides-border` and `--sl-color-asides-text-accent`; Starlight's own defaults for both are cool.
