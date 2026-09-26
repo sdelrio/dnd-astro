@@ -164,6 +164,56 @@ lengths, and **nothing errors and no console warning is emitted**. A capture
 therefore proves less than it appears to. Treat font readiness as an open
 question to resolve separately, not something a PNG settles on its own.
 
+### The capture command, for contract artifacts
+
+The MCP server is the tool for exploration and for synthesized input. It is not
+the tool for writing a design review artifact, because it does not reliably hold
+a requested width: after `resize_page` to 390x844 the page reports
+`window.innerWidth` of 500 and the returned image is 500 wide, with nothing in
+the reply saying so ([ADR-0012](docs/adr/0012-dependency-free-cdp-capture-client.md)).
+
+For the contract captures, use:
+
+```
+make capture
+```
+
+That writes `.impeccable/review/desktop.png` (full page, exactly 1440 wide) and
+`.impeccable/review/mobile.png` (exactly 390) - the exact filenames the
+vendored skill's reviewer looks for - in one invocation. The underlying command
+is `node .opencode/lib/design-review/capture.mjs`; run it with `--help` for the
+options.
+
+What it does that a `take_screenshot` call cannot:
+
+- **Gates on the display font.** It resolves `document.fonts.ready`, then requires
+  a loaded `FontFace` for `Cinzel`, a true `document.fonts.check()`, and a width
+  probe proving the face changes rendering. If any of those fail it exits
+  non-zero, names the font, and writes **no** capture. That is the resolution of
+  the network-font caveat above, and it is a refusal rather than a warning.
+  `--simulate-font-cdn-outage` blocks the CDN so the gate can be tested for real.
+- **Owns the exact width**, then reads it back out of the PNG it wrote. A file
+  that is absent, empty, under 1KB, unreadable, or the wrong width is reported
+  as a failure rather than filed.
+- **Neutralises entrance animation** before a full-page capture: reduced motion
+  is emulated, animation and transition timing are zeroed, and the page is
+  scrolled end to end so viewport-gated reveals have fired.
+
+Browser resolution never downloads anything, in this order: the
+`DESIGN_REVIEW_CHROME` override, then Chrome for Testing builds already in a
+Puppeteer cache directory, then an installed browser. The command prints which
+binary it used. A `DESIGN_REVIEW_CHROME` that is set but unusable is a hard
+error rather than a fall-through.
+
+If the dev server is not running the command **fails** and prints the documented
+`astro dev --background` command. It does not start a second server lifecycle.
+`--start-dev-server` is the explicit opt-in, and it shells out to that same
+documented command.
+
+Like everything else browser-related here, it is dev-time only. It adds nothing
+to the manifest, so `git diff -- package.json pnpm-lock.yaml pnpm-workspace.yaml`
+must still come back empty.
+
 ### Workflow Steps
 
 1. **Never push to master directly**: Always prepare a Pull Request for review
