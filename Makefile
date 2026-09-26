@@ -21,8 +21,11 @@ IMPECCABLE_SKILLS_opencode := .opencode/skills
 IMPECCABLE_SKILLS_claude   := .claude/skills
 IMPECCABLE_SKILLS          := $(IMPECCABLE_SKILLS_$(IMPECCABLE_PROVIDER))
 
-.PHONY: help test lint typecheck build check upgrade \
+.PHONY: help test lint typecheck build check capture upgrade \
         submodule-init submodule-update submodule-link
+
+# The design review capture command. See ADR-0012.
+CAPTURE := node .opencode/lib/design-review/capture.mjs
 
 help:
 	@printf "\n"
@@ -34,6 +37,9 @@ help:
 	@printf "  $(GREEN)make typecheck$(RESET)  🔍  Astro diagnostics (noninteractive)\n"
 	@printf "  $(GREEN)make test$(RESET)       🧪  Vitest unit tests\n"
 	@printf "  $(GREEN)make build$(RESET)      🏗️  Production build to ./dist/\n"
+	@printf "\n"
+	@printf "$(MAGENTA)Design review$(RESET)\n"
+	@printf "  $(GREEN)make capture$(RESET)    📸  Write desktop.png (1440) and mobile.png (390) for review\n"
 	@printf "\n"
 	@printf "$(MAGENTA)Agent skills$(RESET)\n"
 	@printf "  $(GREEN)make submodule-init$(RESET)    📥  Check out the pinned Impeccable skill\n"
@@ -60,6 +66,12 @@ check:
 	$(MAKE) typecheck
 	$(MAKE) test
 	$(MAKE) build
+
+# Writes .impeccable/review/desktop.png and .impeccable/review/mobile.png, the
+# exact filenames the vendored Impeccable skill's reviewer looks for. Fails if
+# the display font is not genuinely loaded, and writes nothing if it is not.
+capture:
+	$(CAPTURE)
 
 upgrade:
 	pnpm dlx @astrojs/upgrade
