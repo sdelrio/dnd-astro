@@ -76,13 +76,13 @@ const initialData = {
     
     <!-- Clear filters and result count -->
     <div class="flex items-center justify-between mb-6">
-      <p class="text-sm text-gray-600 dark:text-gray-400">
+      <p class="text-sm text-gray-600 dark:text-gray-400" role="status" aria-live="polite">
         <span x-text="filteredFeats.length"></span> feat<span x-show="filteredFeats.length !== 1">s</span> found
       </p>
       <button
         x-show="hasActiveFilters()"
         @click="clearFilters()"
-        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+        class="inline-flex items-center justify-center w-11 h-11 -mr-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
         title="Clear filters"
         aria-label="Clear all filters"
       >
