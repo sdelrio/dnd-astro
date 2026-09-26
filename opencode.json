@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "chrome-devtools": {
+      "type": "local",
+      "command": [
+        "pnpm",
+        "dlx",
+        "chrome-devtools-mcp@1.10.1",
+        "--headless",
+        "--isolated",
+        "--javascript-evaluation",
+        "--screenshot-format=png",
+        "--filesystem-root=/Users/sdelrio/github/sdelrio/dnd-astro",
+        "--no-usage-statistics",
+        "--no-performance-crux"
+      ],
+      "environment": {
+        "PUPPETEER_SKIP_DOWNLOAD": "true",
+        "PUPPETEER_SKIP_CHROMIUM_DOWNLOAD": "true",
+        "CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS": "1",
+        "CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS": "1"
+      },
+      "timeout": 180000
+    }
+  }
+}
