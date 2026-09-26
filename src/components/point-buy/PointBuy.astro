@@ -40,7 +40,7 @@ const initialScores = createDefaultScores();
             type="button"
             @click={`decrease('${ability}')`}
             :disabled={`!canDecrease(scores, '${ability}')`}
-            class="inline-flex items-center justify-center w-11 h-11 min-w-11 min-h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             aria-label={`Decrease ${ability}`}
           >
             <IconifyIcon icon="mdi:minus" />
@@ -49,7 +49,7 @@ const initialScores = createDefaultScores();
             type="button"
             @click={`increase('${ability}')`}
             :disabled={`!canIncrease(scores, '${ability}')`}
-            class="inline-flex items-center justify-center w-11 h-11 min-w-11 min-h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             aria-label={`Increase ${ability}`}
           >
             <IconifyIcon icon="mdi:plus" />

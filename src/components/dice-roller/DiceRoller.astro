@@ -85,7 +85,7 @@ const abilities: Ability[] = [
         ></div>
 
         <template x-if="stagedSwap && stagedSwap.index1 === index">
-          <div class="mt-2 bg-(--sl-color-accent-low) border border-(color:--sl-color-accent) rounded-lg p-2 text-center text-sm">
+          <div class="dice-swap-panel rounded-lg p-2 text-center text-sm">
             <div class="text-(color:--sl-color-accent-high) font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
             <div class="flex justify-center gap-2 not-content">
               <button
@@ -156,12 +156,29 @@ const abilities: Ability[] = [
 </div>
 
 <style>
-  /* The swap confirm/cancel pair guards the tool's only destructive action, so
-     it is painted from DESIGN.md's gold and bark rather than the live
-     --sl-color-accent token. That token resolves to sap #f7860f in dark, and
-     white-on-sap measures 2.51:1 - worse than the green-600 it replaced. The
-     outline is bark-black on gold (7.09:1) because an accent-coloured ring on
-     an accent-filled button is invisible at 1.00:1. */
+  /* The swap panel and its confirm/cancel pair guard the tool's only
+     destructive action, so both are painted from the DESIGN.md bark/gold ramp
+     rather than the live --sl-color-accent tokens.
+
+     Why not the tokens: --sl-color-accent is #f7860f in dark and #697066 in
+     light, and --sl-color-text-invert is --sl-color-accent-low, not white.
+     That pairing gives 5.28:1 in dark but only 2.74:1 in light - the light
+     theme is the one that fails (see #329). Using the accent for the panel
+     fill is worse still: in light it is #b9c0b6, which leaves the gold confirm
+     button at 1.74:1 and the cancel button at 1.59:1, i.e. neither button
+     keeps a perceivable boundary (WCAG 1.4.11).
+
+     Every pairing below is at or above its bar:
+       confirm fill vs panel  3.00:1 light, 4.67:1 dark   (1.4.11 shape)
+       confirm glyph on fill 5.50:1 both themes           (1.4.3 text)
+       cancel border/panel  6.68:1 light, 8.42:1 dark    (1.4.11 shape)
+       focus ring vs fill   5.50:1 light, 3.00:1 dark    (2.4.11)
+     The ring is never the same value as the button it outlines. */
+  .dice-swap-panel {
+    margin-top: 8px;
+    background: #f8f6f5;
+    border: 1px solid #c9ad6a;
+  }
   .dice-round-btn {
     display: inline-flex;
     align-items: center;
@@ -184,30 +201,26 @@ const abilities: Ability[] = [
     background: #d99a2b;
   }
   .dice-round-btn--cancel {
-    background: #f1eceb;
+    background: transparent;
     color: #2a2010;
-    border-color: #c7c0be;
-  }
-  .dice-round-btn--cancel:hover {
-    background: #e2dbd9;
-  }
-  :global([data-theme='dark']) .dice-round-btn:focus-visible {
-    outline-color: #c9ad6a;
-  }
-  :global([data-theme='dark']) .dice-round-btn--confirm {
-    background: #c68000;
-    color: #1b1716;
-  }
-  :global([data-theme='dark']) .dice-round-btn--confirm:hover {
-    background: #d99a2b;
-  }
-  :global([data-theme='dark']) .dice-round-btn--cancel {
-    background: #3f3632;
-    color: #f1eceb;
     border-color: #605552;
   }
+  .dice-round-btn--cancel:hover {
+    background: #f1eceb;
+  }
+  :global([data-theme='dark']) .dice-swap-panel {
+    background: #2e2421;
+    border-color: #867347;
+  }
+  :global([data-theme='dark']) .dice-round-btn:focus-visible {
+    outline-color: #f8f6f5;
+  }
+  :global([data-theme='dark']) .dice-round-btn--cancel {
+    color: #f1eceb;
+    border-color: #c7c0be;
+  }
   :global([data-theme='dark']) .dice-round-btn--cancel:hover {
-    background: #4a403a;
+    background: #3f3632;
   }
 </style>
 

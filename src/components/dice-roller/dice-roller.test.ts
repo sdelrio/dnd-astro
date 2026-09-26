@@ -31,11 +31,14 @@ function topLevelChildrenOfAbilityXFor(markup: string): string[] {
   expect(start, 'ability x-for template not found').toBeGreaterThan(-1);
 
   // Walk forward tracking template nesting to find the matching close tag.
+  // Comments are stripped first: a comment containing `</template>` would
+  // otherwise close the walk early and hide any extra roots.
+  const stripped = markup.replace(/<!--[\s\S]*?-->/g, '');
   let depth = 0;
   let closeStart = -1;
   const tag = /<(\/?)template\b[^>]*>/g;
   tag.lastIndex = start;
-  for (let m = tag.exec(markup); m; m = tag.exec(markup)) {
+  for (let m = tag.exec(stripped); m; m = tag.exec(stripped)) {
     depth += m[1] === '' ? 1 : -1;
     if (depth === 0) {
       closeStart = m.index;
@@ -46,9 +49,7 @@ function topLevelChildrenOfAbilityXFor(markup: string): string[] {
 
   // Inner content only. Keeping the outer tags would make the depth walk below
   // start from this template's own open tag.
-  const body = markup
-    .slice(markup.indexOf('>', start) + 1, closeStart)
-    .replace(/<!--[\s\S]*?-->/g, '');
+  const body = stripped.slice(markup.indexOf('>', start) + 1, closeStart);
 
   const names: string[] = [];
   let level = 0;
@@ -75,21 +76,10 @@ describe('DiceRoller ability tile markup', () => {
   // the x-for two root children. Alpine warns and clones only
   // `content.firstElementChild`, so the confirm/cancel panel never rendered and
   // a staged swap could not be confirmed - while the live region told users to
-  // look for buttons that did not exist.
+  // look for buttons that did not exist. The suite passed throughout because it
+  // covers `dice-utils`, not markup.
   it('gives the ability x-for exactly one root element', () => {
     expect(topLevelChildrenOfAbilityXFor(source)).toEqual(['div']);
-  });
-
-  it('keeps the swap confirm/cancel panel inside that single root', () => {
-    const start = source.indexOf('<template x-for="(ability, index) in abilities"');
-    const root = topLevelChildrenOfAbilityXFor(source);
-    expect(root).toHaveLength(1);
-    // The panel is nested, so it must appear after the root opens and before the
-    // x-for closes rather than as a second top-level sibling.
-    const panelAt = source.indexOf('<template x-if="stagedSwap');
-    const confirmAt = source.indexOf('aria-label="Confirm swap"');
-    expect(panelAt).toBeGreaterThan(start);
-    expect(confirmAt).toBeGreaterThan(panelAt);
   });
 
   it('makes the ability tile a real button with a pressed state', () => {
@@ -101,14 +91,57 @@ describe('DiceRoller ability tile markup', () => {
     expect(openTag).toContain(':aria-pressed=');
   });
 
-  it('does not paint the swap confirm button with the live accent token', () => {
-    // `--sl-color-accent` resolves to sap #f7860f in dark, and white on that is
-    // 2.51:1 - worse than the green-600 this replaced. The round buttons use
-    // explicit gold/bark values instead.
+  it('does not paint the swap panel or confirm button with the live accent tokens', () => {
+    // `--sl-color-text-invert` is `--sl-color-accent-low`, not white, so the
+    // pairing is 5.28:1 in dark but only 2.74:1 in light (#329). An accent-filled
+    // panel is worse: in light it is #b9c0b6, leaving the gold confirm button at
+    // 1.74:1 and cancel at 1.59:1 - neither keeps a perceivable boundary.
     const confirmAt = source.indexOf('aria-label="Confirm swap"');
     const button = source.slice(confirmAt - 300, confirmAt);
     expect(button).toContain('dice-round-btn--confirm');
     expect(button).not.toContain('--sl-color-accent');
+
+    const panelAt = source.indexOf('class="dice-swap-panel');
+    expect(panelAt).toBeGreaterThan(-1);
+    // Scope to the panel's own tag - the label inside it legitimately uses
+    // --sl-color-accent-high for its text.
+    const panelTag = source.slice(panelAt, source.indexOf('>', panelAt));
+    expect(panelTag).toContain('dice-swap-panel');
+    expect(panelTag).not.toContain('--sl-color-accent');
+  });
+
+  it('never rings a round button in its own fill colour', () => {
+    // WCAG 2.4.11 / 1.4.11. Asserted as measured contrast rather than a
+    // specific hex, because the failure mode is "ring too close to the fill" -
+    // gold-rule on gold is 1.49:1 and accent on accent 1.00:1, and neither is
+    // the fill hex itself.
+    const relativeLuminance = (hex: string) => {
+      const n = parseInt(hex.slice(1), 16);
+      const channel = (v: number) => {
+        const s = v / 255;
+        return s <= 0.04045 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+      };
+      const [r, g, b] = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(channel);
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    };
+    const contrast = (a: string, b: string) => {
+      const [x, y] = [relativeLuminance(a), relativeLuminance(b)];
+      return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
+    };
+
+    const style = source.slice(source.indexOf('.dice-round-btn:focus-visible'));
+    const darkAt = style.indexOf(":global([data-theme='dark'])");
+    const light = style.slice(0, darkAt);
+    const dark = style.slice(darkAt);
+
+    const confirmFill = '#c68000';
+    const lightRing = light.match(/outline:\s*2px solid (#[0-9a-f]{6})/)?.[1];
+    const darkRing = dark.match(/outline-color:\s*(#[0-9a-f]{6})/)?.[1];
+    expect(lightRing, 'no light focus ring found').toBeTruthy();
+    expect(darkRing, 'no dark focus ring found').toBeTruthy();
+
+    expect(contrast(lightRing!, confirmFill)).toBeGreaterThanOrEqual(3);
+    expect(contrast(darkRing!, confirmFill)).toBeGreaterThanOrEqual(3);
   });
 
   it('announces state changes through a polite live region', () => {
