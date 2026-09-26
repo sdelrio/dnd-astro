@@ -2,24 +2,26 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const indexSource = readFileSync(join(__dirname, '../content/docs/index.mdx'), 'utf8');
+import { rulebookParts } from '../components/rulebook-index/rulebook-parts';
+
 const configSource = readFileSync(join(__dirname, '../../astro.config.mjs'), 'utf8');
+
+const entries = rulebookParts.flatMap((part) => part.entries);
 
 describe('FG Effects navigation', () => {
   it('links the Tools FG Effects item to the migrated page', () => {
-    const itemPattern =
-      /<IconifyIcon icon="mdi:magic-staff" width="2em" class="shrink-0" \/>\s*<span><strong><a href="\/fantasy-grounds\/fg-effects\/">FG Effects<\/a><\/strong> - Advanced automation tips, conditional operators, and custom effects for Fantasy Grounds\.<\/span>/;
+    const matches = entries.filter((entry) => entry.href === '/fantasy-grounds/fg-effects/');
 
-    expect(indexSource).toMatch(itemPattern);
-    expect(indexSource.match(new RegExp(itemPattern.source, 'g'))).toHaveLength(1);
+    expect(matches).toHaveLength(1);
+    expect(matches[0]?.title).toBe('FG Effects');
   });
 
   it('keeps the FG Effects icon and description', () => {
-    expect(indexSource).toContain(
-      '<IconifyIcon icon="mdi:magic-staff" width="2em" class="shrink-0" />'
-    );
-    expect(indexSource).toContain(
-      '- Advanced automation tips, conditional operators, and custom effects for Fantasy Grounds.'
+    const entry = entries.find((candidate) => candidate.href === '/fantasy-grounds/fg-effects/');
+
+    expect(entry?.icon).toBe('mdi:magic-staff');
+    expect(entry?.description).toBe(
+      'Automation tips, conditional operators, and custom effects for Fantasy Grounds.'
     );
   });
 
