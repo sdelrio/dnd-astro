@@ -168,11 +168,19 @@ const abilities: Ability[] = [
      button at 1.74:1 and the cancel button at 1.59:1, i.e. neither button
      keeps a perceivable boundary (WCAG 1.4.11).
 
-     Every pairing below is at or above its bar:
+     Every pairing below is at or above its bar, at rest and on hover:
        confirm fill vs panel  3.00:1 light, 4.67:1 dark   (1.4.11 shape)
-       confirm glyph on fill 5.50:1 both themes           (1.4.3 text)
+       confirm glyph on fill 5.50:1 rest, 4.34:1 hover   (1.4.11, the glyph is
+                                                        an SVG graphic and the
+                                                        accessible name comes
+                                                        from aria-label)
        cancel border/panel  6.68:1 light, 8.42:1 dark    (1.4.11 shape)
        focus ring vs fill   5.50:1 light, 3.00:1 dark    (2.4.11)
+
+     The confirm fill sits exactly on the 3:1 shape boundary against the light
+     panel, so there is no headroom to lighten on hover - a lighter gold drops
+     the button to 2.26:1 and its edge disappears. The hover therefore darkens to
+     #b06f00, which holds every bar in both themes rather than only at rest.
      The ring is never the same value as the button it outlines. */
   .dice-swap-panel {
     margin-top: 8px;
@@ -198,7 +206,7 @@ const abilities: Ability[] = [
     color: #1b1716;
   }
   .dice-round-btn--confirm:hover {
-    background: #d99a2b;
+    background: #b06f00;
   }
   .dice-round-btn--cancel {
     background: transparent;
@@ -215,8 +223,7 @@ const abilities: Ability[] = [
   :global([data-theme='dark']) .dice-round-btn:focus-visible {
     outline-color: #f8f6f5;
   }
-  :global([data-theme='dark']) .dice-round-btn--cancel {
-    color: #f1eceb;
+  :global([data-theme='dark']) .dice-round-btn--cancel {    color: #f1eceb;
     border-color: #c7c0be;
   }
   :global([data-theme='dark']) .dice-round-btn--cancel:hover {

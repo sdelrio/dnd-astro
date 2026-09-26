@@ -30,10 +30,13 @@ function topLevelChildrenOfAbilityXFor(markup: string): string[] {
   const start = markup.indexOf(open);
   expect(start, 'ability x-for template not found').toBeGreaterThan(-1);
 
+  // Blank comments to equal-length whitespace rather than deleting them. A
+  // comment containing `</template>` would otherwise close the walk early, and
+  // deleting shifts every later index so offsets taken from `markup` no longer
+  // address the same spot in the working string.
+  const stripped = markup.replace(/<!--[\s\S]*?-->/g, (m) => ' '.repeat(m.length));
+
   // Walk forward tracking template nesting to find the matching close tag.
-  // Comments are stripped first: a comment containing `</template>` would
-  // otherwise close the walk early and hide any extra roots.
-  const stripped = markup.replace(/<!--[\s\S]*?-->/g, '');
   let depth = 0;
   let closeStart = -1;
   const tag = /<(\/?)template\b[^>]*>/g;
@@ -47,7 +50,7 @@ function topLevelChildrenOfAbilityXFor(markup: string): string[] {
   }
   expect(closeStart, 'unterminated ability x-for template').toBeGreaterThan(-1);
 
-  // Inner content only. Keeping the outer tags would make the depth walk below
+  // Inner content only. Keeping the outer tags would make the depth walk above
   // start from this template's own open tag.
   const body = stripped.slice(markup.indexOf('>', start) + 1, closeStart);
 
@@ -134,14 +137,36 @@ describe('DiceRoller ability tile markup', () => {
     const light = style.slice(0, darkAt);
     const dark = style.slice(darkAt);
 
-    const confirmFill = '#c68000';
+    const restFill = '#c68000';
+    const hoverFill = light.match(
+      /\.dice-round-btn--confirm:hover\s*\{\s*background:\s*(#[0-9a-f]{6})/
+    )?.[1];
+    expect(hoverFill, 'no confirm hover fill found').toBeTruthy();
+
     const lightRing = light.match(/outline:\s*2px solid (#[0-9a-f]{6})/)?.[1];
     const darkRing = dark.match(/outline-color:\s*(#[0-9a-f]{6})/)?.[1];
     expect(lightRing, 'no light focus ring found').toBeTruthy();
     expect(darkRing, 'no dark focus ring found').toBeTruthy();
 
-    expect(contrast(lightRing!, confirmFill)).toBeGreaterThanOrEqual(3);
-    expect(contrast(darkRing!, confirmFill)).toBeGreaterThanOrEqual(3);
+    // Rest and hover, both themes. Checking only the rest state let a hover fill
+    // that erased the button's edge through at 2.26:1.
+    expect(contrast(lightRing!, restFill)).toBeGreaterThanOrEqual(3);
+    expect(contrast(darkRing!, restFill)).toBeGreaterThanOrEqual(3);
+    expect(contrast(lightRing!, hoverFill!)).toBeGreaterThanOrEqual(3);
+    expect(contrast(darkRing!, hoverFill!)).toBeGreaterThanOrEqual(3);
+
+    // The confirm fill is a shape whose only boundary is fill-vs-panel, so the
+    // fill itself must clear 3:1 against the panel in both themes, at rest and
+    // on hover. The glyph is an SVG graphic (1.4.11, 3:1) - the accessible name
+    // comes from aria-label, not from the icon.
+    const lightPanel = '#f8f6f5';
+    const darkPanel = '#2e2421';
+    expect(contrast(restFill, lightPanel)).toBeGreaterThanOrEqual(3);
+    expect(contrast(hoverFill!, lightPanel)).toBeGreaterThanOrEqual(3);
+    expect(contrast(restFill, darkPanel)).toBeGreaterThanOrEqual(3);
+    expect(contrast(hoverFill!, darkPanel)).toBeGreaterThanOrEqual(3);
+    expect(contrast('#1b1716', restFill)).toBeGreaterThanOrEqual(3);
+    expect(contrast('#1b1716', hoverFill!)).toBeGreaterThanOrEqual(3);
   });
 
   it('announces state changes through a polite live region', () => {
