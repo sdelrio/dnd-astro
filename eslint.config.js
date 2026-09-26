@@ -5,7 +5,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig([
-  globalIgnores(['dist/**', '.astro/**', '.vitest/**', 'src/generated/**', 'tmp/**', '.scratch/**', '.agents/**', '.claude/**', '.opencode/**', '.devbox/**']),
+  globalIgnores(['dist/**', '.astro/**', '.vitest/**', 'src/generated/**', 'tmp/**', '.scratch/**', '.agents/**', '.claude/**', '.opencode/**', '.devbox/**', '.impeccable-skill/**']),
   js.configs.recommended,
   {
     files: ['**/*.ts', '**/*.astro', '**/*.astro/*.ts'],
