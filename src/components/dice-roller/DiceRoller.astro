@@ -49,7 +49,7 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
           @click="selectAbility(index)"
           :aria-pressed="selectedIndex === index"
           :aria-label="'Select ' + ability.name + ' for swap'"
-          class="block w-full h-full text-left bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
+          class="block w-full h-full text-left bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
           :class="selectedIndex === index ? 'border-(color:--sl-color-accent) ring-2 ring-(color:--sl-color-accent-low)' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-(color:--sl-color-accent-high)' : 'border-gray-200 dark:border-gray-700'"
         >
           <div class="p-3 sm:p-4">
@@ -59,10 +59,29 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
 
             <div x-show="ability.dice.length > 0" class="space-y-2">
               <div class="flex gap-1 justify-center">
+                <!-- The dropped die needs a boundary of its own. It was
+                     `border-gray-300` on light and `border-gray-600` on dark,
+                     which measure 1.42:1 and 1.40:1 against the tile they sit
+                     on - below the 3:1 of WCAG 1.4.11, and invisible in
+                     practice. Its fill is no help either: `gray-100` on a white
+                     tile is 1.17:1. So the die that did not count was a pale gap
+                     with a hairline through it, and the strikethrough was
+                     carrying the entire "this one is discarded" signal - which
+                     it cannot do for two identical faces, or for anyone who
+                     cannot resolve a 1px rule at 14px.
+
+                     `gray-500` light and `gray-400` dark are the nearest steps
+                     that clear 3:1 against their own tile - measured at 5.01:1
+                     and 5.71:1 - while staying recessive next to the counted
+                     die, which keeps the accent border at 5.11:1 and 7.09:1
+                     and carries a fill. The strikethrough stays as
+                     reinforcement rather than as the sole carrier. Its text is
+                     left at `gray-500` on purpose: the die is inactive content,
+                     which 1.4.3 exempts, and de-emphasising it is the point. -->
                 <template x-for="(die, i) in ability.dice" :key="i">
                   <span
                     class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded border text-xs sm:text-sm font-medium"
-                    :class="ability.topThreeIndices.includes(i) ? 'bg-(--sl-color-accent-low) border-(color:--sl-color-accent) text-(color:--sl-color-accent-high)' : 'bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 line-through'"
+                    :class="ability.topThreeIndices.includes(i) ? 'bg-(--sl-color-accent-low) border-(color:--sl-color-accent) text-(color:--sl-color-accent-high)' : 'bg-gray-100 dark:bg-gray-700 border-gray-500 dark:border-gray-400 text-gray-500 dark:text-gray-400 line-through'"
                     x-text="die"
                   ></span>
                 </template>
@@ -82,11 +101,25 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
           </div>
         </button>
 
+        <!-- #polish. This was a 12x12 glyph in a 44x44 transparent box with no
+             fill and no border. The target was already correct - ADR-0009 raised
+             it to 44px for WCAG 2.5.8 - but nothing about it read as a control:
+             in a capture it was indistinguishable from a spinner. It now wears
+             the round icon button DESIGN.md specifies for the swap pair, on the
+             same bark/gold ramp and for the same reason. The ring is bark-black
+             in light and bark-100 in dark, never the accent it outlines.
+
+             `text-xs` is dropped: the button is icon-only, and the glyph is
+             sized by the `width="1em"` on the icon, so the font size only ever
+             set the box's own line box. `transition-all` is narrowed to
+             `transition-colors` to match the 150ms colour vocabulary; the
+             scale is on the button and the rotation is on the glyph, so the two
+             animate independently and neither needs `all`. -->
         <button
           type="button"
           @click="rollIndividual(index)"
           :disabled="isRolling || ability.rolling || selectedIndex !== null"
-          class="group absolute top-1 right-1 inline-flex items-center justify-center w-11 h-11 bg-transparent border-0 text-xs text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+          class="dice-reroll-btn group absolute top-1 right-1 inline-flex items-center justify-center w-11 h-11 border border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-300 text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) transition-[color,background-color,border-color,transform] duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           :aria-label="'Re-roll ' + ability.name"
         >
           <IconifyIcon icon="mdi:refresh" width="1em" class="transition-transform duration-200 group-hover:rotate-180" />
@@ -98,8 +131,30 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
           style="z-index: 5"
         ></div>
 
+        <!-- #polish. The panel is anchored to its tile rather than stacked under
+             it. In flow it was a real defect, and not the one it looked like:
+             hit-testing a swap staged on STR sent both `Confirm swap` and
+             `Cancel swap` to `elementFromPoint` as `DIV.p-3` inside a
+             `BUTTON.block.w-full` in the *next* row's wrapper, so the tool's
+             only destructive action could be neither committed nor dismissed
+             with a pointer. Escape still worked and a swap staged on the last
+             row was fine, because nothing follows it - which is why it shipped.
+
+             The cause is not the paint order inside the tile. The tile button
+             carries `h-full`, and the button's height is what the grid row is
+             sized from, so the row stays at its pre-panel 263px and the 90px
+             panel hangs 82px into the row below - where the next row's tiles,
+             later in DOM order, cover it. Taking `relative` off the button, the
+             obvious suspect, changes nothing here; it is gone anyway because
+             nothing inside the button is positioned, but it was never the
+             cause.
+
+             Absolute removes the dependency on how the row resolves. The panel
+             is out of flow, so the row never has to grow for it, and `z-10`
+             lifts it above every later sibling regardless. `top-full` ties it
+             to the tile it belongs to, so it cannot drift onto a neighbour. -->
         <template x-if="stagedSwap && stagedSwap.index1 === index">
-          <div class="dice-swap-panel rounded-lg p-2 text-center text-sm">
+          <div class="dice-swap-panel absolute left-0 right-0 top-full z-10 mt-2 rounded-lg p-2 text-center text-sm">
             <div class="text-(color:--sl-color-accent-high) font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
             <div class="flex justify-center gap-2 not-content">
               <button
@@ -125,8 +180,22 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
     </template>
    </div>
 
-  <div class="js-only bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 max-w-sm mx-auto mt-6">
-    <div class="flex items-baseline justify-between gap-2 mb-2">
+  <!-- #polish. This was `max-w-sm mx-auto`, so on a desktop the island stacked
+       four bands on three different axes: the grid and the roll log ran the
+       full 880px measure, this card was 384px and centred, and the primary
+       button above them was centred too. The card was the only element whose
+       edges lined up with nothing.
+
+       It now runs the grid's measure and its four figures sit as a stat strip
+       rather than a 384px label-and-value list, which is what the content has
+       always been: four numbers about one sample. That is the system's own
+       atom - DESIGN.md's Metric treatment, uppercase micro-label over a
+       tabular value - so the card is built from the documented stat tile
+       instead of a narrower private arrangement of the same four facts.
+       `tabular-nums` because these are read as data and are compared against
+       the figures in the log directly above them. -->
+  <div class="js-only bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4">
+    <div class="flex items-baseline justify-between gap-2 mb-3">
       <h3 class="font-bold text-gray-900 dark:text-gray-100">Stats</h3>
       <!-- The sample is capped, so "Stats" is a rolling window rather than the
            whole session. A table comparing tonight's average against an earlier
@@ -134,51 +203,71 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
       <span class="text-xs text-gray-500 dark:text-gray-400">last 50 rolls</span>
     </div>
     <template x-if="!stats || !stats.average || sessionRolls.length === 0">
-      <div class="flex flex-col items-center justify-center p-6 text-gray-500 dark:text-gray-400 text-center">
+      <!-- Narrow, because nothing is in it yet. The card runs the grid's full
+           measure for the stat strip, which is four figures side by side and
+           needs the width; an empty prompt is one icon and a sentence, and
+           stretched across 880px it read as a mostly-blank panel. -->
+      <div class="flex flex-col items-center justify-center max-w-sm mx-auto p-6 text-gray-500 dark:text-gray-400 text-center">
         <IconifyIcon icon="game-icons:dice-twenty-faces-twenty" width="2.25rem" class="text-(color:--sl-color-accent)" />
         <p class="mt-2 text-gray-500 dark:text-gray-400">No stats yet!<br>Roll all abilities to see your results.</p>
       </div>
     </template>
     <template x-if="stats && stats.average && sessionRolls.length > 0">
-      <div class="space-y-0.5 text-sm">
-        <div class="flex justify-between">
-          <span class="text-gray-600 dark:text-gray-400">Average:</span>
-          <span class="font-medium dark:text-gray-100" x-text="stats?.average"></span>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-[7px]">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Average</div>
+          <div class="mt-1 text-xl font-bold tabular-nums text-gray-900 dark:text-gray-100" x-text="stats?.average"></div>
         </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600 dark:text-gray-400">Median:</span>
-          <span class="font-medium dark:text-gray-100" x-text="stats?.median"></span>
+        <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-[7px]">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Median</div>
+          <div class="mt-1 text-xl font-bold tabular-nums text-gray-900 dark:text-gray-100" x-text="stats?.median"></div>
         </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600 dark:text-gray-400">Lowest:</span>
-          <span class="font-medium dark:text-gray-100" x-text="stats?.lowest + (stats?.lowestCount > 1 ? ' (x' + stats?.lowestCount + ')' : '')"></span>
+        <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-[7px]">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Lowest</div>
+          <div class="mt-1 text-xl font-bold tabular-nums text-gray-900 dark:text-gray-100" x-text="stats?.lowest + (stats?.lowestCount > 1 ? ' (x' + stats?.lowestCount + ')' : '')"></div>
         </div>
-        <div class="flex justify-between mb-0 mt-0 last:mb-0 last:mt-0">
-          <span class="text-gray-600 dark:text-gray-400 mb-0 mt-0">Highest:</span>
-          <span class="font-medium dark:text-gray-100 mb-0 mt-0" x-text="stats?.highest + (stats?.highestCount > 1 ? ' (x' + stats?.highestCount + ')' : '')"></span>
+        <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-[7px]">
+          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Highest</div>
+          <div class="mt-1 text-xl font-bold tabular-nums text-gray-900 dark:text-gray-100" x-text="stats?.highest + (stats?.highestCount > 1 ? ' (x' + stats?.highestCount + ')' : '')"></div>
         </div>
       </div>
     </template>
   </div>
 
-  <noscript>
-    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-300">
-      <p class="font-medium">The Dice Roller needs JavaScript.</p>
-      <p class="mt-1">Every other page on this site works without it. With it enabled you get 4d6, drop the lowest die, and add the remaining three per ability.</p>
-    </div>
-  </noscript>
+  <!-- The second copy of the noscript block that used to sit here, between the
+       stats card and the roll log, is gone. Both blocks were byte-identical, so
+       a visitor with scripting off read the same two-paragraph explanation
+       twice on one page, with the whole tool's markup between them. The block
+       at the top of the island is the one that leads, because with scripting
+       off it has to hide the inert controls that follow it. -->
 
-  <div x-cloak x-show="resultLog.length > 0" class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900">
-    <template x-for="(entry, i) in resultLog" :key="i">
-      <div class="text-sm text-gray-700 dark:text-gray-300 font-mono break-words" x-text="entry"></div>
-    </template>
+  <!-- #polish. The log was an unlabelled box of monospace lines directly under
+       a card with a heading, so the two read as one ragged group and nothing
+       said what the lines were or which of them was the roll you just watched
+       happen. `unshift` puts the newest first, so index 0 is the current roll -
+       it now says so, and takes the accent's text step to mark it. Older lines
+       recede one step.
+
+       The heading is `x-cloak`-governed by the same `x-show` as the list, which
+       is why it is inside this block rather than a sibling of it: one condition,
+       one region, nothing to fall out of sync. -->
+  <div x-cloak x-show="resultLog.length > 0">
+    <div class="flex items-baseline justify-between gap-2 mb-2">
+      <h3 class="font-bold text-gray-900 dark:text-gray-100">Roll log</h3>
+      <span class="text-xs text-gray-500 dark:text-gray-400">newest first</span>
+    </div>
+    <div class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900">
+      <template x-for="(entry, i) in resultLog" :key="i">
+        <div
+          class="text-sm font-mono break-words"
+          :class="i === 0 ? 'text-(color:--sl-color-text-accent) font-medium' : 'text-gray-700 dark:text-gray-300'"
+          x-text="entry"
+        ></div>
+      </template>
+    </div>
   </div>
 
   <p class="sr-only" role="status" aria-live="polite" x-text="announcement"></p>
-
-  <div class="text-center text-sm text-gray-500 dark:text-gray-400">
-    <p>Roll 4d6-drop-lowest for each ability score.</p>
-  </div>
 
 </div>
 
@@ -212,7 +301,8 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
      #b06f00, which holds every bar in both themes rather than only at rest.
      The ring is never the same value as the button it outlines. */
   .dice-swap-panel {
-    margin-top: 8px;
+    /* The 8px offset is the `mt-2` on the element, not a second declaration
+       here - the panel is absolutely positioned and `top-full` is its anchor. */
     background: #f8f6f5;
     border: 1px solid #c9ad6a;
   }
@@ -258,5 +348,82 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
   }
   :global([data-theme='dark']) .dice-round-btn--cancel:hover {
     background: #3f3632;
+  }
+
+  /* The per-ability re-roll, on the same reasoning as the cancel button above:
+     a round 44px target on a bark hairline, glyph in the theme's accent so it
+     reads as the system's action colour, and the ring never the colour it
+     outlines. It sits on the tile surface - white in light, #2e2421 in dark.
+
+       border vs tile   7.00:1 light, 9.05:1 dark   (1.4.11 shape)
+       glyph vs tile    5.11:1 light, 6.02:1 dark   (1.4.11, glyph is an SVG
+                                                    graphic; the name is on
+                                                    aria-label)
+       glyph on hover  10.71:1 light, 10.65:1 dark
+       ring vs tile     5.50:1 light, 3.00:1 dark   (2.4.11)
+
+     The hairline rather than a fill is deliberate: the tile's whole surface is
+     already the button that stages a swap, and a filled 44px disc in its corner
+     would compete with it for the same tap. This is the system's outlined
+     icon button, which is what a secondary control on a raised tile should be.
+
+     The colours are utilities on the element, not hexes in this block:
+     `border-gray-400` is `#9a908c`, the lifted bark-500 from `@theme`, and
+     `dark:border-gray-500` is `#786d6a`. Writing either hex here instead would
+     have repeated a value `@theme` already owns and that the detector rightly
+     reports as an undocumented literal - DESIGN.md's own list carries the
+     unlifted `#948985`, so the token is the honest place to read the value
+     from.
+
+       border vs tile   3.11:1 light, 3.55:1 dark at rest   (1.4.11 shape)
+       border on hover  7.00:1 light, 7.05:1 dark
+       glyph vs tile    5.11:1 light, 7.09:1 dark          (1.4.11, glyph is an
+                                                           SVG graphic; the name
+                                                           is on aria-label)
+       ring vs tile     5.50:1 light, 3.00:1 dark          (2.4.11)
+
+     The resting border is a step lighter than the hover border, and that is not
+     a nicety. At `bark-600` all six rings read louder than the one primary
+     action above them, and the arrival state - six empty tiles saying "Roll to
+     generate" - is exactly where that hurts most: six 44px circles against six
+     137px tiles is a third of each tile's height in chrome. At `gray-400` the
+     ring still clears 1.4.11's 3:1 and the affordance survives, while
+     "Roll All Abilities" is once more the first thing read. Hover steps up, so
+     the ring gains weight exactly when it is being aimed at.
+
+     The hover fill sits *inside* `@media (hover: hover)` for the reason ADR-0009
+     gives: `:hover` sticks after a tap on iOS and never fires for a stylus, so
+     an ungated tint would leave a stale wash on a control that was only
+     touched. The `hover:scale-105` that used to sit on this button in the
+     markup was ungated for the same reason and is folded in here - it now
+     scales a visible bordered box, which it did not before, and it is gated
+     with the tint rather than left to stick after a tap. */
+  .dice-reroll-btn {
+    /* Preflight is deliberately off (see src/styles/tailwind.css), so a button
+       that declares no background keeps the browser's own - measured as
+       rgb(239,239,239) on rgb(107,107,107), a rounded grey box that swallows
+       the accent glyph. The `background` here is load-bearing, not decorative:
+       it is the reason this control is a ring on the tile rather than a grey
+       pill sitting on top of it. */
+    background: transparent;
+    border-radius: 9999px;
+  }
+  .dice-reroll-btn:focus-visible {
+    outline: 2px solid #1b1716;
+    outline-offset: 2px;
+  }
+  @media (hover: hover) {
+    .dice-reroll-btn:hover {
+      background: #f1eceb;
+      transform: scale(1.05);
+    }
+  }
+  :global([data-theme='dark']) .dice-reroll-btn:focus-visible {
+    outline-color: #f8f6f5;
+  }
+  @media (hover: hover) {
+    :global([data-theme='dark']) .dice-reroll-btn:hover {
+      background: #3f3632;
+    }
   }
 </style>
