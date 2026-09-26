@@ -174,3 +174,26 @@ describe('DiceRoller ability tile markup', () => {
     expect(source).toContain('x-text="announcement"');
   });
 });
+
+describe('DiceRoller responsive layout', () => {
+  // A phone is the context this is read in. Three columns left each tile about
+  // 106px on a 360px viewport, but a tile's floor is its four-die row (4*28 +
+  // 3*4 = 124px) plus p-3 either side, so the grid forced the page to scroll
+  // sideways mid-session. Two columns plus the smaller base die is the fit.
+  it('never puts three ability tiles on a phone-width screen', () => {
+    expect(source).toContain('grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6');
+  });
+
+  it('shrinks the die row and tile padding below sm so two columns clear 320px', () => {
+    expect(source).toContain('w-7 h-7 sm:w-8 sm:h-8');
+    expect(source).toContain('class="p-3 sm:p-4"');
+  });
+
+  // WCAG 2.5.8. The ability tile and the swap pair are sized by CSS
+  // (.dice-round-btn) or fill their column, so only the per-ability re-roll -
+  // the one control whose visual is smaller than its hit area - is asserted.
+  it('keeps a 44px hit area on the per-ability re-roll', () => {
+    const reroll = source.match(/@click="rollIndividual\(index\)"[\s\S]*?>/);
+    expect(reroll![0]).toContain('w-11 h-11');
+  });
+});

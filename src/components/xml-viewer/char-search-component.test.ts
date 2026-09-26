@@ -68,3 +68,20 @@ describe('charSearchComponent', () => {
     expect(component.matchCount).toBe(3);
   });
 });
+
+describe('charSearchComponent mobile filter disclosure', () => {
+  // The two selects collapse behind a toggle below sm, so the panel state has
+  // to live in the component rather than being derived in the template.
+  it('starts collapsed', () => {
+    expect(makeComponent().filtersOpen).toBe(false);
+  });
+
+  it('counts only the selects, since the search box is always visible below sm', () => {
+    const component = makeComponent();
+    component.search = 'ael';
+    expect(component.activeFilterCount()).toBe(0);
+    component.selectedClass = 'Wizard';
+    component.selectedRace = 'Elf';
+    expect(component.activeFilterCount()).toBe(2);
+  });
+});

@@ -278,9 +278,9 @@ prefix to outrank it - the dark rules were already specific enough via
 
 ## Layout
 
-The documentation shell is Starlight's sidebar-plus-content layout, with content capped at 55rem from the 72rem breakpoint up. Interactive tool pages and Cards use a single-column-safe responsive grid: 1 column on mobile, 2 from `sm`, 3 from `lg`, always with a 16px gap (`gap-4`). Character Cards are container-query driven (`@container`), folding from one column to two at `@6xl` and `@7xl` when the Card itself is wide enough, independent of viewport.
+The documentation shell is Starlight's sidebar-plus-content layout, with content capped at 55rem from the 72rem breakpoint up. Interactive tool pages and Cards use a single-column-safe responsive grid: 1 column on mobile, 2 from `sm`, 3 from `lg`, with a 16px gap (`gap-4`). Character Cards are container-query driven (`@container`), folding from one column to two at `@6xl` and `@7xl` when the Card itself is wide enough, independent of viewport. The Dice Roller's ability grid is the one exception: it is 2 columns on mobile, 3 from `sm`, and 6 at `lg`, with a 12px gap (`gap-3`) below `sm` - see [ADR-0009](docs/adr/0009-phone-first-grids-and-touch-targets.md). Character Cards are container-query driven (`@container`), folding from one column to two at `@6xl` and `@7xl` when the Card itself is wide enough, independent of viewport.
 
-Spacing follows a 4/8/16/24 rhythm: 4px inside tight grids (`gap-1`), 8px between paired items (`gap-2`, `p-2`), 16px inside cards (`p-4`) and between blocks (`space-y-4`), 24px between major sections (`space-y-6`, `p-6`). Ability scores sit in a 3-column grid that expands to 6 at the `lg` container width; party stat summaries use a 2-column grid that expands to 5 at `md`.
+Spacing follows a 4/8/16/24 rhythm: 4px inside tight grids (`gap-1`), 8px between paired items (`gap-2`, `p-2`), 16px inside cards (`p-4`) and between blocks (`space-y-4`), 24px between major sections (`space-y-6`, `p-6`). Ability scores inside a Card sit in a 3-column grid that expands to 6 at the `lg` *container* width, which measures the Card rather than the viewport and so is already phone-safe; the Dice Roller's ability grid is the viewport-driven one and follows [ADR-0009](docs/adr/0009-phone-first-grids-and-touch-targets.md). Party stat summaries use a 2-column grid that expands to 5 at `md`.
 
 ## Elevation & Depth
 
@@ -350,9 +350,11 @@ times over, which is worse than no names. The heading carries the navigation.
 - **Internal Padding:** 16px (`p-4`) body, 16px header; stat tiles tighten to 8px (`p-2`).
 
 ### Inputs / Fields
-- **Style:** White or `gray-800` fill, 1px `gray-300` / `gray-600` stroke, 8px radius, `text-sm`, `shadow-sm`.
+- **Style:** White or `gray-800` fill, 1px `gray-300` / `gray-600` stroke, 8px radius, `text-sm` from `sm` up, `shadow-sm`.
+- **Touch floor:** Every control is at least 44x44px (`min-h-11`), and its font is 16px (`text-base`) below `sm`, stepping back to `text-sm` above. The height is WCAG 2.5.8; the 16px floor is because iOS Safari zooms the whole page when a focused input's font is under 16px, which on a phone at the table means losing your place mid-session. See [ADR-0009](docs/adr/0009-phone-first-grids-and-touch-targets.md).
 - **Focus:** A 2px ring and border shift in the accent (`--sl-color-accent`), so focus matches the accent in both themes. This replaced a `blue-500` ring, the last element that read as generic SaaS.
 - **Labels:** Uppercase micro-labels are for stat tiles; form fields use a 14px medium label above the control.
+- **Mobile disclosure:** Where a surface carries more than two secondary filters, the selects collapse behind a labelled toggle below `sm` and the primary search stays visible. The panel is `sm:flex!` so the important flag outranks Alpine's inline `display`, which is what `x-show` reveals by removing. Do **not** also put `hidden` on that panel: the class-based `display:none` outranks the reveal and the toggle silently does nothing.
 
 ### Navigation
 - **Style:** Starlight's sidebar with Bookinsanity item text, grouped under uppercase group headings. Theme selection is a native Starlight `<Select>` with sun/moon/laptop icons; the site defaults to light mode when no preference is stored.

@@ -243,9 +243,36 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
         color 150ms ease,
         box-shadow 150ms ease;
     }
-    .r3-chip:hover {
-      background: #f1eceb;
-      color: #2a2010;
+    /* Touch gets pressed feedback instead: `:hover` sticks after a tap on iOS
+       and never fires at all with a stylus, so every hover tint is gated on a
+       real hover-capable pointer and coarse pointers get their own press. The
+       rules stay inside the media query rather than being reset later, so the
+       dark-theme overrides below are unaffected. */
+    @media (hover: hover) {
+      .r3-chip:hover {
+        background: #f1eceb;
+        color: #2a2010;
+      }
+      :global([data-theme='dark']) .r3-chip:hover {
+        background: #3f3632;
+        color: #f1eceb;
+      }
+    }
+    @media (hover: none) {
+      .r3-chip:active {
+        background: #f1eceb;
+        color: #2a2010;
+      }
+      :global([data-theme='dark']) .r3-chip:active {
+        background: #3f3632;
+        color: #f1eceb;
+      }
+    }
+    /* 44px targets 4px apart read as one control under a thumb. */
+    @media (pointer: coarse) {
+      .r3-group {
+        gap: 8px;
+      }
     }
     .r3-chip:focus-visible {
       outline: 2px solid #697066;
@@ -296,10 +323,6 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
       color: #c7c0be;
       background: #2e2421;
       border-color: #3f3632;
-    }
-    :global([data-theme='dark']) .r3-chip:hover {
-      background: #3f3632;
-      color: #f1eceb;
     }
     :global([data-theme='dark']) .r3-chip.is-active,
     :global([data-theme='dark']) .r3-role-pill {
