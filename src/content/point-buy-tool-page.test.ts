@@ -19,18 +19,29 @@ describe('Point Buy tool page', () => {
     expect(pageSource).not.toContain('DnDPointBuy');
   });
 
-  it('carries the full point buy rules so it stands on its own', () => {
-    expect(pageSource).toContain('27 points');
-    expect(pageSource).toContain('8');
-    expect(pageSource).toContain('15');
-    expect(pageSource).toMatch(/\| 8\s+\| 0\s+\|/);
-    expect(pageSource).toMatch(/\| 14\s+\| 7\s+\|/);
-    expect(pageSource).toMatch(/\| 15\s+\| 9\s+\|/);
+  it('carries no rules prose: the tool shows every fact the prose restated', () => {
+    expect(pageSource).not.toContain('## Point Buy Rules');
+    expect(pageSource).not.toContain('### Cost of Ability Scores');
+    expect(pageSource).not.toContain('27 points to spend');
+    expect(pageSource).not.toContain('Each ability score starts at');
+    expect(pageSource).not.toContain('racial bonuses');
+    expect(pageSource).not.toContain('Higher scores cost more points');
+    expect(pageSource).not.toMatch(/^\|.*\|$/m);
   });
 
-  it('nests its headings under the title the template renders, skipping no level', () => {
-    expect(pageSource).toContain('## Point Buy Rules');
-    expect(pageSource).toContain('### Cost of Ability Scores');
-    expect(pageSource).not.toMatch(/^####\s/m);
+  it('is exactly frontmatter, the import, the intro line and the component', () => {
+    const body = pageSource.replace(/^---\n[\s\S]*?\n---\n/, '').trim();
+
+    expect(body.split('\n').map((line) => line.trim()).filter(Boolean)).toEqual([
+      "import PointBuy from '@/components/point-buy/PointBuy.astro';",
+      'Allocate your ability scores with the standard D&D 5e point buy system.',
+      '<PointBuy />',
+    ]);
+  });
+
+  it('leaves no heading behind, orphan or level-skipping', () => {
+    const headings = pageSource.match(/^#{1,6}\s.*$/gm) ?? [];
+
+    expect(headings).toEqual([]);
   });
 });
