@@ -29,25 +29,19 @@ const abilities: Ability[] = [
 
   <div class="grid grid-cols-3 lg:grid-cols-6 gap-4">
     <template x-for="(ability, index) in abilities" :key="ability.name">
-      <div>
-        <div
+      <div class="relative">
+        <button
+          type="button"
           @click="selectAbility(index)"
-          class="bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative"
+          :aria-pressed="selectedIndex === index"
+          class="block w-full h-full text-left bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors relative focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
           :class="selectedIndex === index ? 'border-(color:--sl-color-accent) ring-2 ring-(color:--sl-color-accent-low)' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-(color:--sl-color-accent-high)' : 'border-gray-200 dark:border-gray-700'"
         >
           <div class="p-4">
             <div class="flex items-center justify-center gap-1 mb-2">
               <h3 class="font-bold text-gray-900 dark:text-gray-100" x-text="ability.name"></h3>
-              <button
-                @click.stop="rollIndividual(index)"
-                :disabled="isRolling || ability.rolling || selectedIndex !== null"
-                class="group inline-flex items-center gap-1 text-xs text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
-                aria-label="Re-roll ability score"
-              >
-                <IconifyIcon icon="mdi:refresh" width="1em" class="transition-transform duration-200 group-hover:rotate-180" />
-              </button>
             </div>
-            
+
             <div x-show="ability.dice.length > 0" class="space-y-2">
               <div class="flex gap-1 justify-center">
                 <template x-for="(die, i) in ability.dice" :key="i">
@@ -58,7 +52,7 @@ const abilities: Ability[] = [
                   ></span>
                 </template>
               </div>
-              
+
               <div class="text-center">
                 <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                   <span x-text="ability.topThree.join(' + ')"></span> = <span x-text="ability.sum" class="font-bold"></span>
@@ -66,40 +60,52 @@ const abilities: Ability[] = [
                 <div class="text-lg font-bold text-gray-900 dark:text-gray-100" x-text="formatModifier(ability.modifier)"></div>
               </div>
             </div>
-            
+
             <div x-show="ability.dice.length === 0" class="text-center py-4 text-gray-500 dark:text-gray-400">
               Roll to generate
             </div>
           </div>
-          
-          <div
-            x-show="ability.rolling"
-            class="absolute left-0 right-0 bottom-0 h-1 bg-(--sl-color-accent) animate-pulse"
-            style="z-index: 5"
-          ></div>
-        </div>
-        <template x-if="stagedSwap && stagedSwap.index1 === index">
-          <div class="mt-2 bg-(--sl-color-accent-low) border border-(color:--sl-color-accent) rounded-lg p-2 text-center text-sm">
-            <div class="text-(color:--sl-color-accent-high) font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
-            <div class="flex justify-center gap-2 not-content">
-              <button
-                @click="confirmSwap()"
-                class="p-1.5 bg-green-600 text-white rounded-full hover:bg-green-700 transition-colors"
-                aria-label="Confirm swap"
-              >
-                <IconifyIcon icon="mdi:check" width="1em" />
-              </button>
-              <button
-                @click="cancelSwap()"
-                class="p-1.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
-                aria-label="Cancel swap"
-              >
-                <IconifyIcon icon="mdi:close" width="1em" />
-              </button>
-            </div>
-          </div>
-        </template>
+        </button>
+
+        <button
+          type="button"
+          @click="rollIndividual(index)"
+          :disabled="isRolling || ability.rolling || selectedIndex !== null"
+          class="group absolute top-1 right-1 inline-flex items-center justify-center w-11 h-11 text-xs text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+          :aria-label="'Re-roll ' + ability.name"
+        >
+          <IconifyIcon icon="mdi:refresh" width="1em" class="transition-transform duration-200 group-hover:rotate-180" />
+        </button>
+
+        <div
+          x-show="ability.rolling"
+          class="absolute left-0 right-0 bottom-0 h-1 bg-(--sl-color-accent) animate-pulse"
+          style="z-index: 5"
+        ></div>
       </div>
+      <template x-if="stagedSwap && stagedSwap.index1 === index">
+        <div class="mt-2 bg-(--sl-color-accent-low) border border-(color:--sl-color-accent) rounded-lg p-2 text-center text-sm">
+          <div class="text-(color:--sl-color-accent-high) font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
+          <div class="flex justify-center gap-2 not-content">
+            <button
+              type="button"
+              @click="confirmSwap()"
+              class="inline-flex items-center justify-center w-11 h-11 bg-(--sl-color-accent) text-(color:--sl-color-text-invert) rounded-full hover:bg-(--sl-color-accent-high) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
+              aria-label="Confirm swap"
+            >
+              <IconifyIcon icon="mdi:check" width="1em" />
+            </button>
+            <button
+              type="button"
+              @click="cancelSwap()"
+              class="inline-flex items-center justify-center w-11 h-11 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
+              aria-label="Cancel swap"
+            >
+              <IconifyIcon icon="mdi:close" width="1em" />
+            </button>
+          </div>
+        </div>
+      </template>
     </template>
    </div>
 
@@ -138,6 +144,8 @@ const abilities: Ability[] = [
       <div class="text-sm text-gray-700 dark:text-gray-300 font-mono" x-text="entry"></div>
     </template>
   </div>
+
+  <p class="sr-only" role="status" aria-live="polite" x-text="announcement"></p>
 
   <div class="text-center text-sm text-gray-500 dark:text-gray-400">
     <p>Roll 4d6-drop-lowest for each ability score.</p>
@@ -186,6 +194,18 @@ function diceRoller(abilities: Ability[]) {
     selectedIndex: null as number | null,
     stagedSwap: null as { index1: number; index2: number } | null,
     swapUsed: false,
+    announcement: '',
+    /**
+     * Writes to the polite live region. Clearing first and restoring on the
+     * next tick means an identical repeat (re-rolling the same total) is still
+     * announced, which a plain assignment would swallow.
+     */
+    announce(message: string) {
+      this.announcement = '';
+      setTimeout(() => {
+        this.announcement = message;
+      }, 50);
+    },
     rollAll() {
       if (this.isRolling) return;
       this.isRolling = true;
@@ -202,6 +222,10 @@ function diceRoller(abilities: Ability[]) {
           this.sessionRolls.push(sums);
           const allSums = this.sessionRolls.flat();
           this.stats = window.formatStats(window.calculateStats(allSums));
+          const scores = this.abilities
+            .map(a => `${a.name} ${a.sum} (${window.formatModifier(a.modifier)})`)
+            .join(', ');
+          this.announce(`All abilities rolled. ${scores}.`);
           return;
         }
         this.currentRollingIndex = index;
@@ -223,32 +247,48 @@ function diceRoller(abilities: Ability[]) {
       setTimeout(() => {
         const result = window.rollAbility();
         this.abilities[index] = window.updateAbilityWithRoll(this.abilities[index], result);
+        const rolled = this.abilities[index];
+        this.announce(`${rolled.name} rolled ${rolled.sum}, modifier ${window.formatModifier(rolled.modifier)}.`);
       }, 300);
     },
     selectAbility(index: number) {
       if (this.swapUsed || this.isRolling) return;
       if (this.selectedIndex === null) {
         this.selectedIndex = index;
+        this.announce(`${this.abilities[index].name} selected. Choose a second ability to stage a swap.`);
         return;
       }
       if (this.selectedIndex === index) {
         this.selectedIndex = null;
+        this.announce(`${this.abilities[index].name} deselected.`);
         return;
       }
       this.stagedSwap = { index1: this.selectedIndex, index2: index };
+      const a = this.abilities[this.selectedIndex].name;
+      const b = this.abilities[index].name;
+      this.announce(`Swap ${a} with ${b} staged. Confirm or cancel.`);
     },
     confirmSwap() {
       if (!this.stagedSwap) return;
       const { index1, index2 } = this.stagedSwap;
+      const a = this.abilities[index1].name;
+      const b = this.abilities[index2].name;
       this.abilities = window.swapAbilities(this.abilities, index1, index2);
       this.selectedIndex = null;
       this.stagedSwap = null;
       this.swapUsed = true;
       this.resultLog[0] = window.formatResultLog(this.abilities);
+      this.announce(`Swapped ${a} and ${b}. ${this.abilities.map(x => `${x.name} ${x.sum}`).join(', ')}.`);
     },
     cancelSwap() {
+      const staged = this.stagedSwap;
       this.selectedIndex = null;
       this.stagedSwap = null;
+      this.announce(
+        staged
+          ? `Swap of ${this.abilities[staged.index1].name} and ${this.abilities[staged.index2].name} cancelled.`
+          : 'Swap cancelled.'
+      );
     }
   };
 };
