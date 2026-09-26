@@ -27,4 +27,10 @@ describe('Point Buy tool page', () => {
     expect(pageSource).toMatch(/\| 14\s+\| 7\s+\|/);
     expect(pageSource).toMatch(/\| 15\s+\| 9\s+\|/);
   });
+
+  it('nests its headings under the title the template renders, skipping no level', () => {
+    expect(pageSource).toContain('## Point Buy Rules');
+    expect(pageSource).toContain('### Cost of Ability Scores');
+    expect(pageSource).not.toMatch(/^####\s/m);
+  });
 });
