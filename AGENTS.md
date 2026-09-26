@@ -214,6 +214,48 @@ Like everything else browser-related here, it is dev-time only. It adds nothing
 to the manifest, so `git diff -- package.json pnpm-lock.yaml pnpm-workspace.yaml`
 must still come back empty.
 
+### Measuring a page instead of photographing it
+
+A resized viewport and a screenshot verify layout. They never verify a contrast
+ratio and never verify a gesture. For those, use:
+
+```
+make measure ARGS='<overflow|contrast|tap|pointer> [options]'
+node .opencode/lib/design-review/measure.mjs --help
+```
+
+- `overflow` reports, per width, whether the page scrolls sideways and which
+  element is too wide, with a selector path and a right edge. It defaults to ADR
+  0009's widths: 320, 360, 390, 640.
+- `contrast` returns a WCAG ratio per selector, sampled from rendered computed
+  colours, with the effective background resolved by walking ancestors and
+  compositing alpha, in both themes.
+- `tap` dispatches a real touch tap through `Input.dispatchTouchEvent` and
+  reports the resulting display, visibility, `aria-expanded` and class change.
+- `pointer` measures whether the hover, press and spacing rules branch the way
+  ADR 0009 decided, under the device profiles a browser can be emulated into.
+
+It reuses ADR-0012's browser stack rather than adding a second one, keeps the
+same dev-server boundary (`--start-dev-server` is still the explicit opt-in),
+and exits non-zero on a finding, so a run can be a gate. `--no-fail` makes it a
+report.
+
+**Measure the built site, not the dev server.** Under `astro dev`, Vite
+externalises `node:fs` for the browser, `src/alpine.ts` pulls in a module that
+imports it, the page module throws on evaluation and Alpine never boots - so
+`x-cloak` is never removed and every `x-show` element reads as `display: none`.
+The command refuses in that state and says why. Use:
+
+```
+pnpm build && astro preview --port 4322
+make measure ARGS='tap --url http://localhost:4322/dnd-tools/feat-explorer/ --selector "button[aria-controls=\"feat-filter-panel\"]"'
+```
+
+What a synthesized tap and an emulated pointer profile do and do not establish
+is written down in
+[`docs/audits/2026-09-26-rendered-verification-report.md`](docs/audits/2026-09-26-rendered-verification-report.md).
+Read it before quoting a measurement as assurance about a real device.
+
 ### Workflow Steps
 
 1. **Never push to master directly**: Always prepare a Pull Request for review
