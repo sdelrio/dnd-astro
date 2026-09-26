@@ -61,6 +61,36 @@ describe('PartyView', () => {
     }
   });
 
+  // ADR-0009 decision 3 records the identical trap on the filter panels: a bare
+  // `hidden` sitting beside a component `display` rule is silently dead, because
+  // the two tie on specificity and the component style is emitted later. The
+  // guard it prescribed was a class-list assertion - "contains no `hidden`" -
+  // not a computed style, and that is the shape used here.
+  //
+  // The failure was invisible in every other signal: the chips, their
+  // `aria-pressed` and the live-region count all kept updating, so the only
+  // symptom was cards that never left the page.
+  //
+  // Asserted on the rendered binding because happy-dom does not resolve the
+  // cascade, and `party-view-alpine.test.ts` cannot observe a `:class` write at
+  // all (see that harness's documented gap). The rendered outcome is checked
+  // with `make measure ARGS='tap --url .../current-party/ --selector <chip>
+  // --target <cell>'`, which reports the tapped cell's computed display.
+  it('hides a filtered-out card with the important modifier, not the bare utility', async () => {
+    const html = await render();
+    // Matched off the whole page, not off `memberCards`: `role="listitem"` is
+    // written after `:class`, so splitting on it puts every binding in the tail
+    // of the *preceding* segment. The count is asserted too, because a roster
+    // that rendered nothing would make the loop below vacuous.
+    const bindings = [...html.matchAll(/:class="\{ [^"]*hasActiveRole[^"]*\}"/g)].map((m) => m[0]);
+    expect(bindings.length).toBe(memberCards(html).length);
+    expect(bindings.length).toBeGreaterThan(0);
+    for (const binding of bindings) {
+      expect(binding).toContain("'hidden!'");
+      expect(binding).not.toMatch(/:class="\{ hidden:/);
+    }
+  });
+
   it('drops the sm step so a medium card never lands in a ~300px cell', async () => {
     const html = await render();
     const roster = html.match(/<section class="([^"]*grid[^"]*)" role="list"/);
