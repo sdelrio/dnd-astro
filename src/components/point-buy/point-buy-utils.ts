@@ -1,8 +1,10 @@
-import { calculateModifier, formatModifier } from '../dice-roller/dice-utils';
+import { ABILITY_NAMES, calculateModifier, formatModifier } from '../dice-roller/dice-utils';
 
 export { calculateModifier, formatModifier };
 
-export const ABILITY_NAMES = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'] as const;
+// Re-exported rather than redeclared: the six abilities are the same six in
+// both tools, and two lists would drift.
+export { ABILITY_NAMES };
 
 export type AbilityName = (typeof ABILITY_NAMES)[number];
 
