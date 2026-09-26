@@ -49,6 +49,13 @@ async function buy(plan: Record<string, number>): Promise<void> {
   }
 }
 
+/** The pool readout, the line every press is judged against. */
+function readout(): HTMLElement {
+  const el = harness.window.document.querySelector('.text-lg');
+  if (!el) throw new Error('no points-remaining readout');
+  return el as unknown as HTMLElement;
+}
+
 describe('PointBuy at runtime', () => {
   it('registers the component, so no expression falls back to a global', () => {
     // Without `Alpine.data('pointBuy', ...)`, `x-data="pointBuy"` is an
@@ -60,7 +67,7 @@ describe('PointBuy at runtime', () => {
     for (const ability of ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']) {
       expect(card(ability).textContent).toContain('8');
       expect(card(ability).textContent).toContain('-1');
-      expect(card(ability).textContent).toContain('Cost: 0');
+      expect(card(ability).textContent).toContain('Cost 0, next +1');
     }
   });
 
@@ -69,8 +76,8 @@ describe('PointBuy at runtime', () => {
     await harness.settle();
     expect(card('STR').textContent).toContain('9');
     expect(card('STR').textContent).toContain('-1');
-    expect(card('STR').textContent).toContain('Cost: 1');
-    expect(harness.window.document.body.textContent).toContain('26 points remaining');
+    expect(card('STR').textContent).toContain('Cost 1, next +1');
+    expect(readout().textContent?.replace(/\s+/g, ' ').trim()).toBe('26 points remaining');
   });
 
   it('refuses a step the pool cannot pay for', async () => {
@@ -95,19 +102,23 @@ describe('PointBuy at runtime', () => {
     click('[aria-label="Decrease STR"]');
     await harness.settle();
     expect(card('STR').textContent).toContain('8');
-    expect(harness.window.document.body.textContent).toContain('27 points remaining');
+    expect(readout().textContent?.replace(/\s+/g, ' ').trim()).toBe('27 points remaining');
   });
 
   it('confirms completion only once the pool is empty, and resets back to 27', async () => {
     // The cheapest way to spend the pool exactly is six 8s plus 27 more.
     // 15 + 15 + 14 + 10 costs 9 + 9 + 7 + 2 = 27, so this empties the pool exactly.
     await buy({ STR: 15, DEX: 15, CON: 14, INT: 10, WIS: 8, CHA: 8 });
-    expect(harness.window.document.body.textContent).toContain('0 points remaining');
+    // Read from the readout itself. `document.body.textContent` also contains the
+    // live region, whose announcement ends in the same words, so a body-level
+    // assertion here passes on the announcement's timing rather than on what
+    // the readout renders.
+    expect(readout().textContent?.replace(/\s+/g, ' ').trim()).toBe('0 points remaining');
     expect(harness.window.document.body.textContent).toContain('All 27 points spent');
 
     click('[aria-label="Reset all scores"]');
     await harness.settle();
-    expect(harness.window.document.body.textContent).toContain('27 points remaining');
+    expect(readout().textContent?.replace(/\s+/g, ' ').trim()).toBe('27 points remaining');
     expect(card('STR').textContent).toContain('8');
     expect(harness.messages).toEqual([]);
   });
@@ -127,6 +138,9 @@ describe('PointBuy at runtime', () => {
       '[aria-label="Increase STR"]'
     ) as unknown as HTMLButtonElement;
     expect(increase.disabled).toBe(true);
+    // A stepper that goes dead has to say why on the tile, not only in the
+    // live region: the price of the next press is the answer.
+    expect(card('STR').textContent).toContain('Cost 9, max');
   });
 
   it('announces the change through the polite live region', async () => {

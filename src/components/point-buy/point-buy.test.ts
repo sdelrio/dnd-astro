@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 const source = readFileSync(new URL('./PointBuy.astro', import.meta.url), 'utf8');
 const component = readFileSync(new URL('./point-buy-component.ts', import.meta.url), 'utf8');
+const utils = readFileSync(new URL('./point-buy-utils.ts', import.meta.url), 'utf8');
 const registration = readFileSync(new URL('../../alpine.ts', import.meta.url), 'utf8');
 
 describe('PointBuy Alpine wiring', () => {
@@ -50,7 +51,31 @@ describe('PointBuy ability cards', () => {
 
   it('shows the score, modifier and cost for every ability', () => {
     expect(source).toContain('formatModifier(calculateModifier(scores.${ability}))');
-    expect(source).toContain('getScoreCost(scores.${ability})');
+    expect(source).toContain('formatCostLine(scores.${ability})');
+  });
+
+  it('prices the next press on the tile, so a dead stepper explains itself', () => {
+    // Both facts the cost line has to carry: the score's own cost, and what one
+    // more press would add. Without the second, `+` going dead at the cap or on
+    // an empty pool is unexplained. The arithmetic lives in the helper, and the
+    // same helper decides whether the stepper is allowed, so the price shown
+    // and the price charged cannot drift apart.
+    expect(utils).toContain('export function formatCostLine');
+    expect(utils).toContain('export function nextStepCost');
+    expect(component).toContain('formatCostLine: pointBuy.formatCostLine');
+  });
+
+  it('tells a scripting-off visitor the tool needs JavaScript', () => {
+    // Every control is inert without Alpine, and six tiles reading as a real
+    // unspent spread is worse than a note. The Dice Roller set the pattern.
+    expect(source).toContain('point-buy-needs-js');
+    expect(source).toContain('js-only');
+    expect(source).toContain('Point Buy needs JavaScript.');
+  });
+
+  it('gives every control a visible focus ring, and the numerals a fixed width', () => {
+    expect(source).toContain('focus-visible:outline-(--sl-color-accent)');
+    expect(source).toContain('tabular-nums');
   });
 
   it('uses plus and minus icons for the steppers', () => {
@@ -75,6 +100,22 @@ describe('PointBuy pool counter', () => {
     expect(source).toContain('@click="reset()"');
     expect(source).toContain('aria-label="Reset all scores"');
     expect(source).toContain('mdi:restore');
+  });
+});
+
+describe('PointBuy pool readout', () => {
+  it('stays visible for the length of the grid', () => {
+    // Six stacked tiles put the readout some 1400px below the first one on a
+    // phone, which is the wrong place for the constraint every press is judged
+    // against. It is the last block in the flow, so pinning it to the bottom of
+    // the viewport hides nothing.
+    expect(source).toContain('sticky bottom-0');
+  });
+
+  it('reads the remaining points as a string, not a number', () => {
+    // The one value this readout takes is 0 on a finished spread, and happy-dom
+    // assigns a numeric 0 to textContent as "".
+    expect(source).toContain('String(pointsRemaining(scores))');
   });
 });
 
