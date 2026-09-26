@@ -16,6 +16,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 | 0008 | Vendor the Impeccable Agent Skill as a Pinned Git Submodule | accepted | 2026-09-26 |
 | 0009 | Phone-First Grids and Touch Targets in the Tool Layer | accepted | 2026-09-26 |
 | 0010 | Register Alpine Components with `Alpine.data`, Never `window` Globals | accepted | 2026-09-26 |
+| 0011 | Give Agents a Headless Browser via a Pinned Local MCP Server | accepted | 2026-09-26 |
 
 ## About ADRs
 

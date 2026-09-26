@@ -93,6 +93,77 @@ Single-context. ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
 
 Every temporary file (PR bodies, issue bodies, scratch files, notes, etc.) goes to `tmp/` at the repo root - write there first, e.g. `tmp/pr-<slug>.md`. That directory is gitignored; do not use `/tmp` or other system paths.
 
+## Browser evidence (dev-time only)
+
+An agent can open a page in a real headless browser and read a screenshot back. The
+browser tools come from a pinned local MCP server registered in `opencode.json` at the
+repo root, which is the only discovery mechanism that works here: the vendored
+`impeccable` skill's `allowed-tools` front matter is inert in OpenCode. See
+[ADR-0011](docs/adr/0011-headless-browser-mcp-server.md).
+
+### Workflow
+
+1. Start the dev server in background mode: `astro dev --background`. It manages
+   itself; use `astro dev stop`, `astro dev status`, and `astro dev logs`.
+2. Call the `chrome-devtools_*` tools: `new_page` to a `http://localhost:4321/...`
+   URL, then `take_screenshot` with an explicit `filePath`.
+3. Read the written PNG back with the Read tool.
+
+The background dev server is the one lifecycle to use; do not start a second
+server beside it. The server is headless and reuses a single page, so a
+desktop-then-mobile pair is two `resize_page` calls and two `take_screenshot`
+calls on the same `pageId` - never a re-navigation.
+
+`--filesystem-root` is what lets `take_screenshot` write inside the repository.
+It holds an **absolute path**, so if you clone the repository elsewhere, edit that
+one value in `opencode.json` before expecting writes to land.
+
+### The dev-time boundary
+
+Nothing here enters the build. `package.json`, `pnpm-lock.yaml`, and the
+`allowBuilds` map in `pnpm-workspace.yaml` are untouched, and the server resolves
+via `pnpm dlx` into a cache outside the repo. This is what keeps
+[ADR-0007](docs/adr/0007-mermaid-rendering-strategy.md) satisfied - its
+no-headless-browser-in-the-build constraint holds *because* nothing was added to
+the build. Do not add Playwright or Puppeteer to the manifest to "fix" a browser
+problem; verify the boundary instead with `git diff -- package.json pnpm-lock.yaml
+pnpm-workspace.yaml`, which must come back empty.
+
+The browser is one already installed on the machine (`PUPPETEER_SKIP_DOWNLOAD` is
+set for that reason). Nothing downloads a browser.
+
+### After changing any flag: grep the stderr
+
+**Unknown flags do not fail.** The server logs a single `Unknown arguments:` line
+to stderr and starts anyway on the default, so a typo in `--headless` silently
+launches a *visible* browser. That line is the only signal, it appears in stderr
+only (never in the server's `--log-file`, and not in `opencode --print-logs`), and
+so must be checked against captured stderr:
+
+```
+pnpm dlx chrome-devtools-mcp@1.10.1 <the flags from opencode.json> </dev/null >/dev/null 2>tmp/mcp-stderr.log
+rg "Unknown arguments" tmp/mcp-stderr.log    # expect no match
+```
+
+Also verify by capture, not by inspection: confirm a screenshot actually exists
+inside the repository and is a real image. A write rejected as outside the
+workspace roots and a successful write look similar in a tool's reply, so check
+the file, not the message.
+
+Do not change `--screenshot-format`. The server rewrites the extension to match
+the requested format, which would silently rename the files the design review
+contract depends on. That belongs to the wrapper capture command, not to this
+config.
+
+### Network-font caveat
+
+The site's display face is fetched from a third-party font CDN at runtime with a
+`swap` display policy and a silent fallback to a self-hosted face. A screenshot
+taken after that fallback has the wrong heading metrics and the wrong line
+lengths, and **nothing errors and no console warning is emitted**. A capture
+therefore proves less than it appears to. Treat font readiness as an open
+question to resolve separately, not something a PNG settles on its own.
+
 ### Workflow Steps
 
 1. **Never push to master directly**: Always prepare a Pull Request for review
