@@ -76,6 +76,17 @@ the browser surface out of the manifest entirely.
 Chosen option: **Option C**, in `.opencode/lib/design-review/`, alongside the
 existing plugin code, reachable as `make capture`.
 
+### The client is shared, not duplicated
+
+Browser resolution, the throwaway-profile launch, the dev-server boundary, the
+page session, the warm-up script and the font probe live in `session.mjs`, and
+both `capture.mjs` and the measurement command (`measure.mjs`, `make measure`)
+import them. A second copy of the font gate or the dev-server boundary would be a
+second thing to get quietly wrong, and one browser stack in this repo is the
+whole point of having built a client. The measurement half of this - what a tap,
+a contrast ratio and a horizontal overflow report mean - is in
+[`docs/audits/2026-09-26-rendered-verification-report.md`](../audits/2026-09-26-rendered-verification-report.md).
+
 ### The dependency-free part is load-bearing
 
 The client uses Node's built-in `WebSocket` and `fetch` and nothing else. The
@@ -179,6 +190,8 @@ second server lifecycle is introduced next to the documented one.
 ## References
 
 - Issue #340: this decision
+- Issue #341 / PR #348: the measurement commands built on this client, and the reason
+  the shared parts moved into `session.mjs`
 - Issue #339 / PR #346: the MCP server that preceded this, and the single
   unreproduced 500px trial this ADR measured for itself
 - [ADR-0007](0007-mermaid-rendering-strategy.md): no headless browser in the
