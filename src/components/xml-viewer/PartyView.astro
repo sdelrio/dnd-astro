@@ -89,21 +89,6 @@ const roleConfigJson = JSON.stringify(ROLE_CONFIG);
       </div>
     </div>
 
-    <div class="flex flex-wrap gap-2 mt-4" aria-label="Role breakdown">
-      {allRoles.map((role) => {
-        const config = ROLE_CONFIG[role];
-        return (
-          <span
-            class="r3-role-pill"
-            style={`--role-light: ${config.light}; --role-dark: ${config.dark};`}
-          >
-            <IconifyIcon icon={config.icon} width="0.875em" class="inline-block mr-1 align-[-2px]" />
-            {config.label}: {stats.roleCounts[role] ?? 0}
-          </span>
-        );
-      })}
-    </div>
-
     <div class="r3-group" role="group" aria-label="Filter by role">
       <button
         class="r3-chip r3-chip-all"
