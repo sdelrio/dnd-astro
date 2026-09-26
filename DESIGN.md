@@ -193,8 +193,40 @@ The palette is a forest floor: warm bark browns, resin amber, and moss, with oxb
 - **Surface White** (#ffffff): The one true white in the system. It is a light-theme surface only (the HP plate), never text and never a dark-theme surface. Named explicitly so its scarcity stays meaningful.
 - **Moss** (#404521, #363b17, #e8ede1): The olive greens behind striped table rows in dark mode, with a pale sage stripe (`moss-100`) in light mode.
 
+### Utility tokens
+`src/styles/tailwind.css` exposes the palette as Tailwind theme tokens so call
+sites name intent rather than a hex. `bark-*`, `moss-*`, `gold`, `gold-rule`,
+`oxblood`, `ink`, `parchment` and `sage*` mirror the values above.
+
+The `gray` scale is **redefined onto the bark ramp** rather than left as
+Tailwind's cool default. The Card body and every tool input were written against
+`gray-*` (823 call sites across ten steps), and a find-and-replace would have to
+be redone every time the palette moved. Redefining the scale in `@theme` warms all
+of them from one place, so the palette is now changeable in one file. The step
+*numbers* keep Tailwind's meaning - 50 lightest, 900 darkest - so
+`text-gray-900` on a light surface and `dark:text-gray-100` on a dark one behave
+as before. New code should prefer the named tokens.
+
+`gray-200`, `gray-300` and `gray-500` are interpolated and have no DESIGN.md
+counterpart; the other seven are literal palette values. `gray-500` in particular
+is balanced rather than pure: no single mid-tone can clear 4.5:1 against both a
+white surface and a near-black one, so `#786d6a` gives 4.65:1 light and 3.55:1
+dark, against Tailwind's own 4.49:1 and 3.68:1. Every `text-gray-N` call site
+carries a `dark:` counterpart, so each step only has to clear the theme it is
+used in.
+
+`src/styles/tailwind.test.ts` pins all ten values and the derived-step comments,
+so the mapping cannot drift silently.
+
 ### Named Rules
-**The Warm-Only Rule.** No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The character Card heading already complies; the Card body's `gray-*` tiles and the `blue-500` focus ring on the tool inputs are the remaining drift to pull back onto bark and sap.
+**The Warm-Only Rule.** No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The `gray` scale is now bark, the `blue-500` focus rings on the tool inputs are the remaining drift, and the admonition palette has been pulled onto the bark/moss/gold/oxblood ramps. Admonitions set both `--sl-color-asides-border` and `--sl-color-asides-text-accent`; Starlight's own defaults for both are cool.
+
+**Specificity over order for third-party overrides.** Starlight declares
+`--sl-color-asides-text-accent` on the same bare class our rules target, later in
+its stylesheet. At equal specificity the later declaration wins, so an override
+there is silently dead. The light admonition rules therefore carry a `:root`
+prefix to outrank it - the dark rules were already specific enough via
+`:root[data-theme='dark']`. Asserted in `tailwind.test.ts`.
 
 **The Rarity Rule.** Sap Amber is an action and emphasis color, used on well under a tenth of any screen. Gold Leaf and Oxblood belong to headings and markers, not to large fills.
 
