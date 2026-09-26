@@ -38,7 +38,7 @@ const abilities: Ability[] = [
     <button
       @click="rollAll()"
       :disabled="isRolling"
-      class="px-6 py-3 bg-(--sl-color-accent) text-(color:--sl-color-text-invert) rounded-lg shadow hover:bg-(--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      class="px-6 py-3 bg-(--sl-color-accent-contrast) text-(color:--sl-color-text-invert) rounded-lg shadow hover:bg-(--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       aria-label="Roll all ability scores"
     >
       <span x-text="isRolling ? 'Rolling...' : 'Roll All Abilities'"></span>
@@ -195,7 +195,9 @@ const abilities: Ability[] = [
      Why not the tokens: --sl-color-accent is #f7860f in dark and #697066 in
      light, and --sl-color-text-invert is --sl-color-accent-low, not white.
      That pairing gives 5.28:1 in dark but only 2.74:1 in light - the light
-     theme is the one that fails (see #329). Using the accent for the panel
+     theme is the one that fails, which is why text on the accent now goes
+     through --sl-color-accent-contrast (see #329) and why the swap panel
+     stays off the accent entirely. Using the accent for the panel
      fill is worse still: in light it is #b9c0b6, which leaves the gold confirm
      button at 1.74:1 and the cancel button at 1.59:1, i.e. neither button
      keeps a perceivable boundary (WCAG 1.4.11).
