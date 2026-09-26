@@ -127,7 +127,7 @@ function inventoryHeadingRow(section: string): string {
 }
 
 function savesSection(html: string): string {
-  const marker = html.indexOf('>Saving Throws</span>');
+  const marker = html.indexOf('>Saving Throws</h2>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -218,7 +218,7 @@ function featsSection(html: string): string {
 describe('XmlCard Passive Skills section', () => {
   it('renders in large mode between Abilities and Saving Throws', async () => {
     const html = await renderCard('large');
-    const abilities = html.indexOf('title="Abilities"');
+    const abilities = html.indexOf('aria-label="Abilities"');
     const passives = html.indexOf('Passive Skills');
     const saves = html.indexOf('Saving Throws');
     expect(abilities).toBeGreaterThan(-1);
@@ -250,14 +250,13 @@ describe('XmlCard Passive Skills section', () => {
     expect(await renderCard('medium')).not.toContain('Passive Skills');
   });
 
-  it('renders the section title as a hover tooltip instead of a heading', async () => {
+  it('renders the section title as an always-visible heading', async () => {
+    // Was `opacity-0` until `group-hover`, which hid it from keyboard focus and
+    // from touch entirely. P2 finding in the design audit.
     const section = passiveSection(await renderCard('large'));
-    expect(section).not.toContain('<h2');
-    expect(section).toContain('opacity-0');
-    expect(section).toContain('group-hover:opacity-100');
-    expect(section).toContain('transition-opacity');
-    expect(section).toContain('pointer-events-none');
-    expect(section).toContain('>Passive Skills</span>');
+    expect(section).toContain('>Passive Skills</h2>');
+    expect(section).not.toContain('opacity-0');
+    expect(section).not.toContain('group-hover:opacity-100');
   });
 
   it('lays each subcard out as a single label/value row', async () => {
@@ -347,12 +346,12 @@ describe('XmlCard All-skills section', () => {
 
     const perception = skillRow(section, 'Perception');
     expect(perception.match(/bg-\[#c68000\]/g)).toHaveLength(1);
-    expect(perception).toContain('title="Proficient"');
+    expect(perception).toContain('<span class="sr-only">Proficient</span>');
     expect(perception).toContain('data-prof-rank="proficient"');
 
     const sleight = skillRow(section, 'Sleight of Hand');
     expect(sleight.match(/bg-\[#c68000\]/g)).toHaveLength(2);
-    expect(sleight).toContain('title="Expertise"');
+    expect(sleight).toContain('<span class="sr-only">Expertise</span>');
     expect(sleight).toContain('data-prof-rank="expertise"');
 
     expect(section).not.toContain('<button');
@@ -368,7 +367,7 @@ describe('XmlCard All-skills section', () => {
 
     const arcana = skillRow(section, 'Arcana');
     expect(arcana.match(/data-prof-rank="half"/g)).toHaveLength(1);
-    expect(arcana).toContain('title="Half proficiency"');
+    expect(arcana).toContain('<span class="sr-only">Half proficiency</span>');
     expect(arcana.match(/bg-\[#c68000\]/g)).toHaveLength(1);
     expect(arcana).toContain('border border-[#c68000]');
     expect(arcana).toContain('w-1/2');
@@ -654,12 +653,11 @@ describe('XmlCard Saving Throws section', () => {
     ])
   );
 
-  it('labels the saves section with a hover badge instead of a heading', async () => {
+  it('labels the saves section with a heading in large and medium mode', async () => {
     const large = await renderCard('large');
-    expect(large).toContain('>Saving Throws</span>');
-    expect(large).not.toContain('>Saving Throws</h2>');
-    expect(await renderCard('medium')).toContain('>Saving Throws</span>');
-    expect(await renderCard('small')).not.toContain('>Saving Throws</span>');
+    expect(large).toContain('>Saving Throws</h2>');
+    expect(await renderCard('medium')).toContain('>Saving Throws</h2>');
+    expect(await renderCard('small')).not.toContain('aria-label="Saving Throws"');
   });
 
   it('renders the all-saves card in large mode only', async () => {
@@ -690,7 +688,7 @@ describe('XmlCard Saving Throws section', () => {
     for (const short of ['STR', 'CON']) {
       const row = saveRow(section, short);
       expect(row.match(/bg-\[#c68000\]/g)).toHaveLength(1);
-      expect(row).toContain('title="Proficient"');
+      expect(row).toContain('<span class="sr-only">Proficient</span>');
     }
 
     for (const short of ['DEX', 'INT', 'WIS', 'CHA']) {
@@ -740,7 +738,7 @@ describe('XmlCard Saving Throws section', () => {
   it('stays between Passive Skills and Skills', async () => {
     const html = await renderCard('large');
     const passives = html.indexOf('Passive Skills');
-    const saves = html.indexOf('>Saving Throws</span>');
+    const saves = html.indexOf('>Saving Throws</h2>');
     const skills = html.indexOf('>Skills</h2>');
     expect(passives).toBeGreaterThan(-1);
     expect(saves).toBeGreaterThan(passives);
@@ -751,10 +749,10 @@ describe('XmlCard Saving Throws section', () => {
 describe('XmlCard Overview group', () => {
   it('groups Vitals, Abilities, and Passive Skills under one large-mode label', async () => {
     const html = await renderCard('large');
-    const overview = html.indexOf('>Overview</span>');
-    const abilities = html.indexOf('title="Abilities"');
+    const overview = html.indexOf('>Overview</h2>');
+    const abilities = html.indexOf('aria-label="Abilities"');
     const passives = html.indexOf('Passive Skills');
-    const saves = html.indexOf('>Saving Throws</span>');
+    const saves = html.indexOf('>Saving Throws</h2>');
     expect(overview).toBeGreaterThan(-1);
     expect(abilities).toBeGreaterThan(overview);
     expect(passives).toBeGreaterThan(abilities);
@@ -762,15 +760,14 @@ describe('XmlCard Overview group', () => {
   });
 
   it('omits the Overview label from small and medium cards', async () => {
-    expect(await renderCard('small')).not.toContain('>Overview</span>');
-    expect(await renderCard('medium')).not.toContain('>Overview</span>');
+    expect(await renderCard('small')).not.toContain('>Overview</h2>');
+    expect(await renderCard('medium')).not.toContain('>Overview</h2>');
   });
 
-  it('labels the Overview group with a hover badge that yields to the subsection badges', async () => {
+  it('labels the Overview group with an always-visible heading', async () => {
     const html = await renderCard('large');
-    expect(html).toContain('>Overview</span>');
-    expect(html).toContain('group-has-[section:hover]/overview:opacity-0!');
-    expect(html).not.toContain('>Overview</h2>');
+    expect(html).toContain('>Overview</h2>');
+    expect(html).not.toContain('group-has-[section:hover]/overview:opacity-0!');
   });
 
   it('gives the overview and saving throws one half each at ultra-wide container widths', async () => {
@@ -826,7 +823,7 @@ describe('XmlCard ultra-wide section pairing', () => {
 
   it('stacks Languages and Feats under Saving Throws to the right of Overview', async () => {
     const html = await renderPaired();
-    const saves = html.indexOf('>Saving Throws</span>');
+    const saves = html.indexOf('>Saving Throws</h2>');
     const languages = html.indexOf('>Languages</div>');
     const feats = html.indexOf('>Feats</div>');
     const skills = html.indexOf('>Skills</h2>');
@@ -835,8 +832,8 @@ describe('XmlCard ultra-wide section pairing', () => {
     expect(feats).toBeGreaterThan(languages);
     expect(skills).toBeGreaterThan(feats);
     expect(html).toContain('grid grid-cols-1 gap-2 @7xl:grid-cols-2 @7xl:gap-4');
-    expect(html).toContain('<section class="@container relative group">');
-    expect(html).toContain('<div class="space-y-2"><section>');
+    expect(html).toContain('<section class="@container relative group" aria-label="Saving Throws">');
+    expect(html).toContain('<div class="space-y-2"><section class="relative group" aria-label="Vitals"');
   });
 
   it('pairs Skills with Inventory and leaves Equipped Weapons full width', async () => {
@@ -885,7 +882,7 @@ describe('XmlCard Saving Throws group split', () => {
   it('splits Saving Throws from Languages and Feats at @7xl when pills are few', async () => {
     const html = await renderCard('large', { feats: ['Alert'] });
     expect(html).toContain(`grid grid-cols-1 gap-2 ${splitClass}`);
-    expect(html).toContain('<section class="@container relative group">');
+    expect(html).toContain('<section class="@container relative group" aria-label="Saving Throws">');
   });
 
   it('keeps the group in one column when there are too many Languages to fit', async () => {
@@ -1222,15 +1219,15 @@ describe('XmlCard Powers pills card', () => {
     expect(html).not.toContain('x-data');
   });
 
-  it('marks a prepared spell with a filled gold dot and Prepared tooltip', async () => {
+  it('marks a prepared spell with a filled gold dot and a Prepared text alternative', async () => {
     const section = powersSection(await renderCard('large', { powers: [preparedOnlySpell] }));
     const pill = powerPill(section, 'Aid');
     expect(pill).toContain('bg-[#c68000]');
-    expect(pill).toContain('title="Prepared"');
+    expect(pill).toContain('<span class="sr-only">Prepared</span>');
     expect(pill).not.toContain('Always prepared');
   });
 
-  it('marks an always-prepared spell with a hollow accent-ring dot and class tooltip', async () => {
+  it('marks an always-prepared spell with a hollow accent-ring dot and a class text alternative', async () => {
     const section = powersSection(
       await renderCard('large', {
         powers: [{ ...domainSpell, prepared: 0, preparedDomain: 1 }],
@@ -1238,16 +1235,16 @@ describe('XmlCard Powers pills card', () => {
     );
     const pill = powerPill(section, 'Cure Wounds');
     expect(pill).toContain('border border-[#c68000]');
-    expect(pill).toContain('title="Always prepared (class/subclass)"');
+    expect(pill).toContain('<span class="sr-only">Always prepared (class/subclass)</span>');
     expect(pill).not.toContain('bg-[#c68000]');
-    expect(pill).not.toContain('title="Prepared"');
+    expect(pill).not.toContain('<span class="sr-only">Prepared</span>');
   });
 
   it('shows only the always-prepared dot when a spell has both flags', async () => {
     const section = powersSection(await renderCard('large', { powers: [domainSpell] }));
     const pill = powerPill(section, 'Cure Wounds');
-    expect(pill).toContain('title="Always prepared (class/subclass)"');
-    expect(pill).not.toContain('title="Prepared"');
+    expect(pill).toContain('<span class="sr-only">Always prepared (class/subclass)</span>');
+    expect(pill).not.toContain('<span class="sr-only">Prepared</span>');
     expect(pill).not.toContain('bg-[#c68000]');
   });
 
@@ -1276,8 +1273,8 @@ describe('XmlCard Powers pills card', () => {
     const legend = withMarks.slice(legendIndex);
     expect(legend).toContain('bg-[#c68000]');
     expect(legend).toContain('border border-[#c68000]');
-    expect(legend).toContain('title="Prepared"');
-    expect(legend).toContain('title="Always prepared (class/subclass)"');
+    expect(legend).toContain('aria-hidden="true"');
+    expect(legend).toContain('aria-hidden="true"');
 
     const noMarks = powersSection(
       await renderCard('large', { powers: [unpreparedSpell, nonSpell] })

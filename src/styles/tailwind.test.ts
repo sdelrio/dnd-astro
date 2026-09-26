@@ -1,5 +1,4 @@
-import { readFileSync } from 'node:fs';
-import { globSync } from 'node:fs';
+import { globSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const css = readFileSync(new URL('./tailwind.css', import.meta.url), 'utf8');
@@ -226,6 +225,44 @@ describe('x-cloak', () => {
       }
     }
     expect(offenders, `unguarded x-show: ${offenders.join(' | ')}`).toEqual([]);
+  });
+});
+
+describe('Warm-Only Rule across components', () => {
+  // The cool Tailwind families are the drift DESIGN.md calls out by name. The
+  // `gray` scale is exempted: it is redefined onto bark in @theme above.
+  const COOL = /\b(?:blue|green|purple|cyan|teal|indigo|violet|emerald|sky|slate|zinc|neutral|stone)-(\d+|950)\b/g;
+
+  it('has no cool utility class in any component or page', () => {
+    const offenders: string[] = [];
+    for (const file of [
+      ...globSync('src/components/**/*.astro'),
+      ...globSync('src/pages/**/*.astro'),
+    ]) {
+      for (const m of readFileSync(file, 'utf8').matchAll(COOL)) {
+        offenders.push(`${file}: ${m[0]}`);
+      }
+    }
+    expect(offenders, offenders.join(', ')).toEqual([]);
+  });
+
+  it('has no blue-dominant hex literal in any component or page', () => {
+    const offenders: string[] = [];
+    for (const file of [
+      ...globSync('src/components/**/*.astro'),
+      ...globSync('src/pages/**/*.astro'),
+    ]) {
+      for (const m of readFileSync(file, 'utf8').matchAll(/#[0-9a-f]{6}/gi)) {
+        const hex = m[0].toLowerCase();
+        const n = parseInt(hex.slice(1), 16);
+        const r = (n >> 16) & 255;
+        const b = n & 255;
+        // Warm neutrals run r >= g >= b. Moss is legitimately green-dominant,
+        // so only flag a clear blue lean.
+        if (b > r + 10) offenders.push(`${file}: ${hex}`);
+      }
+    }
+    expect(offenders, offenders.join(', ')).toEqual([]);
   });
 });
 
