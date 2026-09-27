@@ -6,10 +6,11 @@
  * panel. Everything here boots the real component against the real markup and
  * drives it the way a user does.
  */
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import DiceRoller from './DiceRoller.astro';
-import { mountAlpine, type MountedAlpine } from '@/test-utils/alpine-dom';
+import { ABILITY_LABELS } from "./dice-utils";
+import DiceRoller from "./DiceRoller.astro";
+import { mountAlpine, type MountedAlpine } from "@/test-utils/alpine-dom";
 
 let harness: MountedAlpine;
 
@@ -37,7 +38,7 @@ async function advance(ms: number): Promise<void> {
 beforeEach(async () => {
   // A fixed face keeps every expectation below a worked example rather than a
   // range: Math.random() of 0.5 is die 4 on a d6.
-  vi.spyOn(Math, 'random').mockReturnValue(0.5);
+  vi.spyOn(Math, "random").mockReturnValue(0.5);
   harness = await mountAlpine(DiceRoller);
   vi.useFakeTimers();
 });
@@ -57,12 +58,14 @@ function doc(): Document {
 }
 
 function mouseEvent(): Event {
-  return new harness.window.MouseEvent('click', { bubbles: true }) as unknown as Event;
+  return new harness.window.MouseEvent("click", {
+    bubbles: true,
+  }) as unknown as Event;
 }
 
 function escapeEvent(): Event {
-  return new harness.window.KeyboardEvent('keydown', {
-    key: 'Escape',
+  return new harness.window.KeyboardEvent("keydown", {
+    key: "Escape",
     bubbles: true,
   }) as unknown as Event;
 }
@@ -81,89 +84,96 @@ function click(selector: string): void {
  */
 function shown(el: Element): string {
   const clone = el.cloneNode(true) as HTMLElement;
-  for (const hidden of clone.querySelectorAll<HTMLElement>('[style*="display: none"]')) {
+  for (const hidden of clone.querySelectorAll<HTMLElement>(
+    '[style*="display: none"]',
+  )) {
     hidden.remove();
   }
-  return (clone.textContent ?? '').replace(/\s+/g, ' ').trim();
+  return (clone.textContent ?? "").replace(/\s+/g, " ").trim();
 }
 
 function tile(name: string): HTMLElement {
-  const found = [...doc().querySelectorAll('button[aria-label^="Select "]')].find((b) =>
-    b.getAttribute('aria-label')?.includes(name)
-  );
-  const el = found?.closest('div.relative');
+  const found = [
+    ...doc().querySelectorAll('button[aria-label^="Select "]'),
+  ].find((b) => b.getAttribute("aria-label")?.includes(name));
+  const el = found?.closest(".dr-row");
   if (!el) throw new Error(`no tile for ${name}`);
   return el as HTMLElement;
 }
 
-describe('DiceRoller at runtime', () => {
-  it('registers the component, so no expression falls back to a global', () => {
+describe("DiceRoller at runtime", () => {
+  it("registers the component, so no expression falls back to a global", () => {
     // Without `Alpine.data('diceRoller', ...)` the root is never initialised
     // and Alpine warns rather than throwing.
     expect(harness.messages).toEqual([]);
   });
 
-  it('renders one tile per ability, each inviting a roll', () => {
-    const labels = [...doc().querySelectorAll('button[aria-label^="Select "]')].map((b) =>
-      b.getAttribute('aria-label')
-    );
+  it("renders one row per ability, each inviting a roll", () => {
+    const labels = [
+      ...doc().querySelectorAll('button[aria-label^="Select "]'),
+    ].map((b) => b.getAttribute("aria-label"));
     expect(labels).toEqual([
-      'Select STR for swap',
-      'Select DEX for swap',
-      'Select CON for swap',
-      'Select INT for swap',
-      'Select WIS for swap',
-      'Select CHA for swap',
+      `Select ${ABILITY_LABELS.STR} for swap`,
+      `Select ${ABILITY_LABELS.DEX} for swap`,
+      `Select ${ABILITY_LABELS.CON} for swap`,
+      `Select ${ABILITY_LABELS.INT} for swap`,
+      `Select ${ABILITY_LABELS.WIS} for swap`,
+      `Select ${ABILITY_LABELS.CHA} for swap`,
     ]);
-    for (const name of ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']) {
-      expect(shown(tile(name))).toContain('Roll to generate');
+    for (const name of Object.values(ABILITY_LABELS)) {
+      expect(shown(tile(name))).toContain("Roll to generate");
     }
   });
 
-  it('fills every tile with dice, a total and a modifier after a full roll', async () => {
+  it("fills every tile with dice, a total and a modifier after a full roll", async () => {
     click('[aria-label="Roll all ability scores"]');
     await advance(FULL_ROLL_MS);
 
-    for (const name of ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']) {
-      const text = tile(name).textContent ?? '';
-      // 4d6 of fours, drop the lowest: three fours kept, so 12 and +1.
-      expect(text).toContain('4 + 4 + 4 = 12');
-      expect(text).toContain('+1');
-      expect(shown(tile(name))).not.toContain('Roll to generate');
+    for (const name of Object.values(ABILITY_LABELS)) {
+      const text = tile(name).textContent ?? "";
+      // 4d6 of fours, drop the lowest: three fours kept, so 12 and +1. The
+      // arithmetic is the row's own line and the score has its own plate, so
+      // they are asserted as two adjacent figures rather than as one sentence.
+      expect(text).toContain("4 + 4 + 4");
+      expect(text).toContain("12");
+      expect(text).toContain("+1");
+      expect(shown(tile(name))).not.toContain("Roll to generate");
     }
     expect(harness.messages).toEqual([]);
   });
 
-  it('disables the controls while a full roll is in flight', async () => {
+  it("disables the controls while a full roll is in flight", async () => {
     click('[aria-label="Roll all ability scores"]');
     await advance(50);
     const rollAll = doc().querySelector(
-      '[aria-label="Roll all ability scores"]'
+      '[aria-label="Roll all ability scores"]',
     ) as unknown as HTMLButtonElement;
     expect(rollAll.disabled).toBe(true);
-    expect(rollAll.textContent).toContain('Rolling...');
-    const reroll = doc().querySelector('[aria-label="Re-roll STR"]') as unknown as HTMLButtonElement;
+    expect(rollAll.textContent).toContain("Rolling...");
+    const reroll = doc().querySelector(
+      `[aria-label="Re-roll ${ABILITY_LABELS.STR}"]`,
+    ) as unknown as HTMLButtonElement;
     expect(reroll.disabled).toBe(true);
 
     await advance(FULL_ROLL_MS);
     expect(rollAll.disabled).toBe(false);
-    expect(rollAll.textContent).toContain('Roll All Abilities');
+    expect(rollAll.textContent).toContain("Roll All Abilities");
   });
 
-  it('re-rolls a single ability without touching the others', async () => {
+  it("re-rolls a single ability without touching the others", async () => {
     click('[aria-label="Roll all ability scores"]');
     await advance(FULL_ROLL_MS);
 
     vi.mocked(Math.random).mockReturnValue(0.99); // die 6
-    click('[aria-label="Re-roll STR"]');
+    click(`[aria-label="Re-roll ${ABILITY_LABELS.STR}"]`);
     await advance(INDIVIDUAL_ROLL_MS);
 
-    expect(shown(tile('STR'))).toContain('6 + 6 + 6 = 18');
-    expect(tile('STR').textContent).toContain('+4');
-    expect(shown(tile('DEX'))).toContain('4 + 4 + 4 = 12');
+    expect(shown(tile(ABILITY_LABELS.STR))).toContain("6 + 6 + 6");
+    expect(tile(ABILITY_LABELS.STR).textContent).toContain("+4");
+    expect(shown(tile(ABILITY_LABELS.DEX))).toContain("4 + 4 + 4");
   });
 
-  it('summarises the session in the stats card and the result log', async () => {
+  it("summarises the session in the stats card and the result log", async () => {
     click('[aria-label="Roll all ability scores"]');
     await advance(FULL_ROLL_MS);
 
@@ -174,116 +184,120 @@ describe('DiceRoller at runtime', () => {
     // so each tile reads as its label run straight into its value; asserting
     // that adjacency is also what pins the two into one tile. Six identical
     // totals: lowest and highest are both 12, each seen six times.
-    expect(body).toContain('Average12.0');
-    expect(body).toContain('Median12');
-    expect(body).toContain('Lowest12 (x6)');
-    expect(body).toContain('Highest12 (x6)');
-    expect(body).toContain('STR 12 (+1)');
+    expect(body).toContain("Average12.0");
+    expect(body).toContain("Median12");
+    expect(body).toContain("Lowest12 (x6)");
+    expect(body).toContain("Highest12 (x6)");
+    expect(body).toContain(`${ABILITY_LABELS.STR} 12 (+1)`);
     expect(doc().querySelector('[aria-live="polite"]')?.textContent).toBe(
-      'All abilities rolled. STR 12 (+1), DEX 12 (+1), CON 12 (+1), INT 12 (+1), WIS 12 (+1), CHA 12 (+1).'
+      `All abilities rolled. ${ABILITY_LABELS.STR} 12 (+1), ${ABILITY_LABELS.DEX} 12 (+1), ${ABILITY_LABELS.CON} 12 (+1), ${ABILITY_LABELS.INT} 12 (+1), ${ABILITY_LABELS.WIS} 12 (+1), ${ABILITY_LABELS.CHA} 12 (+1).`,
     );
   });
 
-  describe('the one swap a session allows', () => {
+  describe("the one swap a session allows", () => {
     beforeEach(async () => {
       click('[aria-label="Roll all ability scores"]');
       await advance(FULL_ROLL_MS);
     });
 
     function swapPanel(): HTMLElement | null {
-      return doc().querySelector('.dice-swap-panel');
+      return doc().querySelector(".dr-swap");
     }
 
-    it('stages a swap, and renders the confirm pair so the swap can be taken', async () => {
+    it("stages a swap, and renders the confirm pair so the swap can be taken", async () => {
       // #328: the panel was a sibling of the tile, so the ability `x-for` had
       // two roots and Alpine cloned only the first. The panel never appeared.
-      click('button[aria-label="Select STR for swap"]');
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
       await harness.flush();
       expect(swapPanel()).toBeNull();
 
-      click('button[aria-label="Select DEX for swap"]');
+      click(`button[aria-label="Select ${ABILITY_LABELS.DEX} for swap"]`);
       await harness.flush();
-      expect(swapPanel()?.textContent).toContain('STR ↔ DEX');
+      expect(swapPanel()?.textContent).toContain(
+        `${ABILITY_LABELS.STR} ↔ ${ABILITY_LABELS.DEX}`,
+      );
       expect(doc().querySelector('[aria-label="Confirm swap"]')).not.toBeNull();
       expect(doc().querySelector('[aria-label="Cancel swap"]')).not.toBeNull();
     });
 
-    it('exchanges the two totals when confirmed', async () => {
+    it("exchanges the two totals when confirmed", async () => {
       vi.mocked(Math.random).mockReturnValue(0.5);
-      click('[aria-label="Re-roll DEX"]');
+      click(`[aria-label="Re-roll ${ABILITY_LABELS.DEX}"]`);
       await advance(INDIVIDUAL_ROLL_MS);
       vi.mocked(Math.random).mockReturnValue(0.99); // die 6
-      click('[aria-label="Re-roll STR"]');
+      click(`[aria-label="Re-roll ${ABILITY_LABELS.STR}"]`);
       await advance(INDIVIDUAL_ROLL_MS);
 
-      click('button[aria-label="Select STR for swap"]');
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
       await harness.flush();
-      click('button[aria-label="Select DEX for swap"]');
+      click(`button[aria-label="Select ${ABILITY_LABELS.DEX} for swap"]`);
       await harness.flush();
       click('[aria-label="Confirm swap"]');
       await advance(60);
 
       // The dice travel with the score they rolled, so the STR tile is the one
       // that now shows 12 and the DEX tile shows 18.
-      expect(shown(tile('STR'))).toContain('4 + 4 + 4 = 12');
-      expect(shown(tile('DEX'))).toContain('6 + 6 + 6 = 18');
+      expect(shown(tile(ABILITY_LABELS.STR))).toContain("4 + 4 + 4");
+      expect(shown(tile(ABILITY_LABELS.DEX))).toContain("6 + 6 + 6");
       expect(swapPanel()).toBeNull();
       // The newest log line is rewritten rather than a second one invented.
       expect(
-        (doc().querySelector('.font-mono')?.textContent ?? '').startsWith(
-          'STR 12 (+1), DEX 18 (+4)'
-        )
+        (doc().querySelector(".dr-log-line")?.textContent ?? "").startsWith(
+          `${ABILITY_LABELS.STR} 12 (+1), ${ABILITY_LABELS.DEX} 18 (+4)`,
+        ),
       ).toBe(true);
     });
 
-    it('leaves both totals alone when cancelled, by button or by Escape', async () => {
-      click('button[aria-label="Select STR for swap"]');
+    it("leaves both totals alone when cancelled, by button or by Escape", async () => {
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
       await harness.flush();
-      click('button[aria-label="Select DEX for swap"]');
+      click(`button[aria-label="Select ${ABILITY_LABELS.DEX} for swap"]`);
       await harness.flush();
       click('[aria-label="Cancel swap"]');
       await harness.flush();
       expect(swapPanel()).toBeNull();
-      expect(shown(tile('STR'))).toContain('12');
+      expect(shown(tile(ABILITY_LABELS.STR))).toContain("12");
 
-      click('button[aria-label="Select STR for swap"]');
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
       await harness.flush();
-      click('button[aria-label="Select CON for swap"]');
+      click(`button[aria-label="Select ${ABILITY_LABELS.CON} for swap"]`);
       await harness.flush();
       doc().dispatchEvent(escapeEvent());
       await harness.flush();
       expect(swapPanel()).toBeNull();
-      expect(shown(tile('STR'))).toContain('12');
-      expect(shown(tile('CON'))).toContain('12');
+      expect(shown(tile(ABILITY_LABELS.STR))).toContain("12");
+      expect(shown(tile(ABILITY_LABELS.CON))).toContain("12");
     });
 
-    it('refuses a second swap and says why', async () => {
-      click('button[aria-label="Select STR for swap"]');
+    it("refuses a second swap and says why", async () => {
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
       await harness.flush();
-      click('button[aria-label="Select DEX for swap"]');
+      click(`button[aria-label="Select ${ABILITY_LABELS.DEX} for swap"]`);
       await harness.flush();
       click('[aria-label="Confirm swap"]');
       await advance(60);
 
-      click('button[aria-label="Select STR for swap"]');
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
       await advance(60);
       expect(swapPanel()).toBeNull();
       expect(doc().querySelector('[aria-live="polite"]')?.textContent).toBe(
-        'This session has already used its swap. Roll all abilities to start a new one.'
+        "This session has already used its swap. Roll all abilities to start a new one.",
       );
     });
 
-    it('deselects a single pick instead of staging a swap with itself', async () => {
-      click('button[aria-label="Select STR for swap"]');
+    it("deselects a single pick instead of staging a swap with itself", async () => {
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
       await advance(60);
       const tileButton = doc().querySelector(
-        'button[aria-label="Select STR for swap"]'
+        `button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`,
       ) as unknown as HTMLButtonElement;
-      expect(tileButton.getAttribute('aria-pressed')).toBe('true');
-      click('button[aria-label="Select STR for swap"]');
+      expect(tileButton.getAttribute("aria-pressed")).toBe("true");
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
       await advance(60);
-      expect(tileButton.getAttribute('aria-pressed')).toBe('false');
-      expect(doc().querySelector('[aria-live="polite"]')?.textContent).toBe('STR deselected.');
+      expect(tileButton.getAttribute("aria-pressed")).toBe("false");
+      expect(doc().querySelector('[aria-live="polite"]')?.textContent).toBe(
+        `${ABILITY_LABELS.STR} deselected.`,
+      );
     });
   });
 });

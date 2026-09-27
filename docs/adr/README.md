@@ -19,6 +19,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 | 0011 | Give Agents a Headless Browser via a Pinned Local MCP Server | accepted | 2026-09-26 |
 | 0012 | Own the Design Review Captures with a Dependency-Free CDP Client | accepted | 2026-09-26 |
 | 0013 | Split Browser-Safe Data Out of Build-Side Modules, and Import It Type-Only | accepted | 2026-09-26 |
+| 0014 | Tool Abilities Are Ruled Rows, Not Tiles | accepted | 2026-09-27 |
 
 ## About ADRs
 

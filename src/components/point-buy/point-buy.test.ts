@@ -20,6 +20,8 @@ const dark = (prop: string): string | undefined =>
   darkBlock().match(new RegExp(`--pb-${prop}:\\s*([^;]+);`))?.[1].trim();
 
 const utils = readFileSync(new URL('./point-buy-utils.ts', import.meta.url), 'utf8');
+/** The vocabulary module, which owns the six codes and the names they map to. */
+const diceUtils = readFileSync(new URL('../dice-roller/dice-utils.ts', import.meta.url), 'utf8');
 const registration = readFileSync(new URL('../../alpine.ts', import.meta.url), 'utf8');
 
 describe('PointBuy Alpine wiring', () => {
@@ -88,7 +90,30 @@ describe('PointBuy ledger rows', () => {
     // place. So the rows carry no name of their own at all.
     expect(source).toContain('ABILITY_LABELS[ability]');
     expect(source).not.toMatch(/name: '(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)'/);
-    expect(utils).toContain('export const ABILITY_LABELS');
+    // The table is DECLARED in `dice-utils.ts`, beside the codes it maps, and
+    // re-exported here. It used to be declared in this module while its own
+    // comment claimed all three tools shared it, which is what left the dice
+    // roller printing three-letter codes: labelling its own rows would have meant
+    // importing a sibling tool's utils, and nothing obliged it to.
+    expect(diceUtils).toContain('export const ABILITY_LABELS');
+    expect(utils).not.toContain('export const ABILITY_LABELS');
+    expect(utils).toMatch(/export \{[^}]*ABILITY_LABELS/);
+  });
+
+  it('keeps the six names beside the codes, so neither tool owns them', () => {
+    // One declaration site for the whole sheet. A second copy is the drift this
+    // exists to prevent, and the dependency direction matters as much as the
+    // count: the dice roller must not reach into a point-buy module for the
+    // vocabulary both of them speak.
+    const declarations = [
+      diceUtils,
+      utils,
+      source,
+      component,
+      readFileSync(new URL('../dice-roller/DiceRoller.astro', import.meta.url), 'utf8'),
+      readFileSync(new URL('../dice-roller/dice-roller-component.ts', import.meta.url), 'utf8'),
+    ].filter((file) => /ABILITY_LABELS[^\n=]*=[^\n]*\{/.test(file));
+    expect(declarations, 'ABILITY_LABELS is declared in more than one place').toHaveLength(1);
   });
 
   it('shows the score, modifier and cost for every ability', () => {

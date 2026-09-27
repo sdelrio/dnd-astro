@@ -38,6 +38,14 @@ A fourth, lower-severity finding: the Party View's role chips carried `:hover` t
 > longer fit it. See "Superseded by measurement, partially" below, which keeps the reasoning
 > and the measured numbers. The rest of this decision is unchanged.
 
+> **Decision 1 superseded by [ADR-0014](0014-tool-rows-not-tiles.md).** The grid is gone
+> entirely, not amended again: the Dice Roller is one ability per ruled row at every viewport
+> width, with no `grid-cols-` utility in its markup. The *problem* this decision fixed is
+> unchanged and still binding - the roller must not scroll sideways at 320px, and every control
+> on it must clear 44x44px. Decisions 2, 3 and 4 below are unaffected. Read ADR-0014 alongside
+> this one; a reader who opens only this file will find a grid prescribed for a component that
+> has no grid.
+
 The `DESIGN.md` layout and inputs sections are updated in the same change. The Card's own ability grid is untouched: it is container-query driven, so it already measures the Card rather than the viewport.
 
 **2. Every text control carries `min-h-11` and `text-base sm:text-sm`.** The height satisfies WCAG 2.5.8. The 16px base font is not cosmetic: it is the threshold below which iOS Safari zooms on focus, and it is the difference between tapping a search field and losing the page.
