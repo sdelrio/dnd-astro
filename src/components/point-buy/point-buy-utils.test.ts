@@ -18,9 +18,9 @@ import {
   increaseScore,
   decreaseScore,
   tradeScores,
-  PRESET_SPREADS,
-  getPresetSpread,
-  applyPreset,
+  STARTING_SPREADS,
+  getStartingSpread,
+  applyStartingSpread,
   totalModifier,
   formatTotalModifier,
   calculateModifier,
@@ -372,43 +372,43 @@ describe('modifier reuse', () => {
   });
 });
 
-describe('preset spreads', () => {
-  // A preset that does not cost exactly the pool is a trap: the obvious next
+describe('starting spreads', () => {
+  // A starting spread that does not cost exactly the pool is a trap: the obvious next
   // move at the table is to dump the remainder into the first score, and the
   // player ends up with a spread they did not choose. The first draft of
   // Standard Array had 13 and 12 the wrong way round and overspent by two, so
   // this is pinned rather than trusted.
-  it('costs every preset at exactly the full pool', () => {
-    for (const preset of PRESET_SPREADS) {
-      expect(pointsSpent(preset.scores), `${preset.label} spends`).toBe(POINT_BUY_POOL);
+  it('costs every starting spread at exactly the full pool', () => {
+    for (const spread of STARTING_SPREADS) {
+      expect(pointsSpent(spread.scores), `${spread.label} spends`).toBe(POINT_BUY_POOL);
     }
   });
 
-  it('keeps every preset score inside the legal range', () => {
-    for (const preset of PRESET_SPREADS) {
+  it('keeps every starting spread score inside the legal range', () => {
+    for (const spread of STARTING_SPREADS) {
       for (const ability of ABILITY_NAMES) {
-        expect(preset.scores[ability], `${preset.label} ${ability}`).toBeGreaterThanOrEqual(
+        expect(spread.scores[ability], `${spread.label} ${ability}`).toBeGreaterThanOrEqual(
           MIN_SCORE
         );
-        expect(preset.scores[ability], `${preset.label} ${ability}`).toBeLessThanOrEqual(MAX_SCORE);
+        expect(spread.scores[ability], `${spread.label} ${ability}`).toBeLessThanOrEqual(MAX_SCORE);
       }
     }
   });
 
   it('covers all six abilities, so loading one leaves nothing at the floor by accident', () => {
-    for (const preset of PRESET_SPREADS) {
-      expect(Object.keys(preset.scores).sort()).toEqual([...ABILITY_NAMES].sort());
+    for (const spread of STARTING_SPREADS) {
+      expect(Object.keys(spread.scores).sort()).toEqual([...ABILITY_NAMES].sort());
     }
   });
 
-  it('gives every preset a distinct id and label', () => {
-    expect(new Set(PRESET_SPREADS.map((p) => p.id)).size).toBe(PRESET_SPREADS.length);
-    expect(new Set(PRESET_SPREADS.map((p) => p.label)).size).toBe(PRESET_SPREADS.length);
+  it('gives every starting spread a distinct id and label', () => {
+    expect(new Set(STARTING_SPREADS.map((s) => s.id)).size).toBe(STARTING_SPREADS.length);
+    expect(new Set(STARTING_SPREADS.map((s) => s.label)).size).toBe(STARTING_SPREADS.length);
   });
 
   it('ships the published Standard Array verbatim', () => {
     // The array is a printed fact, not a house spread: 15/14/13/12/10/8.
-    expect(getPresetSpread('standard-array')).toEqual({
+    expect(getStartingSpread('standard-array')).toEqual({
       STR: 15,
       DEX: 14,
       CON: 13,
@@ -419,24 +419,24 @@ describe('preset spreads', () => {
   });
 
   it('returns undefined for an id that does not exist', () => {
-    expect(getPresetSpread('sorcerer')).toBeUndefined();
+    expect(getStartingSpread('sorcerer')).toBeUndefined();
   });
 
   it('leaves the scores untouched for an unknown id', () => {
     const current = { STR: 12, DEX: 14, CON: 13, INT: 12, WIS: 10, CHA: 8 };
-    expect(applyPreset(current, 'sorcerer')).toEqual(current);
+    expect(applyStartingSpread(current, 'sorcerer')).toEqual(current);
   });
 
   it('replaces the whole spread for a known id, and copies rather than aliases', () => {
-    const loaded = applyPreset(createDefaultScores(), 'striker');
-    expect(loaded).toEqual(getPresetSpread('striker'));
-    expect(loaded).not.toBe(getPresetSpread('striker'));
+    const loaded = applyStartingSpread(createDefaultScores(), 'striker');
+    expect(loaded).toEqual(getStartingSpread('striker'));
+    expect(loaded).not.toBe(getStartingSpread('striker'));
   });
 });
 
 describe('modifier total', () => {
   it('sums the six modifiers', () => {
-    expect(totalModifier(getPresetSpread('standard-array') as Scores)).toBe(5);
+    expect(totalModifier(getStartingSpread('standard-array') as Scores)).toBe(5);
   });
 
   it('is -6 on a blank sheet, the number the tool starts from', () => {

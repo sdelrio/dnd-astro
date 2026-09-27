@@ -193,7 +193,7 @@ describe('PointBuy at runtime', () => {
     expect(text(row('STR'))).toContain('Cost 9, max');
   });
 
-  it('loads a preset spread in one press, and announces it', async () => {
+  it('loads a starting spread in one press, and announces it', async () => {
     const standardArray = [...harness.window.document.querySelectorAll('button')].find(
       (b) => text(b as unknown as HTMLElement) === 'Standard Array'
     ) as unknown as HTMLButtonElement;

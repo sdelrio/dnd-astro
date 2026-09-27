@@ -76,8 +76,19 @@ describe('PointBuy ledger rows', () => {
   it('binds steppers to the bounds and pool helpers with per-ability labels', () => {
     expect(source).toContain("!canIncrease(scores, '${ability}')");
     expect(source).toContain("!canDecrease(scores, '${ability}')");
-    expect(source).toContain('Increase ${name}');
-    expect(source).toContain('Decrease ${name}');
+    expect(source).toContain('Increase ${ABILITY_LABELS[ability]}');
+    expect(source).toContain('Decrease ${ABILITY_LABELS[ability]}');
+  });
+
+  it('spells the six names once, in the vocabulary, not per island', () => {
+    // The visible name, the stepper's label, the trade handle's label and every
+    // announcement have to agree. The row table used to re-type all six, which
+    // is the drift `ABILITY_LABELS` exists to prevent - a screen-reader label
+    // saying "STR" where the page says "Strength" is the same defect in another
+    // place. So the rows carry no name of their own at all.
+    expect(source).toContain('ABILITY_LABELS[ability]');
+    expect(source).not.toMatch(/name: '(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)'/);
+    expect(utils).toContain('export const ABILITY_LABELS');
   });
 
   it('shows the score, modifier and cost for every ability', () => {
@@ -99,8 +110,18 @@ describe('PointBuy ledger rows', () => {
   it('runs a leader out from each name to its figure', () => {
     // The device that makes the sheet a ledger rather than a grid of tiles.
     // Losing it turns six ruled lines back into six boxes.
-    expect(source).toContain('pb-leader');
-    expect(source).toContain('dotted');
+    //
+    // Matched against the `.pb-leader` rule rather than the whole file: a bare
+    // `toContain('dotted')` passes on the word appearing in a comment, which is
+    // the failure mode ADR-0010 names - a test that reads source cannot tell a
+    // working rule from a dead one.
+    const rule = source.slice(source.indexOf('.pb-leader {'));
+    expect(rule.slice(0, 200), 'no .pb-leader rule').toContain('border-bottom');
+    expect(rule.slice(0, 200)).toContain('dotted');
+    // And the leader is outside the trade handle, so it can run the full width
+    // of the name column rather than being clipped to the button.
+    const row = source.slice(source.indexOf('ABILITY_ROWS.map'));
+    expect(row.indexOf('pb-leader')).toBeGreaterThan(row.indexOf('</button>'));
   });
 
   it('tells a scripting-off visitor the tool needs JavaScript', () => {
@@ -151,10 +172,10 @@ describe('PointBuy ledger rows', () => {
   it('gives every control a visible focus ring, and the numerals a fixed width', () => {
     // The ring lives in the scoped stylesheet rather than as a utility class,
     // because its colour is one of the themed custom properties. Every control
-    // in the component is a `.pb-step`, `.pb-preset` or `.pb-reset`, so the
+    // in the component is a `.pb-step`, `.pb-spread` or `.pb-reset`, so the
     // three selectors below cover the whole set.
     expect(source).toContain('outline: 2px solid var(--pb-focus)');
-    for (const control of ['.pb-step', '.pb-preset', '.pb-reset']) {
+    for (const control of ['.pb-step', '.pb-spread', '.pb-reset']) {
       const block = source.slice(source.indexOf(`${control}:focus-visible`));
       expect(block.slice(0, 120), control).toContain('outline');
     }
@@ -238,10 +259,10 @@ describe('PointBuy the foot', () => {
     expect(utils).toContain('export function formatTotalModifier');
   });
 
-  it('offers each preset as a one-press load', () => {
-    expect(source).toContain('PRESET_SPREADS.map');
-    expect(source).toContain("loadPreset('${preset.id}')");
-    expect(component).toContain('pointBuy.applyPreset(this.scores, id)');
+  it('offers each starting spread as a one-press load', () => {
+    expect(source).toContain('STARTING_SPREADS.map');
+    expect(source).toContain("loadSpread('${spread.id}')");
+    expect(component).toContain('pointBuy.applyStartingSpread(this.scores, id)');
   });
 
   it('offers an accessible reset control', () => {

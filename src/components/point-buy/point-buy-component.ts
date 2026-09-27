@@ -20,16 +20,14 @@ export interface PointBuyComponent {
   canDecrease: typeof pointBuy.canDecrease;
   pointsRemaining: typeof pointBuy.pointsRemaining;
   pointsSpent: typeof pointBuy.pointsSpent;
-  totalModifier: typeof pointBuy.totalModifier;
   formatTotalModifier: typeof pointBuy.formatTotalModifier;
-  presets: typeof pointBuy.PRESET_SPREADS;
   announce(message: string): void;
   tradeLabel(ability: pointBuy.AbilityName): string;
   announceScore(ability: pointBuy.AbilityName): void;
   increase(ability: pointBuy.AbilityName): void;
   decrease(ability: pointBuy.AbilityName): void;
   pickForSwap(ability: pointBuy.AbilityName): void;
-  loadPreset(id: string): void;
+  loadSpread(id: string): void;
   reset(): void;
 }
 
@@ -53,9 +51,7 @@ export function pointBuyComponent(): PointBuyComponent {
     canDecrease: pointBuy.canDecrease,
     pointsRemaining: pointBuy.pointsRemaining,
     pointsSpent: pointBuy.pointsSpent,
-    totalModifier: pointBuy.totalModifier,
     formatTotalModifier: pointBuy.formatTotalModifier,
-    presets: pointBuy.PRESET_SPREADS,
     /**
      * What the trade handle says it will do, in the state it is in. Naming the
      * action is the whole of it: a control labelled only "Strength" leaves a
@@ -132,12 +128,12 @@ export function pointBuyComponent(): PointBuyComponent {
           `${this.pointsRemaining(this.scores)} points remaining.`
       );
     },
-    loadPreset(id: string) {
-      const label = pointBuy.PRESET_SPREADS.find((preset) => preset.id === id)?.label;
+    loadSpread(id: string) {
+      const label = pointBuy.STARTING_SPREADS.find((preset) => preset.id === id)?.label;
       if (!label) {
         return;
       }
-      this.scores = pointBuy.applyPreset(this.scores, id);
+      this.scores = pointBuy.applyStartingSpread(this.scores, id);
       this.picked = null;
       this.announce(
         `${label} loaded. Modifier total ${this.formatTotalModifier(this.scores)}.`

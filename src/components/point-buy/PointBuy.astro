@@ -1,7 +1,9 @@
 ---
 import IconifyIcon from '@/components/IconifyIcon.astro';
 import {
-  PRESET_SPREADS,
+  ABILITY_LABELS,
+  STARTING_SPREADS,
+  type AbilityName,
   calculateModifier,
   createDefaultScores,
   formatCostLine,
@@ -12,20 +14,24 @@ import {
 } from './point-buy-utils';
 
 /**
- * The six abilities, as the sheet writes them. Full names in Cinzel because a
- * ledger line has room for them and the abbreviation is the thing people
- * already know; the mark beside the name is a solid silhouette from
- * `game-icons`, the same family throughout so the six read as one set rather
- * than six borrowed glyphs.
+ * The six abilities, as the sheet writes them: the abbreviation, the name, and
+ * the mark beside it.
+ *
+ * The name is not written here. It comes from `ABILITY_LABELS`, which is the
+ * one place the six are spelled, because this is also what every announcement
+ * and every trade handle's label says - and a visible name that could drift
+ * from the announced one is the same defect in a different place. The mark is a
+ * solid silhouette from `game-icons`, the same family throughout so the six
+ * read as one set rather than six borrowed glyphs.
  */
-const ABILITY_ROWS = [
-  { ability: 'STR', name: 'Strength', icon: 'game-icons:mailed-fist' },
-  { ability: 'DEX', name: 'Dexterity', icon: 'game-icons:boots' },
-  { ability: 'CON', name: 'Constitution', icon: 'game-icons:round-shield' },
-  { ability: 'INT', name: 'Intelligence', icon: 'game-icons:brain' },
-  { ability: 'WIS', name: 'Wisdom', icon: 'game-icons:all-seeing-eye' },
-  { ability: 'CHA', name: 'Charisma', icon: 'game-icons:crown' },
-] as const;
+const ABILITY_ROWS: ReadonlyArray<{ ability: AbilityName; icon: string }> = [
+  { ability: 'STR', icon: 'game-icons:mailed-fist' },
+  { ability: 'DEX', icon: 'game-icons:boots' },
+  { ability: 'CON', icon: 'game-icons:round-shield' },
+  { ability: 'INT', icon: 'game-icons:brain' },
+  { ability: 'WIS', icon: 'game-icons:all-seeing-eye' },
+  { ability: 'CHA', icon: 'game-icons:crown' },
+];
 
 const initialScores = createDefaultScores();
 ---
@@ -97,10 +103,7 @@ const initialScores = createDefaultScores();
     <div class="pb-head">
       <div class="pb-head-id">
         <p class="pb-head-title">Point Buy</p>
-        <p class="pb-head-meta">
-          Spend the 27-point pool across all six abilities. Tap a name, then another, to trade
-          scores.
-        </p>
+        <p class="pb-head-meta">Spend the 27-point pool across all six abilities.</p>
       </div>
     </div>
 
@@ -116,9 +119,26 @@ const initialScores = createDefaultScores();
         <span class="w-[5.875rem]"></span>
       </div>
 
+      <!-- How the trade works, said once, and said here rather than in the
+           head's meta line - which is the least readable slot on the surface,
+           at 13px uppercase and 0.04em tracked, so a two-clause instruction
+           there is worse than no instruction at all. This sits directly above
+           the six names it is about.
+
+           It is hidden on phones, where the head row is: a 390px column cannot
+           carry a sentence above six names without pushing the sheet down, and
+           the affordance does not depend on reading it either way - every name
+           is a button whose accessible label names the action it takes ("Pick
+           up Strength, 15, to trade its score"), and the picked state is
+           announced. The line tells a sighted user on a wide screen what the
+           buttons do before they try one. -->
+      <p class="pb-hint">
+        Names trade: press one, then another, to swap their scores.
+      </p>
+
       <div>
         {
-          ABILITY_ROWS.map(({ ability, name, icon }) => (
+          ABILITY_ROWS.map(({ ability, icon }) => (
             <div
               class="pb-rule grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-x-3 border-b border-[color:var(--pb-rule)] py-2 last:border-b-0 max-[46rem]:grid-cols-[auto_auto_minmax(0,1fr)_auto] max-[46rem]:gap-x-2.5 max-[46rem]:gap-y-2 max-[46rem]:py-2.5"
               data-ability={ability}
@@ -152,7 +172,7 @@ const initialScores = createDefaultScores();
                        region is six landmarks' worth of nothing, and it hands
                        the accent colour to a name that has to read as ink. -->
                   <span class="pb-name">
-                    {name}
+                    {ABILITY_LABELS[ability]}
                   </span>
                 </button>
                 {/* The leader. This is the device that makes the sheet a
@@ -193,7 +213,7 @@ const initialScores = createDefaultScores();
                   @click={`decrease('${ability}')`}
                   :disabled={`!canDecrease(scores, '${ability}')`}
                   class="pb-step"
-                  aria-label={`Decrease ${name}`}
+                  aria-label={`Decrease ${ABILITY_LABELS[ability]}`}
                 >
                   <IconifyIcon icon="mdi:minus" width="1.125rem" />
                 </button>
@@ -202,7 +222,7 @@ const initialScores = createDefaultScores();
                   @click={`increase('${ability}')`}
                   :disabled={`!canIncrease(scores, '${ability}')`}
                   class="pb-step"
-                  aria-label={`Increase ${name}`}
+                  aria-label={`Increase ${ABILITY_LABELS[ability]}`}
                 >
                   <IconifyIcon icon="mdi:plus" width="1.125rem" />
                 </button>
@@ -212,19 +232,19 @@ const initialScores = createDefaultScores();
         }
       </div>
 
-      <!-- Presets. Offered so nobody spends 27 presses to find out what a
+      <!-- Starting spreads. Offered so nobody spends 27 presses to find out what a
            Striker looks like; each is pinned to exactly the full pool by a
            test, so loading one is a finished allocation, not a head start. -->
       <div
         class="mt-4 flex flex-wrap items-center gap-1.5 border-t border-[color:var(--pb-rule)] pt-3"
         role="group"
-        aria-label="Start from a preset spread"
+        aria-label="Start from a starting spread"
       >
         <span class="pb-soft micro-label mr-1">Start from</span>
         {
-          PRESET_SPREADS.map((preset) => (
-            <button type="button" @click={`loadPreset('${preset.id}')`} class="pb-preset">
-              {preset.label}
+          STARTING_SPREADS.map((spread) => (
+            <button type="button" @click={`loadSpread('${spread.id}')`} class="pb-spread">
+              {spread.label}
             </button>
           ))
         }
@@ -281,7 +301,7 @@ const initialScores = createDefaultScores();
              control set in the theme's heading ink rather than in the action
              accent: Oxblood in light, Gold Leaf in dark. That is what the
              Rarity Rule reserves those two for - a marker, not a fill - and
-             it is enough to separate this from the presets beside it without
+             it is enough to separate this from the starting spreads beside it without
              a wax seal the size of the panel cap. -->
         <button
           type="button"
@@ -400,6 +420,29 @@ const initialScores = createDefaultScores();
 
   .pb-soft {
     color: var(--pb-ink-soft);
+  }
+
+  /* The trade hint. One sentence, in sentence case at the Body step - it is an
+     instruction, not a column head, and the head row's uppercase label step
+     would mis-set it. Hidden below 46rem, with the head row it belongs to. */
+  .pb-hint {
+    margin: 0.25rem 0 0.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--pb-ink-soft);
+    text-wrap: pretty;
+  }
+
+  /* 46rem, not one of Tailwind's named steps, and deliberately: it is the
+     width at which the five-column line can no longer hold a 44px stepper pair
+     beside a readable name, which is a property of this grid and not of the
+     viewport. It is spelled out in seven places because a custom Tailwind
+     breakpoint would mean a theme token and a build-config change for a value
+     that belongs to one component. Changing it means changing all seven. */
+  @media (max-width: 46rem) {
+    .pb-hint {
+      display: none;
+    }
   }
 
   .pb-body {
@@ -522,9 +565,14 @@ const initialScores = createDefaultScores();
     font-variant-numeric: tabular-nums;
   }
 
+  /* The foot's figures, at the Title step - the same step and the same face as
+     the six row scores, because the three entries and the six rows are peers.
+     An earlier draft set these at 1.125rem, which is on no documented step:
+     the contract called for Headline (1.5rem) and the code shipped something
+     between, which is how a step drifts without anybody deciding it. */
   .pb-total {
     font-family: var(--sl-font-heading);
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     font-weight: 600;
     line-height: 1;
     color: var(--pb-ink);
@@ -575,10 +623,10 @@ const initialScores = createDefaultScores();
     outline-offset: 2px;
   }
 
-  /* The preset and the reset are quiet outline buttons. They used to be a
+  /* A starting spread and the reset are quiet outline buttons. They used to be a
      tinted pill and a wax seal respectively; at ADR-0009's 44px they are two
      of the loudest objects on a page whose job is six numbers. */
-  .pb-preset,
+  .pb-spread,
   .pb-reset {
     display: inline-flex;
     min-height: 2.75rem;
@@ -601,14 +649,14 @@ const initialScores = createDefaultScores();
   }
 
   @media (hover: hover) {
-    .pb-preset:hover,
+    .pb-spread:hover,
     .pb-reset:hover {
       background: var(--pb-raised);
       color: var(--pb-ink);
     }
   }
 
-  .pb-preset:focus-visible,
+  .pb-spread:focus-visible,
   .pb-reset:focus-visible {
     outline: 2px solid var(--pb-focus);
     outline-offset: 2px;

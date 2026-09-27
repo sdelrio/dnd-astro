@@ -144,12 +144,10 @@
      light step is too dark to read as a rule against bark-black, so a border
      or a hairline that has to work in both themes steps to this one.
 
-     Point Buy's first build added a second material vocabulary for itself -
-     `sheet`, `desk`, `brass`, `wax`, `fitted` - on the reasoning that a
-     physical object should not invert with the theme. It inverted nothing
-     except the tool's own heading, which came out identical in light and
-     dark, and the object outweighed the page it sat on. Every tool surface is
-     now one bark step plus the gold rule, per the components below. */
+     The retired tokens (`sheet`, `desk`, `brass`, `wax`, `fitted`) were a
+     second material vocabulary that only Point Buy painted; DESIGN.md's
+     "Themed-Surface Rule" and "Tool-Weight Rule" are where the reasoning that
+     removed them lives, and they are the reference for the next tool. */
   --color-gold-rule-dark: #867347;
 }
 
@@ -160,14 +158,22 @@
   --sl-font-table: 'ScalySans', 'Bookinsanity', Georgia, serif;
 }
 
-/* DESIGN.md's Micro-label step: the label on a figure or a group of
-   figures. A utility rather than a repeated class string, so the step is
-   one value and a later change to it moves every call site at once. */
+/* DESIGN.md's Micro Label step: the label on a figure or a group of figures.
+   A utility rather than a repeated class string, so the step is one value and a
+   later change to it moves every call site at once.
+
+   600 at 0.08em, which is what DESIGN.md specifies and what the one hand-rolled
+   implementation of the step (`.char-hp-label`) already uses. An earlier draft
+   of this utility shipped 700 at 0.1em, inventing a second value for a
+   documented step while claiming in this comment to be the step - and the
+   detector, which reads DESIGN.md's ramp, is what caught it. The family is the
+   `--sl-font-table` token rather than a repeated literal, so a call site names
+   intent rather than a font stack. */
 @utility micro-label {
-  font-family: 'ScalySans', 'Bookinsanity', Georgia, serif;
+  font-family: var(--sl-font-table);
   font-size: 0.5625rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 

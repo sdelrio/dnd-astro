@@ -85,10 +85,10 @@ export function totalModifier(scores: Scores): number {
  * a head start; a spread that underspends is a trap at the table, because
  * the obvious next move is to dump the remainder into the first score.
  *
- * `point-buy.test.ts` pins every one of them to the pool, so adding a preset
+ * `point-buy.test.ts` pins every one of them to the pool, so adding one
  * here without costing it out fails the build rather than shipping.
  */
-export const PRESET_SPREADS: ReadonlyArray<{ id: string; label: string; scores: Scores }> = [
+export const STARTING_SPREADS: ReadonlyArray<{ id: string; label: string; scores: Scores }> = [
   {
     id: 'standard-array',
     label: 'Standard Array',
@@ -100,24 +100,27 @@ export const PRESET_SPREADS: ReadonlyArray<{ id: string; label: string; scores: 
     scores: { STR: 15, DEX: 15, CON: 14, INT: 8, WIS: 10, CHA: 8 },
   },
   {
-    id: 'sage',
-    label: 'Sage',
+    // `caster`, not `sage`: `sage` is a colour token in this system, and an id
+    // that reads as a hex-adjacent palette name is a name that will eventually
+    // be grepped as one.
+    id: 'caster',
+    label: 'Caster',
     scores: { STR: 8, DEX: 14, CON: 14, INT: 15, WIS: 12, CHA: 8 },
   },
 ];
 
 /**
- * A preset looked up by id, or `undefined` for an id that does not exist.
+ * A starting spread looked up by id, or `undefined` for an id that does not exist.
  * The lookup goes through here rather than being inlined in the component so
  * an unknown id degrades to "do nothing" instead of installing six `undefined`
  * scores on the sheet.
  */
-export function getPresetSpread(id: string): Scores | undefined {
-  const preset = PRESET_SPREADS.find((entry) => entry.id === id);
+export function getStartingSpread(id: string): Scores | undefined {
+  const found = STARTING_SPREADS.find((entry) => entry.id === id);
   // Copied, never handed back by reference: this object is a module-level
   // constant, and a component that mutated its own `scores` in place would
-  // rewrite the preset for the rest of the session.
-  return preset ? { ...preset.scores } : undefined;
+  // rewrite the spread for the rest of the session.
+  return found ? { ...found.scores } : undefined;
 }
 
 /**
@@ -199,8 +202,8 @@ export function tradeScores(scores: Scores, from: AbilityName, to: AbilityName):
   };
 }
 
-export function applyPreset(scores: Scores, id: string): Scores {
-  return getPresetSpread(id) ?? { ...scores };
+export function applyStartingSpread(scores: Scores, id: string): Scores {
+  return getStartingSpread(id) ?? { ...scores };
 }
 
 /**
