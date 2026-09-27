@@ -211,8 +211,24 @@ The spec's Step 1 and Files table called for `src/components/dice-roller/dice-ut
 
 The spec did not plan unit tests. The implementation adds `dice-utils.test.ts` (utility behaviour, created in PR #67 and extended by follow-up PRs) and `dice-roller.test.ts` (asserts `DiceRoller.astro` uses Starlight accent variables instead of hardcoded blue, PR #180). Reason: `vitest` is the repo's configured test runner, the pure utilities are directly unit-testable, and the component assertion guards the theme-color fix against regressions.
 
+### 4. Layout: ruled rows, not a responsive tile grid (PR #375)
+
+The Goals and Step 2 describe an ability **grid** of tiles, and Accepted Deviation 1 above quotes the original `grid grid-cols-3 lg:grid-cols-6` markup. The shipped component is **one ability per row at every viewport width**, with no `grid-cols-` utility in its markup. A dotted leader runs out from each ability name to its dice tray, which is the same device the Point Buy ledger uses. Reason: a grid makes the viewport decide how many abilities fit, so every content change re-opens a breakpoint negotiation - raising the die size, adding the tray's padding, and printing full ability names each moved the tile's content floor. A row's width is the content column's, and its columns each have a stable floor, so the narrowest row is asserted against a 320px viewport instead. See [ADR-0009](../../adr/0009-phone-first-grids-and-touch-targets.md) for the original 44px/16px floors, which are unchanged, and [ADR-0014](../../adr/0014-tool-rows-not-tiles.md) for this decision.
+
+### 5. Ephemeral JSON output: not implemented
+
+The Goals list "Generate ephemeral JSON output for temporary character stats", Step 2 item 4 and AC 9 call for a `characterStats` JSON block, and Step 4 specifies the `copyJson` fallback path. **None of this shipped, and it never has.** There is no `characterStats` in the Alpine state, no `application/json` script block, and no copy control in the shipped component; the log and the Stats card are the only record of a roll. Reason: recorded here as a deviation rather than a defect because the feature has no consumer on the site - the character pages read their data from the XML character files, not from a roll - and shipping a JSON block nothing reads would be a second source of truth for a character sheet. **This is a real gap against the spec and has never been flagged in a review, which is what this entry is for.** If a future feature needs to hand a roll to something, the deviation should be revisited rather than inherited.
+
+### 6. Styling: a scoped `<style>` block, not Tailwind utilities (PR #375)
+
+Accepted Deviation 1 above recorded that styling ships as Tailwind utilities on the markup. That is no longer true. The surface is now painted from a scoped `<style>` block in `DiceRoller.astro` using `--dr-*` custom properties, because the panel needs per-theme values that a utility class cannot express (the dice tray steps *into* the panel in each theme, and the die's rim is Gold Rule Dark in dark and Bark 600 in light). Utilities are still used for the few declarations that genuinely are utilities - the roll button's accent-contrast fill and its inverted label, and `animate-pulse`-style state. Reason: the tool panel is one themed surface with an internal token set, and expressing it as utilities produced a stylesheet that could not be reasoned about per theme. The `--dr-*` set is now guarded by a test that asserts every property declared for light is re-declared for dark, the same invariant the sibling `--pb-*` set has.
+
+### 7. Display names, not three-letter codes (PR #375)
+
+The Goals list the abilities as `(STR, DEX, CON, INT, WIS, CHA)` and that form shipped until PR #375. The rows, the `aria-label`s, the roll log, the swap panel and the live region now all print the sheet's full names - Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma - from a shared `ABILITY_LABELS` table in `dice-utils.ts`. The short codes remain the *key* the maths, the presets and the score trade address, and are never printed. Reason: a player reads "Constitution" on a character sheet, and the Point Buy tool beside it already printed the full names, so the two tools disagreed about the same six abilities.
+
 ## Status
 
 - [x] Implementation complete
-- [x] Tests passing (112 unit tests, build verified)
-- [x] ADR updated (no new decisions)
+- [x] Tests passing (836 unit tests, build verified)
+- [x] ADR updated ([ADR-0014](../../adr/0014-tool-rows-not-tiles.md) supersedes ADR-0009 Decision 1; the 44px and 16px floors are unchanged)

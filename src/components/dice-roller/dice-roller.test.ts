@@ -758,13 +758,56 @@ describe('DiceRoller responsive layout', () => {
    * arithmetic for as long as the dice sat directly on the panel. The dice grew
    * from 1.5rem to 1.75rem, the tray took 0.3125rem of padding and a 1px rule
    * around them, and the plate went to 5rem, so every number this describe
-   * block reads moved at once. `diceRow` now carries the tray's padding and its
-   * two borders; without it the 320px assertion passed on a row that was 22px
-   * wider than the number it was checking.
+   * block reads moved at once.
+   *
+   * The assertion is that the floor is strictly wider than the four bare dice,
+   * NOT that it equals the formula - comparing `diceRow()` to its own definition
+   * cannot fail, and would have sat here looking like a guard on the very thing
+   * it restated. This form fails for the regression that actually happened:
+   * someone deleting the tray's terms from `diceRow` and quietly checking a row
+   * narrower than the one that ships.
    */
+  /**
+   * Every `--dr-*` property declared for the light theme is re-declared for the
+   * dark one, and the check is structural rather than a value comparison: a
+   * property added to one block and forgotten in the other fails here without
+   * anyone having to remember the rule.
+   *
+   * This is the invariant DESIGN.md states for the Ledger Panel and
+   * `point-buy.test.ts` enforces with the same shape, and it exists because the
+   * bug it catches is invisible in one theme: a token left at its light value
+   * renders correctly on the theme you are looking at.
+   *
+   * `die-size` and `accent` are exempt, and legitimately so. The die is one
+   * measured size on the surface, not a themed one - it is read by the
+   * row-floor arithmetic, and a dark-theme override would silently invalidate
+   * every number that block computes. `accent` is the live Starlight token,
+   * which already carries both themes.
+   */
+  it('re-declares every themed property for the dark theme', () => {
+    const light = source.match(/\n {2}\.dr \{([\s\S]*?)\n {2}\}/)?.[1] ?? '';
+    const dark =
+      source.match(/:global\(:root\[data-theme='dark'\]\) \.dr \{([\s\S]*?)\n {2}\}/)?.[1] ??
+      '';
+    const THEME_OWNS = new Set(['accent', 'die-size']);
+    const props = [...light.matchAll(/--dr-([a-z-]+):/g)].map((m) => m[1]);
+    expect(props.length, 'no --dr-* properties found in the light block').toBeGreaterThan(6);
+    for (const prop of props.filter((p) => !THEME_OWNS.has(p))) {
+      expect(
+        dark.includes(`--dr-${prop}:`),
+        `--dr-${prop} is never re-declared for the dark theme`
+      ).toBe(true);
+    }
+  });
+
   it('counts the tray, not just the dice, in the row floor', () => {
+    const bareDice = 4 * dieSize() + 3 * dieGap();
+    // The tray has to declare its padding at all, or `trayPad()` throws rather
+    // than reading a zero and letting the row look like it fits.
     expect(trayPad()).toBeGreaterThan(0);
-    expect(diceRow()).toBe(4 * dieSize() + 3 * dieGap() + 2 * trayPad() + 2);
+    expect(diceRow(), 'the row floor ignores the tray around the dice').toBeGreaterThan(
+      bareDice
+    );
   });
 
   it('declares the re-roll fill and border so it cannot paint the default form control', () => {

@@ -844,13 +844,51 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
     }
   }
 
+  /* The rolling indicator. A 2px accent bar at the row's own lower edge, and it
+     has to *move*: on `main` this was `animate-pulse`, and the rework replaced it
+     with a static bar, which silently dropped a spec requirement (AC 8, "during
+     roll, button disabled, animation playing") and, worse, dropped the only
+     signal that a row is mid-roll. The re-roll button is disabled for the whole
+     300ms, so without motion a press gives no feedback at all until the dice
+     land.
+     The motion is a sweep of the bar's own width rather than an opacity pulse,
+     so it reads as the row filling rather than as the row blinking, and it is
+     suppressed under `prefers-reduced-motion` - a decorative loop is exactly
+     what that preference is for. */
   .dr-pulse {
     position: absolute;
     inset-inline: 0;
     bottom: -1px;
     height: 2px;
-    background: var(--dr-accent);
+    overflow: hidden;
+    background: color-mix(in srgb, var(--dr-accent) 22%, transparent);
     z-index: 5;
+  }
+
+  .dr-pulse::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 40%;
+    background: var(--dr-accent);
+    animation: dr-sweep 900ms cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+
+  @keyframes dr-sweep {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(350%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dr-pulse::after {
+      animation: none;
+      width: 100%;
+    }
   }
 
   .dr-foot {

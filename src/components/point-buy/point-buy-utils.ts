@@ -3,15 +3,16 @@ import {
   ABILITY_NAMES,
   calculateModifier,
   formatModifier,
-} from "../dice-roller/dice-utils";
+} from '../dice-roller/dice-utils';
 
 export { calculateModifier, formatModifier };
 
 // Re-exported rather than redeclared: the six abilities are the same six in
 // both tools, and two lists would drift. `ABILITY_LABELS` moved to
-// `dice-utils.ts` beside the codes; it used to be declared here while its own
-// comment claimed all three tools shared it, which left the dice roller printing
-// three-letter codes. Re-exported here so this module's importers are unchanged.
+// `dice-utils.ts` beside the codes it maps; it used to be declared here while its
+// own comment claimed all three tools shared it, which is what left the dice
+// roller printing three-letter codes - labelling its own rows would have meant
+// importing a sibling tool's utils, and nothing obliged it to.
 export { ABILITY_LABELS, ABILITY_NAMES };
 
 export type AbilityName = (typeof ABILITY_NAMES)[number];
@@ -53,10 +54,7 @@ export function resetScores(scores: Scores): Scores {
 }
 
 export function pointsSpent(scores: Scores): number {
-  return ABILITY_NAMES.reduce(
-    (total, ability) => total + getScoreCost(scores[ability]),
-    0,
-  );
+  return ABILITY_NAMES.reduce((total, ability) => total + getScoreCost(scores[ability]), 0);
 }
 
 export function pointsRemaining(scores: Scores): number {
@@ -71,10 +69,7 @@ export function pointsRemaining(scores: Scores): number {
  * character than one that spends 25.
  */
 export function totalModifier(scores: Scores): number {
-  return ABILITY_NAMES.reduce(
-    (total, ability) => total + calculateModifier(scores[ability]),
-    0,
-  );
+  return ABILITY_NAMES.reduce((total, ability) => total + calculateModifier(scores[ability]), 0);
 }
 
 /**
@@ -87,27 +82,23 @@ export function totalModifier(scores: Scores): number {
  * `point-buy.test.ts` pins every one of them to the pool, so adding one
  * here without costing it out fails the build rather than shipping.
  */
-export const STARTING_SPREADS: ReadonlyArray<{
-  id: string;
-  label: string;
-  scores: Scores;
-}> = [
+export const STARTING_SPREADS: ReadonlyArray<{ id: string; label: string; scores: Scores }> = [
   {
-    id: "standard-array",
-    label: "Standard Array",
+    id: 'standard-array',
+    label: 'Standard Array',
     scores: { STR: 15, DEX: 14, CON: 13, INT: 12, WIS: 10, CHA: 8 },
   },
   {
-    id: "striker",
-    label: "Striker",
+    id: 'striker',
+    label: 'Striker',
     scores: { STR: 15, DEX: 15, CON: 14, INT: 8, WIS: 10, CHA: 8 },
   },
   {
     // `caster`, not `sage`: `sage` is a colour token in this system, and an id
     // that reads as a hex-adjacent palette name is a name that will eventually
     // be grepped as one.
-    id: "caster",
-    label: "Caster",
+    id: 'caster',
+    label: 'Caster',
     scores: { STR: 8, DEX: 14, CON: 14, INT: 15, WIS: 12, CHA: 8 },
   },
 ];
@@ -151,9 +142,7 @@ export function nextStepCost(score: number): number {
  */
 export function formatCostLine(score: number): string {
   const total = `Cost ${getScoreCost(score)}`;
-  return score >= MAX_SCORE
-    ? `${total}, max`
-    : `${total}, next +${nextStepCost(score)}`;
+  return score >= MAX_SCORE ? `${total}, max` : `${total}, next +${nextStepCost(score)}`;
 }
 
 export function canIncrease(scores: Scores, ability: AbilityName): boolean {
@@ -196,11 +185,7 @@ export function decreaseScore(scores: Scores, ability: AbilityName): Scores {
  * Copy, never mutate: `scores` is the Alpine component's own state and every
  * other helper here hands back a fresh object.
  */
-export function tradeScores(
-  scores: Scores,
-  from: AbilityName,
-  to: AbilityName,
-): Scores {
+export function tradeScores(scores: Scores, from: AbilityName, to: AbilityName): Scores {
   if (from === to) {
     return { ...scores };
   }
@@ -225,7 +210,7 @@ export function applyStartingSpread(scores: Scores, id: string): Scores {
 export function formatTotalModifier(scores: Scores): string {
   const total = totalModifier(scores);
   if (total === 0) {
-    return "0";
+    return '0';
   }
   return total > 0 ? `+${total}` : String(total);
 }
