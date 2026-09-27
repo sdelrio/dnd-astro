@@ -1,64 +1,527 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-25T00:00:00Z",
+  "generatedAt": "2026-09-27T00:00:00Z",
   "title": "Design System: D&D Companion",
   "extensions": {
     "colorMeta": {
-      "sap": { "role": "primary", "displayName": "Sap Amber", "canonical": "#f7860f", "tonalRamp": ["#3b1e00", "#5c3000", "#7d4300", "#9e5700", "#bf6c00", "#f7860f", "#f9a44a", "#fccf97"] },
-      "sage": { "role": "primary", "displayName": "Sage", "canonical": "#697066", "tonalRamp": ["#1c2119", "#2b3328", "#394036", "#4e5849", "#697066", "#8b9188", "#b9c0b6", "#dfe3dc"] },
-      "oxblood": { "role": "tertiary", "displayName": "Oxblood", "canonical": "#58180d", "tonalRamp": ["#2a0b06", "#3f1109", "#58180d", "#73220f", "#943318", "#b84a2c", "#d6795f", "#eeb7a6"] },
-      "gold": { "role": "tertiary", "displayName": "Gold Leaf", "canonical": "#c68000", "tonalRamp": ["#4a2f00", "#6e4700", "#926000", "#b87900", "#c68000", "#d9a53c", "#e9c777", "#f6e4b8"] },
-      "gold-rule": { "role": "tertiary", "displayName": "Gold Rule", "canonical": "#c9ad6a", "tonalRamp": ["#4d3f1f", "#6f5c31", "#907a45", "#b0995c", "#c9ad6a", "#d9c48d", "#e8dbb4", "#f5efd9"] },
-      "gold-rule-dark": { "role": "tertiary", "displayName": "Gold Rule Dark", "canonical": "#867347", "tonalRamp": ["#2a2313", "#3d3320", "#50442c", "#655638", "#867347", "#a08d63", "#bdaa86", "#dccba8"] },
-      "surface-white": { "role": "neutral", "displayName": "Surface White", "canonical": "#ffffff", "tonalRamp": ["#1b1716", "#2e2421", "#3f3632", "#605552", "#948985", "#c7c0be", "#f1eceb", "#ffffff"] },
-      "parchment": { "role": "neutral", "displayName": "Parchment", "canonical": "#d4c4a8", "tonalRamp": ["#4a3f2c", "#6b5c41", "#8c7958", "#ad966f", "#d4c4a8", "#e2d6c1", "#efe8da", "#f9f5ee"] },
-      "ink": { "role": "neutral", "displayName": "Ink", "canonical": "#2a2010", "tonalRamp": ["#1a1308", "#2a2010", "#3d2f17", "#513f1f", "#6b5529", "#94793f", "#c2a876", "#e6d8bb"] },
-      "bark-700": { "role": "neutral", "displayName": "Bark Dark", "canonical": "#3f3632", "tonalRamp": ["#1b1716", "#2e2421", "#3f3632", "#605552", "#948985", "#c7c0be", "#f1eceb", "#f8f6f5"] },
-      "bark-650": { "role": "neutral", "displayName": "Bark 650 Hairline", "canonical": "#4a403a", "tonalRamp": ["#201b18", "#2e2421", "#3f3632", "#4a403a", "#6b5e56", "#948985", "#c7c0be", "#f1eceb"] },
-      "bark-black": { "role": "neutral", "displayName": "Bark Black", "canonical": "#1b1716", "tonalRamp": ["#0d0b0a", "#1b1716", "#2e2421", "#3f3632", "#605552", "#948985", "#c7c0be", "#f1eceb"] },
-      "bark-800": { "role": "neutral", "displayName": "Bark 800", "canonical": "#2e2421", "tonalRamp": ["#161210", "#2e2421", "#3f3632", "#4a403a", "#605552", "#948985", "#c7c0be", "#f1eceb"] },
-      "bark-600": { "role": "neutral", "displayName": "Bark 600", "canonical": "#605552", "tonalRamp": ["#241d19", "#3f3632", "#4a403a", "#605552", "#948985", "#c7c0be", "#e0dad6", "#f1eceb"] },
-      "bark-500": { "role": "neutral", "displayName": "Bark 500", "canonical": "#948985", "tonalRamp": ["#2a231f", "#4a403a", "#605552", "#7d726d", "#948985", "#b5aca6", "#dcd6d1", "#f1eceb"] },
-      "bark-400": { "role": "neutral", "displayName": "Bark 400", "canonical": "#c7c0be", "tonalRamp": ["#332b26", "#4a403a", "#6b5e56", "#948985", "#b5aca6", "#c7c0be", "#e0dad6", "#f4f0ec"] },
-      "bark-200": { "role": "neutral", "displayName": "Bark 200", "canonical": "#f1eceb", "tonalRamp": ["#2a231f", "#605552", "#948985", "#c7c0be", "#dcd6d1", "#e6e0dc", "#f1eceb", "#fbf9f7"] },
-      "bark-100": { "role": "neutral", "displayName": "Bark Paper", "canonical": "#f8f6f5", "tonalRamp": ["#1b1716", "#2e2421", "#3f3632", "#605552", "#948985", "#c7c0be", "#f1eceb", "#f8f6f5"] },
-      "moss-700": { "role": "secondary", "displayName": "Moss", "canonical": "#404521", "tonalRamp": ["#1c1f0b", "#282c10", "#363b17", "#404521", "#5f682c", "#8a974e", "#b7c489", "#e8ede1"] }
+      "sap": {
+        "role": "primary",
+        "displayName": "Sap Amber",
+        "canonical": "#f7860f",
+        "tonalRamp": [
+          "#3b1e00",
+          "#5c3000",
+          "#7d4300",
+          "#9e5700",
+          "#bf6c00",
+          "#f7860f",
+          "#f9a44a",
+          "#fccf97"
+        ]
+      },
+      "sage": {
+        "role": "primary",
+        "displayName": "Sage",
+        "canonical": "#697066",
+        "tonalRamp": [
+          "#1c2119",
+          "#2b3328",
+          "#394036",
+          "#4e5849",
+          "#697066",
+          "#8b9188",
+          "#b9c0b6",
+          "#dfe3dc"
+        ]
+      },
+      "oxblood": {
+        "role": "tertiary",
+        "displayName": "Oxblood",
+        "canonical": "#58180d",
+        "tonalRamp": [
+          "#2a0b06",
+          "#3f1109",
+          "#58180d",
+          "#73220f",
+          "#943318",
+          "#b84a2c",
+          "#d6795f",
+          "#eeb7a6"
+        ]
+      },
+      "gold": {
+        "role": "tertiary",
+        "displayName": "Gold Leaf",
+        "canonical": "#c68000",
+        "tonalRamp": [
+          "#4a2f00",
+          "#6e4700",
+          "#926000",
+          "#b87900",
+          "#c68000",
+          "#d9a53c",
+          "#e9c777",
+          "#f6e4b8"
+        ]
+      },
+      "gold-rule": {
+        "role": "tertiary",
+        "displayName": "Gold Rule",
+        "canonical": "#c9ad6a",
+        "tonalRamp": [
+          "#4d3f1f",
+          "#6f5c31",
+          "#907a45",
+          "#b0995c",
+          "#c9ad6a",
+          "#d9c48d",
+          "#e8dbb4",
+          "#f5efd9"
+        ]
+      },
+      "gold-rule-dark": {
+        "role": "tertiary",
+        "displayName": "Gold Rule Dark",
+        "canonical": "#867347",
+        "tonalRamp": [
+          "#2a2313",
+          "#3d3320",
+          "#50442c",
+          "#655638",
+          "#867347",
+          "#a08d63",
+          "#bdaa86",
+          "#dccba8"
+        ]
+      },
+      "surface-white": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#1b1716",
+          "#2e2421",
+          "#3f3632",
+          "#605552",
+          "#948985",
+          "#c7c0be",
+          "#f1eceb",
+          "#ffffff"
+        ]
+      },
+      "parchment": {
+        "role": "neutral",
+        "displayName": "Parchment",
+        "canonical": "#d4c4a8",
+        "tonalRamp": [
+          "#4a3f2c",
+          "#6b5c41",
+          "#8c7958",
+          "#ad966f",
+          "#d4c4a8",
+          "#e2d6c1",
+          "#efe8da",
+          "#f9f5ee"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#2a2010",
+        "tonalRamp": [
+          "#1a1308",
+          "#2a2010",
+          "#3d2f17",
+          "#513f1f",
+          "#6b5529",
+          "#94793f",
+          "#c2a876",
+          "#e6d8bb"
+        ]
+      },
+      "bark-700": {
+        "role": "neutral",
+        "displayName": "Bark Dark",
+        "canonical": "#3f3632",
+        "tonalRamp": [
+          "#1b1716",
+          "#2e2421",
+          "#3f3632",
+          "#605552",
+          "#948985",
+          "#c7c0be",
+          "#f1eceb",
+          "#f8f6f5"
+        ]
+      },
+      "bark-650": {
+        "role": "neutral",
+        "displayName": "Bark 650 Hairline",
+        "canonical": "#4a403a",
+        "tonalRamp": [
+          "#201b18",
+          "#2e2421",
+          "#3f3632",
+          "#4a403a",
+          "#6b5e56",
+          "#948985",
+          "#c7c0be",
+          "#f1eceb"
+        ]
+      },
+      "bark-black": {
+        "role": "neutral",
+        "displayName": "Bark Black",
+        "canonical": "#1b1716",
+        "tonalRamp": [
+          "#0d0b0a",
+          "#1b1716",
+          "#2e2421",
+          "#3f3632",
+          "#605552",
+          "#948985",
+          "#c7c0be",
+          "#f1eceb"
+        ]
+      },
+      "bark-800": {
+        "role": "neutral",
+        "displayName": "Bark 800",
+        "canonical": "#2e2421",
+        "tonalRamp": [
+          "#161210",
+          "#2e2421",
+          "#3f3632",
+          "#4a403a",
+          "#605552",
+          "#948985",
+          "#c7c0be",
+          "#f1eceb"
+        ]
+      },
+      "bark-600": {
+        "role": "neutral",
+        "displayName": "Bark 600",
+        "canonical": "#605552",
+        "tonalRamp": [
+          "#241d19",
+          "#3f3632",
+          "#4a403a",
+          "#605552",
+          "#948985",
+          "#c7c0be",
+          "#e0dad6",
+          "#f1eceb"
+        ]
+      },
+      "bark-500": {
+        "role": "neutral",
+        "displayName": "Bark 500",
+        "canonical": "#948985",
+        "tonalRamp": [
+          "#2a231f",
+          "#4a403a",
+          "#605552",
+          "#7d726d",
+          "#948985",
+          "#b5aca6",
+          "#dcd6d1",
+          "#f1eceb"
+        ]
+      },
+      "bark-400": {
+        "role": "neutral",
+        "displayName": "Bark 400",
+        "canonical": "#c7c0be",
+        "tonalRamp": [
+          "#332b26",
+          "#4a403a",
+          "#6b5e56",
+          "#948985",
+          "#b5aca6",
+          "#c7c0be",
+          "#e0dad6",
+          "#f4f0ec"
+        ]
+      },
+      "bark-200": {
+        "role": "neutral",
+        "displayName": "Bark 200",
+        "canonical": "#f1eceb",
+        "tonalRamp": [
+          "#2a231f",
+          "#605552",
+          "#948985",
+          "#c7c0be",
+          "#dcd6d1",
+          "#e6e0dc",
+          "#f1eceb",
+          "#fbf9f7"
+        ]
+      },
+      "bark-100": {
+        "role": "neutral",
+        "displayName": "Bark Paper",
+        "canonical": "#f8f6f5",
+        "tonalRamp": [
+          "#1b1716",
+          "#2e2421",
+          "#3f3632",
+          "#605552",
+          "#948985",
+          "#c7c0be",
+          "#f1eceb",
+          "#f8f6f5"
+        ]
+      },
+      "moss-700": {
+        "role": "secondary",
+        "displayName": "Moss",
+        "canonical": "#404521",
+        "tonalRamp": [
+          "#1c1f0b",
+          "#282c10",
+          "#363b17",
+          "#404521",
+          "#5f682c",
+          "#8a974e",
+          "#b7c489",
+          "#e8ede1"
+        ]
+      },
+      "sap-low": {
+        "role": "primary",
+        "displayName": "Sap Low (deep olive)",
+        "canonical": "#293400",
+        "tonalRamp": [
+          "#080e00",
+          "#1d2600",
+          "#293400",
+          "#4f5b32",
+          "#6c7751",
+          "#99a383",
+          "#c9d2b7",
+          "#ebf2dc"
+        ]
+      },
+      "sap-light": {
+        "role": "primary",
+        "displayName": "Sap Light (chlorophyll)",
+        "canonical": "#d1dfa5",
+        "tonalRamp": [
+          "#0a0d02",
+          "#202411",
+          "#383e25",
+          "#52593b",
+          "#6e7652",
+          "#9aa577",
+          "#d1dfa5",
+          "#e9f6bf"
+        ]
+      },
+      "sage-deep": {
+        "role": "secondary",
+        "displayName": "Sage Deep",
+        "canonical": "#394036",
+        "tonalRamp": [
+          "#080d07",
+          "#1e241b",
+          "#394036",
+          "#51584e",
+          "#6d746b",
+          "#9ba098",
+          "#cbcfc9",
+          "#ecf0ea"
+        ]
+      },
+      "sage-light": {
+        "role": "secondary",
+        "displayName": "Sage Light",
+        "canonical": "#b9c0b6",
+        "tonalRamp": [
+          "#0a0c09",
+          "#20231f",
+          "#383c37",
+          "#535751",
+          "#6e736c",
+          "#9aa198",
+          "#b9c0b6",
+          "#eaf1e8"
+        ]
+      },
+      "moss-100": {
+        "role": "secondary",
+        "displayName": "Pale Sage Stripe",
+        "canonical": "#e8ede1",
+        "tonalRamp": [
+          "#1c1f0b",
+          "#282c10",
+          "#363b17",
+          "#404521",
+          "#5f682c",
+          "#8a974e",
+          "#b7c489",
+          "#e8ede1"
+        ]
+      },
+      "moss-800": {
+        "role": "secondary",
+        "displayName": "Moss 800",
+        "canonical": "#363b17",
+        "tonalRamp": [
+          "#1c1f0b",
+          "#282c10",
+          "#363b17",
+          "#404521",
+          "#5f682c",
+          "#8a974e",
+          "#b7c489",
+          "#e8ede1"
+        ]
+      },
+      "bark-500-lift": {
+        "role": "neutral",
+        "displayName": "Bark 500, lifted",
+        "canonical": "#9a908c",
+        "tonalRamp": [
+          "#0e0a09",
+          "#25201e",
+          "#3f3937",
+          "#5b5351",
+          "#786f6c",
+          "#9a908c",
+          "#d4ccc8",
+          "#f5ece9"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Display", "purpose": "Section headings (h2) and card titles; inscriptional capitals only." },
-      "headline": { "displayName": "Headline", "purpose": "Subsection headings (h3), shipped lighter than Starlight's default at weight 500." },
-      "title": { "displayName": "Title", "purpose": "h4 and component names; regular weight to keep density calm." },
-      "body": { "displayName": "Body", "purpose": "Rules prose, max 55rem at wide viewports." },
-      "table": { "displayName": "Table", "purpose": "Markdown tables and statblock tables; ScalySans." },
-      "card-heading": { "displayName": "Card Heading", "purpose": "The character name in Cinzel - the largest type on a Card and the only display-face use inside a component." },
-      "card-meta": { "displayName": "Card Meta", "purpose": "Race, class and subclass in uppercase ScalySans, tracked out beneath the Cinzel name." },
-      "micro-label": { "displayName": "Micro Label", "purpose": "9px uppercase stat label (Hit Points); the smallest step in the system." },
-      "micro-value": { "displayName": "Micro Value", "purpose": "10px secondary values and statblock legends in the card body." },
-      "pill": { "displayName": "Pill", "purpose": "11px uppercase tag and role-chip text, shared by the card heading and the party filters." },
-      "label": { "displayName": "Label", "purpose": "Uppercase micro-labels above stat values." },
-      "metric": { "displayName": "Metric", "purpose": "Numeric values in stat tiles; monospaced when read as data." }
+      "display": {
+        "displayName": "Display",
+        "purpose": "Section headings (h2) and card titles; inscriptional capitals only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Subsection headings (h3), shipped lighter than Starlight's default at weight 500."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "h4 and component names; regular weight to keep density calm."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Rules prose, max 55rem at wide viewports."
+      },
+      "table": {
+        "displayName": "Table",
+        "purpose": "Markdown tables and statblock tables; ScalySans."
+      },
+      "card-heading": {
+        "displayName": "Card Heading",
+        "purpose": "The character name in Cinzel - the largest type on a Card and the only display-face use inside a component."
+      },
+      "card-meta": {
+        "displayName": "Card Meta",
+        "purpose": "Race, class and subclass in uppercase ScalySans, tracked out beneath the Cinzel name."
+      },
+      "micro-label": {
+        "displayName": "Micro Label",
+        "purpose": "9px uppercase stat label (Hit Points); the smallest step in the system."
+      },
+      "micro-value": {
+        "displayName": "Micro Value",
+        "purpose": "10px secondary values and statblock legends in the card body."
+      },
+      "pill": {
+        "displayName": "Pill",
+        "purpose": "11px uppercase tag and role-chip text, shared by the card heading and the party filters."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase micro-labels above stat values."
+      },
+      "metric": {
+        "displayName": "Metric",
+        "purpose": "Numeric values in stat tiles; monospaced when read as data."
+      }
     },
     "shadows": [
-      { "name": "card-rest", "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)", "purpose": "Default card and input resting state (Tailwind shadow-sm)." },
-      { "name": "card-hover", "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)", "purpose": "Hover lift on interactive cards and active chips (Tailwind shadow-md)." },
-      { "name": "aside", "value": "0 0.25em 1.25em -0.5em rgba(0,0,0,0.5)", "purpose": "Advisory callout ribbon; transitions over 400ms ease-in-out." }
+      {
+        "name": "card-rest",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Default card and input resting state (Tailwind shadow-sm)."
+      },
+      {
+        "name": "card-hover",
+        "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        "purpose": "Hover lift on interactive cards and active chips (Tailwind shadow-md)."
+      },
+      {
+        "name": "aside",
+        "value": "0 0.25em 1.25em -0.5em rgba(0,0,0,0.5)",
+        "purpose": "Advisory callout ribbon; transitions over 400ms ease-in-out."
+      }
     ],
     "motion": [
-      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for color and shadow state transitions." },
-      { "name": "colors", "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Button, chip, and input hover transitions." },
-      { "name": "shadow", "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Card hover lift." },
-      { "name": "aside-shadow", "value": "400ms ease-in-out", "purpose": "Admonition callout shadow." },
-      { "name": "dice-stagger", "value": "300ms roll, 150ms stagger", "purpose": "Dice Roller reveals abilities one at a time." }
+      {
+        "name": "ease-standard",
+        "value": "cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default easing for color and shadow state transitions."
+      },
+      {
+        "name": "colors",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Button, chip, and input hover transitions."
+      },
+      {
+        "name": "shadow",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Card hover lift."
+      },
+      {
+        "name": "aside-shadow",
+        "value": "400ms ease-in-out",
+        "purpose": "Admonition callout shadow."
+      },
+      {
+        "name": "dice-stagger",
+        "value": "300ms roll, 150ms stagger",
+        "purpose": "Dice Roller reveals abilities one at a time."
+      }
     ],
     "breakpoints": [
-      { "name": "sm", "value": "640px" },
-      { "name": "md", "value": "768px" },
-      { "name": "lg", "value": "1024px" },
-      { "name": "xl", "value": "1280px" },
-      { "name": "container-@md", "value": "28rem" },
-      { "name": "container-@lg", "value": "32rem" },
-      { "name": "container-@6xl", "value": "72rem" },
-      { "name": "container-@7xl", "value": "80rem" }
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      },
+      {
+        "name": "container-@md",
+        "value": "28rem"
+      },
+      {
+        "name": "container-@lg",
+        "value": "32rem"
+      },
+      {
+        "name": "container-@6xl",
+        "value": "72rem"
+      },
+      {
+        "name": "container-@7xl",
+        "value": "80rem"
+      }
     ]
   },
   "components": [
@@ -66,9 +529,9 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "The single primary action in a view; Sap Amber fill, dark text, lifts on hover.",
+      "description": "The single primary action in a view. The fill is --sl-color-accent-contrast, not the accent: the label is --sl-color-text-invert, which Shoelace resolves to accent-low and not to white, so on the accent itself the pairing is 5.28:1 in dark but only 2.74:1 in light. ScalySans 0.8125rem uppercase, 44px floor, and a gilt inner rule 3px inside the slab so the action reads as a struck plate rather than a coloured rectangle.",
       "html": "<button class=\"ds-btn-primary\">Roll All Abilities</button>",
-      "css": ".ds-btn-primary { background: var(--sl-color-accent, #f7860f); color: #1b1716; padding: 12px 24px; border: none; border-radius: 8px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); transition: background-color 150ms cubic-bezier(0.4,0,0.2,1), box-shadow 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { background: var(--sl-color-accent-high, #d1dfa5); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); } .ds-btn-primary:focus-visible { outline: 2px solid var(--sl-color-accent, #f7860f); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+      "css": ".ds-btn-primary { position: relative; display: inline-flex; min-height: 2.75rem; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border: 0; border-radius: 8px; cursor: pointer; background: var(--sl-color-accent-contrast, #f7860f); color: var(--sl-color-text-invert); font-family: 'ScalySans', Georgia, serif; font-size: 0.8125rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; transition: background-color 150ms ease-out; } .ds-btn-primary::after { content: ''; position: absolute; inset: 3px; border-radius: 5px; pointer-events: none; background: linear-gradient(var(--ds-gilt), var(--ds-gilt)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; padding: 1px; --ds-gilt: linear-gradient(rgb(201 173 106 / 0.4), rgb(201 173 106 / 0.4)); } .ds-btn-primary:hover { background: var(--sl-color-accent-high, #d1dfa5); } .ds-btn-primary:focus-visible { outline: 2px solid var(--sl-color-accent, #f7860f); outline-offset: 2px; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
     },
     {
       "name": "Outline Icon Button",
@@ -82,7 +545,7 @@
       "name": "Search Input",
       "kind": "input",
       "refersTo": "input",
-      "description": "Text/search field with a 14px label above. Screenshot target: focus should be Sap Amber, not the incumbent blue-500 ring.",
+      "description": "Text and select field with a 14px medium label above. Focus is a 2px ring and border shift in --sl-color-accent, in both themes; this replaced a blue-500 ring, the last element that read as generic SaaS. 44px floor and a 16px font below sm, because iOS Safari zooms the page on a sub-16px focused input.",
       "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Search feats</span><input class=\"ds-input\" type=\"text\" placeholder=\"Type a feat name...\" /></label>",
       "css": ".ds-field { display: flex; flex-direction: column; gap: 4px; font-family: ui-sans-serif, system-ui, sans-serif; } .ds-field-label { font-size: 14px; font-weight: 500; color: #c7c0be; } .ds-input { width: 100%; box-sizing: border-box; padding: 8px 16px; font-size: 14px; color: #f1eceb; background: #1b1716; border: 1px solid #3f3632; border-radius: 8px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); transition: border-color 150ms cubic-bezier(0.4,0,0.2,1), box-shadow 150ms cubic-bezier(0.4,0,0.2,1); } .ds-input::placeholder { color: #948985; } .ds-input:focus { outline: none; border-color: var(--sl-color-accent, #f7860f); box-shadow: 0 0 0 2px var(--sl-color-accent, #f7860f); }"
     },
@@ -105,7 +568,7 @@
     {
       "name": "Arch Ability Tile",
       "kind": "card",
-      "refersTo": "stat-tile",
+      "refersTo": "arch-ability-tile",
       "description": "The signature silhouette: 45% top corners, 8px bottom, accent cap, ability modifier over score.",
       "html": "<div class=\"ds-ability-tile\"><div class=\"ds-ability-label\">STR</div><div class=\"ds-ability-value\">+3</div><div class=\"ds-ability-sub\">16</div></div>",
       "css": ".ds-ability-tile { display: flex; flex-direction: column; gap: 1px; padding: 8px; text-align: center; background: #1b1716; border: 1px solid #3f3632; border-top: 3px solid #c68000; border-top-left-radius: 45%; border-top-right-radius: 45%; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; font-family: ui-sans-serif, system-ui, sans-serif; } .ds-ability-label { font-size: 12px; font-weight: 600; text-transform: uppercase; color: #948985; } .ds-ability-value { font-size: 20px; font-weight: 700; line-height: 1.1; color: #f1eceb; } .ds-ability-sub { font-size: 14px; color: #c7c0be; }"
@@ -136,58 +599,107 @@
     {
       "name": "Admonition Ribbon",
       "kind": "custom",
-      "description": "Scroll-like callout: zero radius, 2px top/bottom type border, pointed ribbon ends. Shown as a note.",
+      "description": "Scroll-like callout: zero radius, 2px top and bottom type border, triangle-notched ends. Only the four Starlight types exist and all four are warm - this is the light-theme note (border Sage #697066, title Sage Deep #394036, fill Bark 100 #f8f6f5); every type steps lighter for its border in dark, because the dark fills sit close enough to the light border values that the border vanished against them.",
       "html": "<aside class=\"ds-admonition\">Remember that a long rest restores all hit points.</aside>",
-      "css": ".ds-admonition { padding: 8px 16px; background: #1e3a5f; color: #f1eceb; border-top: 2px solid #2563eb; border-bottom: 2px solid #2563eb; border-radius: 0; box-shadow: 0 0.25em 1.25em -0.5em rgba(0,0,0,0.5); clip-path: polygon(0.6em 0, calc(100% - 0.6em) 0, 100% 50%, calc(100% - 0.6em) 100%, 0.6em 100%, 0 50%); font-family: 'ScalySans', Georgia, serif; font-size: 15px; line-height: 1.5; transition: box-shadow 400ms ease-in-out; }"
+      "css": ".ds-admonition { padding: 8px 16px; background: #f8f6f5; color: #2a2010; border-top: 2px solid #697066; border-bottom: 2px solid #697066; border-radius: 0; box-shadow: 0 0.25em 1.25em -0.5em rgba(0,0,0,0.5); font-family: 'ScalySans', Georgia, serif; font-size: 0.75rem; line-height: 1.5; position: relative; transition: box-shadow 400ms ease-in-out; } .ds-admonition::before, .ds-admonition::after { content: ''; position: absolute; top: -0.5em; bottom: -0.5em; width: 0.5em; background: inherit; z-index: 0; } .ds-admonition::before { left: 0; clip-path: polygon(0.5em 0, 100% 0.5em, 0 0.5em, 0 calc(100% - 0.5em), 100% calc(100% - 0.5em), 100% 100%, 0.5em 100%, 0 0.5em); } .ds-admonition::after { right: 0; clip-path: polygon(0 0, 100% 0.5em, 100% calc(100% - 0.5em), 0 100%, 0.5em 100%, 100% 0.5em, 100% 0.5em, 0 0.5em); }"
     },
     {
       "name": "Ledger Panel",
-      "kind": "container",
-      "refersTo": "point-buy-panel",
-      "description": "The Point Buy tool's surface, built from the same material as the Tools panel: Bark 100 in light and Bark 800 in dark, a 1px Gold Rule border stepping to Gold Rule Dark, an 8px radius, and the 3px accent cap - Oxblood in light, Gold Leaf in dark. The head is the Card Heading's construction - a printed title over an uppercase meta line, closed by a 2px Gold Rule at its lower edge - so it reads as a heading over the sheet rather than as another row of it. The points readout is in the foot beside Spent, not in the head: a governing figure set in a title band reads as a headline instead of as the state of the sheet. Six ability lines share a baseline, a dotted leader and one cost column, and each name is a two-press trade handle. Every value is a themed custom property, declared once and re-declared for the dark theme; the surface does not hold one value across both.",
-      "html": "<div class=\"ds-panel\"><div class=\"ds-head\"><p class=\"ds-title\">Point Buy</p><p class=\"ds-meta\">Spend the 27-point pool across all six abilities.</p></div><div class=\"ds-body\"><div class=\"ds-rule\"><span class=\"ds-name\">Strength<i class=\"ds-leader\"></i></span><span class=\"ds-score\">15</span><span class=\"ds-mod\">+2</span><span class=\"ds-cost\">Cost 9 &middot; max</span><span class=\"ds-steps\"><button class=\"ds-step\"></button><button class=\"ds-step\"></button></span></div><div class=\"ds-foot\"><span class=\"ds-total\">Modifier total <b>-6</b></span><span class=\"ds-total\">Spent <b>0</b></span><span class=\"ds-purse\"><i class=\"ds-leader\"></i><span class=\"ds-purse-label\">Points left</span><b class=\"ds-purse-figure\">27</b></span></div></div></div>",
-      "css": ".ds-panel { position: relative; padding: 16px; border: 1px solid #c9ad6a; border-radius: 8px; background: #f8f6f5; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); } .ds-panel::before { content: ''; position: absolute; inset-inline: -1px; top: -1px; height: 3px; border-radius: 8px 8px 0 0; background: #58180d; } .ds-head { padding-bottom: 12px; margin-bottom: 8px; border-bottom: 2px solid #c9ad6a; } .ds-title { margin: 0; font-family: Cinzel, Georgia, serif; font-size: 1.35rem; font-weight: 600; line-height: 1.15; letter-spacing: 0.01em; color: #58180d; } .ds-meta { margin: 3px 0 0; font-family: ScalySans, sans-serif; font-size: 0.8125rem; line-height: 1.4; letter-spacing: 0.04em; text-transform: uppercase; color: #605552; } .ds-rule { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto auto; align-items: center; gap: 0 12px; padding: 8px 0; border-bottom: 1px solid rgb(201 173 106 / 0.42); } .ds-name { font-family: Cinzel, Georgia, serif; font-size: 16px; color: #2a2010; white-space: nowrap; } .ds-leader { flex: 1; border-bottom: 1px dotted rgb(201 173 106 / 0.42); } .ds-score { font-family: Cinzel, Georgia, serif; font-size: 20px; font-weight: 600; color: #2a2010; font-variant-numeric: tabular-nums; } .ds-mod { display: grid; width: 44px; height: 28px; place-items: center; border-radius: 999px; background: #f1eceb; font-family: ScalySans, sans-serif; font-weight: 700; font-size: 13px; color: #2a2010; font-variant-numeric: tabular-nums; } .ds-cost { width: 120px; text-align: right; font-family: ScalySans, sans-serif; font-size: 12px; color: #605552; font-variant-numeric: tabular-nums; } .ds-step { width: 44px; height: 44px; border-radius: 8px; border: 1px solid #c9ad6a; background: transparent; color: #697066; } .ds-foot { display: flex; align-items: baseline; gap: 20px; padding-top: 12px; border-top: 1px solid rgb(201 173 106 / 0.42); } .ds-total { font-family: ScalySans, sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #605552; } .ds-total b { margin-left: 6px; font-family: Cinzel, Georgia, serif; font-size: 1.125rem; font-weight: 600; color: #2a2010; font-variant-numeric: tabular-nums; } .ds-purse { display: flex; align-items: baseline; gap: 8px; margin-left: auto; } .ds-purse-label { font-family: ScalySans, sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #605552; white-space: nowrap; } .ds-purse-figure { font-family: Cinzel, Georgia, serif; font-size: 1.5rem; font-weight: 600; line-height: 1; color: #2a2010; font-variant-numeric: tabular-nums; }"
+      "kind": "card",
+      "refersTo": "tool-panel",
+      "description": "The Point Buy tool's surface, built from the material the rulebook spread established: Bark 100 #f8f6f5 in light and Bark 800 #2e2421 in dark, a 1px Gold Rule #c9ad6a border stepping to Gold Rule Dark #867347, an 8px radius, card-rest in light and no shadow in dark, and the 3px accent cap - Oxblood in light, Gold Leaf in dark. The head is the Card Heading's construction - a printed title over an uppercase meta line, closed by a 2px gold rule at its lower edge. Six ability lines share a baseline, a dotted leader and one cost column, and each name is a two-press trade handle. The foot is three identical entries - label at the Micro Label step, figure at the Title step - and the points readout is one of them rather than a treatment of its own. Every value is a themed custom property, declared once and re-declared for the dark theme; the surface does not hold one value across both.",
+      "html": "<div class=\"ds-panel\"><div class=\"ds-head\"><p class=\"ds-title\">Point Buy</p><p class=\"ds-meta\">Spend the 27-point pool across all six abilities.</p></div><div class=\"ds-body\"><div class=\"ds-rule\"><span class=\"ds-name\">Strength<i class=\"ds-leader\"></i></span><span class=\"ds-score\">15</span><span class=\"ds-mod\">+2</span><span class=\"ds-cost\">Cost 9 &middot; max</span><span class=\"ds-steps\"><button class=\"ds-step\" aria-label=\"Decrease Strength\">&minus;</button><button class=\"ds-step\" aria-label=\"Increase Strength\">+</button></span></div><div class=\"ds-foot\"><p class=\"ds-total\"><span class=\"ds-label\">Modifier total</span><b>-6</b></p><p class=\"ds-total\"><span class=\"ds-label\">Spent</span><b>0</b></p><p class=\"ds-total\"><span class=\"ds-label\">Points left</span><b>27</b></p></div></div></div>",
+      "css": ".ds-panel { position: relative; padding: 16px; border: 1px solid #c9ad6a; border-radius: 8px; background: #f8f6f5; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); } .ds-panel::before { content: ''; position: absolute; inset-inline: -1px; top: -1px; height: 3px; border-radius: 8px 8px 0 0; background: #58180d; } .ds-head { padding-bottom: 12px; margin-bottom: 8px; border-bottom: 2px solid #c9ad6a; } .ds-title { margin: 0; font-family: Cinzel, Georgia, serif; font-size: 1.35rem; font-weight: 600; line-height: 1.15; letter-spacing: 0.01em; color: #58180d; } .ds-meta { margin: 3px 0 0; font-family: ScalySans, sans-serif; font-size: 0.8125rem; line-height: 1.4; letter-spacing: 0.04em; text-transform: uppercase; color: #605552; } .ds-rule { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto auto; align-items: center; gap: 0 12px; padding: 8px 0; border-bottom: 1px solid rgb(201 173 106 / 0.42); } .ds-name { display: flex; align-items: center; gap: 8px; font-family: Cinzel, Georgia, serif; font-size: 16px; color: #2a2010; white-space: nowrap; } .ds-leader { flex: 1; min-width: 1rem; align-self: center; border-bottom: 1px dotted #c9ad6a; opacity: 0.7; } .ds-score { font-family: Cinzel, Georgia, serif; font-size: 20px; font-weight: 600; color: #2a2010; font-variant-numeric: tabular-nums; } .ds-mod { display: grid; width: 44px; height: 28px; place-items: center; border-radius: 999px; background: #f1eceb; font-family: ScalySans, sans-serif; font-weight: 700; font-size: 13px; color: #2a2010; font-variant-numeric: tabular-nums; } .ds-cost { width: 120px; text-align: right; font-family: ScalySans, sans-serif; font-size: 12px; color: #605552; font-variant-numeric: tabular-nums; } .ds-step { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 8px; cursor: pointer; border: 1px solid #c9ad6a; background: transparent; color: #f7860f; font-size: 18px; line-height: 1; transition: background-color 150ms ease-out; } .ds-step:hover { background: #f1eceb; } .ds-step:focus-visible { outline: 2px solid #1b1716; outline-offset: 2px; } .ds-foot { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 20px; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgb(201 173 106 / 0.42); } .ds-total { display: flex; align-items: baseline; gap: 6px; margin: 0; } .ds-label { font-family: ScalySans, sans-serif; font-size: 0.5625rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #605552; } .ds-total b { font-family: Cinzel, Georgia, serif; font-size: 1.25rem; font-weight: 600; line-height: 1; color: #2a2010; font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Dice Tray Panel",
+      "kind": "card",
+      "refersTo": "tool-panel",
+      "description": "The Dice Roller's surface: the same panel material as the Ledger Panel, with the body changed to six rows that each answer one question. The dotted leader is shared with the Ledger Panel and is load-bearing rather than ornamental. The tray is a recessed well one ramp step into the panel in each theme (Bark 200 under Bark 100 in light, Bark Black under Bark 800 in dark) and is never empty - an unrolled ability renders four blank engraved sockets, so a row arrives complete and no score column moves when a roll lands. Dice are drawn as d6 (nine pip slots lit by the face) so a dropped die still shows which face it was; the 1px rim is a per-theme token, Gold Rule Dark in dark, because Bark 600 on the Bark Black tray is 2.47:1.",
+      "html": "<div class=\"ds-tray-panel\"><div class=\"ds-tray-head\"><p class=\"ds-tray-title\">Dice Roller</p><p class=\"ds-tray-meta\">4d6, drop the lowest</p></div><div class=\"ds-tray-row\"><div class=\"ds-tray-id\"><span class=\"ds-tray-name\">Strength</span><span class=\"ds-tray-calc\">6 + 5 + 4</span><span class=\"ds-tray-leader\"></span><span class=\"ds-tray-dice\"><span class=\"ds-tray-die\" data-face=\"6\"><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i></span><span class=\"ds-tray-die ds-tray-die-dropped\" data-face=\"2\"><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i><i class=\"ds-tray-pip\"></i></span></span></div><div class=\"ds-tray-plate\"><span class=\"ds-tray-sum\">15</span><span class=\"ds-tray-mod\">+2</span></div><button class=\"ds-tray-reroll\" aria-label=\"Reroll Strength\"><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M3 12a9 9 0 0 1 15.5-6.2M21 12a9 9 0 0 1-15.5 6.2\"/><path d=\"M18 3v4h-4M6 21v-4h4\"/></svg></button></div></div>",
+      "css": ".ds-tray-panel { position: relative; padding: 16px; border: 1px solid #c9ad6a; border-radius: 8px; background: #f8f6f5; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); } .ds-tray-panel::before { content: ''; position: absolute; inset-inline: -1px; top: -1px; height: 3px; border-radius: 8px 8px 0 0; background: #58180d; } .ds-tray-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 16px; padding-bottom: 12px; border-bottom: 2px solid #c9ad6a; } .ds-tray-title { margin: 0; font-family: Cinzel, Georgia, serif; font-size: 1.35rem; font-weight: 600; line-height: 1.15; letter-spacing: 0.01em; color: #58180d; } .ds-tray-meta { margin: 3px 0 0; font-family: ScalySans, sans-serif; font-size: 0.8125rem; line-height: 1.4; letter-spacing: 0.04em; text-transform: uppercase; color: #605552; } .ds-tray-row { display: flex; align-items: center; gap: 16px; padding: 8px 0; border-bottom: 1px solid rgb(201 173 106 / 0.42); } .ds-tray-id { display: flex; flex: 1 1 auto; align-items: baseline; gap: 8px; min-width: 0; } .ds-tray-name { font-family: Cinzel, Georgia, serif; font-size: 16px; color: #2a2010; white-space: nowrap; } .ds-tray-calc { font-family: ScalySans, sans-serif; font-size: 12px; color: #605552; font-variant-numeric: tabular-nums; } .ds-tray-leader { flex: 1 1 auto; min-width: 1rem; align-self: center; border-bottom: 1px dotted #c9ad6a; opacity: 0.7; } .ds-tray-dice { display: flex; flex: 0 0 auto; align-items: center; gap: 5px; padding: 5px; border: 1px solid rgb(201 173 106 / 0.42); border-radius: 7px; background: #f1eceb; } .ds-tray-die { display: grid; grid-template-columns: repeat(3, 1fr); place-items: center; width: 1.75rem; height: 1.75rem; padding: 0.21rem; border: 1px solid #605552; border-radius: 5px; background: #f8f6f5; } .ds-tray-die.ds-tray-die-dropped { border-style: dashed; } .ds-tray-die[data-face='6'] i:nth-of-type(1), .ds-tray-die[data-face='6'] i:nth-of-type(4), .ds-tray-die[data-face='6'] i:nth-of-type(7), .ds-tray-die[data-face='2'] i:nth-of-type(1), .ds-tray-die[data-face='2'] i:nth-of-type(9) { opacity: 1; } .ds-tray-pip { width: 0.315rem; height: 0.315rem; border-radius: 999px; background: #1b1716; opacity: 0; } .ds-tray-plate { display: flex; width: 5rem; height: 5rem; flex: 0 0 auto; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: 1px solid #c9ad6a; border-radius: 8px; background: #f1eceb; } .ds-tray-sum { font-family: Cinzel, Georgia, serif; font-size: 1.75rem; font-weight: 600; line-height: 1; color: #2a2010; font-variant-numeric: tabular-nums; } .ds-tray-mod { font-family: ScalySans, sans-serif; font-size: 0.5625rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #605552; } .ds-tray-reroll { display: grid; width: 44px; height: 44px; flex: 0 0 auto; place-items: center; cursor: pointer; border: 1px solid #f7860f; border-radius: 999px; background: transparent; color: #f7860f; transition: background-color 150ms ease-out; } .ds-tray-reroll:hover { background: #f1eceb; } .ds-tray-reroll:focus-visible { outline: 2px solid #1b1716; outline-offset: 2px; } @media (prefers-reduced-motion: reduce) { .ds-tray-panel *, .ds-tray-reroll { transition-duration: 0.01ms !important; } }"
+    },
+    {
+      "name": "Rulebook Tools Panel",
+      "kind": "card",
+      "refersTo": "tool-panel",
+      "description": "The site index's one raised surface and the reference both other tools were built against: the same cap, border, radius and light-only shadow. It sits on a printed sheet rather than a neutral ground, so the page's other 15 destinations are hairline-separated contents rows and never cards. The part numeral is inside the title on the title's own baseline, in Gold Leaf against the Oxblood heading ink, and the part's standfirst is the page's italic voice. The row's cue is a Pill in bark ink rather than a hue, because a tinted cue cannot clear 4.5:1 on this panel.",
+      "html": "<div class=\"ds-rb-panel\"><p class=\"ds-rb-part\"><span class=\"ds-rb-numeral\">III</span> Tools</p><ul class=\"ds-rb-list\"><li><a class=\"ds-rb-entry\" href=\"#\"><span class=\"ds-rb-folio\">12</span><span class=\"ds-rb-icon\"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"3\"/><circle cx=\"8.5\" cy=\"8.5\" r=\"1.2\" fill=\"currentColor\"/><circle cx=\"15.5\" cy=\"15.5\" r=\"1.2\" fill=\"currentColor\"/><circle cx=\"12\" cy=\"12\" r=\"1.2\" fill=\"currentColor\"/></svg><span class=\"ds-rb-text\"><span class=\"ds-rb-name\">Dice Roller</span><span class=\"ds-rb-desc\">Roll 4d6, drop the lowest, and swap two abilities&rsquo; results.</span></span><span class=\"ds-rb-cue\">Mid-session</span></a></li></ul></div>",
+      "css": ".ds-rb-panel { position: relative; padding: 8px 12px 12px; border: 1px solid #c9ad6a; border-radius: 8px; background: #f8f6f5; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); } .ds-rb-panel::before { content: ''; position: absolute; inset-inline: -1px; top: -1px; height: 3px; border-radius: 8px 8px 0 0; background: #58180d; } .ds-rb-part { display: flex; align-items: baseline; gap: 10px; margin: 0 16px 10px 0; font-family: Cinzel, Georgia, serif; font-size: 1.75rem; font-weight: 700; line-height: 1.1; color: #58180d; } .ds-rb-numeral { color: #c68000; } .ds-rb-part::after { content: ''; flex: 1; min-width: 24px; height: 2px; align-self: center; background: #c9ad6a; } .ds-rb-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid rgb(201 173 106 / 0.42); } .ds-rb-entry { display: grid; grid-template-columns: 20px 20px minmax(0, 1fr) auto; align-items: start; gap: 0 8px; padding: 14px 8px; min-height: 2.75rem; color: inherit; text-decoration: none; border-radius: 8px; transition: background-color 150ms ease-out; } .ds-rb-entry + .ds-rb-entry { border-top: 1px solid rgb(201 173 106 / 0.42); } .ds-rb-folio { font-family: ScalySans, sans-serif; font-size: 0.6875rem; font-weight: 500; text-align: right; padding-top: 3px; color: #605552; font-variant-numeric: tabular-nums; } .ds-rb-icon { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; color: #605552; } .ds-rb-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; } .ds-rb-name { font-family: Cinzel, Georgia, serif; font-size: 1.25rem; font-weight: 600; line-height: 1.25; color: #58180d; text-decoration: underline; text-decoration-color: rgb(201 173 106 / 0.42); text-decoration-thickness: 1px; text-underline-offset: 3px; } .ds-rb-desc { font-size: 1rem; line-height: 1.5; color: #605552; } .ds-rb-cue { align-self: center; padding: 3px 8px; border: 1px solid rgb(201 173 106 / 0.42); border-radius: 999px; font-family: ScalySans, sans-serif; font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: #605552; white-space: nowrap; } @media (hover: hover) { .ds-rb-entry:hover { background: #f8f6f5; } .ds-rb-entry:hover .ds-rb-name { text-decoration-color: #c68000; } .ds-rb-entry:hover .ds-rb-icon { color: #c68000; } } .ds-rb-entry:focus-visible { outline: 2px solid #697066; outline-offset: -2px; background: #f8f6f5; }"
     }
   ],
   "narrative": {
     "northStar": "The Golden Forest Grimoire",
-    "overview": "D&D Companion reads as a campaign grimoire kept in a golden forest: warm bark-brown neutrals for surfaces, an amber sap accent that glows like resin, oxblood and gold-leaf headings, and mossy green stripes running through data tables. It is warm, curious, and handcrafted - closer to a shared notebook carried between sessions than to a product dashboard. The mood is set by the three D&D-inflected webfaces: Cinzel's inscriptional capitals for headings, Bookinsanity for prose, and ScalySans for tables and stat blocks.\n\nThe system is deliberately lifted and tactile. Cards sit on soft ambient shadows and rise slightly on hover; stat tiles wear a 3px accent cap like stamped leather; ability scores are cut into arch-topped plates. Nothing floats in a void - every panel feels placed on a table. Density is high but legible: the character Card is built for scanning mid-session, with compact grids, uppercase micro-labels, and monospaced numbers for anything you might add up.\n\nThe implementation still has a seam between two layers, now uneven. The Starlight documentation layer uses the warm bark/moss palette throughout, and the character Card heading has joined it - Cinzel name, gold rule, warm surfaces, correct dark-theme inversion. What remains on Tailwind's default cool gray scale is the Card *body*: the vitals and ability tiles, the tag chips, and the `blue-500` focus ring on the tool-page inputs. The heading is the reference for where that body is headed.",
+    "overview": "D&D Companion reads as a campaign grimoire kept in a golden forest: warm bark-brown neutrals for surfaces, an amber sap accent that glows like resin, oxblood and gold-leaf headings, and mossy green stripes running through data tables. It is warm, curious, and handcrafted - closer to a shared notebook carried between sessions than to a product dashboard. The mood is set by the three D&D-inflected webfaces: Cinzel's inscriptional capitals for headings, Bookinsanity for prose, and ScalySans for tables and stat blocks.\n\nThe system is deliberately lifted and tactile. Cards sit on soft ambient shadows and rise slightly on hover; stat tiles wear a 3px accent cap like stamped leather; ability scores are cut into arch-topped plates. Nothing floats in a void - every panel feels placed on a table. Density is high but legible: the character Card is built for scanning mid-session, with compact grids, uppercase micro-labels, and monospaced numbers for anything you might add up.\n\nThe implementation still has a seam between two layers, now uneven. The Starlight documentation layer uses the warm bark/moss palette throughout, and the character Card heading has joined it - Cinzel name, gold rule, warm surfaces, correct dark-theme inversion. The Card *body* has since joined it: the `gray` scale is redefined onto the bark ramp in `@theme`, so the vitals and ability tiles, the tag chips, and the tool-page focus rings are all warm. The heading remains the reference implementation.",
     "keyCharacteristics": [
       "Warm bark neutrals and an amber \"sap\" accent; oxblood (light) and gold (dark) for headings.",
       "Inscriptional Cinzel headings over a readable serif body; ScalySans for tabular data.",
       "Lifted, tactile surfaces: ambient card shadows, hover lift, 3px accent caps, arch-topped tiles.",
       "High-density stat blocks with uppercase micro-labels and monospaced numerals.",
-      "One warm palette, inverted per theme: the Card heading's light and dark tables are the worked example."
+      "A single warm palette intended to unify docs and interactive islands."
     ],
     "rules": [
-      { "name": "The Warm-Only Rule", "body": "No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The character Card heading already complies; the Card body's gray-* tiles and the blue-500 focus ring on the tool inputs are the remaining drift to pull back onto bark and sap.", "section": "colors" },
-      { "name": "The Rarity Rule", "body": "Sap Amber is an action and emphasis color, used on well under a tenth of any screen. Gold Leaf and Oxblood belong to headings and markers, not to large fills.", "section": "colors" },
-      { "name": "The Two-Family Rule", "body": "Cinzel only ever sets headings and card titles; it never sets body text, labels, or numbers. If it is a sentence, it is Bookinsanity; if it is a table, it is ScalySans.", "section": "typography" },
-      { "name": "The One-Voice Heading Rule", "body": "A Card heading is a closed three-part stack - Cinzel name, ScalySans meta, outlined pills - in the warm bark and gold scheme in both themes. Do not reintroduce the system sans stack or Tailwind's cool gray-* scale into it; the heading is the reference for how the rest of the Card should migrate.", "section": "typography" },
-      { "name": "The Lifted-Not-Floating Rule", "body": "Every raised surface still reads as sitting on the page: shadows stay soft and low, and a tile's accent cap or border does the structural work. No hard drop shadows, no glassmorphism, no blur.", "section": "elevation" },
-      { "name": "The Themed-Surface Rule", "body": "A tool surface is a themed surface, made of the ramps the rest of the system already uses. Every value is a custom property declared once and re-declared under the dark theme selector, so nothing holds one value across both modes. Point Buy's first build kept its paper the same parchment in light and dark, on the reasoning that a physical object should not invert; the result was a panel and a heading that looked identical in both modes and outweighed the page around them. Do not give a tool a private material vocabulary, and do not exempt a surface from the theme because it depicts something.", "section": "colors" },
-      { "name": "The Tool-Weight Rule", "body": "A tool does not outweigh the page it sits on. One panel, one border, one accent cap, and the numbers left as the loudest thing on it. A second surface wrapped around the panel, a frame around the governing figure, and a gradient or a ring on every row are three ways of saying the same thing louder; each was removed from the Ledger Panel and each is worth noticing the first time one comes back.", "section": "components" },
-      { "name": "The Figure-Beside-Its-Remainder Rule", "body": "A figure that describes the state of a thing belongs with the other state figures, not above them in a heading. Point Buy carried the points readout in its head through two revisions, as a masthead and then as a band, and both read as a headline rather than as the state of the sheet. It lives in the foot beside Spent, which it is the remainder of.", "section": "components" }
+      {
+        "name": "The Warm-Only Rule",
+        "body": "No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The `gray` scale is now bark, the tool-input focus rings and the feat-tier chips are on the accent and the moss/bark ramps, and the admonition palette has been pulled onto the bark/moss/gold/oxblood ramps. There is no remaining named drift; `tailwind.test.ts` fails on any cool utility class or blue-dominant hex in a component or page. Admonitions set both `--sl-color-asides-border` and `--sl-color-asides-text-accent`; Starlight's own defaults for both are cool.",
+        "section": "colors"
+      },
+      {
+        "name": "The Rarity Rule",
+        "body": "Sap Amber is an action and emphasis color, used on well under a tenth of any screen. Gold Leaf and Oxblood belong to headings and markers, not to large fills.",
+        "section": "colors"
+      },
+      {
+        "name": "The Themed-Surface Rule",
+        "body": "A tool surface is a themed surface, made of the ramps the rest of the system already uses. Every value is a custom property declared once and re-declared under the dark theme selector, so nothing holds one value across both modes. Point Buy's first build kept its paper the same parchment in light and dark, on the reasoning that a physical object should not invert; the result was a panel and a heading that looked identical in both modes and outweighed the page around them. Do not give a tool a private material vocabulary, and do not exempt a surface from the theme because it depicts something. A sheet of paper *depicts* something; a tool surface *is* one.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Family Rule",
+        "body": "Cinzel only ever sets headings and card titles; it never sets body text, labels, or numbers. If it is a sentence, it is Bookinsanity; if it is a table, it is ScalySans.",
+        "section": "typography"
+      },
+      {
+        "name": "The One-Voice Heading Rule",
+        "body": "A Card heading is a closed three-part stack - Cinzel name, ScalySans meta, outlined pills - in the warm bark and gold scheme in *both* themes. Do not reintroduce the system sans stack or Tailwind's cool `gray-*` scale into it; the heading is the reference for how the rest of the Card should migrate.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lifted-Not-Floating Rule",
+        "body": "Every raised surface still reads as sitting on the page: shadows stay soft and low, and a tile's accent cap or border does the structural work. No hard drop shadows, no glassmorphism, no blur.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Tool-Weight Rule",
+        "body": "A tool does not outweigh the page it sits on. One panel, one border, one accent cap, and the numbers left as the loudest thing on it. A second surface wrapped around the panel, a frame around the governing figure, and a gradient or a ring on every row are three ways of saying the same thing louder; each was removed from the Ledger Panel, and each is worth noticing the first time one comes back.",
+        "section": "components"
+      },
+      {
+        "name": "The Figure-Beside-Its-Remainder Rule",
+        "body": "A figure that describes the state of a thing belongs with the other state figures, not above them in a heading. Point Buy carried the points readout in its head through two revisions, as a masthead and then as a band, and both read as a headline rather than as the state of the sheet. It lives in the foot beside `SPENT`, which it is the remainder of, and it is the third of three identical entries there - no leader, no step up, no treatment of its own.",
+        "section": "components"
+      }
     ],
     "dos": [
       "Do keep the accent to one role per screen; Sap Amber for actions and selection, Gold Leaf and Oxblood for headings and markers.",
       "Do use the warm bark ramp for neutrals and let surfaces invert per theme rather than hard-coding a single mode; the Card heading's light and dark tables are the worked example.",
       "Do give raised surfaces both a soft shadow and a structural cue (accent cap, arch, or border).",
       "Do set headings in Cinzel, prose in Bookinsanity, and tables in ScalySans - never mix their jobs.",
-      "Do use uppercase micro-labels with tabular monospaced numerals inside stat blocks."
+      "Do use uppercase micro-labels with tabular monospaced numerals inside stat blocks.",
+      "Do set a list-shaped thing as ruled rows rather than a wall of tiles. A tile has to be wide enough for its content at every viewport; a row's width is the content column's, and its columns can hold a name, a figure and a 44px control at any width. [ADR-0014](docs/adr/0014-tool-rows-not-tiles.md)."
     ],
     "donts": [
       "Don't introduce neon or cyberpunk: no electric purple or cyan, no glassmorphism, no glowing sci-fi gradients or blur.",
-      "Don't reach for Tailwind's default cool gray-* scale or a blue-500 focus ring in new work. The Card heading is already off it; the Card body is the remaining debt.",
+      "Don't reach for Tailwind's default cool `gray-*` scale or a `blue-500` focus ring in new work. The `gray` scale is already remapped onto bark, but a hardcoded cool hex in new markup will still render cool. `tailwind.test.ts` fails the build on either.",
       "Don't put the system sans stack in a Card heading. Cinzel for the name, ScalySans for everything else, in both themes.",
       "Don't treat Surface White as a general surface or an ink. It is the light-theme HP plate and nothing else.",
       "Don't use pure black or pure white for text; use Ink and Parchment.",
       "Don't set body copy or numeric data in Cinzel, or apply the arch/45% radius to ordinary cards.",
-      "Don't fabricate campaign branding, logos, or imagery; the world is built from the existing palette, faces, and real assets only.",
-      "Don't use a heading element for a printed title or a row label inside a themed surface. Starlight colours every heading in the content column to the accent (0-1-1 in light, 0-2-1 in dark), so a heading outranks a single utility class. Use the element the thing actually is: a printed title and a row label are paragraphs.",
-      "Don't give a tool its own material vocabulary, and don't hold one surface fixed across both themes. Surfaces invert per theme and come from the ramps the rest of the system already uses.",
-      "Don't let a tool outweigh the page it sits on. One panel, one border, one cap, and the figures left to be the loudest thing.",
-      "Don't set a governing figure inside a title band. It belongs beside the figures it is derived from, not above them in a heading."
+      "Don't use a heading element for a printed title or a row label inside a themed surface. Starlight colours every heading in the content column to the accent (`.sl-markdown-content :is(h1..h6)` is 0-1-1 in light and 0-2-1 in dark), so a heading outranks a single utility class. An `h3` title inside the Point Buy panel rendered the theme's heading ink as a heading rather than as a printed title; an `h4` per ability measured 2.32:1. Use the element the thing actually is - a printed title and a row label are paragraphs.",
+      "Don't give a tool its own material vocabulary, and don't hold one surface fixed across both themes. Point Buy carried `sheet`, `desk`, `brass`, `wax` and `fitted` for a parchment-on-leather object that did not invert; the tool came out looking like a different website pasted into the page, with a heading and a surface that were the same in light and dark. Surfaces invert per theme, and they come from the ramps the rest of the system already uses.",
+      "Don't let a tool outweigh the page it sits on. The same build wrapped its panel in a second padded surface, framed the points readout, and put a gradient disc on every modifier - six small objects competing with the figures they explain. One panel, one border, one cap, and the numbers left to be the loudest thing.",
+      "Don't set a governing figure inside a title band. Point Buy carried the points readout in the head through two revisions, as a masthead and then as a band, and both read as a headline rather than as the state of the sheet. A figure that describes the state of a thing belongs with the other state figures - beside `SPENT`, which it is the remainder of - not above them in a heading.",
+      "Don't fabricate campaign branding, logos, or imagery; the world is built from the existing palette, faces, and real assets only."
     ]
   }
 }
