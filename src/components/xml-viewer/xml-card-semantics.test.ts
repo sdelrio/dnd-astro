@@ -61,6 +61,20 @@ describe('XmlCard section semantics', () => {
     }
   });
 
+  it('truncates the name to one line, like the meta line beneath it', () => {
+    // The name used to wrap deliberately (`overflow-wrap: break-word`), which
+    // gave it a second line in a two-column roster and cost the header its
+    // shape. That decision is reversed: the name now truncates with an
+    // ellipsis, exactly as the meta line does. A truncation rule produces
+    // byte-identical HTML whether it is present or absent, so no render
+    // snapshot can catch a reversion here.
+    const rule = /\.char-name\s*\{([^}]*)\}/.exec(source)?.[1] ?? '';
+    for (const declaration of ['white-space: nowrap', 'overflow: hidden', 'text-overflow: ellipsis']) {
+      expect(rule, `.char-name is missing "${declaration}"`).toContain(declaration);
+    }
+    expect(rule, '.char-name still wraps').not.toContain('overflow-wrap');
+  });
+
   it('leaves the card subdivisions unnamed, so they are not landmarks', () => {
     // The party page renders six cards. Naming every subdivision produced
     // "Vitals" as a landmark once per card - a landmark list no screen reader

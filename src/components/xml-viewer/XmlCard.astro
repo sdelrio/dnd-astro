@@ -573,12 +573,17 @@ const splitSavesGroup =
     line-height: 1.15;
     letter-spacing: 0.01em;
     color: #58180d;
-    /* The name is the card's primary element, so it wraps rather than
-       ellipsises: in a two-column roster the identity block is ~200px wide and
-       "COPPER DRAGONBORN" was losing its tail. The meta line below still
-       truncates, because it repeats the full race and class on the character
-       page and is not the thing being scanned for. */
-    overflow-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* The name truncates on one line, exactly as the meta line below does, so
+       the header keeps its shape at any card width. This reverses an earlier
+       decision that let the name wrap: in a two-column roster the identity
+       block is ~200px wide and "COPPER DRAGONBORN" gained a second line, which
+       read worse than losing its tail. That cost is accepted - a long name
+       loses its tail to the ellipsis - and the full value stays reachable
+       from this element's own hover title and from the character page the
+       portrait links to. */
   }
   .char-meta {
     margin: 3px 0 0;
