@@ -9,6 +9,15 @@ import * as dice from './dice-utils';
  */
 export interface DiceRollerComponent {
   abilities: dice.Ability[];
+  /**
+   * Four zeroes, standing in for the four d6 an unrolled ability is still
+   * waiting on. The template renders one die per entry of `ability.dice`, and an
+   * unrolled ability has none, so without this the tray was empty and the row
+   * arrived as a wide band with a dot in a box - the tool looked broken before
+   * it was used. Face `0` is not a d6, so it lights no pips and the stylesheet
+   * draws it as an engraved socket instead of a die.
+   */
+  emptyFaces: number[];
   resultLog: string[];
   /** Array of ability sums per completed "Roll All Abilities". */
   sessionRolls: number[][];
@@ -42,8 +51,14 @@ const SESSION_ROLL_LIMIT = 50;
 
 /** The unrolled starting state, one tile per ability. */
 export function createDefaultAbilities(): dice.Ability[] {
-  return dice.ABILITY_NAMES.map((name) => ({
-    name,
+  // `name` is the display name, not the code. It is what the row prints, what
+  // the roll log and the live region speak, and what the swap panel names the
+  // two abilities it is about - so labelling the rows with the full name and
+  // leaving `name` as "CON" would have put "CON" in the log and the swap panel
+  // while the sheet said "Constitution". The code stays the key everywhere the
+  // maths and the trade address an ability, which is what `ABILITY_NAMES` is.
+  return dice.ABILITY_NAMES.map((code) => ({
+    name: dice.ABILITY_LABELS[code],
     dice: [],
     topThree: [],
     topThreeIndices: [],
@@ -63,6 +78,7 @@ export function createDefaultAbilities(): dice.Ability[] {
 export function diceRollerComponent(): DiceRollerComponent {
   return {
     abilities: createDefaultAbilities(),
+    emptyFaces: [0, 0, 0, 0],
     resultLog: [],
     sessionRolls: [],
     isRolling: false,

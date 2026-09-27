@@ -132,10 +132,17 @@ describe('primary button accent', () => {
     'src/components/feats-explorer/FeatExplorer.astro',
   ])('has a primary button on accent-contrast in %s', (file) => {
     const source = readFileSync(file, 'utf8');
+    // The pairing is the decision, and it has to be asserted as a pair rather
+    // than as a fill alone. The fill is a different colour in each theme, so the
+    // one legible ink is not the same in both and no literal can replace the
+    // token: the Dice Roller's fill is #3f4a3a in light and #f7860f in dark,
+    // and text-invert is 9.33:1 and 5.28:1 on those two where Bark Black is
+    // 1.91:1 and 7.09:1. Keying on either half alone would let the other half
+    // drift, and the drift is invisible in one theme.
     expect(
       [...source.matchAll(/bg-\(--sl-color-accent[^)" ]*\)[^"]*text-\(color:--sl-color-text-invert\)/g)]
         .length,
-      `no accent-filled control with inverted text in ${file}`
+      `no accent-contrast fill with an inverted label in ${file}`
     ).toBeGreaterThan(0);
   });
 

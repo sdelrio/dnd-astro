@@ -14,8 +14,24 @@ describe('DiceRoller theme colors', () => {
   });
 
   it('uses the Starlight accent color variables for interactive and highlight elements', () => {
-    for (const variable of ['--sl-color-accent', '--sl-color-accent-low', '--sl-color-accent-high']) {
-      expect(source).toContain(variable);
+    // Matched on a word boundary. `toContain('--sl-color-accent')` is satisfied
+    // by `--sl-color-accent-contrast` on its own, so the loose form passed
+    // whatever the tool actually referenced.
+    //
+    // `--sl-color-text-invert` is load-bearing and must stay. The roll button's
+    // fill is a different colour in each theme - #3f4a3a in light, #f7860f in
+    // dark - so the one legible ink is not the same in both, and the invert
+    // token is what tracks it: 9.33:1 and 5.28:1 respectively. Bark Black, the
+    // obvious literal to reach for, is 7.09:1 in dark and 1.91:1 in light.
+    for (const variable of [
+      '--sl-color-accent',
+      '--sl-color-accent-contrast',
+      '--sl-color-accent-high',
+      '--sl-color-text-invert',
+    ]) {
+      expect(source, `${variable} is unreferenced`).toMatch(
+        new RegExp(`${variable}(?![\\w-])`)
+      );
     }
   });
 });
@@ -26,6 +42,41 @@ describe('DiceRoller theme colors', () => {
  * closes, so every later sibling is read as a child and a real second root goes
  * unreported - the guard would pass on exactly the markup it exists to reject.
  */
+/**
+ * One declaration out of the component's own stylesheet, read from source.
+ *
+ * The contrast guard above has its own resolver because it needs the cascade;
+ * a single declaration does not, and going through it anyway means a renamed
+ * class fails the assertion that depends on it rather than quietly matching
+ * nothing.
+ *
+ * The anchor is `^`, `{` or `;`. `{` is load-bearing: the capture starts at the
+ * selector, so a rule's *first* declaration is preceded by the brace and a
+ * `^`-or-`;` anchor silently could not read it. That is invisible for every
+ * declaration except the first, so a rule written `border-style` then
+ * `background` resolved its background and reported no border at all.
+ *
+ * Comments inside the captured rule are blanked to spaces before the property is
+ * read, for the same reason: this stylesheet explains its tokens in place, and a
+ * comment above the first declaration would otherwise hide it. Blanking rather
+ * than deleting keeps every offset in the capture valid.
+ */
+const decl = (selector: string, property: string): string => {
+  const rule = source.match(new RegExp(`\\${selector}\\s*\\{[^}]*\\}`));
+  expect(rule, `${selector} has no rule`).not.toBeNull();
+  const body = rule![0].replace(/\/\*[\s\S]*?\*\//g, (m) => ' '.repeat(m.length));
+  const found = body.match(new RegExp(`(?:^|[;{])\\s*${property}\\s*:\\s*([^;]+)`));
+  expect(found, `${selector} declares no ${property}`).not.toBeNull();
+  return found![1].trim();
+};
+
+/** The rem value as pixels. The root is 16px and the document does not change it. */
+const rem = (value: string): number => {
+  const m = value.match(/^([\d.]+)rem$/);
+  expect(m, `${value} is not a rem length`).not.toBeNull();
+  return Number(m![1]) * 16;
+};
+
 const VOID_ELEMENTS = new Set([
   'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
   'link', 'meta', 'param', 'source', 'track', 'wbr',
@@ -115,7 +166,7 @@ function topLevelChildrenOfAbilityXFor(markup: string): string[] {
 // dark override is picked up without touching the test.
 // ---------------------------------------------------------------------------
 
-/** The style block that carries the swap panel and round buttons. */
+/** The style block that carries the whole surface, swap panel and round buttons included. */
 const styleBlock =
   [...source.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)]
     .map((m) => m[1])
@@ -247,7 +298,7 @@ function valueOf(theme: 'light' | 'dark', el: PaintTarget, ...properties: string
   const applicable = cascadeFor(theme, el);
   for (let i = applicable.length - 1; i >= 0; i--) {
     for (const property of properties) {
-      const found = applicable[i].body.match(new RegExp(`(?:^|;)\\s*${property}\\s*:\\s*([^;]+)`));
+      const found = applicable[i].body.match(new RegExp(`(?:^|[;{])\\s*${property}\\s*:\\s*([^;]+)`));
       if (found) return found[1].trim();
     }
   }
@@ -380,12 +431,12 @@ describe('DiceRoller ability tile markup', () => {
     expect(button).toContain('dice-round-btn--confirm');
     expect(button).not.toContain('--sl-color-accent');
 
-    const panelAt = source.indexOf('class="dice-swap-panel');
+    const panelAt = source.indexOf('class="dr-swap"');
     expect(panelAt).toBeGreaterThan(-1);
-    // Scope to the panel's own tag - the label inside it legitimately uses
-    // --sl-color-accent-high for its text.
+    // Scope to the panel's own tag - the label inside it legitimately uses the
+    // panel's own ink for its text.
     const panelTag = source.slice(panelAt, source.indexOf('>', panelAt));
-    expect(panelTag).toContain('dice-swap-panel');
+    expect(panelTag).toContain('dr-swap');
     expect(panelTag).not.toContain('--sl-color-accent');
   });
 
@@ -433,7 +484,7 @@ describe('DiceRoller round button contrast', () => {
 
   /** The panel the pair sits on, which is what a transparent fill reveals. */
   const panelOf = (theme: 'light' | 'dark') =>
-    painted(theme, { classes: ['dice-swap-panel'], pseudos: [] }, ['background'], 'the swap panel');
+    painted(theme, { classes: ['dr-swap'], pseudos: [] }, ['background'], 'the swap panel');
 
   /**
    * The four paints of one button in one theme and state.
@@ -568,7 +619,7 @@ describe('DiceRoller Alpine wiring', () => {
 
   it('exposes formatModifier, the one helper the template calls, on the component', () => {
     expect(component).toContain('formatModifier: dice.formatModifier');
-    expect(source).toContain('x-text="formatModifier(ability.modifier)"');
+    expect(source).toContain('formatModifier(ability.modifier)');
   });
 });
 
@@ -620,7 +671,12 @@ describe('DiceRoller hardening', () => {
   });
 
   it('wraps long log lines', () => {
-    expect(source).toMatch(/font-mono break-words/);
+    // The log is ScalySans in a full-width well now, not monospace in a
+    // 200px box, so the wrap is a property of the class rather than of a
+    // utility on the element.
+    const rule = source.match(/\.dr-log-line\s*\{[^}]*\}/);
+    expect(rule).not.toBeNull();
+    expect(rule![0]).toMatch(/overflow-wrap:\s*break-word/);
   });
 });
 
@@ -646,11 +702,11 @@ describe('DiceRoller without JavaScript', () => {
   });
 
   it('marks every inert region and gives the rule a root to hang off', () => {
-    expect(source).toContain('class="dice-roller-needs-js not-content space-y-6"');
-    // The button, the tile grid, and the stats card. The result log is already
+    expect(source).toContain('class="dice-roller-needs-js dr not-content"');
+    // The panel and the ability rows inside it. The result log is already
     // `x-cloak`, which never lifts without Alpine, so it needs no marker.
     const marked = source.match(/class="js-only[^"]*"/g) ?? [];
-    expect(marked).toHaveLength(3);
+    expect(marked).toHaveLength(2);
   });
 });
 
@@ -664,97 +720,231 @@ describe('DiceRoller stats window', () => {
 });
 
 describe('DiceRoller responsive layout', () => {
-  // A phone is the context this is read in. Three columns left each tile about
-  // 106px on a 360px viewport, but a tile's floor is its four-die row (4*28 +
-  // 3*4 = 124px) plus p-3 either side, so the grid forced the page to scroll
-  // sideways mid-session. Two columns plus the smaller base die is the fit.
-  //
-  // There is deliberately no six-column step, which is a second finding rather
-  // than an oversight - see the re-roll geometry test below.
-  it('never puts three ability tiles on a phone-width screen', () => {
-    expect(source).toContain('grid grid-cols-2 sm:grid-cols-3');
-    expect(source).not.toMatch(/grid-cols-6/);
+  /**
+   * The row replaced a 2/3-column tile grid, so none of the geometry the old
+   * guards described exists any more: there is no column count to read, no die
+   * row to shrink below `sm`, and no absolutely-anchored re-roll for a centred
+   * ability name to collide with. What replaced them is a single-column list
+   * whose narrowest content can be measured, so that is what is asserted.
+   *
+   * Every value is read out of the stylesheet rather than written into the
+   * assertion, for the reason the contrast guard above gives: a pinned number
+   * can only confirm the number someone already checked.
+   */
+  /** The one die size on the surface. It is a token because it is measured. */
+  const dieSize = () => rem(decl('.dr', '--dr-die-size'));
+  const dieGap = () => rem(decl('.dr-dice', 'gap'));
+  const trayPad = () => rem(decl('.dr-dice', 'padding'));
+  const plate = () => rem(decl('.dr-plate', 'width'));
+  const reroll = () => rem(decl('.dr-reroll', 'width'));
+  const tradeMin = () => rem(decl('.dr-trade', 'min-width'));
+  const rowGap = () => rem(decl('.dr-row', 'gap'));
+  const panelPad = () => rem(decl('.dr-panel', 'padding'));
+
+  /** Four dice, the three gaps between them, and the tray's own padding and rule. */
+  const diceRow = () => 4 * dieSize() + 3 * dieGap() + 2 * trayPad() + 2;
+
+  it('lays out one ability per row at every width', () => {
+    // One flexible column and two fixed ones. There is no `grid-cols-` utility
+    // left in the markup, so a phone-width screen cannot put two rows side by
+    // side - which was the original defect (#331), and is now true by structure
+    // rather than by a breakpoint that has to be kept in step.
+    expect(decl('.dr-row', 'grid-template-columns')).toBe('minmax(0, 1fr) 5rem 2.75rem');
+    expect(source).not.toMatch(/grid-cols-\d/);
   });
 
-  it('shrinks the die row and tile padding below sm so two columns clear 320px', () => {
-    expect(source).toContain('w-7 h-7 sm:w-8 sm:h-8');
-    expect(source).toContain('class="p-3 sm:p-4"');
+  /**
+   * The tray's own box is part of the row's floor, and it was missing from this
+   * arithmetic for as long as the dice sat directly on the panel. The dice grew
+   * from 1.5rem to 1.75rem, the tray took 0.3125rem of padding and a 1px rule
+   * around them, and the plate went to 5rem, so every number this describe
+   * block reads moved at once. `diceRow` now carries the tray's padding and its
+   * two borders; without it the 320px assertion passed on a row that was 22px
+   * wider than the number it was checking.
+   */
+  it('counts the tray, not just the dice, in the row floor', () => {
+    expect(trayPad()).toBeGreaterThan(0);
+    expect(diceRow()).toBe(4 * dieSize() + 3 * dieGap() + 2 * trayPad() + 2);
   });
 
-  // WCAG 2.5.8. The ability tile and the swap pair are sized by CSS
-  // (.dice-round-btn) or fill their column, so only the per-ability re-roll -
-  // the one control whose visual is smaller than its hit area - is asserted.
+  it('declares the re-roll fill and border so it cannot paint the default form control', () => {
+    // #331. Preflight is deliberately off (see src/styles/tailwind.css), so a
+    // button that declares neither a background nor a border keeps the browser's
+    // own: measured as rgb(239,239,239) on rgb(107,107,107) here, in a rounded
+    // grey box that swallowed the accent glyph. The load-bearing declaration is
+    // the fill; the border is what makes the ring visible as a control at rest.
+    expect(decl('.dr-reroll', 'background')).toBe('transparent');
+    expect(decl('.dr-reroll', 'border')).toMatch(/^1px solid/);
+  });
+
   it('keeps a 44px hit area on the per-ability re-roll', () => {
-    const reroll = source.match(/@click="rollIndividual\(index\)"[\s\S]*?>/);
-    expect(reroll![0]).toContain('w-11 h-11');
+    // WCAG 2.5.8. The plate and the swap pair are 44px by construction and the
+    // trade handle takes the row's own height, so the re-roll is the one control
+    // whose visual is smaller than its target and the one worth asserting.
+    expect(reroll()).toBeGreaterThanOrEqual(44);
+    expect(rem(decl('.dr-reroll', 'height'))).toBeGreaterThanOrEqual(44);
+    // The outline/icon button vocabulary: round, so it reads as an icon control
+    // rather than as a seventh number on the row.
+    expect(decl('.dr-reroll', 'border-radius')).toBe('999px');
   });
 
-  // #331. The re-roll is anchored `absolute top-1 right-1`, so its 44px box
-  // occupies the tile's top-right 48px including the offset. The ability name is
-  // centred in the same row, so the two collide unless the tile is wider than
-  // the label plus 96px (twice the 48px the button claims, once for each side of
-  // a centred box). The widest label is CHA at 41.58px, so a tile needs >137.58px.
-  //
-  // The container is Starlight's, and it is capped at 880px: six columns give
-  // 133.33px tiles at 1280 and 102px at 1024, measured in a real browser. Six
-  // across therefore overlapped the name by 16.64px at 1024 and 0.97px at 1280 -
-  // and no wider breakpoint rescues it, because the cap does not move. This
-  // asserts the consequence, so restoring a six-column step fails loudly rather
-  // than reintroducing the overlap.
-  it('keeps every ability tile wider than its re-roll box plus its name', () => {
-    // Measured in a real browser, not derived: Starlight's content cap, the
-    // widest ability name's tight text extent, and the re-roll's footprint
-    // (44px plus the 4px `right-1` offset).
-    const CONTAINER_CAP = 880;
-    const GAP = 16;
-    const BUTTON_FOOTPRINT = 48;
-    const WIDEST_LABEL = 41.58;
-    const MIN_TILE = BUTTON_FOOTPRINT * 2 + WIDEST_LABEL;
+  it('fits its narrowest row inside a 320px viewport', () => {
+    // Below 40rem the identity block stacks, so a row's floor is its two fixed
+    // tracks plus the wider of the block's two stacked lines - not the sum of
+    // them. Asserted against the number the tool is actually read at.
+    const fixed = plate() + reroll() + rowGap() + 2 * panelPad() + 2;
+    const stacked = fixed + Math.max(tradeMin(), diceRow());
+    expect(stacked, `a row needs ${stacked}px of the 320px viewport`).toBeLessThanOrEqual(320);
+  });
 
-    // Read the column counts the markup actually asks for, so this is one
-    // assertion about the grid rather than a list that has to be kept in step
-    // with it.
-    const classes = source.match(/class="js-only grid([^"]*)"/)![1];
-    const columns = [...classes.matchAll(/grid-cols-(\d+)/g)].map((m) => Number(m[1]));
+  it('keeps the side-by-side row inside the content measure above its own breakpoint', () => {
+    // Above 40rem the identity block is one line, so the row's floor is the
+    // fixed tracks plus the name, the gap and the dice together. The breakpoint
+    // is 640px and Starlight's content column is well over the row's floor by
+    // then; the assertion is that the two numbers cannot cross.
+    const row = plate() + reroll() + rowGap() + 2 * panelPad() + 2 + tradeMin() + rowGap() + diceRow();
+    expect(row).toBeLessThan(40 * 16);
+  });
 
-    expect(columns.length, 'the ability grid declares no column count').toBeGreaterThan(0);
-    for (const count of columns) {
-      const tile = (CONTAINER_CAP - GAP * (count - 1)) / count;
-      expect(
-        tile,
-        `${count} columns leaves ${tile}px tiles in a ${CONTAINER_CAP}px container, ` +
-          `under the ${MIN_TILE}px the re-roll and the name need`
-      ).toBeGreaterThan(MIN_TILE);
+  it('sizes the dice from one token, so no breakpoint can drift them apart', () => {
+    expect(source).toContain('--dr-die-size: 1.75rem;');
+    // The die reads its box and its pips from the same token, which is what
+    // keeps a 4.5rem die from carrying 12px pips.
+    const die = source.match(/\.dr-die\s*\{[^}]*\}/)![0];
+    expect(die).toMatch(/width:\s*var\(--dr-die-size\)/);
+    expect(die).toMatch(/height:\s*var\(--dr-die-size\)/);
+    const pip = source.match(/\.dr-pip\s*\{[^}]*\}/)![0];
+    expect(pip).toMatch(/width:\s*calc\(var\(--dr-die-size\) \* 0\.18\)/);
+  });
+});
+
+describe('DiceRoller dice are dice', () => {
+  /**
+   * The die is drawn as a d6 - nine pip slots on a 3x3 grid, lit by the face -
+   * rather than as its numeral, for two reasons the numerals could not serve.
+   *
+   * The dropped die has to stay readable. A numeral plus a strikethrough cannot
+   * distinguish two identical faces and is invisible to anyone who cannot
+   * resolve a 1px rule at 12px, so the die that did not count was a pale gap
+   * with a hairline through it. Here the face survives at 55% and the dashed
+   * edge is the boundary, so the "this one was discarded" signal is carried by
+   * three things rather than one.
+   *
+   * And the value has to reach assistive technology. The pips are decoration, so
+   * the die is a labelled image and its label says whether it counted.
+   */
+  it('renders a face as pips rather than as a numeral', () => {
+    const die = source.match(/<span\s+class="dr-die"[\s\S]*?<\/span>\s*<\/template>/);
+    expect(die, 'the die element not found').not.toBeNull();
+    expect(die![0]).not.toMatch(/x-text=/);
+    expect(die![0]).toContain('<template x-for="p in 9"><i class="dr-pip"></i></template>');
+    expect(source).toContain("grid-template-columns: repeat(3, 1fr)");
+  });
+
+  it('lights every face from one rule block, so no face can be left dark', () => {
+    const faces = [...source.matchAll(/\.dr-die\[data-face='(\d)'\]/g)].map((m) => m[1]);
+    expect([...new Set(faces)].sort()).toEqual(['1', '2', '3', '4', '5', '6']);
+    // Six pips is the densest face, and it has to place all six.
+    const six = source.match(/\.dr-die\[data-face='6'\][\s\S]*?\{/)![0];
+    expect(six.match(/nth-of-type/g)).toHaveLength(6);
+  });
+
+  /**
+   * The real faces, in reading order across the 3x3 grid.
+   *
+   * This asserts the pip indices themselves, not that a rule block exists. The
+   * block was always there and always looked right; the dice were drawn wrong
+   * because the nine pips are cloned out of an `x-for` `<template>`, and that
+   * template is the die's own first element child - Alpine inserts the clones as
+   * its siblings. `nth-child` therefore counted the template, so every face was
+   * one pip early and one short: a 3 rendered as pips 4 and 8 of the grid, a 4
+   * lost two corners, and 1 and 6 lost pips entirely. Nothing caught it,
+   * including `lights every face`, because the rules were all present.
+   */
+  const FACES: Record<string, number[]> = {
+    '1': [5],
+    '2': [1, 9],
+    '3': [1, 5, 9],
+    '4': [1, 3, 7, 9],
+    '5': [1, 3, 5, 7, 9],
+    '6': [1, 3, 4, 6, 7, 9],
+  };
+
+  it.each(Object.entries(FACES))(
+    'places the %s pips on a real d6',
+    (face, pips) => {
+      const selectors = [...source.matchAll(
+        new RegExp(`\\.dr-die\\[data-face='${face}'\\]\\s+i:nth-of-type\\((\\d)\\)`, 'g')
+      )].map((m) => Number(m[1]));
+      expect(selectors.sort((a, b) => a - b), `face ${face}`).toEqual(pips);
+    }
+  );
+
+  it('selects pips by type, never by child position', () => {
+    // `nth-child` is the whole regression, so the ban is on the selector rather
+    // than on the indices: any future face added with `nth-child` lights the
+    // wrong pip and every assertion above still passes, because they read
+    // `nth-of-type` and would simply not see it. Matched against the
+    // comment-stripped stylesheet, so the note explaining the ban does not trip
+    // its own assertion.
+    expect(styleText).not.toMatch(/nth-child/);
+  });
+
+  /**
+   * A die's lit and unlit pips are told apart by the `[data-face]` block alone.
+   *
+   * A state that set a blanket alpha on `.dr-pip` outranked the base
+   * `opacity: 0` and made every pip faintly visible, so a dropped 3 rendered as
+   * three bright pips on a field of six faint ones - a full grid of dots rather
+   * than a d6, at any size. States de-emphasise by paint instead, so the guard
+   * is that none of them touches pip opacity at all.
+   *
+   * `is-socket` is the one exemption and it is a real one: a socket carries face
+   * `0`, no face rule applies to it, and engraving all nine pips at a low alpha
+   * is the design. It cannot paint a phantom face because there is no face to
+   * paint - which the socket case below asserts.
+   */
+  it('lets only the face block decide which pips are lit on a real die', () => {
+    for (const state of ['is-kept', 'is-dropped']) {
+      // `is-kept` is the default state and correctly has no pip rule at all;
+      // `is-dropped` has one, to dim the pip colour. Neither may set opacity.
+      const rule = source.match(new RegExp(`\\.dr-die\\.${state} \\.dr-pip\\s*\\{[^}]*\\}`));
+      expect(rule?.[0] ?? '', `${state} must not set pip opacity`).not.toMatch(/opacity/);
     }
   });
 
-  // #331. Preflight is deliberately off (see src/styles/tailwind.css), so a
-  // button that declares neither a background nor a border keeps the browser's
-  // own: measured as rgb(239,239,239) on rgb(107,107,107) here, in a rounded
-  // grey box. The accent glyph then sits at 4.44:1 light and 2.12:1 dark, both
-  // under AA, and that box is what made the overlap above visible in the first
-  // place. Declaring both is the fix - what the re-roll then reveals is the
-  // tile's own card, which the tile already paints.
-  //
-  // Asserted as the invariant and not as the markup. The re-roll has moved
-  // through three shapes: `bg-transparent border-0` in its Tailwind class list,
-  // then a `.dice-reroll-btn` rule owning both, now a utility `border` for the
-  // edge plus the rule for the background. A test pinning any one of those
-  // would have failed on a correct refactor and passed on the grey pill above -
-  // the failure ADR-0009 warns about, where the assertion is written against
-  // the string that happens to be there rather than against the thing that must
-  // be true. So each half accepts either home and only the outcome is pinned.
-  it('declares the re-roll fill and border so it cannot paint the default form control', () => {
-    const reroll = source.match(/@click="rollIndividual\(index\)"[\s\S]*?>/)![0];
-    const fill =
-      /\bbg-transparent\b/.test(reroll) ||
-      /\.dice-reroll-btn\s*\{[^}]*background:\s*transparent/.test(source);
-    expect(fill, 'the re-roll must declare a transparent background').toBe(true);
+  it('engraves a socket rather than lighting a face on it', () => {
+    const pip = source.match(/\.dr-die\.is-socket \.dr-pip\s*\{[^}]*\}/)![0];
+    expect(pip).toMatch(/opacity:\s*0\.22/);
+    // Face 0 must light nothing anywhere in the stylesheet, or a socket would
+    // show a face the moment one was added by accident.
+    expect(styleText).not.toMatch(/\[data-face='0'\]/);
+  });
 
-    const edge =
-      /\bborder-0\b/.test(reroll) ||
-      /\bborder\b/.test(reroll) ||
-      /\.dice-reroll-btn\s*\{[^}]*border:\s*1px solid/.test(source);
-    expect(edge, 'the re-roll must declare its own border').toBe(true);
+  it('gives the dropped die an edge and a dimmed face, not only a strike', () => {
+    expect(decl('.dr-die.is-dropped', 'border-style')).toBe('dashed');
+    // No longer `transparent`: inside the tray that resolved to the tray's own
+    // fill, and a dashed hairline one ramp step off it measured roughly 1.1:1 -
+    // the discarded die was invisible rather than de-emphasised.
+    expect(decl('.dr-die.is-dropped', 'background')).toMatch(/color-mix/);
+    const pip = source.match(/\.dr-die\.is-dropped \.dr-pip\s*\{[^}]*\}/)![0];
+    expect(pip).toMatch(/color-mix/);
+  });
+
+  it('never renders an unrolled row without its four sockets', () => {
+    // The tray used to be `x-show`-gated on a roll, so six unrolled rows arrived
+    // as a wide empty band with a middot in a box - the tool looked broken
+    // before it was used. `emptyFaces` is what fills it, and the die's width is
+    // the same in both states, so no score column moves when a roll lands.
+    expect(source).toContain('ability.dice.length ? ability.dice : emptyFaces');
+    expect(source).not.toMatch(/class="dr-dice"[^>]*x-show/);
+    expect(component).toContain('emptyFaces: [0, 0, 0, 0]');
+    // Face 0 is not a d6, so it must light nothing.
+    expect(source).not.toMatch(/\[data-face='0'\]/);
+  });
+
+  it('names every die for assistive technology, dropped ones included', () => {
+    expect(source).toContain('role="img"');
+    expect(source).toContain(":aria-label=\"'Die ' + die + (ability.topThreeIndices.includes(i) ? '' : ', dropped')\"");
   });
 });
