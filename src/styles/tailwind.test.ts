@@ -103,24 +103,53 @@ describe('primary button accent', () => {
     }
   });
 
-  // The fix is only real if every control painting inverted text on an accent
-  // fill points at the new token. Both primary buttons are the single most
-  // prominent control in their tool, and the feat count badge is the one other
-  // badge in the set; the pairing regressed precisely because nothing tied them
-  // to the token.
+  // The fix is only real if no control anywhere paints inverted text on a
+  // plain accent fill. That is the invariant, and it is checked for every
+  // file below. The second half - that a tool which *has* a primary accent
+  // button reaches for accent-contrast - is checked only where one still
+  // exists. Point Buy lost its: the reset is an outline button in the theme's
+  // heading ink, because it is the one control on that panel that destroys
+  // work rather than adding to it, and the Rarity Rule keeps Oxblood and Gold
+  // Leaf for markers rather than fills. Requiring an accent fill there would
+  // require putting back the thing the redesign removed.
   it.each([
     'src/components/dice-roller/DiceRoller.astro',
     'src/components/point-buy/PointBuy.astro',
     'src/components/feats-explorer/FeatExplorer.astro',
-  ])('paints inverted text on accent-contrast, not plain accent, in %s', (file) => {
+  ])('never paints text-invert on a plain accent fill in %s', (file) => {
     const source = readFileSync(file, 'utf8');
-    const inverted = [...source.matchAll(/bg-\(--sl-color-accent[^)" ]*\)[^"]*text-\(color:--sl-color-text-invert\)/g)];
-    expect(inverted.length, `no accent-filled control with inverted text in ${file}`).toBeGreaterThan(0);
-    for (const m of inverted) {
+    for (const m of source.matchAll(
+      /bg-\(--sl-color-accent[^)" ]*\)[^"]*text-\(color:--sl-color-text-invert\)/g
+    )) {
       expect(m[0], `${file} paints text-invert on plain --sl-color-accent`).toContain(
         'bg-(--sl-color-accent-contrast)',
       );
     }
+  });
+
+  it.each([
+    'src/components/dice-roller/DiceRoller.astro',
+    'src/components/feats-explorer/FeatExplorer.astro',
+  ])('has a primary button on accent-contrast in %s', (file) => {
+    const source = readFileSync(file, 'utf8');
+    expect(
+      [...source.matchAll(/bg-\(--sl-color-accent[^)" ]*\)[^"]*text-\(color:--sl-color-text-invert\)/g)]
+        .length,
+      `no accent-filled control with inverted text in ${file}`
+    ).toBeGreaterThan(0);
+  });
+
+  // Pinning the divergence, so "Point Buy has no accent button" stays a
+  // recorded decision and cannot quietly regress into a blue one. The second
+  // assertion is the replacement for the old `to-oxblood` one: the destructive
+  // control is marked in the theme's heading ink (Oxblood in light, Gold Leaf
+  // in dark) rather than filled with the action accent, which is what the
+  // Rarity Rule reserves Oxblood and Gold for.
+  it('leaves Point Buy with no accent-filled control at all', () => {
+    const source = readFileSync('src/components/point-buy/PointBuy.astro', 'utf8');
+    expect(source).not.toMatch(/bg-\(--sl-color-accent/);
+    expect(source).toContain('--pb-heading: var(--color-oxblood)');
+    expect(source).toContain('--pb-heading: var(--color-gold)');
   });
 });
 

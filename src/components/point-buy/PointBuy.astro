@@ -1,19 +1,46 @@
 ---
 import IconifyIcon from '@/components/IconifyIcon.astro';
 import {
-  ABILITY_NAMES,
+  ABILITY_LABELS,
+  STARTING_SPREADS,
+  type AbilityName,
   calculateModifier,
   createDefaultScores,
   formatCostLine,
   formatModifier,
+  formatTotalModifier,
   pointsRemaining,
+  pointsSpent,
 } from './point-buy-utils';
+
+/**
+ * The six abilities, as the sheet writes them: the abbreviation, the name, and
+ * the mark beside it.
+ *
+ * The name is not written here. It comes from `ABILITY_LABELS`, which is the
+ * one place the six are spelled, because this is also what every announcement
+ * and every trade handle's label says - and a visible name that could drift
+ * from the announced one is the same defect in a different place. The mark is a
+ * solid silhouette from `game-icons`, the same family throughout so the six
+ * read as one set rather than six borrowed glyphs.
+ */
+const ABILITY_ROWS: ReadonlyArray<{ ability: AbilityName; icon: string }> = [
+  { ability: 'STR', icon: 'game-icons:mailed-fist' },
+  { ability: 'DEX', icon: 'game-icons:boots' },
+  { ability: 'CON', icon: 'game-icons:round-shield' },
+  { ability: 'INT', icon: 'game-icons:brain' },
+  { ability: 'WIS', icon: 'game-icons:all-seeing-eye' },
+  { ability: 'CHA', icon: 'game-icons:crown' },
+];
 
 const initialScores = createDefaultScores();
 ---
 
-<div x-data="pointBuy" class="point-buy-needs-js not-content space-y-6">
-  <!-- With scripting off, every control below is inert and the six tiles would
+<div
+  x-data="pointBuy"
+  class="point-buy-needs-js pb not-content"
+>
+  <!-- With scripting off, every control below is inert and the six rows would
        read as a real allocation of 27 unspent points. A `<noscript>` block
        cannot remove them, so the note leads and hides them instead of leaving
        live-looking steppers that do nothing. `is:inline` is required: Astro
@@ -25,102 +52,638 @@ const initialScores = createDefaultScores();
         display: none !important;
       }
     </style>
-    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-300">
+    <div class="rounded-lg border border-gold-rule bg-bark-100 p-4 text-ink dark:border-gold-rule-dark dark:bg-bark-800 dark:text-parchment">
       <p class="font-medium">Point Buy needs JavaScript.</p>
-      <p class="mt-1">Every other page on this site works without it. With it enabled you spend the standard 27-point pool across all six abilities and see the modifier and cost of each score as you go.</p>
+      <p class="mt-1">
+        Every other page on this site works without it. With it enabled you spend the
+        standard 27-point pool across all six abilities and see the modifier and cost of
+        each score as you go.
+      </p>
     </div>
   </noscript>
 
-  <h2 class="sr-only">Ability scores</h2>
+  <h2 class="sr-only" id="point-buy-scores">Ability scores</h2>
 
-  <div class="js-only grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    {ABILITY_NAMES.map((ability) => (
-      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4 text-center">
-        <h3 class="font-bold text-gray-900 dark:text-gray-100">{ability}</h3>
-        <div
-          class="mt-2 text-3xl font-bold tabular-nums text-gray-900 dark:text-gray-100"
-          x-text={`scores.${ability}`}
-        >
-          {initialScores[ability]}
-        </div>
-        <div
-          class="text-sm font-medium tabular-nums text-gray-600 dark:text-gray-400"
-          x-text={`formatModifier(calculateModifier(scores.${ability}))`}
-        >
-          {formatModifier(calculateModifier(initialScores[ability]))}
-        </div>
-        <div
-          class="mt-1 text-xs tabular-nums text-gray-500 dark:text-gray-400"
-          x-text={`formatCostLine(scores.${ability})`}
-        >
-          {formatCostLine(initialScores[ability])}
-        </div>
-        <div class="mt-3 flex items-center justify-center gap-3">
-          <button
-            type="button"
-            @click={`decrease('${ability}')`}
-            :disabled={`!canDecrease(scores, '${ability}')`}
-            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
-            aria-label={`Decrease ${ability}`}
-          >
-            <IconifyIcon icon="mdi:minus" />
-          </button>
-          <button
-            type="button"
-            @click={`increase('${ability}')`}
-            :disabled={`!canIncrease(scores, '${ability}')`}
-            class="inline-flex items-center justify-center w-11 h-11 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) hover:bg-(--sl-color-accent-low) disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
-            aria-label={`Increase ${ability}`}
-          >
-            <IconifyIcon icon="mdi:plus" />
-          </button>
-        </div>
-      </div>
-    ))}
-  </div>
+  <!-- The panel. The same material as the Tools panel on the index page, on
+       purpose: this tool is one of the instruments that panel lists, so the
+       page that opens one of them is built from the same surface as the page
+       that lists them. Bark 100 in light, Bark 800 in dark, a 1px gold rule
+       that swaps to its dark step, an 8px radius, and the 3px accent cap -
+       Oxblood in light, Gold Leaf in dark - which is the one place on the
+       surface where the theme shows through as colour.
 
-  <!-- The readout is the constraint every press is judged against, so it stays
-       pinned to the bottom of the viewport for the whole length of the grid
-       instead of sitting 1400px below the first tile on a phone. It is the last
-       block in the flow, so nothing is ever trapped behind it: scrolling to the
-       end settles it back into its natural place. The bottom padding follows the
-       home-indicator inset, which is where a phone held at a table actually
-       puts the bar. -->
-  <div class="js-only sticky bottom-0 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-    <!-- One row at every width. Pinned to the bottom of a phone, this bar is
-         15% of the viewport if it stacks, and it wraps rather than stacks: the
-         completion chip is the only thing that needs a second line, and it
-         only appears once, at the end. -->
-    <div class="flex flex-wrap items-center justify-between gap-3">
-      <div class="flex flex-wrap items-center gap-3">
-        <!-- `String(...)` is not redundancy: the one value this readout takes
-             is 0 on a finished spread, and happy-dom assigns a numeric 0 to
-             textContent as "" rather than "0". A browser paints "0" either
-             way, so the coercion is free here and it keeps the empty-pool state
-             legible to the test DOM. -->
-        <p class="text-lg font-bold tabular-nums text-gray-900 dark:text-gray-100">
-          <span class="text-(color:--sl-color-accent)" x-text="String(pointsRemaining(scores))">
-            {pointsRemaining(initialScores)}
-          </span> points remaining
-        </p>
-        <template x-if="pointsRemaining(scores) === 0">
-          <div class="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-(--sl-color-accent-low) border border-(color:--sl-color-accent) text-(color:--sl-color-accent-high) text-sm font-medium">
-            <IconifyIcon icon="mdi:check-circle" />
-            <span>All 27 points spent</span>
-          </div>
-        </template>
+       An earlier build wrapped this in a leather desk with a dark headband
+       and a gilt edge, and kept the paper the same parchment in both themes.
+       That is what made the tool read as a different website pasted into the
+       page: the heading and the surface were identical in light and dark, and
+       the whole object outweighed the prose around it. A tool that is
+       adjusting one number should look like the rest of the system doing it. -->
+  <!-- `pb-swapping` is the one piece of state the stylesheet reads directly:
+       while a score is held, the other five names are the targets and say so.
+       It lives on the panel rather than on the island root so the rule is a
+       plain descendant of the surface it draws inside. -->
+  <div
+    class="js-only pb-panel"
+    :class="{ 'pb-swapping': picked !== null }"
+    role="group"
+    aria-labelledby="point-buy-scores"
+  >
+    <!-- The head, as the character Card's header: the printed title over a
+         meta line, closed by a 2px gold rule at the head's own lower edge. The
+         rule is what makes it work - a head banded only by a dotted leader
+         reads as another row of the sheet, and a head closed by a rule at its
+         lower edge reads as a heading over what it heads.
+
+         A title and meta set as a part heading over a panel, and no
+         heading element: Starlight colours every heading in the content
+         column to the accent (0-1-1 light, 0-2-1 dark), which outranks a
+         utility class, so a heading here would be an accent-coloured label
+         the surface never asked for. The page's own `h1` is already "Point
+         Buy"; this restates it as the panel's title. -->
+    <div class="pb-head">
+      <div class="pb-head-id">
+        <p class="pb-head-title">Point Buy</p>
+        <p class="pb-head-meta">Spend the 27-point pool across all six abilities.</p>
       </div>
-      <button
-        type="button"
-        @click="reset()"
-        class="inline-flex items-center gap-2 px-4 py-2 bg-(--sl-color-accent-contrast) text-(color:--sl-color-text-invert) rounded-lg shadow hover:bg-(--sl-color-accent-high) transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
-        aria-label="Reset all scores"
+    </div>
+
+    <!-- The sheet. Six ruled lines, no paper: a hairline between each, the
+         dotted leader out to the figures, and the figures on one baseline. -->
+    <div class="pb-body">
+      <div
+        class="pb-rule-head grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-x-3 border-b border-[color:var(--pb-rule)] pb-1.5 max-[46rem]:hidden"
       >
-        <IconifyIcon icon="mdi:restore" />
-        <span>Reset</span>
-      </button>
+        <span class="pb-soft micro-label">Ability</span>
+        <span class="pb-soft micro-label w-[2.75rem] text-center">Mod</span>
+        <span class="pb-soft micro-label w-[7.5rem] text-right">Cost</span>
+        <span class="w-[5.875rem]"></span>
+      </div>
+
+      <!-- How the trade works, said once, and said here rather than in the
+           head's meta line - which is the least readable slot on the surface,
+           at 13px uppercase and 0.04em tracked, so a two-clause instruction
+           there is worse than no instruction at all. This sits directly above
+           the six names it is about.
+
+           It is hidden on phones, where the head row is: a 390px column cannot
+           carry a sentence above six names without pushing the sheet down, and
+           the affordance does not depend on reading it either way - every name
+           is a button whose accessible label names the action it takes ("Pick
+           up Strength, 15, to trade its score"), and the picked state is
+           announced. The line tells a sighted user on a wide screen what the
+           buttons do before they try one. -->
+      <p class="pb-hint">
+        Names trade: press one, then another, to swap their scores.
+      </p>
+
+      <div>
+        {
+          ABILITY_ROWS.map(({ ability, icon }) => (
+            <div
+              class="pb-rule grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-x-3 border-b border-[color:var(--pb-rule)] py-2 last:border-b-0 max-[46rem]:grid-cols-[auto_auto_minmax(0,1fr)_auto] max-[46rem]:gap-x-2.5 max-[46rem]:gap-y-2 max-[46rem]:py-2.5"
+              data-ability={ability}
+            >
+              <div class="flex min-w-0 items-baseline gap-2 max-[46rem]:col-span-full">
+                <!-- The trade handle. Two presses, one exchange: this one
+                     picks the score up, the next names where it goes. It is a
+                     button and not the whole row because the steppers live in
+                     the row, and a row-sized target that contains two 44px
+                     buttons is a mis-tap waiting to happen. It wraps the mark
+                     and the name only - the leader stays outside it, because a
+                     leader inside a button can only be as long as the button
+                     and the whole point of it is to run to the figure.
+
+                     `aria-pressed` carries the picked state rather than a
+                     class, so the ring is never the only signal, and the
+                     label changes with it so the action names itself. -->
+                <button
+                  type="button"
+                  class="pb-trade"
+                  @click={`pickForSwap('${ability}')`}
+                  :aria-pressed={`picked === '${ability}'`}
+                  :aria-label={`tradeLabel('${ability}')`}
+                >
+                  <IconifyIcon
+                    icon={icon}
+                    width="1.125rem"
+                    class="pb-mark shrink-0 translate-y-px"
+                  />
+                  <!-- A row label, not a heading. Six headings inside one
+                       region is six landmarks' worth of nothing, and it hands
+                       the accent colour to a name that has to read as ink. -->
+                  <span class="pb-name">
+                    {ABILITY_LABELS[ability]}
+                  </span>
+                </button>
+                {/* The leader. This is the device that makes the sheet a
+                    ledger rather than a grid of tiles: the eye runs out along
+                    the dots to the figure, so the six scores are read as one
+                    column. */}
+                <span class="pb-leader" />
+              </div>
+
+              <span
+                class="pb-score"
+                x-text={`scores.${ability}`}>{initialScores[ability]}</span
+              >
+
+              <!-- The modifier, on a flat chip. It was a 34px disc with a
+                   gradient, a ring and a shadow - six of those on a page is
+                   six small objects competing with the figures they explain.
+                   A flat step in the neutral ramp keeps the column scannable
+                    and leaves the score as the loud number on the line. -->
+
+              <span
+                class="pb-mod"
+                x-text={`formatModifier(calculateModifier(scores.${ability}))`}
+              >
+                {formatModifier(calculateModifier(initialScores[ability]))}
+              </span>
+
+              <span
+                class="pb-cost"
+                x-text={`formatCostLine(scores.${ability})`}
+              >
+                {formatCostLine(initialScores[ability])}
+              </span>
+
+              <div class="flex w-[5.875rem] justify-end gap-1.5 max-[46rem]:w-auto">
+                <button
+                  type="button"
+                  @click={`decrease('${ability}')`}
+                  :disabled={`!canDecrease(scores, '${ability}')`}
+                  class="pb-step"
+                  aria-label={`Decrease ${ABILITY_LABELS[ability]}`}
+                >
+                  <IconifyIcon icon="mdi:minus" width="1.125rem" />
+                </button>
+                <button
+                  type="button"
+                  @click={`increase('${ability}')`}
+                  :disabled={`!canIncrease(scores, '${ability}')`}
+                  class="pb-step"
+                  aria-label={`Increase ${ABILITY_LABELS[ability]}`}
+                >
+                  <IconifyIcon icon="mdi:plus" width="1.125rem" />
+                </button>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- Starting spreads. Offered so nobody spends 27 presses to find out what a
+           Striker looks like; each is pinned to exactly the full pool by a
+           test, so loading one is a finished allocation, not a head start. -->
+      <div
+        class="mt-4 flex flex-wrap items-center gap-1.5 border-t border-[color:var(--pb-rule)] pt-3"
+        role="group"
+        aria-label="Start from a starting spread"
+      >
+        <span class="pb-soft micro-label mr-1">Start from</span>
+        {
+          STARTING_SPREADS.map((spread) => (
+            <button type="button" @click={`loadSpread('${spread.id}')`} class="pb-spread">
+              {spread.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <!-- The foot is the sum of the sheet, in the three figures a player
+           actually compares builds on. The purse lives here rather than in the
+           head: the head is a title, and a governing number set in a title
+           band reads as a headline instead of as the state of the sheet. Down
+           here it sits beside "Spent", which is the figure it is the remainder
+           of - 27 minus spent - and the three together answer the only three
+           questions anyone asks of a spread: how strong, how much, how much is
+           left.
+
+           All three are the same entry: label, figure, one step. Setting the
+           purse apart - a leader out to the right, a step up, its own
+           treatment - made the remainder the loudest thing on a surface whose
+           job is six numbers, and the leader only meant "look here". When the
+           pool empties the label says so, which is how a finished allocation
+           reads as finished without the figure having to shout. -->
+      <div
+        class="mt-3 flex flex-wrap items-center justify-between gap-x-5 gap-y-3 border-t border-[color:var(--pb-rule)] pt-3"
+      >
+        <div class="flex flex-wrap items-baseline gap-x-5 gap-y-1">
+          <p class="flex items-baseline gap-1.5">
+            <span class="pb-soft micro-label">Modifier total</span>
+            <span
+              class="pb-total"
+              x-text="formatTotalModifier(scores)">{formatTotalModifier(initialScores)}</span
+            >
+          </p>
+          <p class="flex items-baseline gap-1.5">
+            <span class="pb-soft micro-label">Spent</span>
+            <span
+              class="pb-total"
+              x-text="String(pointsSpent(scores))">{pointsSpent(initialScores)}</span
+            >
+          </p>
+          <p class="flex items-baseline gap-1.5">
+            <span
+              class="pb-soft micro-label"
+              x-text="pointsRemaining(scores) === 0 ? 'Pool spent' : 'Points left'"
+              >Points left</span
+            >
+            <span
+              class="pb-total"
+              data-purse
+              x-text="String(pointsRemaining(scores))">{pointsRemaining(initialScores)}</span
+            >
+          </p>
+        </div>
+
+        <!-- The one control that throws the sheet away, so it is the one
+             control set in the theme's heading ink rather than in the action
+             accent: Oxblood in light, Gold Leaf in dark. That is what the
+             Rarity Rule reserves those two for - a marker, not a fill - and
+             it is enough to separate this from the starting spreads beside it without
+             a wax seal the size of the panel cap. -->
+        <button
+          type="button"
+          @click="reset()"
+          class="pb-reset"
+          aria-label="Reset all scores to eight"
+        >
+          <IconifyIcon icon="mdi:restore" width="0.9375rem" />
+          <span>Reset to blank</span>
+        </button>
+      </div>
     </div>
   </div>
 
   <p class="sr-only" role="status" aria-live="polite" x-text="announcement"></p>
 </div>
+
+<style>
+  /* One system inverted, not a second design - the same move the rulebook
+     index makes and the same reason. The surface steps down, the ink steps
+     up, the rule swaps to its dark step, and the accent swaps from Oxblood to
+     Gold Leaf. Nothing changes shape, size or spacing between themes. */
+  .pb {
+    --pb-surface: var(--color-bark-100);
+    --pb-raised: var(--color-bark-200);
+    --pb-rule: color-mix(in srgb, var(--color-gold-rule) 42%, transparent);
+    --pb-rule-strong: var(--color-gold-rule);
+    --pb-ink: var(--color-ink);
+    --pb-ink-soft: var(--color-bark-600);
+    --pb-heading: var(--color-oxblood);
+    --pb-accent: var(--sl-color-accent);
+    /* The focus ring is never the value of the ink it outlines: the glyph is
+       the accent, so the ring is bark. */
+    --pb-focus: var(--color-bark-black);
+  }
+
+  :global(:root[data-theme='dark']) .pb {
+    --pb-surface: var(--color-bark-800);
+    --pb-raised: var(--color-bark-700);
+    --pb-rule: color-mix(in srgb, var(--color-gold-rule-dark) 45%, transparent);
+    --pb-rule-strong: var(--color-gold-rule-dark);
+    --pb-ink: var(--color-parchment);
+    --pb-ink-soft: var(--color-bark-400);
+    --pb-heading: var(--color-gold);
+    --pb-focus: var(--color-bark-100);
+  }
+
+  .pb-panel {
+    position: relative;
+    padding: 1rem;
+    border: 1px solid var(--pb-rule-strong);
+    border-radius: 8px;
+    background: var(--pb-surface);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  /* The cap, drawn over the border so the 1px edge stays continuous. The one
+     piece of theme colour on the surface, and the only accent bar in the
+     tool: it says "instrument" once rather than six times. */
+  .pb-panel::before {
+    content: '';
+    position: absolute;
+    inset-inline: -1px;
+    top: -1px;
+    height: 3px;
+    border-radius: 8px 8px 0 0;
+    background: var(--pb-heading);
+  }
+
+  /* The head, built as the character Card's header: a title over a meta line,
+     closed by a 2px gold rule at the bottom edge. That rule is the whole
+     reason for the shape. A head banded only by a dotted leader reads as a row
+     of the sheet; a head closed by a rule at its own lower edge reads as a
+     heading over what it heads, which is what a title is. It is the same gold
+     the Card header uses, and it is the panel's second structural cue rather
+     than a second accent - the cap above and the rule below bracket the
+     surface without either one carrying colour on its own. */
+  .pb-head {
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid var(--pb-rule-strong);
+  }
+
+  .pb-head-id {
+    min-width: 0;
+  }
+
+  /* A printed title, at the Card Heading's name step. Never a heading element -
+     see the note in the markup. */
+  .pb-head-title {
+    font-family: var(--sl-font-heading);
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    color: var(--pb-heading);
+    /* Wraps rather than truncates: the title is the panel's primary element,
+       and at 320 the whole panel measure is under 260px. */
+    overflow-wrap: break-word;
+  }
+
+  /* The meta line: the Card header's meta, uppercased and tracked, so the head
+     is recognisably the same object as the one on a character Card rather than
+     a lookalike. It is the one place a full sentence is set this way, and it
+     works because the sentence is a label - what the panel is - and not prose
+     anyone reads at length. */
+  .pb-head-meta {
+    margin-top: 3px;
+    font-family: var(--sl-font-table);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--pb-ink-soft);
+  }
+
+  .pb-soft {
+    color: var(--pb-ink-soft);
+  }
+
+  /* The trade hint. One sentence, in sentence case at the Body step - it is an
+     instruction, not a column head, and the head row's uppercase label step
+     would mis-set it. Hidden below 46rem, with the head row it belongs to. */
+  .pb-hint {
+    margin: 0.25rem 0 0.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--pb-ink-soft);
+    text-wrap: pretty;
+  }
+
+  /* 46rem, not one of Tailwind's named steps, and deliberately: it is the
+     width at which the five-column line can no longer hold a 44px stepper pair
+     beside a readable name, which is a property of this grid and not of the
+     viewport. It is spelled out in seven places because a custom Tailwind
+     breakpoint would mean a theme token and a build-config change for a value
+     that belongs to one component. Changing it means changing all seven. */
+  @media (max-width: 46rem) {
+    .pb-hint {
+      display: none;
+    }
+  }
+
+  .pb-body {
+    padding-top: 0.25rem;
+  }
+
+  /* The name carries the row's identity, so it is set in the heading face at
+     body scale and in the row's own ink - the accent is for the title, and
+     spending it on six names would leave the title with nothing. */
+  .pb-name {
+    font-family: var(--sl-font-heading);
+    font-size: 1rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: var(--pb-ink);
+  }
+
+  .pb-mark {
+    color: var(--pb-ink-soft);
+  }
+
+  /* The trade handle, as a control that has to look like part of the writing
+     at rest and like a control while it is live. It borrows nothing from the
+     steppers beside it - no border, no fill, no accent - because six bordered
+     rectangles down the name column would be six more objects on a sheet
+     whose job is six numbers. What it does take is the 44px floor: the row is
+     already 44px tall because of the steppers, so the target is the row's own
+     height and nothing on the sheet grows. */
+  .pb-trade {
+    display: inline-flex;
+    align-items: baseline;
+    min-height: 2.75rem;
+    gap: 0.5rem;
+    cursor: pointer;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    text-align: start;
+    color: inherit;
+    transition: box-shadow 150ms ease-out;
+  }
+
+  .pb-trade:focus-visible {
+    outline: 2px solid var(--pb-focus);
+    outline-offset: 2px;
+  }
+
+  /* Press feedback ungated, for the reason the steppers give: `hover` sticks
+     after a tap on iOS and never fires for a stylus. */
+  .pb-trade:active {
+    transform: translateY(1px);
+  }
+
+  /* While a score is held, the other five names are the targets and say so -
+     a 1px outline in the panel's own hairline step, which is the quietest
+     thing on the surface that is still an edge. It is deliberately the
+     *weaker* rule rather than the full gold one: in dark, six full-strength
+     gold outlines read as six boxes and the one ring that means something
+     stops standing out. */
+  .pb-swapping .pb-trade[aria-pressed='false'] {
+    box-shadow: inset 0 0 0 1px var(--pb-rule);
+  }
+
+  /* The held one, in the theme's action accent: the Rarity Rule's one
+     legitimate use, a selection. The ring is 2px and offset so it reads as
+     outside the name rather than as a box drawn round it. */
+  .pb-trade[aria-pressed='true'] {
+    box-shadow: 0 0 0 2px var(--pb-accent);
+  }
+
+  .pb-trade[aria-pressed='true'] .pb-mark {
+    color: var(--pb-accent);
+  }
+
+  .pb-leader {
+    height: 0;
+    min-width: 0.75rem;
+    flex: 1;
+    transform: translateY(-3px);
+    border-bottom: 1px dotted var(--pb-rule);
+  }
+
+  .pb-score {
+    min-width: 1.4ch;
+    text-align: center;
+    font-family: var(--sl-font-heading);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--pb-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The modifier, on a flat step in the neutral ramp: enough to hold the
+     column, not enough to be an object. */
+  .pb-mod {
+    display: grid;
+    width: 2.75rem;
+    height: 1.75rem;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--pb-raised);
+    font-family: var(--sl-font-table);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--pb-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .pb-cost {
+    width: 7.5rem;
+    text-align: right;
+    font-family: var(--sl-font-table);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    color: var(--pb-ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The foot's figures, at the Title step - the same step and the same face as
+     the six row scores, because the three entries and the six rows are peers.
+     An earlier draft set these at 1.125rem, which is on no documented step:
+     the contract called for Headline (1.5rem) and the code shipped something
+     between, which is how a step drifts without anybody deciding it. */
+  .pb-total {
+    font-family: var(--sl-font-heading);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--pb-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The steppers, as DESIGN.md's Outline / Icon control: transparent fill, the
+     theme's action accent for border and glyph, 8px radius. 44px is
+     ADR-0009's floor and the box is 44 rather than the glyph's 18, so the
+     target is the control rather than the mark inside it. */
+  .pb-step {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 1px solid var(--pb-rule-strong);
+    background: transparent;
+    color: var(--pb-accent);
+    transition:
+      background-color 150ms ease-out,
+      transform 90ms ease-out;
+  }
+
+  @media (hover: hover) {
+    .pb-step:hover:not(:disabled) {
+      background: var(--pb-raised);
+    }
+  }
+
+  /* Press feedback is deliberately ungated: `hover` sticks after a tap on
+     iOS and never fires for a stylus, so gating the press on `hover` silently
+     excludes exactly the device ADR-0009 is about. */
+  .pb-step:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .pb-step:disabled {
+    color: var(--pb-ink-soft);
+    border-color: var(--pb-rule);
+    cursor: not-allowed;
+  }
+
+  .pb-step:focus-visible {
+    outline: 2px solid var(--pb-focus);
+    outline-offset: 2px;
+  }
+
+  /* A starting spread and the reset are quiet outline buttons. They used to be a
+     tinted pill and a wax seal respectively; at ADR-0009's 44px they are two
+     of the loudest objects on a page whose job is six numbers. */
+  .pb-spread,
+  .pb-reset {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--pb-rule-strong);
+    background: transparent;
+    font-family: var(--sl-font-table);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--pb-ink-soft);
+    transition:
+      background-color 150ms ease-out,
+      color 150ms ease-out;
+  }
+
+  @media (hover: hover) {
+    .pb-spread:hover,
+    .pb-reset:hover {
+      background: var(--pb-raised);
+      color: var(--pb-ink);
+    }
+  }
+
+  .pb-spread:focus-visible,
+  .pb-reset:focus-visible {
+    outline: 2px solid var(--pb-focus);
+    outline-offset: 2px;
+  }
+
+  /* The reset is the destructive one, and the theme's heading ink is what
+     marks a thing as important without filling it. */
+  .pb-reset {
+    color: var(--pb-heading);
+    border-color: var(--pb-heading);
+  }
+
+  @media (max-width: 46rem) {
+    .pb-cost {
+      width: auto;
+      text-align: left;
+    }
+
+    .pb-score {
+      justify-self: start;
+    }
+  }
+
+  /* No shadow in dark. DESIGN.md's card-rest is 5% black, which cannot lift a
+     surface off bark-black, so the dark panel carries none and lets the 1px
+     border, the 3px cap and the head's 2px rule do the structural work. */
+  :global(:root[data-theme='dark']) .pb-panel {
+    box-shadow: none;
+  }
+</style>

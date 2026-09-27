@@ -48,3 +48,16 @@ _Avoid_: Default array, preset scores
 Discarding a character's rolled ability scores and using the fixed Mulligan
 array 15, 14, 12, 12, 10, 8 instead.
 _Avoid_: Reroll, do-over
+
+**Starting spread**:
+One of the complete allocations the Point Buy tool offers as a one-press load.
+Each is a legal 5e spread costing exactly the full 27-point pool, so loading one
+is a finished allocation rather than a head start. The set is Standard Array,
+Striker (15/15/14/8/10/8) and Caster (8/14/14/15/12/8).
+_Avoid_: Preset, template, build, loadout
+
+**Trade**:
+Exchanging the scores of two Ability Scores on the Point Buy sheet. A trade
+moves both values at once, so the spend and the modifier total are unchanged by
+construction and it cannot overspend.
+_Avoid_: Swap, exchange, drag-and-drop reorder
