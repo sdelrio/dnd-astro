@@ -192,8 +192,25 @@ const initialData = {
   .fx-filters-toggle{ display:flex; align-items:center; justify-content:center; gap:.5rem; flex:1 1 auto; padding:0 1rem; border:1px solid var(--fx-rule-strong); background: var(--fx-field); color: var(--fx-ink); font-family: var(--sl-font); font-weight:600; border-radius:8px; cursor:pointer; }
   @media (min-width:40rem){ .fx-filters-toggle{ display:none !important; } }
   .fx-filters-toggle svg{ width:18px; height:18px; }
-  .fx-clear{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; flex:0 0 auto; border:1px solid transparent; background:transparent; color: var(--fx-ink-soft); cursor:pointer; border-radius:8px; transition: color .15s ease, background .15s ease; }
-  .fx-clear:hover{ color: var(--fx-ink); background: var(--fx-sunk); border-color: var(--fx-rule); }
+  .fx-clear{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; flex:0 0 auto; border:1px solid transparent; background:transparent; color: var(--fx-ink-soft); cursor:pointer; border-radius:8px; transition: color 150ms ease-out, background 150ms ease-out, transform 90ms ease-out; }
+  /* ADR-0009 D4: the hover tint is gated, the press is not. This control sits 14px
+     from the selects and the search field, so an ungated `:hover` here is exactly
+     the stale-tint-after-a-tap case the decision was written about. The siblings
+     gate theirs - `.pb-step`, `.dr-reroll`, `.r3-chip`, `.rb-entry-link` - and
+     five ungated hover tints still survive elsewhere in the repo (the swap popover
+     buttons in `DiceRoller.astro` and `.rb-panel .rb-entry-link` in
+     `RulebookSpread.astro`), all pre-existing and out of scope here. */
+  @media (hover: hover){
+    .fx-clear:hover{ color: var(--fx-ink); background: var(--fx-sunk); border-color: var(--fx-rule); }
+  }
+  /* Press feedback is deliberately ungated, for the reason ADR-0009 D4 gives:
+     `:hover` sticks after a tap on iOS and never fires for a stylus, so gating
+     the press on `hover` would exclude exactly the device the decision is about.
+     A mouse still gets a press while held, a finger gets one on contact, and a
+     touchscreen laptop reports `hover: hover` and `pointer: fine` at once, so
+     the ungated form is correct on all three. `translateY(1px)` is the sibling
+     components' press: `.pb-step`, `.dr-reroll`, `.dr-trade`. */
+  .fx-clear:active{ transform: translateY(1px); }
   .fx-clear svg{ width:20px; height:20px; }
 
   .fx-field{ display:flex; flex-direction:column; gap:.25rem; min-width:0; }
@@ -313,8 +330,13 @@ const initialData = {
      the Ledger Panel's own construction. It and the 2px head rule bracket the
      panel without either one carrying colour alone, which is why the cap is
      the only accent bar here and the tier legend below is not given one. It is
-     also now this surface's only pseudo-element: the stitched spine and then the
-     wax ribbon both came off, and neither of them was a Tool Panel feature. */
+     also the only pseudo-element *the root* draws: the stitched spine and then
+     the wax ribbon both came off this root, and neither was a Tool Panel
+     feature. The surface still has descendant pseudo-elements of its own - the
+     select caret on `.fx-control::after` and the chip dot on `.fx-chip::before` -
+     and those are control furniture, not accents: the caret is a glyph in the
+     field's own ink and the dot is 6px of the chip. "One accent" is a claim
+     about what is coloured, not about what has a generated box. */
   [data-fx]::before{ content:''; position:absolute; inset-inline:-1px; top:-1px; height:3px; border-radius: 8px 8px 0 0; background: var(--fx-heading); }
 
   .fx-title{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1.125rem; padding-bottom:.75rem; border-bottom:2px solid var(--fx-rule-strong); }

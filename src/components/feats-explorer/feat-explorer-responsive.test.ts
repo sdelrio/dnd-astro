@@ -200,13 +200,27 @@ describe('FeatExplorer surface', () => {
   });
 
   // The cap is the only accent on this surface, which is a stronger claim than
-  // "the cap exists": it is the only pseudo-element the root draws at all. A
-  // stitched spine and a wax ribbon have each come off this root; neither was a
-  // Tool Panel feature, and each read as a doubled border rather than as
-  // furniture. If a second pseudo-element ever comes back, the surface has two
-  // accents and the bracket stops bracketing.
+  // "the cap exists": it is the only pseudo-element the *root* draws. A stitched
+  // spine and a wax ribbon have each come off this root; neither was a Tool
+  // Panel feature, and each read as a doubled border rather than as furniture.
+  // If a second one ever comes back, the surface has two accents and the bracket
+  // stops bracketing.
+  //
+  // Matching on `[data-fx]::` alone would let a root written `[data-fx] > div::after`
+  // walk straight past, so this asserts the whole inventory of pseudo-elements in
+  // the component instead. That is a whitelist: a new one anywhere - on the root
+  // or on any descendant - has to be added here deliberately, and the two that
+  // are on the list are control furniture (a caret glyph and a 6px chip dot),
+  // not accents. "One accent" is a claim about what is coloured, not about what
+  // has a generated box.
   it('draws the cap as the only pseudo-element on the root', () => {
-    expect([...style.matchAll(/\[data-fx\]::(before|after)/g)].map((m) => m[0])).toEqual([
+    const bare = style.replace(/\/\*[\s\S]*?\*\//g, '');
+    const pseudos = [...bare.matchAll(/([^{}\n]*::(?:before|after))\s*\{/g)].map((m) => m[1].trim());
+
+    // Sorted, so a cosmetic reorder of the stylesheet is not a failure but a
+    // fourth pseudo-element still is.
+    expect([...pseudos].sort()).toEqual(['.fx-chip::before', '.fx-control::after', '[data-fx]::before']);
+    expect(pseudos.filter((selector) => selector.startsWith('[data-fx]::'))).toEqual([
       '[data-fx]::before',
     ]);
   });

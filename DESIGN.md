@@ -148,6 +148,16 @@ components:
     textColor: "{colors.ink}"
     rounded: "{rounded.lg}"
     padding: "16px"
+  tool-panel-list:
+    backgroundColor: "{colors.bark-100}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.lg}"
+    padding: "24px 28px"
+  tool-panel-list-dark:
+    backgroundColor: "{colors.bark-800}"
+    textColor: "{colors.parchment}"
+    rounded: "{rounded.lg}"
+    padding: "24px 28px"
   tool-panel-dark:
     backgroundColor: "{colors.bark-800}"
     textColor: "{colors.parchment}"
@@ -437,8 +447,20 @@ surface scale: `--fx-page` is `--pb-surface` (Bark 100 / Bark 800), `--fx-card` 
 `--pb-raised` (Bark 200 / Bark 700), the edge is 1px Gold Rule / Gold Rule Dark,
 the radius is 8px, the shadow is `0 1px 2px 0 rgb(0 0 0 / 0.05)` in light and
 `none` in dark, the 3px cap is Oxblood stepping to Gold Leaf, and the head is
-closed by the 2px Gold Rule. What distinguishes it from the Ledger Panel is only
-that it holds 219 entries instead of six ability lines.
+closed by the 2px Gold Rule.
+
+**One thing is not the Tool Panel: the padding.** The Ledger Panel is 16px; this
+is `24px 28px`, and 20px all round below `sm`. That is a deviation, not an
+oversight, and it is named in the token block above as its own entry
+(`tool-panel-list` / `tool-panel-list-dark`) rather than left to contradict
+`tool-panel`. The reason is the job: the Ledger Panel holds six ability lines and
+a foot, and 16px puts that content one step inside the rule, which is what you
+want when the panel is a frame around a small amount of writing. This one holds
+219 entries on a grid, and at 16px the outer column of cards sat close enough to
+the 1px Gold Rule that the panel read as a border wrapped around the grid rather
+than as a panel the grid sits inside. The extra 8-12px is the gutter that makes
+the last column read as a column, and it is symmetric on both sides and in both
+width bands. A test asserts that symmetry, in both bands.
 
 It got there by subtraction, and each subtraction is a decision worth keeping.
 It had a **parchment page** - a 25% Parchment mix over Bark 100, then 20% Ink
