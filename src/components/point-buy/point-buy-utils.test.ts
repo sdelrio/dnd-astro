@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  ABILITY_LABELS,
   ABILITY_NAMES,
   MIN_SCORE,
   MAX_SCORE,
@@ -16,6 +17,12 @@ import {
   canDecrease,
   increaseScore,
   decreaseScore,
+  tradeScores,
+  PRESET_SPREADS,
+  getPresetSpread,
+  applyPreset,
+  totalModifier,
+  formatTotalModifier,
   calculateModifier,
   formatModifier,
   type AbilityName,
@@ -295,6 +302,62 @@ describe('decreaseScore', () => {
   });
 });
 
+describe('tradeScores', () => {
+  it('exchanges the two scores and leaves the other four alone', () => {
+    const scores: Scores = { STR: 15, DEX: 10, CON: 8, INT: 8, WIS: 12, CHA: 8 };
+    expect(tradeScores(scores, 'STR', 'DEX')).toEqual({
+      STR: 10,
+      DEX: 15,
+      CON: 8,
+      INT: 8,
+      WIS: 12,
+      CHA: 8,
+    });
+  });
+
+  it('is its own inverse', () => {
+    const scores: Scores = { STR: 15, DEX: 10, CON: 8, INT: 8, WIS: 12, CHA: 8 };
+    expect(tradeScores(tradeScores(scores, 'STR', 'DEX'), 'STR', 'DEX')).toEqual(scores);
+  });
+
+  it('cannot overspend, because it moves scores rather than buying them', () => {
+    // The whole reason this exists: a player who regrets a 15 wants it on
+    // another ability, not back in the pool, and a move that goes through
+    // decrease-then-increase can leave the sheet short.
+    const scores: Scores = { STR: 15, DEX: 15, CON: 15, INT: 8, WIS: 8, CHA: 8 };
+    expect(pointsRemaining(scores)).toBe(0);
+    expect(pointsRemaining(tradeScores(scores, 'STR', 'WIS'))).toBe(0);
+    expect(pointsSpent(tradeScores(scores, 'STR', 'WIS'))).toBe(pointsSpent(scores));
+    expect(totalModifier(tradeScores(scores, 'STR', 'WIS'))).toBe(totalModifier(scores));
+  });
+
+  it('does not mutate the allocation passed in', () => {
+    const before: Scores = { STR: 15, DEX: 10, CON: 8, INT: 8, WIS: 8, CHA: 8 };
+    tradeScores(before, 'STR', 'WIS');
+    expect(before.STR).toBe(15);
+    expect(before.WIS).toBe(8);
+  });
+
+  it('is a no-op when asked to trade an ability with itself', () => {
+    const before = createDefaultScores();
+    const after = tradeScores(before, 'STR', 'STR');
+    expect(after).toEqual(before);
+    expect(after).not.toBe(before);
+  });
+});
+
+describe('ability labels', () => {
+  it('names all six abilities, in the order the sheet writes them', () => {
+    expect(Object.keys(ABILITY_LABELS)).toEqual([...ABILITY_NAMES]);
+  });
+
+  it('has no label that is the abbreviation, which is what the table prints', () => {
+    for (const name of ABILITY_NAMES) {
+      expect(ABILITY_LABELS[name], name).not.toBe(name);
+    }
+  });
+});
+
 describe('modifier reuse', () => {
   it('re-exports the Dice Roller modifier helpers', () => {
     expect(calculateModifier).toBe(diceCalculateModifier);
@@ -306,5 +369,91 @@ describe('modifier reuse', () => {
     expect(calculateModifier(15)).toBe(2);
     expect(formatModifier(calculateModifier(8))).toBe('-1');
     expect(formatModifier(calculateModifier(15))).toBe('+2');
+  });
+});
+
+describe('preset spreads', () => {
+  // A preset that does not cost exactly the pool is a trap: the obvious next
+  // move at the table is to dump the remainder into the first score, and the
+  // player ends up with a spread they did not choose. The first draft of
+  // Standard Array had 13 and 12 the wrong way round and overspent by two, so
+  // this is pinned rather than trusted.
+  it('costs every preset at exactly the full pool', () => {
+    for (const preset of PRESET_SPREADS) {
+      expect(pointsSpent(preset.scores), `${preset.label} spends`).toBe(POINT_BUY_POOL);
+    }
+  });
+
+  it('keeps every preset score inside the legal range', () => {
+    for (const preset of PRESET_SPREADS) {
+      for (const ability of ABILITY_NAMES) {
+        expect(preset.scores[ability], `${preset.label} ${ability}`).toBeGreaterThanOrEqual(
+          MIN_SCORE
+        );
+        expect(preset.scores[ability], `${preset.label} ${ability}`).toBeLessThanOrEqual(MAX_SCORE);
+      }
+    }
+  });
+
+  it('covers all six abilities, so loading one leaves nothing at the floor by accident', () => {
+    for (const preset of PRESET_SPREADS) {
+      expect(Object.keys(preset.scores).sort()).toEqual([...ABILITY_NAMES].sort());
+    }
+  });
+
+  it('gives every preset a distinct id and label', () => {
+    expect(new Set(PRESET_SPREADS.map((p) => p.id)).size).toBe(PRESET_SPREADS.length);
+    expect(new Set(PRESET_SPREADS.map((p) => p.label)).size).toBe(PRESET_SPREADS.length);
+  });
+
+  it('ships the published Standard Array verbatim', () => {
+    // The array is a printed fact, not a house spread: 15/14/13/12/10/8.
+    expect(getPresetSpread('standard-array')).toEqual({
+      STR: 15,
+      DEX: 14,
+      CON: 13,
+      INT: 12,
+      WIS: 10,
+      CHA: 8,
+    });
+  });
+
+  it('returns undefined for an id that does not exist', () => {
+    expect(getPresetSpread('sorcerer')).toBeUndefined();
+  });
+
+  it('leaves the scores untouched for an unknown id', () => {
+    const current = { STR: 12, DEX: 14, CON: 13, INT: 12, WIS: 10, CHA: 8 };
+    expect(applyPreset(current, 'sorcerer')).toEqual(current);
+  });
+
+  it('replaces the whole spread for a known id, and copies rather than aliases', () => {
+    const loaded = applyPreset(createDefaultScores(), 'striker');
+    expect(loaded).toEqual(getPresetSpread('striker'));
+    expect(loaded).not.toBe(getPresetSpread('striker'));
+  });
+});
+
+describe('modifier total', () => {
+  it('sums the six modifiers', () => {
+    expect(totalModifier(getPresetSpread('standard-array') as Scores)).toBe(5);
+  });
+
+  it('is -6 on a blank sheet, the number the tool starts from', () => {
+    expect(totalModifier(createDefaultScores())).toBe(-6);
+  });
+
+  it('always carries its sign, so a bonus cannot read as a quantity', () => {
+    expect(formatTotalModifier(createDefaultScores())).toBe('-6');
+    expect(formatTotalModifier({ STR: 15, DEX: 15, CON: 14, INT: 8, WIS: 10, CHA: 8 })).toBe(
+      '+4'
+    );
+  });
+
+  it('writes a zero without a sign, which is neither a bonus nor a penalty', () => {
+    // The only spread where +0 and -0 are both wrong is a total of exactly
+    // zero, so it is pinned rather than left to the sign helper.
+    expect(totalModifier({ STR: 14, DEX: 12, CON: 10, INT: 10, WIS: 10, CHA: 10 })).toBe(3);
+    expect(formatTotalModifier({ STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 })).toBe('0');
   });
 });
