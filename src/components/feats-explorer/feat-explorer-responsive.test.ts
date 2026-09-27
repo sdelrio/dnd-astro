@@ -100,9 +100,9 @@ describe('FeatExplorer phone adaptation', () => {
 describe('FeatExplorer card composition', () => {
   // The prerequisite is a second line under the name, never a fifth column of
   // a grid. A grid column is what forced the long strings - the worst case in
-  // the dataset is a 130-character prerequisite - into a narrow track, and a
-  // narrow track plus a long unbreakable run is how a phone page ends up
-  // scrolling sideways.
+  // the dataset is a 97-character prerequisite, 105 with the rendered "Requires"
+  // label in front of it - into a narrow track, and a narrow track plus a long
+  // unbreakable run is how a phone page ends up scrolling sideways.
   it('renders the prerequisite on its own line beneath the name, not a column', () => {
     const prereq = source.match(/<template x-if="feat\.prerequisite">[\s\S]*?<\/template>/)![0];
     expect(prereq).toContain('class="fx-prereq"');
@@ -209,17 +209,24 @@ describe('FeatExplorer surface', () => {
   // Matching on `[data-fx]::` alone would let a root written `[data-fx] > div::after`
   // walk straight past, so this asserts the whole inventory of pseudo-elements in
   // the component instead. That is a whitelist: a new one anywhere - on the root
-  // or on any descendant - has to be added here deliberately, and the two that
-  // are on the list are control furniture (a caret glyph and a 6px chip dot),
-  // not accents. "One accent" is a claim about what is coloured, not about what
-  // has a generated box.
+  // or on any descendant - has to be added here deliberately, and the three that
+  // are on the list are control furniture (a caret glyph, a 6px chip dot, and the
+  // middot that leads the legend's trailing note), not accents. "One accent" is a
+  // claim about what is coloured, not about what has a generated box. It has
+  // already earned its keep once: the middot below was not on this list when the
+  // test was written.
   it('draws the cap as the only pseudo-element on the root', () => {
     const bare = style.replace(/\/\*[\s\S]*?\*\//g, '');
     const pseudos = [...bare.matchAll(/([^{}\n]*::(?:before|after))\s*\{/g)].map((m) => m[1].trim());
 
     // Sorted, so a cosmetic reorder of the stylesheet is not a failure but a
     // fourth pseudo-element still is.
-    expect([...pseudos].sort()).toEqual(['.fx-chip::before', '.fx-control::after', '[data-fx]::before']);
+    expect([...pseudos].sort()).toEqual([
+      '.fx-chip::before',
+      '.fx-control::after',
+      '.fx-legend-note::before',
+      '[data-fx]::before',
+    ]);
     expect(pseudos.filter((selector) => selector.startsWith('[data-fx]::'))).toEqual([
       '[data-fx]::before',
     ]);
@@ -274,6 +281,24 @@ describe('FeatExplorer surface', () => {
     expect(narrow.left).toBeGreaterThan(0);
   });
 
+  // The card edge is the panel's full Gold Rule rather than its 42% hairline.
+  // The fill step alone is about 1.06:1 in light (Bark 200 on Bark 100), which
+  // left 219 cards held entirely by a faint outline. The rule is 1px in both
+  // themes, so it must stay one step under the 2px head rule and the 3px cap -
+  // strengthening the edge is not allowed to promote a card border to a
+  // structural cue.
+  it('draws the card edge at the full gold rule, one step under the head rule', () => {
+    const card = style.match(/\.fx-card\{[^}]*\}/)![0];
+    expect(card).toContain('border:1px solid var(--fx-rule-strong)');
+    expect(card).toMatch(/border:1px\b/);
+
+    const head = style.match(/\.fx-title\{[^}]*\}/)![0];
+    expect(head).toContain('border-bottom:2px solid var(--fx-rule-strong)');
+
+    const cap = style.match(/\[data-fx\]::before\{[^}]*\}/)![0];
+    expect(cap).toContain('height:3px');
+  });
+
   // Nothing may be declared and left unreferenced: an undefined custom property
   // does not error, it silently drops the declaration that used it, so the
   // tokens that went with the removed ornaments have to go too.
@@ -306,8 +331,13 @@ describe('FeatExplorer count and tier key', () => {
   // hidden from a screen reader, which needs the same three mappings a reader
   // gets. It sits outside the collapsible panel so it is on the page at 320 as
   // well as at 1440.
+  //
+  // The key also has to state the scope of EB, which is `level >= 19` while the
+  // Level filter splits 19 from 21. Without that note a reader who filters to
+  // Level 21, finds EB seals, and goes to look for a Boon, has been misled by
+  // the page. The note is real visible text in the key, not a comment.
   it('keys the tier seals in visible text, outside the collapsible panel', () => {
-    const legend = source.match(/<div class="fx-legend">[\s\S]*?<\/dl>\s*<\/div>/)![0];
+    const legend = source.match(/<div class="fx-legend">[\s\S]*?<\/div>\n\n {2}<div class="fx-grid">/)![0];
     expect(legend).toContain('aria-labelledby="fx-legend-label"');
     expect(legend).not.toContain('aria-hidden');
 
@@ -318,8 +348,34 @@ describe('FeatExplorer count and tier key', () => {
     }
 
     // The marks are the seals themselves, at key size: one class, so the legend
-    // reads off the same three declarations the medallions use.
+    // reads off the same three declarations the medallions use. That is what
+    // stops the note beside them from drifting from the marks themselves.
     expect([...legend.matchAll(/class="fx-seal fx-seal-key"/g)]).toHaveLength(3);
     expect(source.indexOf('id="fx-panel"')).toBeLessThan(source.indexOf('class="fx-legend"'));
+
+    // The scope note, as text, naming both levels the seal actually covers and
+    // using the Level filter's own option labels so the two are comparable.
+    const note = legend.match(/<p class="fx-legend-note">([^<]+)<\/p>/)![1];
+    expect(note).toContain('EB');
+    expect(note).toContain('Level 19');
+    expect(note).toContain('Level 21');
+  });
+
+  // The tier is derived from `level`, in the component, and the Level filter's
+  // two high buckets both fall in it. If either half moved - the filter merged
+  // 19 and 21, or the threshold stopped at 19 - the note above would be a lie,
+  // so the pair is asserted together rather than trusted.
+  it('keeps the EB scope note honest against the tier rule and the level buckets', () => {
+    const filter = readFileSync(new URL('./feat-filter.ts', import.meta.url), 'utf8');
+
+    // The seal: epic at 19 and above, so both buckets are inside it.
+    const component = source.match(/level === 0 \? 'origin' : level >= (\d+) \? 'epic' : 'general'/);
+    expect(component).not.toBeNull();
+    expect(Number(component![1])).toBe(19);
+
+    // And the filter really does still separate 19 from 21, which is the whole
+    // reason the note has to exist.
+    const buckets = [...filter.matchAll(/label: 'Level (19|21)'/g)].map((m) => m[1]);
+    expect(buckets).toEqual(['19', '21']);
   });
 });

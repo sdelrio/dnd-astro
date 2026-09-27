@@ -40,6 +40,20 @@ seconds, on a phone, mid-session.
 - **Data truth, decided with the user:** `description` is absent on all 219
   records, so the slot renders only when present. No line of feat copy is
   invented to fill it.
+- **The Epic Boon tier, decided with the user after review:** the seal is
+  `level >= 19`, which is 78 feats - the 40 "Boon of ..." entries at level 19 and
+  38 at level 21, and the level-21 ones are class builds (Paragon,
+  Alchamaestro, Blinding Speed, Shadowdancer) rather than boons. The Level filter
+  keeps 19 and 21 as separate buckets, so a reader can land on 21 and find an EB
+  seal. The user was asked whether to split the tier, rename "Epic Boon" to
+  "Epic", or read the dataset's `category` field, and chose **none of them**:
+  one tier, the name kept, and **the legend states its scope on the page** -
+  "EB covers Level 19 and Level 21", in visible text beside the key, naming the
+  filter's own option labels so the two are comparable. That note is the whole fix.
+  Two things the decision is *not*, so a later session does not read them in: the
+  tier is **not** derived from `category` (the field carries only `Origin` and
+  `General` across all 219 records, so it cannot express the third tier at all),
+  and 19 and 21 were **not** merged in the filter.
 - **Scope of the redesign, decided with the user:** the elements stay (search,
   three filters, the count, the clear, the cards and every field on them); the
   arrangement and the surface are free. The world is not: the Tool Panel
@@ -129,10 +143,19 @@ trailing edge. The clear control is a **sibling of the panel, never a child**:
 below `sm` the panel is collapsed, so a clear inside it would be unreachable
 until the user opened the filters. Then the **tier legend** - a `dl` of the
 three seal marks and their names, real text, not `aria-hidden`, outside the
-collapsible panel. Then the entries: 2-up catalogue cards (auto-fill, `minmax(min(100%,
+collapsible panel, with a trailing note stating that EB covers both Level 19 and
+Level 21 (see the decision above; the note is the fix, not a caveat). Then the
+entries: 2-up catalogue cards (auto-fill, `minmax(min(100%,
 17rem), 1fr)`), each a name with its wax-seal medallion, the prerequisite as a
 second line under the name when there is one, ability chips, and the tier and
 book closing the card below a hairline rule.
+
+**The card edge is the full Gold Rule, not the hairline.** At the panel's 42%
+hairline the fill step alone is about 1.06:1 in light (Bark 200 on Bark 100), so
+all 219 cards were held by a faint outline and read as one wash rather than as
+entries. The user chose the stronger edge, in both themes. It is still 1px, so
+the 2px head rule and the 3px cap remain the only structural cues on the surface
+and a wall of borders does not out-shout two bars.
 
 **FORM.** Locked, 1 Leather Codex, with the leather taken back out too. It is the
 Tool Panel - 8px radius, 1px Gold Rule, 3px cap, 2px head rule, symmetric

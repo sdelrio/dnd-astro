@@ -535,6 +535,29 @@ sizes - so the key cannot drift from the seals. It carries no colour of its own,
 which is what keeps it a key rather than a fourth accent beside the cap and the
 head rule.
 
+**The key also has to state the tier's scope, and on this one it is load-bearing.**
+EB is `level >= 19`, which is 78 feats: the 40 "Boon of ..." entries at level 19
+and 38 at level 21, and the level-21 ones are class builds rather than boons. The
+Level filter keeps 19 and 21 as separate buckets, so a reader can land on 21 and
+find an EB seal. The user was asked whether to split the tier, rename "Epic
+Boon", or read the dataset's `category` field, and chose none of those - one
+tier, the name kept, and **the legend says so in as many words**: a trailing note
+reading `EB covers Level 19 and Level 21`, in visible text beside the key, using
+the filter's own option labels. A key that names a tier without naming its
+scope is a key that can mislead, and the general rule is that a legend on this
+site states what the mark covers, not only what it is called. `category` cannot
+be the answer: it carries only `Origin` and `General` across all 219 records, so
+it cannot express the third tier at all.
+
+**The card edge is the full Gold Rule, not the panel's hairline.** At the 42%
+hairline the fill step alone is about 1.06:1 in light - Bark 200 on Bark 100 -
+so all 219 cards were held by a faint outline and read as one wash rather than as
+entries. The user chose the stronger edge, in both themes. It is still 1px, so
+the **2px head rule and the 3px cap remain the only structural cues** on the
+surface: strengthening a border is not permitted to promote it to a cue, and a
+wall of 219 edges does not out-shout two bars. That ordering is the whole
+reason the cap and the head rule exist on a surface this size.
+
 **The count is announced once.** It was a `role="status" aria-live="polite"`
 region in the head *and* another one on the bar below, both saying the same
 number, so a screen reader announced the count twice on every filter change. The

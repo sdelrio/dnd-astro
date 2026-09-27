@@ -103,7 +103,16 @@ const initialData = {
        same three --fx-seal-* declarations the medallions use. It sits outside
        the collapsible panel, above the cards, so it is on the page at every
        width and in both themes. It is a key and not a feature: no colour of
-       its own, no rule of its own beyond the hairlines it shares with the page. -->
+       its own, no rule of its own beyond the hairlines it shares with the page.
+
+       The trailing note is part of the key, not a caveat: EB is `level >= 19`,
+       and the Level filter splits 19 from 21, so a reader who picks Level 21 and
+       finds an EB seal is looking at the intended behaviour and the key has to
+       say so on the page. The level-21 entries are class builds rather than
+       boons; the user was asked and chose to keep the one "Epic Boon" tier and
+       to make the key state its scope rather than split the tier or rename it.
+       The marks stay on `.fx-seal` at key size, so this note cannot drift from
+       the colours it describes. -->
   <div class="fx-legend">
     <span class="fx-legend-label" id="fx-legend-label">Tier seals</span>
     <dl class="fx-legend-keys" aria-labelledby="fx-legend-label">
@@ -120,6 +129,7 @@ const initialData = {
         <dd>Epic Boon</dd>
       </div>
     </dl>
+    <p class="fx-legend-note">EB covers Level 19 and Level 21.</p>
   </div>
 
   <div class="fx-grid">
@@ -333,10 +343,11 @@ const initialData = {
      also the only pseudo-element *the root* draws: the stitched spine and then
      the wax ribbon both came off this root, and neither was a Tool Panel
      feature. The surface still has descendant pseudo-elements of its own - the
-     select caret on `.fx-control::after` and the chip dot on `.fx-chip::before` -
-     and those are control furniture, not accents: the caret is a glyph in the
-     field's own ink and the dot is 6px of the chip. "One accent" is a claim
-     about what is coloured, not about what has a generated box. */
+     select caret on `.fx-control::after`, the chip dot on `.fx-chip::before` and
+     the middot leading the legend's note - and those are control furniture, not
+     accents: a glyph in the field's own ink, 6px of the chip, and a separator.
+     "One accent" is a claim about what is coloured, not about what has a
+     generated box. */
   [data-fx]::before{ content:''; position:absolute; inset-inline:-1px; top:-1px; height:3px; border-radius: 8px 8px 0 0; background: var(--fx-heading); }
 
   .fx-title{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1.125rem; padding-bottom:.75rem; border-bottom:2px solid var(--fx-rule-strong); }
@@ -365,9 +376,21 @@ const initialData = {
   .fx-legend-set{ display:flex; align-items:center; gap:.4375rem; }
   .fx-legend-set dt{ margin:0; line-height:0; }
   .fx-legend-set dd{ margin:0; font-family: var(--sl-font-table); font-size:.6875rem; color: var(--fx-ink-soft); }
+  /* The trailing note, at the same step and the same ink as the three names so
+     it reads as part of the key rather than as a fourth entry. A middot leads
+     it, which is the separator the card foot already uses. */
+  .fx-legend-note{ margin:0 0 0 .375rem; font-family: var(--sl-font-table); font-size:.6875rem; color: var(--fx-ink-soft); }
+  .fx-legend-note::before{ content:'\00b7'; margin-right:.375rem; }
 
   .fx-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap:.875rem; }
-  .fx-card{ display:flex; flex-direction:column; gap:.625rem; padding:.875rem .9375rem; background: var(--fx-card); border:1px solid var(--fx-rule); border-radius:6px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04); }
+  /* The card edge is the panel's full Gold Rule, not its 42% hairline. At the
+     hairline the fill step alone is about 1.06:1 in light - Bark 200 on Bark 100
+     - so 219 cards were held entirely by a faint outline and read as one wash
+     rather than as entries. The user chose the stronger edge. It is still one
+     1px step, so the 2px head rule and the 3px cap above it remain the only
+     things on the surface that are structural, and 219 borders never out-shout
+     two bars. */
+  .fx-card{ display:flex; flex-direction:column; gap:.625rem; padding:.875rem .9375rem; background: var(--fx-card); border:1px solid var(--fx-rule-strong); border-radius:6px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04); }
   :root[data-theme="dark"] .fx-card{ box-shadow: none; }
   .fx-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:.625rem; }
   /* The name is the card's ink, not the theme's heading accent, and it is set
