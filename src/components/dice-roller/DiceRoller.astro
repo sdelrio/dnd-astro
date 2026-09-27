@@ -5,7 +5,7 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
 <div
   x-data="diceRoller"
   @keydown.escape.window="cancelSwap()"
-  class="dice-roller-needs-js not-content space-y-6"
+  class="dice-roller-needs-js dr not-content"
 >
   <!-- With scripting off, every control below is inert. A `<noscript>` block
        cannot remove them, so the note leads and hides them instead of leaving a
@@ -18,260 +18,974 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
         display: none !important;
       }
     </style>
-    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900 text-sm text-gray-700 dark:text-gray-300">
+    <div class="rounded-lg border border-gold-rule bg-bark-100 p-4 text-ink dark:border-gold-rule-dark dark:bg-bark-800 dark:text-parchment">
       <p class="font-medium">The Dice Roller needs JavaScript.</p>
       <p class="mt-1">Every other page on this site works without it. With it enabled you get 4d6, drop the lowest die, and add the remaining three per ability.</p>
     </div>
   </noscript>
 
-  <div class="js-only flex justify-center">
-    <button
-      @click="rollAll()"
-      :disabled="isRolling"
-      class="px-6 py-3 bg-(--sl-color-accent-contrast) text-(color:--sl-color-text-invert) rounded-lg shadow hover:bg-(--sl-color-accent-high) disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      aria-label="Roll all ability scores"
-    >
-      <span x-text="isRolling ? 'Rolling...' : 'Roll All Abilities'"></span>
-    </button>
-  </div>
+  <div class="js-only dr-panel" role="group" aria-label="Dice roller">
+    <!-- The head, as the character Card's header: a printed title over a meta
+         line, closed by a 2px gold rule at its own lower edge. That rule is
+         what makes it work - a head banded only by a dotted leader reads as
+         another row of the sheet, and a head closed by a rule at its lower edge
+         reads as a heading over what it heads.
 
-    <!-- #331. No six-column step: the re-roll is a 44px box anchored in the
-         tile's top-right corner, and a centred ability name only clears it when
-         the tile is wider than the label plus 96px. Starlight caps this
-         container at 880px, so six columns would leave 133px tiles and put the
-         button on the name. Three across is the most that fits. -->
-    <div class="js-only grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+         A printed title and a row label, and no heading element anywhere on the
+         surface: Starlight colours every heading in the content column to the
+         accent (0-1-1 light, 0-2-1 dark), which outranks a utility class, so a
+         heading here would be an accent-coloured label the surface never asked
+         for. The page's own `h1` is already "Dice Roller". -->
+    <div class="dr-head">
+      <div class="dr-head-id">
+        <p class="dr-title">Dice Roller</p>
+        <p class="dr-meta">4d6, drop the lowest die, add the rest.</p>
+      </div>
+      <!-- The one primary action.
 
-    <template x-for="(ability, index) in abilities" :key="ability.name">
-      <div class="relative">
-        <button
-          type="button"
-          @click="selectAbility(index)"
-          :aria-pressed="selectedIndex === index"
-          :aria-label="'Select ' + ability.name + ' for swap'"
-          class="block w-full h-full text-left bg-white dark:bg-gray-800 border rounded-lg shadow-sm overflow-hidden cursor-pointer transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--sl-color-accent)"
-          :class="selectedIndex === index ? 'border-(color:--sl-color-accent) ring-2 ring-(color:--sl-color-accent-low)' : stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) ? 'border-(color:--sl-color-accent-high)' : 'border-gray-200 dark:border-gray-700'"
-        >
-          <div class="p-3 sm:p-4">
-            <div class="flex items-center justify-center gap-1 mb-2">
-              <h3 class="font-bold text-gray-900 dark:text-gray-100" x-text="ability.name"></h3>
-            </div>
+           The label is `--sl-color-text-invert` and must not be pinned to a
+           literal, because the FILL is a different colour in each theme and the
+           one legible ink is not the same in both:
 
-            <div x-show="ability.dice.length > 0" class="space-y-2">
-              <div class="flex gap-1 justify-center">
-                <!-- The dropped die needs a boundary of its own. It was
-                     `border-gray-300` on light and `border-gray-600` on dark,
-                     which measure 1.42:1 and 1.40:1 against the tile they sit
-                     on - below the 3:1 of WCAG 1.4.11, and invisible in
-                     practice. Its fill is no help either: `gray-100` on a white
-                     tile is 1.17:1. So the die that did not count was a pale gap
-                     with a hairline through it, and the strikethrough was
-                     carrying the entire "this one is discarded" signal - which
-                     it cannot do for two identical faces, or for anyone who
-                     cannot resolve a 1px rule at 14px.
+             light  fill #3f4a3a (dark sage)  text-invert  9.33:1
+             dark   fill #f7860f (Sap Amber) text-invert  5.28:1
 
-                     `gray-500` light and `gray-400` dark are the nearest steps
-                     that clear 3:1 against their own tile - measured at 5.01:1
-                     and 5.71:1 - while staying recessive next to the counted
-                     die, which keeps the accent border at 5.11:1 and 7.09:1
-                     and carries a fill. The strikethrough stays as
-                     reinforcement rather than as the sole carrier. Its text is
-                     left at `gray-500` on purpose: the die is inactive content,
-                     which 1.4.3 exempts, and de-emphasising it is the point. -->
-                <template x-for="(die, i) in ability.dice" :key="i">
-                  <span
-                    class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded border text-xs sm:text-sm font-medium"
-                    :class="ability.topThreeIndices.includes(i) ? 'bg-(--sl-color-accent-low) border-(color:--sl-color-accent) text-(color:--sl-color-accent-high)' : 'bg-gray-100 dark:bg-gray-700 border-gray-500 dark:border-gray-400 text-gray-500 dark:text-gray-400 line-through'"
-                    x-text="die"
-                  ></span>
-                </template>
-              </div>
+           Bark Black on the same two fills is 7.09:1 in dark and 1.91:1 in
+           light, so a single literal is a fail in one theme or the other. The
+           fill is --sl-color-accent-contrast and never the plain accent, since
+           the plain accent under inverted text is the pairing that fails.
 
-              <div class="text-center">
-                <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                  <span x-text="ability.topThree.join(' + ')"></span> = <span x-text="ability.sum" class="font-bold"></span>
-                </div>
-                <div class="text-lg font-bold text-gray-900 dark:text-gray-100" x-text="formatModifier(ability.modifier)"></div>
-              </div>
-            </div>
+           Measure this one settled. The button transitions
+           `background-color` over 150ms, so reading `getComputedStyle` on the
+           frame after a theme switch returns an interpolated colour: sampled
+           that way it reports 2.51:1, which is a light-theme label on a
+           dark-theme fill - a pairing the page never renders. The gilt inner
+           rule below is the refinement. -->
+      <button
+        type="button"
+        @click="rollAll()"
+        :disabled="isRolling"
+        class="dr-roll bg-(--sl-color-accent-contrast) text-(color:--sl-color-text-invert) [@media(hover:hover)]:hover:bg-(--sl-color-accent-high)"
+        aria-label="Roll all ability scores"
+      >
+        <IconifyIcon icon="game-icons:dice-twenty-faces-twenty" width="1.125rem" class="dr-mark" />
+        <span x-text="isRolling ? 'Rolling...' : 'Roll All Abilities'"></span>
+      </button>
+    </div>
 
-            <div x-show="ability.dice.length === 0" class="text-center py-4 text-gray-500 dark:text-gray-400">
-              Roll to generate
-            </div>
-          </div>
-        </button>
-
-        <!-- #polish. This was a 12x12 glyph in a 44x44 transparent box with no
-             fill and no border. The target was already correct - ADR-0009 raised
-             it to 44px for WCAG 2.5.8 - but nothing about it read as a control:
-             in a capture it was indistinguishable from a spinner. It now wears
-             the round icon button DESIGN.md specifies for the swap pair, on the
-             same bark/gold ramp and for the same reason. The ring is bark-black
-             in light and bark-100 in dark, never the accent it outlines.
-
-             `text-xs` is dropped: the button is icon-only, and the glyph is
-             sized by the `width="1em"` on the icon, so the font size only ever
-             set the box's own line box. `transition-all` is narrowed to
-             `transition-colors` to match the 150ms colour vocabulary; the
-             scale is on the button and the rotation is on the glyph, so the two
-             animate independently and neither needs `all`. -->
-        <button
-          type="button"
-          @click="rollIndividual(index)"
-          :disabled="isRolling || ability.rolling || selectedIndex !== null"
-          class="dice-reroll-btn group absolute top-1 right-1 inline-flex items-center justify-center w-11 h-11 border border-gray-400 dark:border-gray-500 hover:border-gray-600 dark:hover:border-gray-300 text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) transition-[color,background-color,border-color,transform] duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-          :aria-label="'Re-roll ' + ability.name"
-        >
-          <IconifyIcon icon="mdi:refresh" width="1em" class="transition-transform duration-200 group-hover:rotate-180" />
-        </button>
-
+    <div class="js-only">
+      <template x-for="(ability, index) in abilities" :key="ability.name">
+        <!-- `relative` is load-bearing, not decoration. The swap panel is out
+             of flow below its own row and lifted by z-index, so a staged swap
+             can never be covered by a later row's tiles - which is exactly what
+             happened when the panel was in flow, and why the tool's only
+             destructive action could be neither committed nor dismissed with a
+             pointer. -->
         <div
-          x-show="ability.rolling"
-          class="absolute left-0 right-0 bottom-0 h-1 bg-(--sl-color-accent) animate-pulse"
-          style="z-index: 5"
-        ></div>
+          class="dr-row"
+          :class="{ 'is-swapped': stagedSwap && (stagedSwap.index1 === index || stagedSwap.index2 === index) }"
+        >
+          <div class="dr-id">
+            <!-- The trade handle. Two presses exchange two abilities' rolls.
+                 It is a button and not the whole row because the row already
+                 holds a 44px re-roll and a dice cluster, and a row-sized target
+                 containing them is a mis-tap waiting to happen. It borrows no
+                 border or fill from the re-roll beside it, so the name still
+                 reads as writing, and it takes only the 44px floor the row
+                 already has. `aria-pressed` carries the state, never a class
+                 alone. -->
+            <button
+              type="button"
+              @click="selectAbility(index)"
+              :aria-pressed="selectedIndex === index"
+              :aria-label="'Select ' + ability.name + ' for swap'"
+              class="dr-trade"
+            >
+              <span class="dr-name" x-text="ability.name"></span>
+              <!-- The arithmetic. It is the whole record of which three dice
+                   counted, and it is here rather than in the score plate
+                   because the plate is one figure and this is a sentence about
+                   the row. It also carries the arrival state: with no roll yet
+                   this line is the prompt, so the row is never blank. -->
+              <span
+                class="dr-calc"
+                x-text="ability.dice.length ? ability.topThree.join(' + ') : 'Roll to generate'"
+              ></span>
+            </button>
 
-        <!-- #polish. The panel is anchored to its tile rather than stacked under
-             it. In flow it was a real defect, and not the one it looked like:
-             hit-testing a swap staged on STR sent both `Confirm swap` and
-             `Cancel swap` to `elementFromPoint` as `DIV.p-3` inside a
-             `BUTTON.block.w-full` in the *next* row's wrapper, so the tool's
-             only destructive action could be neither committed nor dismissed
-             with a pointer. Escape still worked and a swap staged on the last
-             row was fine, because nothing follows it - which is why it shipped.
+            <!-- The ledger leader. It exists because of the width, not as
+                 ornament: the content column runs to about 880px and the row
+                 holds four numbers, so with the name left-packed and the tray
+                 hard against the score there was roughly 600px of bare panel
+                 between a row's subject and its own evidence. The dotted rule is
+                 Point Buy's, and it is what turns that span back into one written
+                 line. Decorative, so it is hidden from the tree rather than
+                 read as an empty node. -->
+            <span class="dr-leader" aria-hidden="true"></span>
 
-             The cause is not the paint order inside the tile. The tile button
-             carries `h-full`, and the button's height is what the grid row is
-             sized from, so the row stays at its pre-panel 263px and the 90px
-             panel hangs 82px into the row below - where the next row's tiles,
-             later in DOM order, cover it. Taking `relative` off the button, the
-             obvious suspect, changes nothing here; it is gone anyway because
-             nothing inside the button is positioned, but it was never the
-             cause.
-
-             Absolute removes the dependency on how the row resolves. The panel
-             is out of flow, so the row never has to grow for it, and `z-10`
-             lifts it above every later sibling regardless. `top-full` ties it
-             to the tile it belongs to, so it cannot drift onto a neighbour. -->
-        <template x-if="stagedSwap && stagedSwap.index1 === index">
-          <div class="dice-swap-panel absolute left-0 right-0 top-full z-10 mt-2 rounded-lg p-2 text-center text-sm">
-            <div class="text-(color:--sl-color-accent-high) font-medium mb-2" x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"></div>
-            <div class="flex justify-center gap-2 not-content">
-              <button
-                type="button"
-                @click="confirmSwap()"
-                class="dice-round-btn dice-round-btn--confirm"
-                aria-label="Confirm swap"
-              >
-                <IconifyIcon icon="mdi:check" width="1em" />
-              </button>
-              <button
-                type="button"
-                @click="cancelSwap()"
-                class="dice-round-btn dice-round-btn--cancel"
-                aria-label="Cancel swap"
-              >
-                <IconifyIcon icon="mdi:close" width="1em" />
-              </button>
+            <!-- The tray. Four dice in a recessed well, and it is never empty:
+                 an unrolled ability renders `emptyFaces` (face 0, no pips), so a
+                 row arrives complete - you see the 4d6 waiting rather than a
+                 gap - and the tray's width never changes, so the six scores
+                 stay on one column and the sheet never reflows under a roll.
+                 The socket is `aria-hidden`: the row's own arithmetic line
+                 already says "Roll to generate", and six rows of four
+                 unrolled dice would otherwise be twenty-four announcements of
+                 nothing. -->
+            <div class="dr-dice">
+              <template x-for="(die, i) in ability.dice.length ? ability.dice : emptyFaces" :key="i">
+                <span
+                  class="dr-die"
+                  :data-face="die"
+                  :class="ability.dice.length ? (ability.topThreeIndices.includes(i) ? 'is-kept' : 'is-dropped') : 'is-socket'"
+                  role="img"
+                  :aria-hidden="!ability.dice.length"
+                  :aria-label="'Die ' + die + (ability.topThreeIndices.includes(i) ? '' : ', dropped')"
+                >
+                  <template x-for="p in 9"><i class="dr-pip"></i></template>
+                </span>
+              </template>
             </div>
           </div>
+
+          <!-- The score plate. This is the surface's one piece of hierarchy:
+               the rolled score is the number a player came for, and the dice
+               beside it are the evidence for it rather than four competing
+               figures. `is-empty` is the arrival state - a scored nothing, in
+               the soft ink, so six unrolled plates do not read as six zeros. -->
+          <div class="dr-plate" :class="ability.dice.length ? '' : 'is-empty'">
+            <span
+              class="dr-sum"
+              :class="ability.dice.length ? '' : 'is-empty'"
+              x-text="ability.dice.length ? ability.sum : '·'"
+            ></span>
+            <span
+              class="dr-mod"
+              x-text="ability.dice.length ? formatModifier(ability.modifier) : ''"
+            ></span>
+          </div>
+
+          <!-- The re-roll. The target is the control rather than the glyph
+               inside it (WCAG 2.5.8), the ring is never the colour of the glyph
+               it outlines, and the hover tint sits inside `@media (hover: hover)`
+               because `:hover` sticks after a tap on iOS. Press feedback is
+               deliberately ungated, for the reason the row gives. -->
+          <button
+            type="button"
+            @click="rollIndividual(index)"
+            :disabled="isRolling || ability.rolling || selectedIndex !== null"
+            class="dr-reroll"
+            :aria-label="'Re-roll ' + ability.name"
+          >
+            <IconifyIcon icon="mdi:refresh" width="1rem" class="dr-glyph" />
+          </button>
+
+          <div x-show="ability.rolling" class="dr-pulse"></div>
+
+          <template x-if="stagedSwap && stagedSwap.index1 === index">
+            <div class="dr-swap">
+              <div
+                class="dr-swap-name"
+                x-text="abilities[stagedSwap.index1].name + ' ↔ ' + abilities[stagedSwap.index2].name"
+              ></div>
+              <div class="flex justify-center gap-2 not-content">
+                <button
+                  type="button"
+                  @click="confirmSwap()"
+                  class="dice-round-btn dice-round-btn--confirm"
+                  aria-label="Confirm swap"
+                >
+                  <IconifyIcon icon="mdi:check" width="1em" />
+                </button>
+                <button
+                  type="button"
+                  @click="cancelSwap()"
+                  class="dice-round-btn dice-round-btn--cancel"
+                  aria-label="Cancel swap"
+                >
+                  <IconifyIcon icon="mdi:close" width="1em" />
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+
+    <!-- The session figures, in the foot rather than in the head: a governing
+         number set in a title band reads as a headline instead of as the state
+         of the sheet. The sample is capped, so the band says which window it
+         is - a table comparing tonight's average against an earlier one needs to
+         know it is a window, and how wide. -->
+    <div class="dr-foot">
+      <div class="dr-foot-head">
+        <span class="dr-soft micro-label">Stats</span>
+        <span class="dr-soft micro-label">last 50 rolls</span>
+      </div>
+      <template x-if="!stats || !stats.average || sessionRolls.length === 0">
+        <div class="dr-void">
+          <IconifyIcon icon="game-icons:dice-twenty-faces-twenty" width="1.5rem" />
+          <p>No stats yet! Roll all abilities to see your results.</p>
+        </div>
+      </template>
+      <template x-if="stats && stats.average && sessionRolls.length > 0">
+        <div class="dr-stats">
+          <div class="dr-stat">
+            <span class="dr-soft micro-label">Average</span>
+            <span class="dr-stat-fig" x-text="stats?.average"></span>
+          </div>
+          <div class="dr-stat">
+            <span class="dr-soft micro-label">Median</span>
+            <span class="dr-stat-fig" x-text="stats?.median"></span>
+          </div>
+          <div class="dr-stat">
+            <span class="dr-soft micro-label">Lowest</span>
+            <span
+              class="dr-stat-fig"
+              x-text="stats?.lowest + (stats?.lowestCount > 1 ? ' (x' + stats?.lowestCount + ')' : '')"
+            ></span>
+          </div>
+          <div class="dr-stat">
+            <span class="dr-soft micro-label">Highest</span>
+            <span
+              class="dr-stat-fig"
+              x-text="stats?.highest + (stats?.highestCount > 1 ? ' (x' + stats?.highestCount + ')' : '')"
+            ></span>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <!-- The log. Its heading is `x-cloak`-governed by the same `x-show` as the
+         list, so one condition owns one region. `unshift` puts the newest
+         first, so index 0 is the roll you just watched happen and it takes the
+         action accent; older lines recede one step. -->
+    <div class="dr-foot" x-cloak x-show="resultLog.length > 0">
+      <div class="dr-foot-head">
+        <span class="dr-soft micro-label">Roll log</span>
+        <span class="dr-soft micro-label">newest first</span>
+      </div>
+      <div class="dr-log">
+        <template x-for="(entry, i) in resultLog" :key="i">
+          <div
+            class="dr-log-line"
+            :class="i === 0 ? 'is-current' : ''"
+            x-text="entry"
+          ></div>
         </template>
       </div>
-    </template>
-   </div>
-
-  <!-- #polish. This was `max-w-sm mx-auto`, so on a desktop the island stacked
-       four bands on three different axes: the grid and the roll log ran the
-       full 880px measure, this card was 384px and centred, and the primary
-       button above them was centred too. The card was the only element whose
-       edges lined up with nothing.
-
-       It now runs the grid's measure and its four figures sit as a stat strip
-       rather than a 384px label-and-value list, which is what the content has
-       always been: four numbers about one sample. That is the system's own
-       atom - DESIGN.md's Metric treatment, uppercase micro-label over a
-       tabular value - so the card is built from the documented stat tile
-       instead of a narrower private arrangement of the same four facts.
-       `tabular-nums` because these are read as data and are compared against
-       the figures in the log directly above them. -->
-  <div class="js-only bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-4">
-    <div class="flex items-baseline justify-between gap-2 mb-3">
-      <h3 class="font-bold text-gray-900 dark:text-gray-100">Stats</h3>
-      <!-- The sample is capped, so "Stats" is a rolling window rather than the
-           whole session. A table comparing tonight's average against an earlier
-           one needs to know it is a window, and how wide. -->
-      <span class="text-xs text-gray-500 dark:text-gray-400">last 50 rolls</span>
-    </div>
-    <template x-if="!stats || !stats.average || sessionRolls.length === 0">
-      <!-- Narrow, because nothing is in it yet. The card runs the grid's full
-           measure for the stat strip, which is four figures side by side and
-           needs the width; an empty prompt is one icon and a sentence, and
-           stretched across 880px it read as a mostly-blank panel. -->
-      <div class="flex flex-col items-center justify-center max-w-sm mx-auto p-6 text-gray-500 dark:text-gray-400 text-center">
-        <IconifyIcon icon="game-icons:dice-twenty-faces-twenty" width="2.25rem" class="text-(color:--sl-color-accent)" />
-        <p class="mt-2 text-gray-500 dark:text-gray-400">No stats yet!<br>Roll all abilities to see your results.</p>
-      </div>
-    </template>
-    <template x-if="stats && stats.average && sessionRolls.length > 0">
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-[7px]">
-          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Average</div>
-          <div class="mt-1 text-xl font-bold tabular-nums text-gray-900 dark:text-gray-100" x-text="stats?.average"></div>
-        </div>
-        <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-[7px]">
-          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Median</div>
-          <div class="mt-1 text-xl font-bold tabular-nums text-gray-900 dark:text-gray-100" x-text="stats?.median"></div>
-        </div>
-        <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-[7px]">
-          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Lowest</div>
-          <div class="mt-1 text-xl font-bold tabular-nums text-gray-900 dark:text-gray-100" x-text="stats?.lowest + (stats?.lowestCount > 1 ? ' (x' + stats?.lowestCount + ')' : '')"></div>
-        </div>
-        <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-[7px]">
-          <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Highest</div>
-          <div class="mt-1 text-xl font-bold tabular-nums text-gray-900 dark:text-gray-100" x-text="stats?.highest + (stats?.highestCount > 1 ? ' (x' + stats?.highestCount + ')' : '')"></div>
-        </div>
-      </div>
-    </template>
-  </div>
-
-  <!-- The second copy of the noscript block that used to sit here, between the
-       stats card and the roll log, is gone. Both blocks were byte-identical, so
-       a visitor with scripting off read the same two-paragraph explanation
-       twice on one page, with the whole tool's markup between them. The block
-       at the top of the island is the one that leads, because with scripting
-       off it has to hide the inert controls that follow it. -->
-
-  <!-- #polish. The log was an unlabelled box of monospace lines directly under
-       a card with a heading, so the two read as one ragged group and nothing
-       said what the lines were or which of them was the roll you just watched
-       happen. `unshift` puts the newest first, so index 0 is the current roll -
-       it now says so, and takes the accent's text step to mark it. Older lines
-       recede one step.
-
-       The heading is `x-cloak`-governed by the same `x-show` as the list, which
-       is why it is inside this block rather than a sibling of it: one condition,
-       one region, nothing to fall out of sync. -->
-  <div x-cloak x-show="resultLog.length > 0">
-    <div class="flex items-baseline justify-between gap-2 mb-2">
-      <h3 class="font-bold text-gray-900 dark:text-gray-100">Roll log</h3>
-      <span class="text-xs text-gray-500 dark:text-gray-400">newest first</span>
-    </div>
-    <div class="max-h-[200px] overflow-y-auto space-y-2 border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-900">
-      <template x-for="(entry, i) in resultLog" :key="i">
-        <div
-          class="text-sm font-mono break-words"
-          :class="i === 0 ? 'text-(color:--sl-color-text-accent) font-medium' : 'text-gray-700 dark:text-gray-300'"
-          x-text="entry"
-        ></div>
-      </template>
     </div>
   </div>
 
   <p class="sr-only" role="status" aria-live="polite" x-text="announcement"></p>
-
 </div>
 
 <style>
+  /* One system inverted, not a second design - the same move the Ledger Panel
+     makes and for the same reason. The surface steps down, the ink steps up,
+     the rule swaps to its dark step, and the accent swaps from Oxblood to Gold
+     Leaf. Nothing changes shape, size or spacing between themes.
+
+     The tool surface is a themed surface. An earlier build kept its paper the
+     same parchment in both themes on the reasoning that a physical object
+     should not invert; the effect was that the panel and its heading were
+     identical in light and dark, and the object outweighed the prose around
+     it. One bark step plus the gold rule per theme, and no private material
+     vocabulary. */
+  .dr {
+    --dr-surface: var(--color-bark-100);
+    --dr-raised: var(--color-bark-200);
+    /* A themed well, which this was not. `--dr-well` was bark-black in both
+       themes, so the roll log rendered dark-on-dark in light: 2.47:1 for an
+       ordinary line and 3.48:1 for the current one, against a 4.5:1 bar, and a
+       black slab in the middle of a parchment panel - the one surface on the
+       tool that refused to invert, which is the failure this panel's own
+       comment above spends a paragraph ruling out. It is the same recessed step
+       as the dice tray, so a panel now has exactly one well value in it. */
+    --dr-well: var(--color-bark-200);
+    --dr-rule: color-mix(in srgb, var(--color-gold-rule) 42%, transparent);
+    --dr-rule-strong: var(--color-gold-rule);
+    --dr-ink: var(--color-ink);
+    --dr-ink-soft: var(--color-bark-600);
+    --dr-heading: var(--color-oxblood);
+    --dr-accent: var(--sl-color-accent);
+    /* The focus ring is never the value of the glyph it outlines. */
+    --dr-focus: var(--color-bark-black);
+    /* The tray the four dice sit in, and the die's own three paints. The tray is
+       one ramp step *into* the panel in each theme - bark-200 under bark-100 in
+       light, bark-black under bark-800 in dark - because a recess goes away from
+       the light in both, and a tray that stayed one fixed value across themes
+       would be the object that refused to invert. The dice are a themed surface
+       too: holding them to a single bone in both themes made them the loudest
+       thing on the panel in dark, which is the one outcome DESIGN.md's Don'ts
+       already rejected twice on this tool. */
+    --dr-tray: var(--color-bark-200);
+    --dr-die-face: var(--color-bark-100);
+    --dr-die-edge: var(--color-bark-600);
+    --dr-die-pip: var(--color-bark-black);
+    --dr-die-size: 1.75rem;
+  }
+
+  :global(:root[data-theme='dark']) .dr {
+    --dr-surface: var(--color-bark-800);
+    --dr-raised: var(--color-bark-700);
+    --dr-well: var(--color-bark-black);
+    --dr-rule: color-mix(in srgb, var(--color-gold-rule-dark) 45%, transparent);
+    --dr-rule-strong: var(--color-gold-rule-dark);
+    --dr-ink: var(--color-parchment);
+    --dr-ink-soft: var(--color-bark-400);
+    --dr-heading: var(--color-gold);
+    --dr-focus: var(--color-bark-100);
+    --dr-tray: var(--color-bark-black);
+    --dr-die-face: var(--color-bark-700);
+    /* Gold Rule Dark, not bark-600, and this is measured rather than chosen by
+       eye. The die's 1px rim is the only thing separating a bone die from the
+       bark-black tray it sits in - the fills are one ramp step apart and measure
+       1.51:1 - and bark-600 on bark-black is 2.47:1, under the 3:1 a graphic
+       needs to be understood. Gold Rule Dark reaches 3.86:1 on the same tray,
+       which is also why a gilt-rimmed die is the right object here. In light the
+       ramp's own bark-600 is already 6.15:1 against the bark-200 tray, and the
+       gold rule there would drop to 1.95:1, so the edge is a per-theme token
+       rather than one value held across both. */
+    --dr-die-edge: var(--color-gold-rule-dark);
+    --dr-die-pip: var(--color-parchment);
+  }
+
+  /* Preflight is deliberately off in this project (src/styles/tailwind.css), so
+     nothing declares border-box globally. Every sized box on this surface says
+     so here rather than each one carrying the declaration. */
+  .dr,
+  .dr *,
+  .dr *::before,
+  .dr *::after {
+    box-sizing: border-box;
+  }
+
+  .dr-panel {
+    position: relative;
+    padding: 1rem;
+    border: 1px solid var(--dr-rule-strong);
+    border-radius: 8px;
+    background: var(--dr-surface);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  /* The cap, drawn over the border so the 1px edge stays continuous. Oxblood in
+     light, Gold Leaf in dark: the one place on the surface where the theme
+     shows through as colour, and the only accent bar on it. */
+  .dr-panel::before {
+    content: '';
+    position: absolute;
+    inset-inline: -1px;
+    top: -1px;
+    height: 3px;
+    border-radius: 8px 8px 0 0;
+    background: var(--dr-heading);
+  }
+
+  /* No shadow in dark. DESIGN.md's card-rest is 5% black, which cannot lift a
+     surface off bark-black, so the dark panel carries none and lets the 1px
+     border, the 3px cap and the head's 2px rule do the structural work. */
+  :global(:root[data-theme='dark']) .dr-panel {
+    box-shadow: none;
+  }
+
+  .dr-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.625rem 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--dr-rule-strong);
+  }
+
+  .dr-head-id {
+    min-width: 0;
+  }
+
+  /* A printed title, at the Card Heading's name step. Never a heading element -
+     see the note in the markup. */
+  .dr-title {
+    font-family: var(--sl-font-heading);
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    color: var(--dr-heading);
+    overflow-wrap: break-word;
+  }
+
+  /* The meta line: the Card header's meta, uppercased and tracked, so the head
+     is recognisably the same object as the one on a character Card. It is the
+     one place a full sentence is set this way, and it works because the
+     sentence is a label - what the panel is - and not prose anyone reads at
+     length. */
+  .dr-meta {
+    margin-top: 3px;
+    font-family: var(--sl-font-table);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--dr-ink-soft);
+  }
+
+  /* The one primary action on the surface. The fill and the label colour are
+     utilities on the element, not declarations here: the pair is the one #329
+     settled and `src/styles/tailwind.test.ts` guards at the markup, and the
+     hover is gated on `@media (hover: hover)` for the reason ADR-0009 gives.
+     44px is the same floor, and the box is 44 rather than the glyph's 18, so
+     the target is the control rather than the mark inside it. */
+  .dr-roll {
+    position: relative;
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+    border: 0;
+    border-radius: 8px;
+    font-family: var(--sl-font-table);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: background-color 150ms ease-out;
+  }
+
+  /* The gilt inner rule: a hairline of Gold Rule set 3px inside the slab, so the
+     primary action is a struck plate with an edge rather than a coloured
+     rectangle. The radius is the button's own 8px less the 3px inset, so the
+     two corners stay parallel. It is a gradient rather than the bare rule token
+     because a 1px solid `#c9ad6a` on the accent is a 1.31:1 hairline in light
+     and reads as dirt; at 40% it is a glint that survives both fills, and it is
+     decoration, so it carries no contrast obligation of its own. The label and
+     the mark sit above it by source order. */
+  .dr-roll::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 1px solid color-mix(in srgb, var(--color-gold-rule) 40%, transparent);
+    border-radius: 5px;
+    pointer-events: none;
+  }
+
+  /* The authored moment. One motion on the surface, and it is on the control
+     the visitor is about to press rather than scattered across the rows: the
+     die tips over and settles as the button goes down. Ungated, for the reason
+     the roll button's press already gives - a gated press excludes touch. */
+  .dr-mark {
+    transition: transform 220ms cubic-bezier(0.2, 0.9, 0.25, 1);
+  }
+
+  .dr-roll:active:not(:disabled) .dr-mark {
+    transform: rotate(-32deg) scale(0.88);
+  }
+
+  @media (hover: hover) {
+    .dr-roll:hover:not(:disabled) .dr-mark {
+      transform: rotate(14deg);
+    }
+  }
+
+  .dr-roll:focus-visible {
+    outline: 2px solid var(--dr-focus);
+    outline-offset: 2px;
+  }
+
+  /* Press feedback is deliberately ungated: `hover` sticks after a tap on iOS
+     and never fires for a stylus, so gating the press on `hover` silently
+     excludes exactly the device ADR-0009 is about. */
+  .dr-roll:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .dr-roll:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .dr-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 5rem 2.75rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--dr-rule);
+  }
+
+  .dr-row:last-child {
+    border-bottom: 0;
+  }
+
+  /* A staged swap tints the two rows it touches, so the pair is findable in a
+     column of six without a second full-strength ring competing with the one
+     that means something. */
+  .dr-row.is-swapped {
+    background: color-mix(in srgb, var(--dr-accent) 8%, transparent);
+  }
+
+  .dr-id {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.875rem;
+  }
+
+  /* The leader, out to the tray. `flex: 1` with a floor of 1rem rather than a
+     fixed width, so it takes exactly the slack the content column has and
+     disappears on its own at a narrow one. It is centred on the row rather than
+     on the arithmetic line, which is the same baseline the dice and the score
+     sit on - a leader is a rule, and a rule belongs to the row. */
+  .dr-leader {
+    flex: 1 1 auto;
+    min-width: 1rem;
+    align-self: center;
+    border-bottom: 1px dotted var(--dr-rule-strong);
+    opacity: 0.7;
+  }
+
+  /* The trade handle. `min-width` is 7rem and the longest name sets it: the
+     handle carries the full ability name, "Constitution" being the longest of
+     the six at about 6.4rem in Cinzel at 1rem. `min-width` is also what the 320px
+     row-floor assertion reads, so a floor below the real text would let that
+     assertion pass on a row wider than the number it checked. */
+  .dr-trade {
+    display: flex;
+    min-width: 7rem;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-start;
+    cursor: pointer;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    text-align: start;
+    color: inherit;
+    transition: box-shadow 150ms ease-out;
+  }
+
+  .dr-trade:focus-visible {
+    outline: 2px solid var(--dr-focus);
+    outline-offset: 2px;
+  }
+
+  .dr-trade:active {
+    transform: translateY(1px);
+  }
+
+  /* The name carries the row's identity, so it is set in the heading face at
+     body scale and in the row's own ink - the accent is for the action and the
+     title, and spending it on six names would leave the title with nothing. */
+  .dr-name {
+    font-family: var(--sl-font-heading);
+    font-size: 1rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: var(--dr-ink);
+  }
+
+  .dr-calc {
+    font-family: var(--sl-font-table);
+    font-size: 0.75rem;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: var(--dr-ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The tray. A recessed well the four dice sit in, held to its own width by
+     its contents so the six score plates below it stay on one column whether
+     the row is rolled or not. `border-box` is inherited from the preflight block
+     at the top of this stylesheet, so the padding is inside the measured tray
+     rather than added to it. */
+  .dr-dice {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 0.3125rem;
+    padding: 0.3125rem;
+    border: 1px solid var(--dr-rule);
+    border-radius: 7px;
+    background: var(--dr-tray);
+  }
+
+  /* The die. Nine pip slots on a 3x3 grid, lit by the face value, so a d6 is
+     drawn as a d6 rather than as its numeral - and so the dropped die still
+     shows which face it was, which a numeral with a strikethrough cannot do for
+     two identical faces or for anyone who cannot resolve a 1px rule at 12px.
+
+     Boundary and fill carry "this die counted" and "this die was dropped"; the
+     face itself is de-emphasised, which WCAG 1.4.3 exempts because a discarded
+     die is inactive content. Face, edge and pip are three separate tokens
+     because the die sits inside the tray rather than directly on the panel, so
+     none of them can be the panel's own surface any more. */
+  .dr-die {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    place-items: center;
+    width: var(--dr-die-size);
+    height: var(--dr-die-size);
+    padding: calc(var(--dr-die-size) * 0.12);
+    border: 1px solid var(--dr-die-edge);
+    border-radius: 5px;
+    background: var(--dr-die-face);
+    transition: border-color 150ms ease-out;
+  }
+
+  .dr-pip {
+    width: calc(var(--dr-die-size) * 0.18);
+    height: calc(var(--dr-die-size) * 0.18);
+    border-radius: 999px;
+    background: var(--dr-die-pip);
+    opacity: 0;
+  }
+
+  /* `nth-of-type`, never `nth-child`. The nine pips are cloned out of an
+     `x-for` `<template>`, and that template is itself the die's first element
+     child - Alpine inserts the clones as its siblings. So `nth-child` counts the
+     template and every face was drawn one pip early and one short: a 3 came out
+     as pips 4 and 8 of the grid, a 4 lost two corners, and a 1 and a 6 lost
+     pips entirely. `nth-of-type` counts only the `i` elements, so the indices
+     below are the pips they read as.
+
+     The indices are the real faces, in reading order across the 3x3:
+       1        5        2 = 1,9   3 = 1,5,9   4 = 1,3,7,9   5 = 1,3,5,7,9
+                                6 = 1,3,4,6,7,9 */
+  .dr-die[data-face='1'] i:nth-of-type(5),
+  .dr-die[data-face='2'] i:nth-of-type(1),
+  .dr-die[data-face='2'] i:nth-of-type(9),
+  .dr-die[data-face='3'] i:nth-of-type(1),
+  .dr-die[data-face='3'] i:nth-of-type(5),
+  .dr-die[data-face='3'] i:nth-of-type(9),
+  .dr-die[data-face='4'] i:nth-of-type(1),
+  .dr-die[data-face='4'] i:nth-of-type(3),
+  .dr-die[data-face='4'] i:nth-of-type(7),
+  .dr-die[data-face='4'] i:nth-of-type(9),
+  .dr-die[data-face='5'] i:nth-of-type(1),
+  .dr-die[data-face='5'] i:nth-of-type(3),
+  .dr-die[data-face='5'] i:nth-of-type(5),
+  .dr-die[data-face='5'] i:nth-of-type(7),
+  .dr-die[data-face='5'] i:nth-of-type(9),
+  .dr-die[data-face='6'] i:nth-of-type(1),
+  .dr-die[data-face='6'] i:nth-of-type(4),
+  .dr-die[data-face='6'] i:nth-of-type(7),
+  .dr-die[data-face='6'] i:nth-of-type(3),
+  .dr-die[data-face='6'] i:nth-of-type(6),
+  .dr-die[data-face='6'] i:nth-of-type(9) {
+    opacity: 1;
+  }
+
+  /* Three states, three shapes of the same box. None of them may set a blanket
+     `opacity` on `.dr-pip`: the lit/unlit split is owned by the
+     `[data-face]` block above, and a rule here that made every pip faintly
+     visible outranked the base `opacity: 0` and painted a full grid of dots on
+     every die - a dropped 3 came out as three bright pips on a field of six
+     faint ones, which is not a d6 at any size. Each state de-emphasises by
+     paint (the face fill and the pip colour), never by alpha.
+
+     `is-socket` is the unrolled state: a blank die face, its nine pips engraved
+     rather than lit. A hollow outline read as a checkbox, and four of them read
+     as a form; a blank face reads as a die that has not been thrown yet, and it
+     is the same object the row will show once the roll lands, so nothing on the
+     row changes size or position when the sheet is filled in.
+
+     `is-dropped` no longer goes transparent. It did, when the dice sat on the
+     panel, and the only thing that kept a discarded die visible was its dashed
+     edge against the surface behind it. Inside the tray, "transparent" means
+     the tray's own fill, and a dashed hairline one ramp step off that fill is
+     roughly 1.1:1 - invisible. It keeps a fill now, one step off the kept die's,
+     and the dashed edge is the boundary; the face is still de-emphasised, which
+     1.4.3 exempts as inactive content. */
+  .dr-die.is-socket {
+    background: var(--dr-die-face);
+  }
+
+  .dr-die.is-socket .dr-pip {
+    background: var(--dr-die-edge);
+    opacity: 0.22;
+  }
+
+  .dr-die.is-dropped {
+    border-style: dashed;
+    background: color-mix(in srgb, var(--dr-die-face) 45%, var(--dr-tray));
+  }
+
+  .dr-die.is-dropped .dr-pip {
+    background: color-mix(in srgb, var(--dr-die-pip) 55%, var(--dr-die-face));
+  }
+
+  @media (hover: hover) {
+    .dr-die.is-dropped:hover {
+      border-color: var(--dr-die-edge);
+    }
+  }
+
+  /* The score plate. Cut rather than raised or inset: a raised plate competes
+     with the re-roll for the same hover, and an inset one reads as a hole in
+     the sheet. What carries it is the flat step in the neutral ramp and the 1px
+     rule - the same treatment as a printed figure on a card. It is 5rem rather
+     than 4.5rem because the tray beside it now carries the most ink on the row,
+     and the rolled score is the number the player came for: at 4.5rem the plate
+     was the same size as the dice it was arguing with. */
+  .dr-plate {
+    display: flex;
+    width: 5rem;
+    height: 5rem;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: 1px solid var(--dr-rule-strong);
+    border-radius: 8px;
+    background: var(--dr-raised);
+  }
+
+  /* The Display step, unchanged at 1.75rem. The plate grew from 4.5rem to 5rem
+     and the figure did not, deliberately: 2.125rem is not on DESIGN.md's ramp,
+     and the score does not need a new step to stay the loudest thing on the
+     row - the pips beside it are 0.18 of the die's 1.75rem, so a Display figure
+     is already three times the size of anything else in the tray. The bigger
+     plate is what stopped it competing with the tray for attention. */
+  .dr-sum {
+    font-family: var(--sl-font-heading);
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--dr-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* An unrolled plate is a cut slot rather than a raised box. At 5rem it was
+     the largest object on an unrolled row and it held a middot, so the arrival
+     state was six empty frames - the panel looked like a form waiting for input
+     rather than a sheet waiting to be rolled. Dashed, unfilled and with the
+     middot in soft ink, it reads as the same blank die face as the sockets
+     beside it. */
+  .dr-plate.is-empty {
+    border-style: dashed;
+    border-color: var(--dr-rule);
+    background: transparent;
+  }
+
+  .dr-sum.is-empty {
+    color: var(--dr-ink-soft);
+  }
+
+  /* The modifier, in the theme's action accent: it is the one figure on the
+     row that is not a die result but a derived use, and the accent is the
+     system's colour for that. */
+  .dr-mod {
+    font-family: var(--sl-font-table);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--dr-accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The re-roll, as DESIGN.md's round outline icon button: a hairline rather
+     than a fill, because the plate beside it already carries a fill and two
+     filled objects on one row is one too many. The ring is bark, never the
+     accent it outlines. */
+  .dr-reroll {
+    display: inline-flex;
+    width: 2.75rem;
+    height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid var(--dr-rule-strong);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--dr-accent);
+    transition:
+      background-color 150ms ease-out,
+      transform 150ms ease-out;
+  }
+
+  .dr-reroll:focus-visible {
+    outline: 2px solid var(--dr-focus);
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) {
+    .dr-reroll:hover:not(:disabled) {
+      background: var(--dr-raised);
+    }
+  }
+
+  .dr-reroll:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .dr-reroll:disabled {
+    color: var(--dr-ink-soft);
+    border-color: var(--dr-rule);
+    cursor: not-allowed;
+  }
+
+  .dr-glyph {
+    transition: transform 200ms ease-out;
+  }
+
+  /* The scale is on the button and the rotation on the glyph, so the two
+     animate independently and neither needs `transition: all`. */
+  @media (hover: hover) {
+    .dr-reroll:hover:not(:disabled) .dr-glyph {
+      transform: rotate(180deg);
+    }
+  }
+
+  /* The rolling indicator. A 2px accent bar at the row's own lower edge, and it
+     has to *move*: on `main` this was `animate-pulse`, and the rework replaced it
+     with a static bar, which silently dropped a spec requirement (AC 8, "during
+     roll, button disabled, animation playing") and, worse, dropped the only
+     signal that a row is mid-roll. The re-roll button is disabled for the whole
+     300ms, so without motion a press gives no feedback at all until the dice
+     land.
+     The motion is a sweep of the bar's own width rather than an opacity pulse,
+     so it reads as the row filling rather than as the row blinking, and it is
+     suppressed under `prefers-reduced-motion` - a decorative loop is exactly
+     what that preference is for. */
+  .dr-pulse {
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 2px;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--dr-accent) 22%, transparent);
+    z-index: 5;
+  }
+
+  .dr-pulse::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 40%;
+    background: var(--dr-accent);
+    animation: dr-sweep 900ms cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+
+  @keyframes dr-sweep {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(350%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dr-pulse::after {
+      animation: none;
+      width: 100%;
+    }
+  }
+
+  .dr-foot {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--dr-rule);
+  }
+
+  .dr-foot-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .dr-soft {
+    color: var(--dr-ink-soft);
+  }
+
+  .dr-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  /* The system's own atom - an uppercase micro-label over a tabular value - so
+     the four figures about one sample read as data and are comparable with the
+     figures in the log directly below them. */
+  .dr-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 0.5rem 0.25rem;
+    border: 1px solid var(--dr-rule);
+    border-radius: 7px;
+  }
+
+  .dr-stat-fig {
+    font-family: var(--sl-font-table);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--dr-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dr-void {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    max-width: 26rem;
+    margin: 0 auto;
+    padding: 0.75rem;
+    color: var(--dr-ink-soft);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  /* The log sits in a well rather than in a second bordered card: a card inside
+     a card is two surfaces where one is asked for, and the well is the same
+     recessed step the system already uses for a plate. */
+  .dr-log {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 0.5rem 0.625rem;
+    border-radius: 7px;
+    background: var(--dr-well);
+  }
+
+  .dr-log-line {
+    font-family: var(--sl-font-table);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--dr-ink-soft);
+    overflow-wrap: break-word;
+  }
+
+  /* The newest line takes the panel's own ink, not the action accent. The accent
+     measured 3.48:1 on the light well - under the 4.5:1 bar for 12px text, and
+     the only reason it was ever there is that it read as emphasis. It is also
+     redundant: the foot head already reads "newest first" and `unshift` puts the
+     roll you just watched at index 0, so position says which line is current
+     and colour only ever had to agree with it. Two steps of the neutral ramp -
+     full ink at 600 for the current line, soft ink for the rest - carry the
+     same signal at 16.5:1 and 6.7:1 in light, and leave the accent to the
+     modifier and the re-roll glyph, which are the only two things on this
+     surface that are actually an action or a derived use. */
+  .dr-log-line.is-current {
+    color: var(--dr-ink);
+    font-weight: 600;
+  }
+
   /* The swap panel and its confirm/cancel pair guard the tool's only
      destructive action, so both are painted from the DESIGN.md bark/gold ramp
      rather than the live --sl-color-accent tokens.
@@ -279,12 +993,12 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
      Why not the tokens: --sl-color-accent is #f7860f in dark and #697066 in
      light, and --sl-color-text-invert is --sl-color-accent-low, not white.
      That pairing gives 5.28:1 in dark but only 2.74:1 in light - the light
-     theme is the one that fails, which is why text on the accent now goes
-     through --sl-color-accent-contrast (see #329) and why the swap panel
-     stays off the accent entirely. Using the accent for the panel
-     fill is worse still: in light it is #b9c0b6, which leaves the gold confirm
-     button at 1.74:1 and the cancel button at 1.59:1, i.e. neither button
-     keeps a perceivable boundary (WCAG 1.4.11).
+     theme is the one that fails, which is why text on the accent goes through
+     --sl-color-accent-contrast (see #329) and why the swap panel stays off the
+     accent entirely. Using the accent for the panel fill is worse still: in
+     light it is #b9c0b6, which leaves the gold confirm button at 1.74:1 and
+     the cancel button at 1.59:1, i.e. neither keeps a perceivable boundary
+     (WCAG 1.4.11).
 
      Every pairing below is at or above its bar, at rest and on hover:
        confirm fill vs panel  3.00:1 light, 4.67:1 dark   (1.4.11 shape)
@@ -300,12 +1014,32 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
      the button to 2.26:1 and its edge disappears. The hover therefore darkens to
      #b06f00, which holds every bar in both themes rather than only at rest.
      The ring is never the same value as the button it outlines. */
-  .dice-swap-panel {
-    /* The 8px offset is the `mt-2` on the element, not a second declaration
-       here - the panel is absolutely positioned and `top-full` is its anchor. */
+  .dr-swap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 10;
+    margin-top: 0.375rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 0.875rem;
     background: #f8f6f5;
     border: 1px solid #c9ad6a;
   }
+
+  :global(:root[data-theme='dark']) .dr-swap {
+    background: #2e2421;
+    border-color: #867347;
+  }
+
+  .dr-swap-name {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--dr-ink);
+  }
+
   .dice-round-btn {
     display: inline-flex;
     align-items: center;
@@ -316,114 +1050,62 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
     border: 1px solid transparent;
     transition: background-color 150ms ease, color 150ms ease;
   }
+
   .dice-round-btn:focus-visible {
     outline: 2px solid #1b1716;
     outline-offset: 2px;
   }
+
   .dice-round-btn--confirm {
     background: #c68000;
     color: #1b1716;
   }
+
   .dice-round-btn--confirm:hover {
     background: #b06f00;
   }
+
   .dice-round-btn--cancel {
     background: transparent;
     color: #2a2010;
     border-color: #605552;
   }
+
   .dice-round-btn--cancel:hover {
     background: #f1eceb;
   }
-  :global([data-theme='dark']) .dice-swap-panel {
-    background: #2e2421;
-    border-color: #867347;
-  }
-  :global([data-theme='dark']) .dice-round-btn:focus-visible {
+
+  :global(:root[data-theme='dark']) .dice-round-btn:focus-visible {
     outline-color: #f8f6f5;
   }
-  :global([data-theme='dark']) .dice-round-btn--cancel {
+
+  :global(:root[data-theme='dark']) .dice-round-btn--cancel {
     color: #f1eceb;
     border-color: #c7c0be;
   }
-  :global([data-theme='dark']) .dice-round-btn--cancel:hover {
+
+  :global(:root[data-theme='dark']) .dice-round-btn--cancel:hover {
     background: #3f3632;
   }
 
-  /* The per-ability re-roll, on the same reasoning as the cancel button above:
-     a round 44px target on a bark hairline, glyph in the theme's accent so it
-     reads as the system's action colour, and the ring never the colour it
-     outlines. It sits on the tile surface - white in light, #2e2421 in dark.
-
-       border vs tile   7.00:1 light, 9.05:1 dark   (1.4.11 shape)
-       glyph vs tile    5.11:1 light, 6.02:1 dark   (1.4.11, glyph is an SVG
-                                                    graphic; the name is on
-                                                    aria-label)
-       glyph on hover  10.71:1 light, 10.65:1 dark
-       ring vs tile     5.50:1 light, 3.00:1 dark   (2.4.11)
-
-     The hairline rather than a fill is deliberate: the tile's whole surface is
-     already the button that stages a swap, and a filled 44px disc in its corner
-     would compete with it for the same tap. This is the system's outlined
-     icon button, which is what a secondary control on a raised tile should be.
-
-     The colours are utilities on the element, not hexes in this block:
-     `border-gray-400` is `#9a908c`, the lifted bark-500 from `@theme`, and
-     `dark:border-gray-500` is `#786d6a`. Writing either hex here instead would
-     have repeated a value `@theme` already owns and that the detector rightly
-     reports as an undocumented literal - DESIGN.md's own list carries the
-     unlifted `#948985`, so the token is the honest place to read the value
-     from.
-
-       border vs tile   3.11:1 light, 3.55:1 dark at rest   (1.4.11 shape)
-       border on hover  7.00:1 light, 7.05:1 dark
-       glyph vs tile    5.11:1 light, 7.09:1 dark          (1.4.11, glyph is an
-                                                           SVG graphic; the name
-                                                           is on aria-label)
-       ring vs tile     5.50:1 light, 3.00:1 dark          (2.4.11)
-
-     The resting border is a step lighter than the hover border, and that is not
-     a nicety. At `bark-600` all six rings read louder than the one primary
-     action above them, and the arrival state - six empty tiles saying "Roll to
-     generate" - is exactly where that hurts most: six 44px circles against six
-     137px tiles is a third of each tile's height in chrome. At `gray-400` the
-     ring still clears 1.4.11's 3:1 and the affordance survives, while
-     "Roll All Abilities" is once more the first thing read. Hover steps up, so
-     the ring gains weight exactly when it is being aimed at.
-
-     The hover fill sits *inside* `@media (hover: hover)` for the reason ADR-0009
-     gives: `:hover` sticks after a tap on iOS and never fires for a stylus, so
-     an ungated tint would leave a stale wash on a control that was only
-     touched. The `hover:scale-105` that used to sit on this button in the
-     markup was ungated for the same reason and is folded in here - it now
-     scales a visible bordered box, which it did not before, and it is gated
-     with the tint rather than left to stick after a tap. */
-  .dice-reroll-btn {
-    /* Preflight is deliberately off (see src/styles/tailwind.css), so a button
-       that declares no background keeps the browser's own - measured as
-       rgb(239,239,239) on rgb(107,107,107), a rounded grey box that swallows
-       the accent glyph. The `background` here is load-bearing, not decorative:
-       it is the reason this control is a ring on the tile rather than a grey
-       pill sitting on top of it. */
-    background: transparent;
-    border-radius: 9999px;
-  }
-  .dice-reroll-btn:focus-visible {
-    outline: 2px solid #1b1716;
-    outline-offset: 2px;
-  }
-  @media (hover: hover) {
-    .dice-reroll-btn:hover {
-      background: #f1eceb;
-      transform: scale(1.05);
+  /* Below 40rem the name, its arithmetic and the tray no longer fit on one line
+     beside an 80px plate, so the identity block stacks and the plate and the
+     re-roll stay on the row. The leader goes with it: stacked, there is no slack
+     for it to fill, and a dotted rule pinned to the right of a block is a
+     stray mark rather than a leader. */
+  @media (max-width: 40rem) {
+    .dr-id {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.375rem;
     }
-  }
-  :global([data-theme='dark']) .dice-reroll-btn:focus-visible {
-    outline-color: #f8f6f5;
-  }
-  @media (hover: hover) {
-    :global([data-theme='dark']) .dice-reroll-btn:hover {
-      background: #3f3632;
+
+    .dr-leader {
+      display: none;
+    }
+
+    .dr-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>

@@ -3,7 +3,40 @@
  * them out. One list, so a card cannot end up with a seventh ability the other
  * has never heard of.
  */
-export const ABILITY_NAMES = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'] as const;
+export const ABILITY_NAMES = [
+  "STR",
+  "DEX",
+  "CON",
+  "INT",
+  "WIS",
+  "CHA",
+] as const;
+
+export type AbilityName = (typeof ABILITY_NAMES)[number];
+
+/**
+ * The sheet's spelling of each ability, beside the codes rather than in either
+ * tool's folder.
+ *
+ * It lived in `point-buy-utils.ts` and was documented as shared, which was the
+ * intent but not the shape: the dice roller importing a sibling tool's utils to
+ * label its own rows is the wrong dependency direction, and the practical
+ * consequence was that the roller kept printing the three-letter codes. The
+ * ability order is the 5e one, and a player reads "Constitution" on a character
+ * sheet, not "CON".
+ *
+ * `ABILITY_NAMES` stays the short code because it is the key the maths, the
+ * presets and the trade all address. This is the display name, and it is the
+ * only place the two are allowed to differ.
+ */
+export const ABILITY_LABELS: Readonly<Record<AbilityName, string>> = {
+  STR: "Strength",
+  DEX: "Dexterity",
+  CON: "Constitution",
+  INT: "Intelligence",
+  WIS: "Wisdom",
+  CHA: "Charisma",
+};
 
 export function rollDie(sides = 6): number {
   return Math.floor(Math.random() * sides) + 1;
@@ -41,25 +74,31 @@ export function formatModifier(mod: number): string {
 
 export function calculateStats(sums: number[]) {
   const sorted = [...sums].sort((a, b) => a - b);
-  const average = Math.round((sorted.reduce((a, b) => a + b, 0) / sorted.length) * 10) / 10;
+  const average =
+    Math.round((sorted.reduce((a, b) => a + b, 0) / sorted.length) * 10) / 10;
   const mid = Math.floor(sorted.length / 2);
-  const median = sorted.length % 2 !== 0
-    ? sorted[mid]
-    : (sorted[mid - 1] + sorted[mid]) / 2;
+  const median =
+    sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
   const lowest = sorted[0];
   const highest = sorted[sorted.length - 1];
   return {
     average,
     median,
     lowest: { value: lowest, count: sorted.filter((v) => v === lowest).length },
-    highest: { value: highest, count: sorted.filter((v) => v === highest).length },
+    highest: {
+      value: highest,
+      count: sorted.filter((v) => v === highest).length,
+    },
   };
 }
 
 export function formatStats(stats: ReturnType<typeof calculateStats>) {
   return {
     average: stats.average.toFixed(1),
-    median: stats.median % 1 === 0 ? stats.median.toString() : stats.median.toFixed(1),
+    median:
+      stats.median % 1 === 0
+        ? stats.median.toString()
+        : stats.median.toFixed(1),
     lowest: stats.lowest.value.toString(),
     lowestCount: stats.lowest.count,
     highest: stats.highest.value.toString(),
@@ -68,14 +107,17 @@ export function formatStats(stats: ReturnType<typeof calculateStats>) {
 }
 
 export function formatResultLog(
-  abilities: Array<{ name: string; sum: number; modifier: number }>
+  abilities: Array<{ name: string; sum: number; modifier: number }>,
 ): string {
   return abilities
     .map((a) => `${a.name} ${a.sum} (${formatModifier(a.modifier)})`)
-    .join(', ');
+    .join(", ");
 }
 
-export function updateAbilityWithRoll(ability: Ability, result: ReturnType<typeof rollAbility>): Ability {
+export function updateAbilityWithRoll(
+  ability: Ability,
+  result: ReturnType<typeof rollAbility>,
+): Ability {
   return {
     ...ability,
     dice: result.dice,
@@ -100,7 +142,7 @@ export interface Ability {
 export function swapAbilities(
   abilities: Ability[],
   index1: number,
-  index2: number
+  index2: number,
 ): Ability[] {
   const copy = abilities.map((a) => ({ ...a }));
   const a = copy[index1];

@@ -1,27 +1,21 @@
-import { ABILITY_NAMES, calculateModifier, formatModifier } from '../dice-roller/dice-utils';
+import {
+  ABILITY_LABELS,
+  ABILITY_NAMES,
+  calculateModifier,
+  formatModifier,
+} from '../dice-roller/dice-utils';
 
 export { calculateModifier, formatModifier };
 
 // Re-exported rather than redeclared: the six abilities are the same six in
-// both tools, and two lists would drift.
-export { ABILITY_NAMES };
+// both tools, and two lists would drift. `ABILITY_LABELS` moved to
+// `dice-utils.ts` beside the codes it maps; it used to be declared here while its
+// own comment claimed all three tools shared it, which is what left the dice
+// roller printing three-letter codes - labelling its own rows would have meant
+// importing a sibling tool's utils, and nothing obliged it to.
+export { ABILITY_LABELS, ABILITY_NAMES };
 
 export type AbilityName = (typeof ABILITY_NAMES)[number];
-
-/**
- * The sheet's spelling of each ability. The three tools all label the same six
- * the same way, so the names live here with the vocabulary rather than being
- * typed into each island's markup - a screen-reader label that says "STR" where
- * the page says "Strength" is the same drift in a different place.
- */
-export const ABILITY_LABELS: Readonly<Record<AbilityName, string>> = {
-  STR: 'Strength',
-  DEX: 'Dexterity',
-  CON: 'Constitution',
-  INT: 'Intelligence',
-  WIS: 'Wisdom',
-  CHA: 'Charisma',
-};
 
 export type Scores = Record<AbilityName, number>;
 
