@@ -36,4 +36,22 @@ describe('parseArgs', () => {
     expect(parseArgs(['--out-dir', 'tmp/review']).outDir).toBe('tmp/review');
     expect(DEFAULTS.outDir).toBe('.impeccable/review');
   });
+
+  // Every surface on this site inverts per theme, so a capture set pinned to one
+  // theme reviews half of nothing. Light is the default because ThemeProvider
+  // resolves to it when no preference is stored, so a capture that seeds nothing
+  // lands there anyway - but it is a decision the flag makes explicit rather
+  // than an accident of the default.
+  it('captures light by default and dark on request', () => {
+    expect(parseArgs([]).theme).toBe('light');
+    expect(parseArgs(['--theme', 'dark']).theme).toBe('dark');
+    expect(parseArgs(['--theme', 'light']).theme).toBe('light');
+  });
+
+  // The full-page default is what the review contract wants, so scoping down to
+  // the first screen has to be asked for rather than inferred.
+  it('captures the whole page unless viewport-only is asked for', () => {
+    expect(parseArgs([]).viewportOnly).toBe(false);
+    expect(parseArgs(['--viewport-only']).viewportOnly).toBe(true);
+  });
 });

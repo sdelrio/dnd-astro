@@ -1,7 +1,6 @@
 ---
 import { FEATS, BOOKS, ABILITIES } from './feat-data';
 import { LEVEL_BUCKETS } from './feat-filter';
-import IconifyIcon from '@/components/IconifyIcon.astro';
 
 const initialData = {
   feats: FEATS,
@@ -11,162 +10,420 @@ const initialData = {
 ---
 
 <div
+  data-fx="codex"
+  class="not-content"
   x-data={`featExplorer(${JSON.stringify(initialData)})`}
-  class="not-content space-y-6"
 >
-  <!-- Filter controls -->
-    <div class="flex flex-col sm:flex-row gap-4 mb-6">
-      <div class="flex-1">
-        <label for="feat-search" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Search feats</label>
-        <input
-          id="feat-search"
-          type="text"
-          x-model="searchQuery"
-          @input.debounce.300ms="filterFeats()"
-          placeholder="Type a feat name..."
-          class="w-full min-h-11 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-base sm:text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        />
-      </div>
-
-      <!-- Below sm the three selects collapse behind a toggle: four stacked
-           full-width controls pushed the first result card off a phone screen.
-           The panel must NOT carry a `hidden` class. `x-show` hides by writing
-           inline `display:none` and, on show, *removes* the inline display
-           instead of setting one - so a class-based `display:none` would win
-           again the moment the panel opened and the toggle would do nothing on
-           a phone. `x-cloak` already covers the pre-boot paint, and
-           `sm:flex!` is what outranks the inline `display:none` at sm+, keeping
-           the three selects in a row there. -->
-      <button
-        type="button"
-        x-cloak
-        x-show="!filtersOpen"
-        @click="filtersOpen = true"
-        class="sm:hidden min-h-11 inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-(color:--sl-color-accent) text-(color:--sl-color-accent) font-medium transition-colors"
-        aria-controls="feat-filter-panel"
-        :aria-expanded="filtersOpen ? 'true' : 'false'"
-      >
-        <IconifyIcon icon="mdi:tune-variant" width="1.25em" />
-        <span>Filters</span>
-        <span
-          x-show="activeFilterCount() > 0"
-          x-text="activeFilterCount()"
-          class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-(--sl-color-accent-contrast) text-(color:--sl-color-text-invert) text-xs font-bold"
-        ></span>
-      </button>
-
-      <div
-        id="feat-filter-panel"
-        x-cloak
-        x-show="filtersOpen"
-        class="sm:flex! sm:flex-row sm:items-start gap-4"
-      >
-      <div class="sm:w-32">
-        <label for="ability-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ability</label>
-        <select
-          id="ability-filter"
-          x-model="selectedAbility"
-          @change="filterFeats()"
-          class="w-full min-h-11 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-base sm:text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        >
-          <option value="All">All Abilities</option>
-          <template x-for="ability in abilities" :key="ability">
-            <option :value="ability" x-text="ability"></option>
-          </template>
-        </select>
-      </div>
-      
-      <div class="sm:w-48">
-        <label for="book-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Book</label>
-        <select
-          id="book-filter"
-          x-model="selectedBook"
-          @change="filterFeats()"
-          class="w-full min-h-11 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-base sm:text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        >
-          <option value="All">All Books</option>
-          <template x-for="(label, code) in books" :key="code">
-            <option :value="code" x-text="label"></option>
-          </template>
-        </select>
-      </div>
-      
-      <div class="sm:w-24">
-        <label for="level-filter" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Level</label>
-        <select
-          id="level-filter"
-          x-model="selectedLevel"
-          @change="filterFeats()"
-          class="w-full min-h-11 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm focus:ring-2 focus:ring-(--sl-color-accent) focus:border-(--sl-color-accent) text-base sm:text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-        >
-          <option value="All">All Levels</option>
-          {LEVEL_BUCKETS.map((bucket) => (
-            <option value={bucket.value}>{bucket.label}</option>
-          ))}
-        </select>
-      </div>
-      </div>
-    </div>
-    
-    <!-- Clear filters and result count -->
-    <div class="flex items-center justify-between mb-6">
-      <p class="text-sm text-gray-600 dark:text-gray-400" role="status" aria-live="polite">
-        <span x-text="filteredFeats.length"></span> feat<span x-show="filteredFeats.length !== 1">s</span> found
-      </p>
-      <button
-        x-show="hasActiveFilters()"
-        @click="clearFilters()"
-        class="inline-flex items-center justify-center w-11 h-11 -mr-2 text-(color:--sl-color-accent) hover:text-(color:--sl-color-accent-high) transition-colors"
-        title="Clear filters"
-        aria-label="Clear all filters"
-      >
-        <IconifyIcon icon="mdi:filter-remove" width="1.25em" />
-      </button>
-    </div>
-    
-    <!-- Feat grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <template x-for="feat in filteredFeats" :key="feat.name">
-        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-          <div class="p-4">
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="font-bold text-gray-900 dark:text-gray-100" x-text="feat.name"></h3>
-              <span 
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                :class="feat.level === 0 ? 'bg-moss-100 dark:bg-moss-800 text-ink dark:text-parchment' : feat.level >= 19 ? 'bg-bark-200 dark:bg-bark-800 text-ink dark:text-parchment' : 'bg-bark-100 dark:bg-bark-700 text-ink dark:text-parchment'"
-                x-text="feat.level === 0 ? 'Origin' : feat.level >= 19 ? 'Epic Boon' : 'General'"
-              ></span>
-            </div>
-            
-            <div class="text-sm text-gray-600 dark:text-gray-400 mb-2" x-text="feat.description"></div>
-            
-            <div class="flex flex-wrap gap-1 mb-2">
-              <template x-if="feat.abilityIncrease && feat.abilityIncrease.length > 0">
-                <div class="flex flex-wrap gap-1">
-                  <template x-for="ability in feat.abilityIncrease" :key="ability">
-                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200" x-text="ability"></span>
-                  </template>
-                </div>
-              </template>
-            </div>
-            
-            <div class="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
-              <span x-text="books[feat.book] || feat.book"></span>
-              <span x-show="feat.prerequisite" x-text="'Prereq: ' + feat.prerequisite"></span>
-            </div>
-          </div>
-        </div>
-      </template>
-    </div>
-    
-  <!-- Empty state -->
-  <div x-cloak x-show="filteredFeats.length === 0" class="text-center py-12 text-gray-500 dark:text-gray-400">
-    No feats match your filters.
+  <div class="fx-title">
+    <h2 class="fx-page-title">Feat Codex</h2>
+    <!-- The one live region on the component. It was two: this line and the
+         "N feats found" line on the bar below, both role="status"
+         aria-live="polite", so a screen reader announced the count twice on
+         every keystroke. The bar's copy is gone and the count is stated here
+         once, in the head where the collection's size belongs. -->
+    <p class="fx-countline" role="status" aria-live="polite">
+      <span x-text="filteredFeats.length"></span> of <span x-text="feats.length"></span> feats on this sheet
+    </p>
   </div>
+
+  <!-- The filter line: search, the disclosure toggle, the three selects, and
+       the clear control at the trailing edge. It is a wrapping flex row, so
+       the clear control is a sibling of the panel and never a child of it -
+       below sm the panel is collapsed and a clear control inside it would be
+       unreachable until the user opened the filters, which is a regression in
+       a control that is currently always one tap away. -->
+  <div class="fx-filters">
+    <div class="fx-field fx-search">
+      <label for="fx-search">Search feats</label>
+      <input id="fx-search" class="min-h-11 text-base sm:text-sm fx-input" type="text" x-model="searchQuery" @input.debounce.300ms="filterFeats()" placeholder="Type a feat name..." autocomplete="off" />
+    </div>
+    <button
+      type="button"
+      class="min-h-11 text-base fx-filters-toggle"
+      x-cloak
+      x-show="!filtersOpen"
+      @click="filtersOpen = true"
+      aria-controls="fx-panel"
+      :aria-expanded="filtersOpen ? 'true' : 'false'"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 5h16M7 12h10M10 19h4" /></svg>
+      <span>Filters</span>
+      <span class="min-w-5 h-5 px-1.5 inline-flex items-center justify-center rounded-full bg-(--sl-color-accent-contrast) text-(color:--sl-color-text-invert) text-xs font-bold" x-show="activeFilterCount() > 0" x-text="activeFilterCount()"></span>
+    </button>
+    <div class="fx-panel" id="fx-panel" x-cloak x-show="filtersOpen">
+      <div class="fx-field fx-ability">
+        <label for="fx-ability">Ability</label>
+        <span class="fx-control">
+          <select id="fx-ability" class="min-h-11 text-base sm:text-sm fx-select" x-model="selectedAbility" @change="filterFeats()">
+            <option value="All">All Abilities</option>
+            <template x-for="ability in abilities" :key="ability">
+              <option :value="ability" x-text="ability"></option>
+            </template>
+          </select>
+        </span>
+      </div>
+      <div class="fx-field fx-book">
+        <label for="fx-book">Book</label>
+        <span class="fx-control">
+          <select id="fx-book" class="min-h-11 text-base sm:text-sm fx-select" x-model="selectedBook" @change="filterFeats()">
+            <option value="All">All Books</option>
+            <template x-for="(label, code) in books" :key="code">
+              <option :value="code" x-text="label"></option>
+            </template>
+          </select>
+        </span>
+      </div>
+      <div class="fx-field fx-level">
+        <label for="fx-level">Level</label>
+        <span class="fx-control">
+          <select id="fx-level" class="min-h-11 text-base sm:text-sm fx-select" x-model="selectedLevel" @change="filterFeats()">
+            <option value="All">All Levels</option>
+            {LEVEL_BUCKETS.map((bucket) => (
+              <option value={bucket.value}>{bucket.label}</option>
+            ))}
+          </select>
+        </span>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="fx-clear"
+      x-cloak
+      x-show="hasActiveFilters()"
+      @click="clearFilters()"
+      title="Clear filters"
+      aria-label="Clear all filters"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 5h18M8 5V3h8v2M6 5l1 14h10l1-14M10 9v7M14 9v7" /></svg>
+    </button>
+  </div>
+
+  <!-- The tier key. It is a dl of the three seals' own marks and their names, so
+       a screen reader gets the same key a reader gets, and both read off the
+       same three --fx-seal-* declarations the medallions use. It sits outside
+       the collapsible panel, above the cards, so it is on the page at every
+       width and in both themes. It is a key and not a feature: no colour of
+       its own, no rule of its own beyond the hairlines it shares with the page.
+
+       The trailing note is part of the key, not a caveat: EB is `level >= 19`,
+       and the Level filter splits 19 from 21, so a reader who picks Level 21 and
+       finds an EB seal is looking at the intended behaviour and the key has to
+       say so on the page. The level-21 entries are class builds rather than
+       boons; the user was asked and chose to keep the one "Epic Boon" tier and
+       to make the key state its scope rather than split the tier or rename it.
+       The marks stay on `.fx-seal` at key size, so this note cannot drift from
+       the colours it describes. -->
+  <div class="fx-legend">
+    <span class="fx-legend-label" id="fx-legend-label">Tier seals</span>
+    <dl class="fx-legend-keys" aria-labelledby="fx-legend-label">
+      <div class="fx-legend-set">
+        <dt><span class="fx-seal fx-seal-key" data-tier="origin">OR</span></dt>
+        <dd>Origin</dd>
+      </div>
+      <div class="fx-legend-set">
+        <dt><span class="fx-seal fx-seal-key" data-tier="general">GE</span></dt>
+        <dd>General</dd>
+      </div>
+      <div class="fx-legend-set">
+        <dt><span class="fx-seal fx-seal-key" data-tier="epic">EB</span></dt>
+        <dd>Epic Boon</dd>
+      </div>
+    </dl>
+    <p class="fx-legend-note">EB covers Level 19 and Level 21.</p>
+  </div>
+
+  <div class="fx-grid">
+    <template x-for="feat in filteredFeats" :key="feat.name">
+      <article class="fx-card" :data-tier="tierKey(feat.level)">
+        <div class="fx-head">
+          <h3 class="fx-name" x-text="feat.name"></h3>
+          <span class="fx-seal" :data-tier="tierKey(feat.level)" x-text="tierMono(tierKey(feat.level))" aria-hidden="true"></span>
+        </div>
+        <!-- The prerequisite is its own line under the name, not a fifth column.
+             Block flow rather than a flex row so the longest string in the
+             dataset wraps at the card's full measure instead of being squeezed
+             beside a label; overflow-wrap:anywhere breaks the unbreakable runs
+             (a feat name, a "18+") that would otherwise push the card wide.
+             x-if, not x-show: a feat with no prerequisite renders no line and
+             leaves no gap in the card's flex-column flow. -->
+        <template x-if="feat.prerequisite">
+          <p class="fx-prereq"><span class="fx-prereq-k">Requires</span><span x-text="feat.prerequisite"></span></p>
+        </template>
+        <template x-if="feat.abilityIncrease && feat.abilityIncrease.length > 0">
+          <div class="fx-abil">
+            <template x-for="ability in feat.abilityIncrease" :key="ability">
+              <span class="fx-chip" x-text="ability"></span>
+            </template>
+          </div>
+        </template>
+        <template x-if="!feat.abilityIncrease || feat.abilityIncrease.length === 0">
+          <div class="fx-abil"><span class="fx-none">No ability increase</span></div>
+        </template>
+        <div class="fx-foot">
+          <span class="fx-tier" x-text="tierName(feat.level)"></span>
+          <span aria-hidden="true">&middot;</span>
+          <span class="fx-book" x-text="bookLabel(feat)"></span>
+        </div>
+      </article>
+    </template>
+  </div>
+
+  <div class="fx-empty" x-cloak x-show="filteredFeats.length === 0">No feats match your filters.</div>
 </div>
 
+<style is:global>
+  [data-fx]{ font-family: var(--sl-font); color: var(--fx-ink); }
+  [data-fx] *{ box-sizing: border-box; }
+  [data-fx] h2, [data-fx] h3{ margin:0; font-family: var(--sl-font-heading); font-weight:700; }
+  [data-fx] p{ margin:0; }
+  [data-fx] :is(input,select,button,a):focus-visible{ outline:2px solid var(--fx-focus); outline-offset:2px; border-radius:8px; }
+  .fx-none{ font-family: var(--sl-font-table); font-size:.6875rem; font-style:italic; color: var(--fx-ink-soft); }
+
+  /* Every control is a 44px target with a 16px base font, carried by the same
+     `min-h-11 text-base sm:text-sm` utilities the other tool panels use. Below
+     sm the 16px is what holds: iOS Safari zooms the whole page on focus of a
+     sub-16px input, which is fatal at the table. */
+  .fx-input, .fx-select{ width:100%; min-width:0; padding:.5rem .75rem; font-family: var(--sl-font); color: var(--fx-ink); background: var(--fx-field); border:1px solid var(--fx-rule-strong); border-radius:8px; }
+  .fx-input::placeholder{ color: var(--fx-ink-soft); opacity:.85; }
+
+  /* The caret is drawn in CSS rather than shipped as a data-URI SVG, because a
+     data URI has to name its own colour and that would put a private hex back
+     on a surface the system already themes. The wrapper is the only reason the
+     selects are wrapped at all. */
+  .fx-control{ position:relative; display:block; min-width:0; }
+  .fx-control::after{ content:''; position:absolute; top:50%; right:.75rem; width:.4375rem; height:.4375rem; border-right:2px solid var(--fx-ink-soft); border-bottom:2px solid var(--fx-ink-soft); transform:translateY(-70%) rotate(45deg); pointer-events:none; }
+  .fx-select{ appearance:none; padding-right:2.25rem; }
+
+  /* The disclosure toggle is visible by default and hidden at sm+, where the
+     three selects sit inline. It must NOT be display:none in the base rule:
+     x-show reveals by REMOVING the inline display, so a base display:none would
+     win again the moment the panel opened and the toggle would do nothing on a
+     phone. Same reasoning the shipped filter panel relies on. */
+  .fx-filters-toggle{ display:flex; align-items:center; justify-content:center; gap:.5rem; flex:1 1 auto; padding:0 1rem; border:1px solid var(--fx-rule-strong); background: var(--fx-field); color: var(--fx-ink); font-family: var(--sl-font); font-weight:600; border-radius:8px; cursor:pointer; }
+  @media (min-width:40rem){ .fx-filters-toggle{ display:none !important; } }
+  .fx-filters-toggle svg{ width:18px; height:18px; }
+  .fx-clear{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; flex:0 0 auto; border:1px solid transparent; background:transparent; color: var(--fx-ink-soft); cursor:pointer; border-radius:8px; transition: color 150ms ease-out, background 150ms ease-out, transform 90ms ease-out; }
+  /* ADR-0009 D4: the hover tint is gated, the press is not. This control sits 14px
+     from the selects and the search field, so an ungated `:hover` here is exactly
+     the stale-tint-after-a-tap case the decision was written about. The siblings
+     gate theirs - `.pb-step`, `.dr-reroll`, `.r3-chip`, `.rb-entry-link` - and
+     five ungated hover tints still survive elsewhere in the repo (the swap popover
+     buttons in `DiceRoller.astro` and `.rb-panel .rb-entry-link` in
+     `RulebookSpread.astro`), all pre-existing and out of scope here. */
+  @media (hover: hover){
+    .fx-clear:hover{ color: var(--fx-ink); background: var(--fx-sunk); border-color: var(--fx-rule); }
+  }
+  /* Press feedback is deliberately ungated, for the reason ADR-0009 D4 gives:
+     `:hover` sticks after a tap on iOS and never fires for a stylus, so gating
+     the press on `hover` would exclude exactly the device the decision is about.
+     A mouse still gets a press while held, a finger gets one on contact, and a
+     touchscreen laptop reports `hover: hover` and `pointer: fine` at once, so
+     the ungated form is correct on all three. `translateY(1px)` is the sibling
+     components' press: `.pb-step`, `.dr-reroll`, `.dr-trade`. */
+  .fx-clear:active{ transform: translateY(1px); }
+  .fx-clear svg{ width:20px; height:20px; }
+
+  .fx-field{ display:flex; flex-direction:column; gap:.25rem; min-width:0; }
+  .fx-field > label{ font-family: var(--sl-font-table); font-size:.5625rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color: var(--fx-ink-soft); }
+
+  /* The filter line. `flex-end` puts the clear control's 44px square on the
+     selects' baseline rather than centring it in the label's taller box, and
+     the wrap is what lets the row be [search] [Filters] [clear] below sm and
+     [search] [ability] [book] [level] [clear] at the widths where all five fit
+     on one line. Below 40rem the search takes the whole line by its 100%
+     basis; at sm+ it drops to 14rem, which is the point at which the three
+     selects and the clear control fit beside it. */
+  .fx-filters{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:.875rem; margin-bottom:1.125rem; }
+  .fx-search{ flex:1 1 100%; }
+  [data-fx] .fx-panel{ display:flex; flex-direction:column; gap:.875rem; }
+  @media (min-width:40rem){
+    [data-fx] .fx-panel{ display:flex !important; flex-direction:row; align-items:flex-end; }
+    /* Proportional rather than equal: a book name needs more room than a tier.
+       Level is 7.5rem and not 6rem because the custom caret reserves 2.25rem on
+       the right, and at 6rem that left 46px of text box against a 60px "All
+       Levels" - the control clipped its own default label. */
+    .fx-search{ flex:1 1 14rem; }
+    .fx-ability{ flex:0 0 8rem; }
+    .fx-book{ flex:0 0 12rem; }
+    .fx-level{ flex:0 0 7.5rem; }
+  }
+  .fx-empty{ text-align:center; padding:3rem 1rem; color: var(--fx-ink-soft); font-style:italic; }
+
+  /* ---------------- the parchment sheet ---------------- */
+  [data-fx]{
+    /* No private palette. Every value below is a shared system token or a
+       color-mix over one, which is the Themed-Surface Rule's actual demand.
+       This surface is not a themed copy of the Ledger Panel, which is what it
+       used to be: it *is* the Ledger Panel's material, with the same surface,
+       edge, radius, shadow, cap and head rule, and the only thing that
+       distinguishes it is that it holds 219 entries instead of six ability
+       lines. The page is therefore the panel's own Bark 100 and the card is the
+       panel's own Bark 200, one step off it - the panel's own `--pb-surface`
+       and `--pb-raised`. */
+    --fx-page: var(--color-bark-100);
+    --fx-card: var(--color-bark-200);
+    --fx-field: color-mix(in srgb, var(--color-parchment) 40%, var(--color-bark-100));
+    --fx-sunk: color-mix(in srgb, var(--color-ink) 6%, transparent);
+    --fx-ink: var(--color-ink);
+    --fx-ink-soft: var(--color-bark-600);
+    --fx-rule: color-mix(in srgb, var(--color-gold-rule) 42%, transparent);
+    --fx-rule-strong: var(--color-gold-rule);
+    --fx-heading: var(--color-oxblood);
+    /* No --fx-accent: the Rarity Rule holds the accent for selection and
+       action, and nothing on this surface is either - the filters are chosen,
+       not selected, and a facet that tinted itself would be a fourth accent
+       beside the cap and the head rule. */
+    --fx-focus: var(--color-bark-black);
+    --fx-chip: color-mix(in srgb, var(--color-gold-rule) 16%, var(--color-bark-100));
+    --fx-chip-edge: color-mix(in srgb, var(--color-gold-rule) 55%, transparent);
+    --fx-chip-ink: var(--color-ink);
+    --fx-chip-dot: var(--color-gold);
+    /* The three seal inks. Moss for Origin, Gold for General, Oxblood for Epic
+       Boon - the same three the Admonition table uses, so the medallions are
+       markers in the system's vocabulary rather than three new swatches. The
+       label ink is a shared step per seal, chosen because AA for a 10px bold
+       monogram is not reachable from any one of them: on Origin and Epic Boon
+       only Parchment clears 4.5:1, and on General only Ink does. Gold is the
+       one bright seal and Moss 800 and Oxblood are both dark, so the two dark
+       seals are separated by hue (olive against red) at a matched luminance -
+       hence the rim on every seal, which is what makes the edge readable. */
+    --fx-seal-origin: var(--color-moss-800);
+    --fx-seal-origin-ink: var(--color-moss-100);
+    --fx-seal-general: var(--color-gold);
+    --fx-seal-general-ink: var(--color-ink);
+    --fx-seal-epic: var(--color-oxblood);
+    --fx-seal-epic-ink: var(--color-parchment);
+    /* The padding is symmetric, and it is symmetric because there is nothing on
+       the edge any more. It was 2rem on the right against 1.75rem on the left
+       to leave the wax ribbon's 24px reach a gutter of its own, and the ribbon
+       is gone; leaving the 2rem would have shipped a phantom quarter-inch down
+       one side and made the panel read as accidentally mis-aligned. There is no
+       ornament on this edge now, so there is nothing for the padding to clear. */
+    position:relative; padding: 1.5rem 1.75rem;
+    background: var(--fx-page);
+    border:1px solid var(--fx-rule-strong); border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  :root[data-theme="dark"] [data-fx]{
+    /* The panel's own surface and raised step, so the sheet inverts exactly the
+       way the Ledger Panel does: Bark 800 under Bark 100 in light, and no
+       shadow in dark, where a card-rest on a surface this dark is a smudge. */
+    --fx-page: var(--color-bark-800);
+    --fx-card: var(--color-bark-700);
+    --fx-field: color-mix(in srgb, var(--color-parchment) 9%, var(--color-bark-800));
+    --fx-sunk: color-mix(in srgb, var(--color-parchment) 12%, transparent);
+    --fx-ink: var(--color-parchment);
+    --fx-ink-soft: var(--color-bark-400);
+    --fx-rule: color-mix(in srgb, var(--color-gold-rule-dark) 45%, transparent);
+    --fx-rule-strong: var(--color-gold-rule-dark);
+    --fx-heading: var(--color-gold);
+    --fx-focus: var(--color-bark-100);
+    --fx-chip: color-mix(in srgb, var(--color-gold-rule-dark) 18%, var(--color-bark-700));
+    --fx-chip-edge: color-mix(in srgb, var(--color-gold-rule-dark) 60%, transparent);
+    --fx-chip-ink: var(--color-parchment);
+    --fx-chip-dot: var(--color-gold);
+    /* In dark the two dark seals would vanish into the page, so the tier split
+       is carried by hue and lightness instead: Parchment-moss for Origin,
+       Gold for General, and a Parchment-lifted Oxblood for Epic Boon - three
+       that differ in hue at three different lightnesses, each with Ink on it.
+       The Epic Boon mix is the palest Oxblood that still clears 4.5:1 under
+       Ink; one step darker and the monogram fails AA. */
+    --fx-seal-origin: var(--color-moss-100);
+    --fx-seal-origin-ink: var(--color-moss-800);
+    --fx-seal-general: var(--color-gold);
+    --fx-seal-general-ink: var(--color-ink);
+    --fx-seal-epic: color-mix(in srgb, var(--color-oxblood) 30%, var(--color-parchment));
+    --fx-seal-epic-ink: var(--color-ink);
+    box-shadow: none;
+  }
+  /* The 3px cap, drawn over the border so the 1px edge stays continuous, in
+     the Ledger Panel's own construction. It and the 2px head rule bracket the
+     panel without either one carrying colour alone, which is why the cap is
+     the only accent bar here and the tier legend below is not given one. It is
+     also the only pseudo-element *the root* draws: the stitched spine and then
+     the wax ribbon both came off this root, and neither was a Tool Panel
+     feature. The surface still has descendant pseudo-elements of its own - the
+     select caret on `.fx-control::after`, the chip dot on `.fx-chip::before` and
+     the middot leading the legend's note - and those are control furniture, not
+     accents: a glyph in the field's own ink, 6px of the chip, and a separator.
+     "One accent" is a claim about what is coloured, not about what has a
+     generated box. */
+  [data-fx]::before{ content:''; position:absolute; inset-inline:-1px; top:-1px; height:3px; border-radius: 8px 8px 0 0; background: var(--fx-heading); }
+
+  .fx-title{ display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1.125rem; padding-bottom:.75rem; border-bottom:2px solid var(--fx-rule-strong); }
+  /* Both heading colours are set with an element-qualified class on purpose.
+     `tailwind.css` carries `.sl-markdown-content :is(h1..h6){ color }` and its
+     dark counterpart *without* the `:not(:where(.not-content *))` guard every
+     neighbouring rule in that file has, so both reach inside this component -
+     and the dark one is `:root[data-theme='dark'] .sl-markdown-content
+     :is(h1..h6)`, which is (0,3,1) and beats a class-qualified `[data-fx]
+     .fx-card .fx-name` at (0,3,0). So the selector has to out-specify it rather
+     than merely beat the light rule, and the leak's value is not this
+     component's to inherit: the h2's Oxblood-in-light was arriving by
+     coincidence, because the leak happens to be the same accent. Adding the
+     missing guard to those two rules in `tailwind.css` would be the better fix
+     and would reach every other `not-content` component too; it is not this
+     change's to make. */
+  [data-fx] .fx-title h2.fx-page-title{ font-size:1.35rem; font-weight:600; letter-spacing:.04em; color: var(--fx-heading); }
+  .fx-countline{ font-family: var(--sl-font-table); font-size:.8125rem; letter-spacing:.04em; text-transform:uppercase; color: var(--fx-ink-soft); font-variant-numeric: tabular-nums; }
+
+  /* The tier key. A dl, so the marks and the names are a definition rather than
+     a run of glyphs; the marks carry the three seal inks and nothing else, so
+     this band adds no fourth accent to the cap and the head rule. */
+  .fx-legend{ display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1.375rem; padding:.75rem 0; margin-bottom:1.25rem; border-top:1px solid var(--fx-rule); border-bottom:1px solid var(--fx-rule); }
+  .fx-legend-label{ font-family: var(--sl-font-table); font-size:.5625rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color: var(--fx-ink-soft); }
+  .fx-legend-keys{ display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1.375rem; margin:0; }
+  .fx-legend-set{ display:flex; align-items:center; gap:.4375rem; }
+  .fx-legend-set dt{ margin:0; line-height:0; }
+  .fx-legend-set dd{ margin:0; font-family: var(--sl-font-table); font-size:.6875rem; color: var(--fx-ink-soft); }
+  /* The trailing note, at the same step and the same ink as the three names so
+     it reads as part of the key rather than as a fourth entry. A middot leads
+     it, which is the separator the card foot already uses. */
+  .fx-legend-note{ margin:0 0 0 .375rem; font-family: var(--sl-font-table); font-size:.6875rem; color: var(--fx-ink-soft); }
+  .fx-legend-note::before{ content:'\00b7'; margin-right:.375rem; }
+
+  .fx-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap:.875rem; }
+  /* The card edge is the panel's full Gold Rule, not its 42% hairline. At the
+     hairline the fill step alone is about 1.06:1 in light - Bark 200 on Bark 100
+     - so 219 cards were held entirely by a faint outline and read as one wash
+     rather than as entries. The user chose the stronger edge. It is still one
+     1px step, so the 2px head rule and the 3px cap above it remain the only
+     things on the surface that are structural, and 219 borders never out-shout
+     two bars. */
+  .fx-card{ display:flex; flex-direction:column; gap:.625rem; padding:.875rem .9375rem; background: var(--fx-card); border:1px solid var(--fx-rule-strong); border-radius:6px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04); }
+  :root[data-theme="dark"] .fx-card{ box-shadow: none; }
+  .fx-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:.625rem; }
+  /* The name is the card's ink, not the theme's heading accent, and it is set
+     with the same element-qualified selector - see the note on the head title
+     for the rule it has to out-specify. Left to inherit, an h3 takes the leaked
+     Gold in dark, and Gold on Bark 700 at 15px is 3.64:1, under AA. The card's
+     colour marker is the seal; the Rarity Rule does not want a second one on
+     every one of 219 names. */
+  [data-fx] .fx-card h3.fx-name{ font-size:.9375rem; line-height:1.3; color: var(--fx-ink); overflow-wrap:anywhere; }
+  /* The wax-seal tier medallion, and the same mark at key size in the legend
+     above. One class, two sizes: the legend cannot drift from the seals
+     because there is nothing for it to drift from. */
+  .fx-seal{ --fx-seal-size: 2rem; flex:0 0 auto; display:grid; place-items:center; width: var(--fx-seal-size); height: var(--fx-seal-size); border-radius:50%; font-family: var(--sl-font-table); font-size:.625rem; font-weight:700; line-height:1; box-shadow: inset 0 0 0 1px var(--fx-rule), inset 0 -2px 4px color-mix(in srgb, var(--color-ink) 26%, transparent); }
+  .fx-seal[data-tier="origin"]{ background: var(--fx-seal-origin); color: var(--fx-seal-origin-ink); }
+  .fx-seal[data-tier="general"]{ background: var(--fx-seal-general); color: var(--fx-seal-general-ink); }
+  .fx-seal[data-tier="epic"]{ background: var(--fx-seal-epic); color: var(--fx-seal-epic-ink); }
+  .fx-seal-key{ --fx-seal-size: 1.25rem; font-size:.5625rem; }
+  .fx-prereq{ font-size:.8125rem; font-style:italic; line-height:1.45; color: var(--fx-ink-soft); overflow-wrap:anywhere; }
+  .fx-prereq-k{ margin-right:.375rem; font-family: var(--sl-font-table); font-style:normal; font-size:.5625rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; }
+  .fx-abil{ display:flex; flex-wrap:wrap; gap:.3125rem; min-width:0; }
+  .fx-chip{ display:inline-flex; align-items:center; gap:.3125rem; padding:.1875rem .4375rem; border:1px solid var(--fx-chip-edge); border-radius:999px; background: var(--fx-chip); font-family: var(--sl-font-table); font-size:.6875rem; font-weight:600; color: var(--fx-chip-ink); overflow-wrap:anywhere; }
+  .fx-chip::before{ content:''; width:.375rem; height:.375rem; flex:0 0 auto; border-radius:50%; background: var(--fx-chip-dot); }
+  .fx-foot{ margin-top:auto; padding-top:.5rem; border-top:1px solid var(--fx-rule); display:flex; flex-wrap:wrap; align-items:baseline; gap:.375rem; font-family: var(--sl-font-table); font-size:.625rem; letter-spacing:.04em; text-transform:uppercase; color: var(--fx-ink-soft); }
+  .fx-tier{ font-weight:700; color: var(--fx-ink); }
+  .fx-book{ overflow-wrap:anywhere; }
+  /* Symmetric at every width, and for the same reason: there is nothing on the
+     edge to clear. The narrow band is tighter because a 320px panel cannot
+     spend 28px on both sides, not because one of them was carrying a ribbon. */
+  @media (max-width:39.999rem){ [data-fx]{ padding:1.25rem 1.25rem; } }
+</style>
+
 <script>
-  import type { FEATS, BOOKS, ABILITIES } from './feat-data';
+  import { FEATS, BOOKS, ABILITIES } from './feat-data';
   import { filterFeats } from './feat-filter';
 
   interface FeatExplorerData {
@@ -180,6 +437,9 @@ const initialData = {
       featExplorer: typeof featExplorer;
     }
   }
+
+  /** The two-letter mark stamped into the tier medallion. */
+  const TIER_MONO: Record<string, string> = { origin: 'OR', general: 'GE', epic: 'EB' };
 
   function featExplorer(data: FeatExplorerData) {
     return {
@@ -220,7 +480,23 @@ const initialData = {
         return [this.selectedAbility, this.selectedBook, this.selectedLevel]
           .filter((value) => value !== 'All')
           .length;
-      }
+      },
+
+      tierKey(level: number) {
+        return level === 0 ? 'origin' : level >= 19 ? 'epic' : 'general';
+      },
+
+      tierName(level: number) {
+        return level === 0 ? 'Origin' : level >= 19 ? 'Epic Boon' : 'General';
+      },
+
+      tierMono(key: string) {
+        return TIER_MONO[key] ?? '';
+      },
+
+      bookLabel(feat: { book?: string }) {
+        return feat.book ? this.books[feat.book] || feat.book : 'Unattributed';
+      },
     };
   };
 

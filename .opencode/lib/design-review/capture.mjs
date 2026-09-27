@@ -67,6 +67,7 @@ export const DEFAULTS = {
   captures: 'desktop=1440x900,mobile=390x844',
   font: 'Cinzel',
   fontUrl: 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
+  theme: 'light',
 };
 
 /** Third-party font endpoints, for the CDN-outage self-test. */
@@ -87,8 +88,17 @@ Options:
   --out-dir <dir>          review directory       (default ${DEFAULTS.outDir})
   --captures <set>         name=WxH,...           (default ${DEFAULTS.captures})
   --font <family>          display face to gate on (default ${DEFAULTS.font})
-  --font-url <url>         where that face comes from, named on failure
+  --font-url <url>          where that face comes from, named on failure
+  --theme <light|dark>       which theme to seed into the page (default light).
+                             Seeded into localStorage before the first paint,
+                             because ThemeProvider defaults to light when the
+                             stored preference is absent - emulating
+                             prefers-color-scheme does not move it.
   --start-dev-server       opt in to running \`astro dev --background\` and stopping it
+  --viewport-only            capture the first screen at the requested size instead of
+                             the whole page. For a page taller than Chrome will
+                             encode in one image, where a full-page shot would be
+                             silently truncated.
   --simulate-font-cdn-outage
                            block the font CDN before loading, to prove the gate fails
   --help                   this text
@@ -100,7 +110,13 @@ Browser resolution (never downloads one):
 `.trimStart();
 
 export function parseArgs(argv) {
-  const options = { ...DEFAULTS, startDevServer: false, simulateFontCdnOutage: false, help: false };
+  const options = {
+    ...DEFAULTS,
+    startDevServer: false,
+    simulateFontCdnOutage: false,
+    viewportOnly: false,
+    help: false,
+  };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -117,8 +133,10 @@ export function parseArgs(argv) {
       case '--captures': options.captures = next(); break;
       case '--font': options.font = next(); break;
       case '--font-url': options.fontUrl = next(); break;
+      case '--theme': options.theme = next(); break;
       case '--start-dev-server': options.startDevServer = true; break;
       case '--simulate-font-cdn-outage': options.simulateFontCdnOutage = true; break;
+      case '--viewport-only': options.viewportOnly = true; break;
       case '--help': case '-h': options.help = true; break;
       default: throw new Error(`Unknown option ${arg}. Run with --help.`);
     }
@@ -160,6 +178,24 @@ async function captureOne(client, capture, { options, outDir }) {
     await client.send('Network.setBlockedURLs', { urls: FONT_CDN_PATTERNS }, sessionId);
   }
 
+  // The theme is seeded before the first byte of content rather than after it.
+  // Every surface on this site inverts per theme (DESIGN.md's Themed-Surface
+  // Rule), so a capture set that cannot reach dark is half the review missing -
+  // and the reason it cannot is worth naming: Starlight's ThemeProvider reads
+  // localStorage and *defaults to light* when the key is absent, so emulating
+  // prefers-color-scheme changes nothing. The only lever is the stored
+  // preference, and it has to be in place before the provider's inline script
+  // runs or the first paint is already the wrong theme.
+  await client.send(
+    'Page.addScriptToEvaluateOnNewDocument',
+    {
+      source:
+        `try { localStorage.setItem('starlight-theme', ${JSON.stringify(options.theme)}); }` +
+        ` catch (e) {}`,
+    },
+    sessionId,
+  );
+
   try {
     // The width is set twice on purpose: the device metrics decide the layout,
     // and the clip decides the image. A page that renders its own scrollbar or
@@ -192,12 +228,23 @@ async function captureOne(client, capture, { options, outDir }) {
       'Math.ceil(Math.max(document.scrollingElement.scrollHeight, document.body.scrollHeight))',
     );
 
-    if (contentHeight > MAX_CAPTURE_HEIGHT) {
+    // The ceiling above is about *truncation*: a full-page shot taller than
+    // Chrome will encode comes back silently cropped, which is worse than no
+    // file. A viewport capture is not truncated, it is scoped, so it is a
+    // different artifact and opts out of the ceiling rather than raising it.
+    const fullPage = !options.viewportOnly;
+
+    if (fullPage && contentHeight > MAX_CAPTURE_HEIGHT) {
       log.error(
         `${name}: page is ${contentHeight}px tall, over the ${MAX_CAPTURE_HEIGHT}px single-capture ` +
-          'ceiling. Capturing anyway would silently truncate; split the page instead.',
+          'ceiling. Capturing anyway would silently truncate; split the page instead, or pass ' +
+          '--viewport-only to capture the first screen instead of the whole page.',
       );
       return { ok: false, label: `${name}.png`, problems: ['page too tall to capture in one image'] };
+    }
+
+    if (!fullPage) {
+      log.info(`  ${name}: viewport only, first ${height}px of a ${contentHeight}px page`);
     }
 
     const shot = await client.send(
@@ -205,8 +252,10 @@ async function captureOne(client, capture, { options, outDir }) {
       {
         format: 'png',
         fromSurface: true,
-        captureBeyondViewport: true,
-        clip: { x: 0, y: 0, width, height: contentHeight, scale: 1 },
+        captureBeyondViewport: fullPage,
+        ...(fullPage
+          ? { clip: { x: 0, y: 0, width, height: contentHeight, scale: 1 } }
+          : { clip: { x: 0, y: 0, width, height, scale: 1 } }),
       },
       sessionId,
     );

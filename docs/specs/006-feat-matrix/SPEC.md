@@ -58,6 +58,9 @@ interface Feat {
 }
 ```
 
+**The tier is derived from `level`, not from `category`.** The shipped
+`FeatExplorer.astro` computes it as `level === 0 ? 'origin' : level >= 19 ? 'epic' : 'general'`. The `category` field above is not read anywhere in the component and cannot express the third tier: across all 219 records it carries only `Origin` and `General`, never `Epic`. Recorded here so a future reader does not assume the field is wired up. No data changed.
+
 ## Feat Data Source
 
 Feat data was extracted once from the golden-forest project's MDX file at
@@ -191,10 +194,10 @@ Create `src/components/feats-explorer/search-utils.js`:
 
 Create `src/components/feats-explorer/feat-explorer.css`:
 - Filter controls layout (flex row with gaps)
-- Accepted width refinement (#91): at the `sm` breakpoint and above, Ability uses 8rem, Book retains 12rem, and Level uses 6rem. Search retains flex growth and receives the recovered space. Below `sm`, controls remain full-width and vertically stacked.
-- Responsive grid (1/2/3 columns)
+- Accepted width refinement (#91): at the `sm` breakpoint and above, Ability uses 8rem, Book retains 12rem, and Level uses 7.5rem. Search retains flex growth and receives the recovered space. Below `sm`, controls remain full-width and vertically stacked. (Level was specified at 6rem; see Accepted Deviations 3.)
+- Responsive grid (auto-fill 2-up; see Accepted Deviations 4)
 - Card styling with hover effect
-- Level badge colors (green for origin, blue for general)
+- Tier seal colors (moss for Origin, gold for General, oxblood for Epic Boon). Blue was specified for General and was never built: it is a cool value and the Warm-Only Rule in DESIGN.md forbids one. Gold stands in. See Accepted Deviations 5.
 - Ability tag styling
 - Empty state styling
 - Loading state styling
@@ -277,7 +280,7 @@ Search and filter through all available feats.
 
 ### Automated Tests
 
-No dedicated vitest suite covers the feat explorer yet: the filter and fuzzy-search logic is inline in `FeatExplorer.astro` (see Accepted Deviations). Repo-wide verification runs the AGENTS.md commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
+Two vitest suites cover the feat explorer: `feat-filter.test.ts` on the filter and fuzzy-search logic, which lives in `feat-filter.ts` and not inline in `FeatExplorer.astro`, and `feat-explorer-responsive.test.ts` on the component's surface, its palette discipline and its responsive behaviour. Repo-wide verification runs the AGENTS.md commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
 
 ### Acceptance Criteria
 1. **Page load**: Visit `/dnd-tools/feat-explorer/` - page renders without errors
@@ -290,14 +293,14 @@ No dedicated vitest suite covers the feat explorer yet: the filter and fuzzy-sea
 8. **Clear filters**: Click clear - all filters reset, all feats shown
 9. **Result count**: Count updates dynamically with filter changes
 10. **Empty state**: Apply impossible filter combo - "No feats match" message shown
-11. **Responsive**: Grid shows 1 column mobile, 2 tablet, 3 desktop
+11. **Responsive**: Grid is 1 column on a phone and 2 from `sm` up; it does not reach 3 columns (see Accepted Deviations 4)
 12. **No React**: Page bundle contains no React runtime
 
 ### Manual Verification
 - Open browser DevTools, verify no React components in Components tab
 - Check Network tab - no unnecessary JS downloads
 - Test on mobile viewport - filters stack, grid responsive
-- At desktop widths, verify Ability is approximately one third narrower and Level one half narrower than their previous 12rem widths, Book remains unchanged, and Search receives the freed space (#91).
+- At desktop widths, verify Ability is approximately one third narrower and Book remains unchanged, Search receives the freed space, and Level is 7.5rem rather than the 6rem first specified, because the custom caret reserves 2.25rem on the right (#91, amended by Accepted Deviations 3).
 - The user visually accepted the width refinement. Production build validation passed via `pnpm build`; Astro checks and lint now run via `pnpm typecheck` and `pnpm lint` (see AGENTS.md Verification).
 
 ## Rollback
@@ -319,6 +322,20 @@ The spec's Step 3 and Files table called for `src/components/feats-explorer/sear
 ### 2. Eager mount instead of deferred `x-intersect` hydration (#271)
 
 This archived spec originally mandated deferred loading via `x-intersect.once="init()"` with a loading state until the component scrolled into the viewport. The shipped component mounts eagerly: the root element carries `x-data="featExplorer(...)"` with the feat dataset inlined at build time, and there is no `x-intersect` binding, `init()`, or loading state. Reason: with the dataset already inlined, deferred hydration added complexity without a meaningful payload win. Binding text in `SPEC.md` (Component 2) and this spec was amended to match the delivered behavior; the Alpine intersect plugin remains registered in `src/alpine.ts` for future use. No runtime code changed with this edit.
+
+### 3. Level select is 7.5rem, not 6rem (#376)
+
+Step 4 specified 6rem and the Manual Verification step said Level would be "one half narrower" than its previous 12rem width. The shipped value is `flex: 0 0 7.5rem`. Reason: the custom caret is drawn in CSS and reserves 2.25rem on the right of the control, so at 6rem that left a 46px text box against a 60px "All Levels" - the control clipped its own default label, which is the first thing a user sees on an untouched control. The 1.5rem is the caret's gutter, not extra label room, so Ability (8rem) and Book (12rem) are unchanged. Both spec sentences were amended to 7.5rem and now point here. No runtime code changed with this edit.
+
+### 4. The grid is auto-fill 2-up, not a fixed 3 columns at desktop (#376)
+
+Step 4 called for a responsive grid of 1/2/3 columns and Acceptance Criterion 11 said "3 desktop". The shipped rule is `grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr))`, which is 1-up on a phone and 2-up at every width above it, because in the Starlight content column a third track never fits without dropping under 17rem. Reason: at this measure, three columns of feat names wrapped the longest ones onto two lines and left a visibly uneven grid, and the 17rem floor is also what stops a track from being narrower than the longest unbreakable run - the thing that made a phone page scroll sideways. The `min(100%, 17rem)` part of the `minmax()` is also what keeps the track satisfiable at 320px. Both spec sentences were amended and now point here. No runtime code changed with this edit.
+
+### 5. The tier marks are seals on moss, gold and oxblood, and General is gold rather than blue (#376)
+
+Step 4 called for "Level badge colors (green for origin, blue for general)". Blue was never built and should not have been: it is a cool value, and the Warm-Only Rule in DESIGN.md reserves this system's colour to the warm ramps, which the repo's own `tailwind.test.ts` enforces. The shipped marks are the wax-seal medallions described in DESIGN.md's Feat Codex Panel entry: Origin on `--color-moss-800`/`--color-moss-100`, General on `--color-gold`, Epic Boon on `--color-oxblood`, each inverted per theme. Moss is a shared token rather than a private value, and it is a deliberate widening of the palette: from bark, gold and oxblood alone the three tiers cannot all be told apart in light, where Origin and Epic would both be forced dark. The spec sentence was amended and now points here. No runtime code changed with this edit.
+
+The tier is derived from the feat's `level` and not from the `category` field the Data Schema declares. `category` carries only `Origin` and `General` across all 219 records and never `Epic`, so it cannot express the third tier. The `level >= 19` threshold also merges the Level 19 and Level 21 filter buckets into one `EB` seal, which the on-page legend states explicitly.
 
 ## Status
 

@@ -21,12 +21,20 @@ colors:
   bark-650: "#4a403a"
   bark-600: "#605552"
   bark-500: "#948985"
+  bark-500-lift: "#9a908c"
   bark-400: "#c7c0be"
   bark-200: "#f1eceb"
   bark-100: "#f8f6f5"
   moss-800: "#363b17"
   moss-700: "#404521"
   moss-100: "#e8ede1"
+  stripe-odd-a: "#dfe4d1"
+  stripe-odd-b: "#d5dcc6"
+  aside-caution-fill: "#faf0dc"
+  aside-caution-fill-dark: "#46331d"
+  aside-danger-fill: "#f7ebe6"
+  aside-danger-fill-dark: "#3d1f18"
+  gold-deep: "#b06f00"
 typography:
   display:
     fontFamily: "Cinzel, Bookinsanity, Georgia, serif"
@@ -135,6 +143,26 @@ components:
     backgroundColor: "{colors.bark-200}"
     rounded: "{rounded.tile}"
     padding: "8px"
+  tool-panel:
+    backgroundColor: "{colors.bark-100}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.lg}"
+    padding: "16px"
+  tool-panel-list:
+    backgroundColor: "{colors.bark-100}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.lg}"
+    padding: "24px 28px"
+  tool-panel-list-dark:
+    backgroundColor: "{colors.bark-800}"
+    textColor: "{colors.parchment}"
+    rounded: "{rounded.lg}"
+    padding: "24px 28px"
+  tool-panel-dark:
+    backgroundColor: "{colors.bark-800}"
+    textColor: "{colors.parchment}"
+    rounded: "{rounded.lg}"
+    padding: "16px"
   tag:
     backgroundColor: "{colors.bark-200}"
     textColor: "{colors.bark-600}"
@@ -192,7 +220,10 @@ The palette is a forest floor: warm bark browns, resin amber, and moss, with oxb
 - **Parchment** (#d4c4a8): Dark-mode body text and dark-theme pill text - warm and paper-like, never pure white.
 - **Ink** (#2a2010): Light-mode body text - a dark warm brown, never pure black.
 - **Surface White** (#ffffff): The one true white in the system. It is a light-theme surface only (the HP plate), never text and never a dark-theme surface. Named explicitly so its scarcity stays meaningful.
-- **Moss** (#404521, #363b17, #e8ede1): The olive greens behind striped table rows in dark mode, with a pale sage stripe (`moss-100`) in light mode.
+- **Moss** (#404521, #363b17, #e8ede1): The olive greens behind striped table rows in dark mode, with a pale sage stripe (`moss-100`) in light mode. Light mode's odd row is not one flat fill but a two-stop gradient across the row - `#dfe4d1` at 2% to `#d5dcc6` at 98% - so the stripe fades out at both edges instead of stopping like a band; the even row is flat `moss-100`. Both pairs are warmed from what were cool stripes, and [ADR-0005](docs/adr/0005-table-row-striping-pattern.md) fixes the pattern rather than the hues.
+- **Aside fills** (`#faf0dc` / `#46331d` caution, `#f7ebe6` / `#3d1f18` danger): The only two off-ramp tints in the system, and they are tinted surfaces rather than palette steps - a pale gold and a pale oxblood in light, a deep amber and a deep oxblood in dark. The note and tip asides need none: their light fills are Bark 100 and `moss-100`, already on the ramp.
+- **Gold Deep** (#b06f00): One step below Gold Leaf, and it exists for one reason. The Dice Roller's swap confirm button sits exactly on the 3:1 shape boundary against the light panel, so there is no headroom to lighten it on hover - a lighter gold drops the button to 2.26:1 and its edge disappears. The hover darkens to this value instead, which holds every bar in both themes rather than only at rest.
+- **Bark 500, lifted** (#9a908c): The same step as Tailwind's `--color-bark-500` and `--color-gray-400`, raised off #948985 to clear 4.5:1 on the dark Card surface. It is a second value for one name, and the reason is that the two systems disagree about what `bark-500` is: the docs shell's `--sl-color-gray-3` is #948985, tuned for the light surface, and the Tailwind alias of the same name is the lifted step. Reach for the lifted one on a dark surface and the docs one on a light one; a lifted `bark-500` on white lands near 2.9:1, which is why the rulebook's folios take Bark 600 instead.
 
 ### Utility tokens
 `src/styles/tailwind.css` exposes the palette as Tailwind theme tokens so call
@@ -201,8 +232,9 @@ sites name intent rather than a hex. `bark-*`, `moss-*`, `gold`, `gold-rule`,
 
 The `gray` scale is **redefined onto the bark ramp** rather than left as
 Tailwind's cool default. The Card body and every tool input were written against
-`gray-*` - roughly 340 call sites across eleven steps - and a find-and-replace
-would have to be redone every time the palette moved. Redefining the scale in
+`gray-*` - 259 call sites across eleven steps, 175 of them `text-gray-*`, in the
+58 non-test files under `src/` - and a find-and-replace would have to be redone
+every time the palette moved. Redefining the scale in
 `@theme` warms all of them from one place, so the palette is now changeable in
 one file. The step *numbers* keep Tailwind's meaning - 50 lightest, 950 darkest -
 so `text-gray-900` on a light surface and `dark:text-gray-100` on a dark one
@@ -220,7 +252,9 @@ preflight keeps the *reset* off the docs pages; it is not what contains this
 change.
 
 `gray-200`, `gray-300`, `gray-500` and `gray-950` are interpolated and have no
-DESIGN.md counterpart; the rest are literal palette values. `gray-500` in
+DESIGN.md counterpart; the rest are literal palette values, with `gray-400` the
+one exception that is a *lifted* named step rather than an invented one.
+`gray-500` in
 particular is balanced rather than pure: no single mid-tone can clear 4.5:1
 against both a white surface and a near-black one, so on the surfaces it is
 actually used with:
@@ -232,7 +266,8 @@ actually used with:
 
 Neither theme regresses, and the light surface - where `gray-500` is
 overwhelmingly used - is above AA. Every `text-gray-N` call site carries a `dark:`
-counterpart (verified: 112 sites, none without one), so each step only has to
+counterpart (re-verified at this refresh: all 175 sites, the single line without
+one being a comment that quotes the class), so each step only has to
 clear the theme it appears in.
 
 `src/styles/tailwind.test.ts` pins all eleven values, the derived-step comments,
@@ -240,7 +275,7 @@ the admonition pairings and the stripe stops, so the mapping cannot drift
 silently.
 
 ### Named Rules
-**The Warm-Only Rule.** No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The `gray` scale is now bark, the tool-input focus rings and the feat-tier chips are on the accent and the moss/bark ramps, and the admonition palette has been pulled onto the bark/moss/gold/oxblood ramps. There is no remaining named drift; `tailwind.test.ts` fails on any cool utility class or blue-dominant hex in a component or page. Admonitions set both `--sl-color-asides-border` and `--sl-color-asides-text-accent`; Starlight's own defaults for both are cool.
+**The Warm-Only Rule.** No cool blue-gray, electric purple, or cyan enters the system. Neutrals are warm browns. The `gray` scale is now bark, the tool-input focus rings and the feat-tier seals are on the moss/gold/oxblood ramps, and the admonition palette has been pulled onto the bark/moss/gold/oxblood ramps. There is no remaining named drift; `tailwind.test.ts` fails on any cool utility class or blue-dominant hex in a component or page, and the Feat Explorer's own surface test additionally fails on *any* hex, warm or not, because that surface is not permitted a private value at all. Admonitions set both `--sl-color-asides-border` and `--sl-color-asides-text-accent`; Starlight's own defaults for both are cool.
 
 **Specificity over order for third-party overrides.** Starlight declares
 `--sl-color-asides-text-accent` on the same bare class our rules target, later in
@@ -250,6 +285,30 @@ prefix to outrank it - the dark rules were already specific enough via
 `:root[data-theme='dark']`. Asserted in `tailwind.test.ts`.
 
 **The Rarity Rule.** Sap Amber is an action and emphasis color, used on well under a tenth of any screen. Gold Leaf and Oxblood belong to headings and markers, not to large fills.
+
+**The Themed-Surface Rule.** A tool surface is a themed surface, made of the ramps
+the rest of the system already uses. Every value is a custom property declared
+once and re-declared under the dark theme selector, so nothing holds one value
+across both modes. Point Buy's first build kept its paper the same parchment in
+light and dark, on the reasoning that a physical object should not invert; the
+result was a panel and a heading that looked identical in both modes and
+outweighed the page around them. Do not exempt a surface from the theme because
+it depicts something. A sheet of paper *depicts* something; a tool surface *is*
+one.
+
+A surface may name a **material** - leather, parchment, brass - as long as the
+material is themed with the rest of the system and its inks come off the
+existing ramps. What the Point Buy build actually got wrong was a material that
+was *unthemed*, and that is the half the rule forbids. Naming a material is not
+permission to name *values*: a surface that paints its own hexes is a second
+palette wearing the first palette's clothes, and it does not sit beside the tool
+panels - it argues with them. **Reach a tint with `color-mix()` over a shared
+token.** That is the idiom, it is what the Ledger Panel already does for its
+hairline rule, and it is what a tint is for - a tint, not a surface. The Feat
+Codex Panel took it further than that and is now the Ledger Panel's own material
+with a larger job: it kept its name and lost the parchment, the mottle, the
+spine and the ribbon, because a tool surface that has to *argue* for its
+material is a surface that has already lost. See the Feat Codex Panel below.
 
 ## Typography
 
@@ -270,7 +329,7 @@ prefix to outrank it - the dark rules were already specific enough via
 - **Card Meta** (400, 0.8125rem, letter-spacing 0.04em, uppercase, line-height 1.4): Race, class, and subclass in ScalySans, tracked out and set small so the Cinzel name keeps the top of the hierarchy.
 - **Label** (500, 0.75rem, letter-spacing 0.05em, uppercase): Micro-labels above stat values in the documentation layer.
 - **Section Label** (600, 0.7rem/11.2px, letter-spacing 0.08em, uppercase): The heading of every card section, on the gold rule. One step above **Pill** and the largest of the card ramp's small steps, because a section heading has to out-rank the values it labels. It is one class, `sectionHeadingClass`, at every display mode - see *Card sections*.
-- **Micro Label** (600, 0.5625rem/9px, letter-spacing 0.08em, uppercase): The card-scale label, as small as the design goes. Used for "Hit Points" on the plate; **Micro Value** (400, 0.625rem/10px) covers secondary values and statblock legends, and **Pill** (500, 0.6875rem/11px, letter-spacing 0.04em, uppercase) covers tags and role chips. Together 9/10/11/11.2px are the card ramp, distinct from the documentation layer's 12px Label.
+- **Micro Label** (600, 0.5625rem/9px, letter-spacing 0.08em, uppercase): The card-scale label, as small as the design goes. Used for "Hit Points" on the plate; **Micro Value** (400, 0.625rem/10px) covers secondary values and statblock legends, and **Pill** (500, 0.6875rem/11px, letter-spacing 0.04em, uppercase) covers tags and role chips. Together 9/10/11/11.2px are the card ramp, distinct from the documentation layer's 12px Label. The step ships as a `@utility micro-label` in `src/styles/tailwind.css` rather than as a repeated class string, so it is one value and a later change to it moves every call site at once; the family is the `--sl-font-table` token, so a call site names intent rather than a font stack. An earlier draft shipped it at 700 and 0.1em, inventing a second value for a documented step while claiming in its own comment to *be* the step - the detector, which reads this ramp, is what caught it.
 - **Metric** (700, 1.125rem-1.5rem): Numeric values in stat tiles and metric cards, monospaced (`font-mono`) when they are read as data (saves, skills, attack bonuses). The card's HP value is ScalySans at 1.35rem with tabular numerals rather than the sans stack.
 
 ### Named Rules
@@ -297,7 +356,7 @@ The system is lifted and tactile. Surfaces are raised on soft ambient shadows at
 
 ## Shapes
 
-Corners are gently rounded and occasionally arched. Cards, buttons, inputs, and buttons use an 8px radius (`rounded-lg`); stat tiles use a 7px radius; tags, chips, badges, and circular icon buttons are fully round (`rounded-full`). The signature geometry is the **arch**: ability tiles, the character portrait, and the stat caps use 45% top corners over 8px bottom corners, evoking a carved stone or a shield. Admonitions break the pattern on purpose - zero radius with clipped triangular notches on the left and right, so the callout reads as a pulled scroll ribbon rather than a box.
+Corners are gently rounded and occasionally arched. Cards, buttons, inputs, and buttons use an 8px radius (`rounded-lg`); stat tiles use a 7px radius; tags, chips, badges, and circular icon buttons are fully round (`rounded-full`). Two 5px radii are derived rather than chosen, and neither is a ramp step: the primary button's gilt inner rule is its own 8px less the 3px inset, so the two corners stay parallel, and a d6 takes 5px because a die's corner is not a card's corner. The signature geometry is the **arch**: ability tiles, the character portrait, and the stat caps use 45% top corners over 8px bottom corners, evoking a carved stone or a shield. Admonitions break the pattern on purpose - zero radius with clipped triangular notches on the left and right, so the callout reads as a pulled scroll ribbon rather than a box.
 
 ## Components
 
@@ -311,7 +370,7 @@ Corners are gently rounded and occasionally arched. Cards, buttons, inputs, and 
 - **Focus ring:** Never the same value as the control it outlines, in either theme. Bark-black `#1b1716` in light, bark-100 `#f8f6f5` in dark - 5.50:1 and 3.00:1 against the gold fill. An accent-coloured ring on an accent-filled button is invisible at 1.00:1, and gold-rule on gold is only 1.49:1.
 
 ### Chips
-- **Style:** `rounded-full` pills. Tier chips (Origin / Epic Boon / General) use moss-100 / bark-200 / bark-100 in light and moss-800 / bark-800 / bark-700 in dark, with ink and parchment text. **Role chips** carry a light and a dark hue step (`ROLE_CONFIG` in `party-roster.ts`) exposed as the `--role-light` / `--role-dark` custom properties. The hue is used **only** for a 14% background tint and the border; the label text stays bark (`#605552` light, `#c7c0be` dark) and clears 4.5:1 in both themes. Tinting with the hue *and* colouring the text with the same hue cannot reach 4.5:1 - a saturated colour on a tint of itself is too light. Non-role chips use pale gray fill with gray text at `text-xs`.
+- **Style:** `rounded-full` pills. **Role chips** carry a light and a dark hue step (`ROLE_CONFIG` in `party-roster.ts`) exposed as the `--role-light` / `--role-dark` custom properties. The hue is used **only** for a 14% background tint and the border; the label text stays bark (`#605552` light, `#c7c0be` dark) and clears 4.5:1 in both themes. Tinting with the hue *and* colouring the text with the same hue cannot reach 4.5:1 - a saturated colour on a tint of itself is too light. Non-role chips use pale gray fill with gray text at `text-xs`. The Feat Explorer's Origin / General / Epic Boon tiers are **not** chips on this surface - they are the wax-seal medallion on a catalogue card (Feat Codex Panel below). A tier chip in the corner of every one of 219 cards is the tile-wall tic the Codex was chosen to refuse.
 - **State:** Role filter chips are outlined when inactive (gray fill, subtle hover) and filled with the role hue when active; selection is also carried by `aria-pressed` and font weight, never by colour alone. A horizontal 1-3 dot marker denotes proficiency tiers.
 - **Pointer feedback:** Hover tints sit inside `@media (hover: hover)`, because `:hover` sticks after a tap on iOS and never fires for a stylus. Press feedback is deliberately **ungated**, and chip spacing widens under `@media (any-pointer: coarse)` rather than `pointer: coarse`. `hover` and `pointer` describe the *primary* pointing device, so a touchscreen laptop reports `hover: hover` and `pointer: fine` and its digitizer shows up only in the `any-*` features; gating the press or the gap on the non-`any` forms silently excludes exactly that device. See [ADR-0009](docs/adr/0009-phone-first-grids-and-touch-targets.md).
 
@@ -368,7 +427,7 @@ times over, which is worse than no names. The heading carries the navigation.
 
 ### Cards / Containers
 - **Corner Style:** 8px (`rounded-lg`).
-- **Background:** White in light mode, `gray-800` in dark mode; the Card header is a slightly recessed surface (`gray-50` / `gray-900`).
+- **Background:** White in light mode, `gray-800` in dark mode. The *section plate* a card's contents sit on (`cardPlateClass`) is the recessed surface, Bark 100 (`gray-50`) stepping to Bark Black (`gray-900`); the Card *header* is its own thing and takes Bark 100 to Bark 800 - see the Card Heading tables.
 - **Shadow Strategy:** `card-rest` at rest, `card-hover` on hover (see Elevation).
 - **Border:** 1px `gray-200` / `gray-700`, plus a 3px top accent cap (Oxblood in light, Gold Leaf in dark) on stat tiles.
 - **Internal Padding:** 16px (`p-4`) body, 16px header; stat tiles tighten to 8px (`p-2`).
@@ -377,8 +436,133 @@ times over, which is worse than no names. The heading carries the navigation.
 - **Style:** White or `gray-800` fill, 1px `gray-300` / `gray-600` stroke, 8px radius, `text-sm` from `sm` up, `shadow-sm`.
 - **Touch floor:** Every control is at least 44x44px (`min-h-11`), and its font is 16px (`text-base`) below `sm`, stepping back to `text-sm` above. The height is WCAG 2.5.8; the 16px floor is because iOS Safari zooms the whole page when a focused input's font is under 16px, which on a phone at the table means losing your place mid-session. See [ADR-0009](docs/adr/0009-phone-first-grids-and-touch-targets.md).
 - **Focus:** A 2px ring and border shift in the accent (`--sl-color-accent`), so focus matches the accent in both themes. This replaced a `blue-500` ring, the last element that read as generic SaaS.
-- **Labels:** Uppercase micro-labels are for stat tiles; form fields use a 14px medium label above the control.
+- **Labels:** Uppercase micro-labels are for stat tiles; form fields use a 14px medium label above the control. 14px and 15px are the two sizes off the type ramp and both are accounted for: 14px is the form label and the Dice Roller's swap popover, 15px is an icon glyph and the roll progress bar's label. Neither sets a sentence of prose, so neither is taking a step the ramp already provides.
 - **Mobile disclosure:** Where a surface carries more than two secondary filters, the selects collapse behind a labelled toggle below `sm` and the primary search stays visible. The panel is `sm:flex!` so the important flag outranks Alpine's inline `display`, which is what `x-show` reveals by removing. Do **not** also put `hidden` on that panel: the class-based `display:none` outranks the reveal and the toggle silently does nothing.
+
+### Feat Codex Panel
+`src/components/feats-explorer/FeatExplorer.astro`, root `[data-fx="codex"]`.
+**It is the Tool Panel.** Not a themed copy of it, not a parchment page with the
+decoration stripped - the Ledger Panel's own values, at the Ledger Panel's
+surface scale: `--fx-page` is `--pb-surface` (Bark 100 / Bark 800), `--fx-card` is
+`--pb-raised` (Bark 200 / Bark 700), the edge is 1px Gold Rule / Gold Rule Dark,
+the radius is 8px, the shadow is `0 1px 2px 0 rgb(0 0 0 / 0.05)` in light and
+`none` in dark, the 3px cap is Oxblood stepping to Gold Leaf, and the head is
+closed by the 2px Gold Rule.
+
+**One thing is not the Tool Panel: the padding.** The Ledger Panel is 16px; this
+is `24px 28px`, and 20px all round below `sm`. That is a deviation, not an
+oversight, and it is named in the token block above as its own entry
+(`tool-panel-list` / `tool-panel-list-dark`) rather than left to contradict
+`tool-panel`. The reason is the job: the Ledger Panel holds six ability lines and
+a foot, and 16px puts that content one step inside the rule, which is what you
+want when the panel is a frame around a small amount of writing. This one holds
+219 entries on a grid, and at 16px the outer column of cards sat close enough to
+the 1px Gold Rule that the panel read as a border wrapped around the grid rather
+than as a panel the grid sits inside. The extra 8-12px is the gutter that makes
+the last column read as a column, and it is symmetric on both sides and in both
+width bands. A test asserts that symmetry, in both bands.
+
+It got there by subtraction, and each subtraction is a decision worth keeping.
+It had a **parchment page** - a 25% Parchment mix over Bark 100, then 20% Ink
+over Bark 800 in dark, warm in opposite directions in the two themes - and a
+**mottle** on it: three soft tiles at 23/31/17rem plus a 7px fibre layer, so a
+37,000px page would be uneven everywhere instead of evenly tinted. The user
+called both decoration and the surface went. **A plain surface takes a
+`background` and nothing else**; a `background-image` is how a panel becomes a
+picture of a material rather than the material. It had a **stitched spine** down
+the binding edge and then a **wax ribbon** off the fore-edge - two 6px tongues at
+40% - and the user read the ribbon as "the 2 lines on the right part of the
+border". Both are gone, and the cap is now the **only** pseudo-element the root
+draws: exactly one accent on this surface, and it is the cap.
+
+**Removing an ornament means removing its reservation.** The right padding was
+2rem against 1.75rem on the left to clear the ribbon's 24px reach, with a comment
+explaining why. The ribbon is gone, so the padding is symmetric - 1.5rem/1.75rem,
+and 1.25rem all round below `sm`, where 320px cannot spend 28px on both sides. A
+phantom gutter on one side of a panel reads as accidental misalignment, which is a
+worse defect than the ornament it was reserving space for. Both the custom
+property the ornament read and the decoration itself are deleted rather than left
+declared, because a defined-but-unused token is a claim nothing backs up, and an
+undefined one silently drops the declaration that used it.
+
+The head's own copy stopped pretending earlier and still has: the count is
+`219 of 219 feats on this sheet`, not a folio, because folio is the bindery's
+word. The entries are **catalogue cards** on
+`repeat(auto-fill, minmax(min(100%, 17rem), 1fr))`, so the count per row is a
+consequence of the measure and the track never sets a floor the container cannot
+meet at 320px. A card is a single-column flex flow - name with its medallion,
+prerequisite, ability chips, then a `margin-top:auto` foot - so a feat with no
+prerequisite leaves no gap and one with a very long prerequisite wraps at the
+card's full measure rather than being squeezed into a column beside a label.
+`overflow-wrap:anywhere` on the name, the prerequisite and the book is what breaks
+the unbreakable runs (a feat name, a `18+`) that would otherwise push a card wide
+on a phone. **A prerequisite is a second line under the name, never a fifth column
+of a grid**: the grid is what produced the narrow track, and the narrow track is
+what produced sideways scroll.
+
+Every colour on the surface is a shared token or a `color-mix()` over one, and
+that is enforced rather than asserted in a comment: a test fails on **any** hex
+in the block, another fails if a `--fx-*` declaration does not resolve to a
+`--color-*` or `--sl-color-*` one, a third fails if any custom property is
+declared and unused or used and undeclared, and a fourth fails if the padding's
+two sides disagree.
+
+The **filter line** is one wrapping flex row: search, the disclosure toggle, the
+three selects, and the clear control at the trailing edge. The clear control is a
+**sibling of the panel, never a child of it** - below `sm` the panel is
+collapsed, so a clear inside it would be unreachable until the user opened the
+filters, which is a regression in a control that is otherwise always one tap
+away. The row is `[search] [Filters] [clear]` below `sm` and
+`[search] [ability] [book] [level] [clear]` at the widths where all five fit on
+one line; the search drops from a 100% basis to 14rem at `sm`, which is the
+point at which the three selects and the clear control fit beside it. `align-items:
+flex-end` puts the clear's 44px square on the selects' baseline rather than
+centring it in the label's taller box.
+
+The **tier medallion** is a 2rem circle stamped on the name row, carrying a
+two-letter monogram (OR / GE / EB) rather than the tier's name, in three inks -
+Moss 800 for Origin, Gold for General, Oxblood for Epic Boon in light; Moss 100,
+Gold, and a Parchment-lifted Oxblood in dark, because a dark seal on a dark page
+is not a seal. The monogram on a card is `aria-hidden` because the foot already
+carries the tier name in words; a seal that announced its own contents twice
+would be the tile-wall tic again. It replaces the tier chip this surface used to
+carry on every card. **Two-letter marks need a key**, and the **tier legend** is
+one: a `dl` of the three marks and their names, above the cards and outside the
+collapsible panel so it is on the page at 320 as well as at 1440, in real text
+and not `aria-hidden` because a screen reader user needs the same three mappings
+a reader gets. The marks are the seals themselves at key size - one class, two
+sizes - so the key cannot drift from the seals. It carries no colour of its own,
+which is what keeps it a key rather than a fourth accent beside the cap and the
+head rule.
+
+**The key also has to state the tier's scope, and on this one it is load-bearing.**
+EB is `level >= 19`, which is 78 feats: the 40 "Boon of ..." entries at level 19
+and 38 at level 21, and the level-21 ones are class builds rather than boons. The
+Level filter keeps 19 and 21 as separate buckets, so a reader can land on 21 and
+find an EB seal. The user was asked whether to split the tier, rename "Epic
+Boon", or read the dataset's `category` field, and chose none of those - one
+tier, the name kept, and **the legend says so in as many words**: a trailing note
+reading `EB covers Level 19 and Level 21`, in visible text beside the key, using
+the filter's own option labels. A key that names a tier without naming its
+scope is a key that can mislead, and the general rule is that a legend on this
+site states what the mark covers, not only what it is called. `category` cannot
+be the answer: it carries only `Origin` and `General` across all 219 records, so
+it cannot express the third tier at all.
+
+**The card edge is the full Gold Rule, not the panel's hairline.** At the 42%
+hairline the fill step alone is about 1.06:1 in light - Bark 200 on Bark 100 -
+so all 219 cards were held by a faint outline and read as one wash rather than as
+entries. The user chose the stronger edge, in both themes. It is still 1px, so
+the **2px head rule and the 3px cap remain the only structural cues** on the
+surface: strengthening a border is not permitted to promote it to a cue, and a
+wall of 219 edges does not out-shout two bars. That ordering is the whole
+reason the cap and the head rule exist on a surface this size.
+
+**The count is announced once.** It was a `role="status" aria-live="polite"`
+region in the head *and* another one on the bar below, both saying the same
+number, so a screen reader announced the count twice on every filter change. The
+head line is the one that survived; the bar and its copy are gone.
+
 
 ### Navigation
 - **Style:** Starlight's sidebar with Bookinsanity item text, grouped under uppercase group headings. Theme selection is a native Starlight `<Select>` with sun/moon/laptop icons; the site defaults to light mode when no preference is stored.
@@ -387,11 +571,20 @@ times over, which is worse than no names. The heading carries the navigation.
 ### Signature Components
 - **Stat Tile:** A 7px-radius plate with a 3px Oxblood/Gold top cap, an uppercase 12px label, and a bold metric. It is the atom of the character Card.
 - **Arch Ability Tile:** A 45%-top-radius plate holding an abbreviated ability, its modifier, score, and save; it is the system's most recognizable silhouette.
-- **Admonition Ribbon:** A full-width callout with zero radius, 2px top and bottom borders, triangle-notched ends, and a per-type border color (note blue, tip green, caution amber, danger red) with tinted light/dark backgrounds.
-- **Character Card:** The largest composition - a container-query card whose sections appear by display mode (small/medium/large), from portrait-plus-vitals up to full skills, inventory, weapons, features, and powers. Display mode selects which sections appear and how many rows they list; it does not select a different design for one. Skills and Saving Throws render the same table card at medium and large, and medium passes only the proficient rows where large passes all of them.
-- **Tool Panel:** The material every D&D tool surface is built from, so the page that opens a tool and the page that lists the tools are made of one surface. There are two instances of it - the **Ledger Panel** (Point Buy) and the **Dice Tray Panel** (Dice Roller) - and they are two instances of one panel, not two designs: same Bark 100 (#f8f6f5) surface stepping to Bark 800 (#2e2421), same 1px Gold Rule (#c9ad6a) border stepping to Gold Rule Dark (#867347), same 8px radius, same card-rest in light and **no shadow** in dark, same 3px accent cap (Oxblood in light, Gold Leaf in dark) as the only accent bar, and the same head built as **the Card Heading's construction**: a printed title in Cinzel at 1.35rem/600 in the theme's heading ink over a meta line in ScalySans at 0.8125rem, uppercase, 0.04em tracked, in Bark 600 (Bark 400 in dark), closed by a **2px Gold Rule at its lower edge**, which steps to Gold Rule Dark. That rule is the reason for the shape: a head banded only by a dotted leader reads as another row of the sheet, while a head closed by a rule at its own lower edge reads as a heading over what it heads. The cap above and the rule below bracket the surface without either carrying colour alone. A tool surface is a themed surface; one that held its paper fixed across both themes was the same object in light and in dark, which is the one outcome a theme toggle exists to prevent. Every value is a `--dr-*` or `--pb-*` custom property declared once and re-declared under `:root[data-theme='dark']`, and a test enforces that re-declaration for both.
+- **Admonition Ribbon:** A full-width callout with zero radius, 2px top and bottom borders, and triangle-notched ends. Only the four Starlight types are used, and each carries a light and a dark step from the bark/moss/gold/oxblood ramps - there is no blue left in it. The border is the type's identity and the title takes the same ramp one step in, because Starlight's own defaults for both are cool:
 
-  The **Ledger Panel's** body is a ruled leaf of six ability lines. The points readout is **not in the head** - it is in the foot, beside `SPENT`, because a governing number set in a title band reads as a headline rather than as the state of the sheet, and because down there the three figures answer the only three questions asked of a spread: how strong, how much, how much is left. It is `POINTS LEFT`, and it is the **third of three identical entries** - label at the Micro Label step, figure at the Headline step, one item each, in one row: no leader, no step up, no separate treatment. It reached the same figures by the same dotted leader and at a step of its own through Revision 4, and that made the remainder the loudest object on a surface whose job is six numbers; a leader out to the right only means "look here". When the pool empties the label reads `POOL SPENT`, which is how a finished sheet reads as finished without the figure having to become a status.
+  | Type | Border (light / dark) | Title (light / dark) | Fill (light / dark) |
+  |---|---|---|---|
+  | note | `#697066` / `#b9c0b6` | `#394036` / `#b9c0b6` | `#f8f6f5` / `#2e2421` |
+  | tip | `#404521` / `#8fae5c` | `#363b17` / `#8fae5c` | `#e8ede1` / `#363b17` |
+  | caution | `#a06e00` / `#d99a2b` | `#8a5600` / `#d99a2b` | `#faf0dc` / `#46331d` |
+  | danger | `#58180d` / `#c2603f` | `#58180d` / `#d98a6b` | `#f7ebe6` / `#3d1f18` |
+
+  Every border steps lighter in dark: the dark fills sit close enough to the light-theme border values that the border vanished against them (tip was 1.17:1, danger 1.10:1). `tailwind.test.ts` holds every cell to 3:1 for the border and 4.5:1 for the title.
+- **Character Card:** The largest composition - a container-query card whose sections appear by display mode (small/medium/large), from portrait-plus-vitals up to full skills, inventory, weapons, features, and powers. Display mode selects which sections appear and how many rows they list; it does not select a different design for one. Skills and Saving Throws render the same table card at medium and large, and medium passes only the proficient rows where large passes all of them.
+- **Tool Panel:** The material every D&D tool surface is built from, so the page that opens a tool and the page that lists the tools are made of one surface. There are three instances of it - the **Ledger Panel** (Point Buy), the **Dice Tray Panel** (Dice Roller), and the **Tools Panel** in the rulebook spread, which is the surface `.rb-panel` and the reference both other tools were built against - and they are three instances of one panel, not three designs: same Bark 100 (#f8f6f5) surface stepping to Bark 800 (#2e2421), same 1px Gold Rule (#c9ad6a) border stepping to Gold Rule Dark (#867347), same 8px radius, same card-rest in light and **no shadow** in dark, same 3px accent cap (Oxblood in light, Gold Leaf in dark) as the only accent bar, and the same head built as **the Card Heading's construction**: a printed title in Cinzel at 1.35rem/600 in the theme's heading ink over a meta line in ScalySans at 0.8125rem, uppercase, 0.04em tracked, in Bark 600 (Bark 400 in dark), closed by a **2px Gold Rule at its lower edge**, which steps to Gold Rule Dark. That rule is the reason for the shape: a head banded only by a dotted leader reads as another row of the sheet, while a head closed by a rule at its own lower edge reads as a heading over what it heads. The cap above and the rule below bracket the surface without either carrying colour alone. A tool surface is a themed surface; one that held its paper fixed across both themes was the same object in light and in dark, which is the one outcome a theme toggle exists to prevent. Every value is a `--pb-*`, `--dr-*` or `--rb-*` custom property declared once and re-declared under `:root[data-theme='dark']`, and a test enforces that re-declaration for the first two.
+
+  The **Ledger Panel's** body is a ruled leaf of six ability lines. The points readout is **not in the head** - it is in the foot, beside `SPENT`, because a governing number set in a title band reads as a headline rather than as the state of the sheet, and because down there the three figures answer the only three questions asked of a spread: how strong, how much, how much is left. It is `POINTS LEFT`, and it is the **third of three identical entries** - label at the Micro Label step, figure at the Title step (1.25rem Cinzel 600, tabular), one item each, in one row: no leader, no step up, no separate treatment. It reached the same figures by the same dotted leader and at a step of its own through Revision 4, and that made the remainder the loudest object on a surface whose job is six numbers; a leader out to the right only means "look here". When the pool empties the label reads `POOL SPENT`, which is how a finished sheet reads as finished without the figure having to become a status.
 
   The **Dice Tray Panel's** body is six rows that each answer one question - what did this ability roll - and the row's three parts are the evidence, the figure, and the control. The **dotted leader** is shared with the Ledger Panel and is load-bearing rather than ornamental: the content column runs to about 880px and a row holds four numbers, so without a rule spanning the slack between a row's subject and its own evidence the line falls apart into a name at one edge and a figure at the other. The **tray** is a recessed well, one ramp step *into* the panel in each theme (Bark 200 under Bark 100 in light, Bark Black under Bark 800 in dark), holding the four d6 immediately left of the score plate so the evidence and the figure read as one object. It is never empty: an unrolled ability renders four blank **engraved sockets** rather than a gap, so a row arrives complete and no score column moves when a roll lands. The dice are drawn as d6 - nine pip slots lit by the face - because a numeral with a strikethrough cannot distinguish two identical discarded faces, and a discarded die is inactive content under WCAG 1.4.3; it keeps a dimmed fill and a dashed edge rather than going transparent, since transparent inside a tray resolves to the tray's own fill and a hairline one step off that is invisible. The die's 1px rim is the only thing separating a die from its tray, so it is a per-theme token: Bark 600 reaches 6.15:1 in light and Gold Rule Dark 3.86:1 in dark, where Bark 600 would be 2.47:1. The rolled score is the loudest number on the row and the panel's job is six numbers, so the four pips stay decoration and the plate carries the figure.
 
@@ -427,6 +620,12 @@ times over, which is worse than no names. The heading carries the navigation.
   | HP value | Gold Leaf (#c68000) |
 
   The two themes are one system inverted, not two designs: the surface steps down, the ink steps up, and the single accent swaps from Oxblood to Gold Leaf. Nothing in the heading changes shape, size, or spacing between themes.
+- **Rulebook Spread:** The site index, and the reason the Tool Panel has a third instance. It is one printed sheet rather than a grid of destination cards: a 28px gutter column and the leaves beside it, `width: min(70rem, calc(100vw - 2.5rem))` and centred on the content column with the standard `translateX(-50%)` breakout, where the 2.5rem is the overflow guard that keeps ADR-0009's widths clean. Desktop divides it into two leaves with a 2px gold gutter rule; a phone stacks them in reading order and the gutter becomes a sticky left spine carrying the current part's Roman numeral at the Label step (0.75rem Cinzel 700) above a 2px fully-round track whose fill is `scaleY`-driven, so the only motion on the page stays off the layout path. The part heading is the numeral *inside* the title on the title's own baseline - `I  House Rules` - because a small uppercase kicker above a heading is the one device this page refuses outright; the numeral itself is Gold Leaf against the Oxblood heading ink. Entries are printed contents rows separated by hairlines, never cards: a card per entry would put fifteen raised boxes on a page whose one panel is meant to be the only raised thing. Each row is folio, icon, name, cue on a grid, floors at ADR-0009's 44px, and the name takes the Title step at the Card Heading's weight because a link at weight 400 does not read as one. The cue is a Pill in bark ink, never a hue - a tinted cue cannot clear 4.5:1 on the panel it sits on.
+
+### Named Rules
+**The Tool-Weight Rule.** A tool does not outweigh the page it sits on. One panel, one border, one accent cap, and the numbers left as the loudest thing on it. A second surface wrapped around the panel, a frame around the governing figure, and a gradient or a ring on every row are three ways of saying the same thing louder; each was removed from the Ledger Panel, and each is worth noticing the first time one comes back.
+
+**The Figure-Beside-Its-Remainder Rule.** A figure that describes the state of a thing belongs with the other state figures, not above them in a heading. Point Buy carried the points readout in its head through two revisions, as a masthead and then as a band, and both read as a headline rather than as the state of the sheet. It lives in the foot beside `SPENT`, which it is the remainder of, and it is the third of three identical entries there - no leader, no step up, no treatment of its own.
 
 ## Do's and Don'ts
 
@@ -436,6 +635,7 @@ times over, which is worse than no names. The heading carries the navigation.
 - **Do** give raised surfaces both a soft shadow and a structural cue (accent cap, arch, or border).
 - **Do** set headings in Cinzel, prose in Bookinsanity, and tables in ScalySans - never mix their jobs.
 - **Do** use uppercase micro-labels with tabular monospaced numerals inside stat blocks.
+- **Do** set a list-shaped thing as ruled rows rather than a wall of tiles. A tile has to be wide enough for its content at every viewport; a row's width is the content column's, and its columns can hold a name, a figure and a 44px control at any width. [ADR-0014](docs/adr/0014-tool-rows-not-tiles.md).
 
 ### Don't:
 - **Don't** introduce neon or cyberpunk: no electric purple or cyan, no glassmorphism, no glowing sci-fi gradients or blur.
