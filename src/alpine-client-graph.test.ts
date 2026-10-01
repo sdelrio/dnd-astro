@@ -286,7 +286,25 @@ describe('the browser-bound graph (issue #352)', () => {
 
     it('classifies a bare specifier as third-party, so it is recorded and never opened', () => {
       expect(classify('alpinejs')).toBe('third-party');
-      expect(classify('@alpinejs/intersect')).toBe('third-party');
+      expect(classify('fast-xml-parser')).toBe('third-party');
+    });
+
+    it('records a third-party edge without opening the dependency', () => {
+      // The boundary is this repo's own code. A dependency's internals are
+      // recorded as a dependency edge and never opened, so the walk cannot
+      // report another package's bundling choice as a failure here.
+      //
+      // Rooted at a module that really does import one: asserting the
+      // record-but-decline behaviour against a graph with no third-party edge in
+      // it would pass on an empty list, for the wrong reason.
+      const parser = walk(resolve(SRC, 'utils/parse-character-xml.ts'));
+      expect(parser.thirdParty).toEqual(
+        expect.arrayContaining([
+          'fast-xml-parser (from src/utils/parse-character-xml.ts)',
+          'he (from src/utils/parse-character-xml.ts)',
+        ])
+      );
+      expect(parser.visited.filter((file) => file.includes('node_modules'))).toEqual([]);
     });
   });
 
@@ -338,25 +356,24 @@ describe('the browser-bound graph (issue #352)', () => {
       ]);
     });
 
-    it('does not traverse third-party packages', () => {
-      // The boundary is this repo's own code. A dependency's internals are
-      // recorded as a dependency edge and never opened, so the walk cannot
-      // report another package's bundling choice as a failure here.
-      expect(walkFromAlpine.thirdParty).toEqual(
-        expect.arrayContaining(['@alpinejs/intersect (from src/alpine.ts)'])
-      );
-      // `alpinejs` itself is a type-only import at the entrypoint, so it is not
-      // a third-party *edge* at all - the erasure ADR-0013 relies on.
-      expect(walkFromAlpine.thirdParty).not.toContain('alpinejs (from src/alpine.ts)');
-      expect(walkFromAlpine.visited.filter((file) => file.includes('node_modules'))).toEqual([]);
-      // Stronger than "no node_modules happened to be visited": every file the
-      // walk opened is first-party source under `src/`, so it could not have
-      // opened a dependency even if one were reachable.
+    it('reaches no third-party package from the entrypoint at all', () => {
+      // The entrypoint's only remaining `alpinejs` edge is `import type`, which
+      // the compiler erases, so the browser bundle this walk describes imports
+      // nothing from `node_modules` (#383 removed the one dependency edge that
+      // was here). Every component is first-party.
+      //
+      // The same property from the other side: a walk that classified bare
+      // specifiers as first-party would report this clean graph without ever
+      // declining to open anything, and `classify` above is what rules that out.
+      expect(walkFromAlpine.thirdParty).toEqual([]);
+      // `alpinejs` is a type-only import at the entrypoint, so it is not a
+      // third-party *edge* at all - the erasure ADR-0013 relies on. Stated
+      // directly, because the empty list above would read the same either way.
+      expect(edgesIn(read(ALPINE_ENTRY))).not.toContain('alpinejs');
       expect(walkFromAlpine.visited.filter((file) => !file.startsWith(SRC + sep))).toEqual([]);
-      // The walk had the opportunity and declined: the entrypoint's dependency
-      // edge is recorded, and the first-party modules behind the entrypoint were
-      // still followed. Stopping at the third-party specifier did not stop the
-      // walk.
+      // The walk still followed the whole first-party graph behind the
+      // entrypoint, so the empty third-party list is a clean graph rather than a
+      // walk that resolved nothing.
       expect(walkFromAlpine.visited.length).toBeGreaterThan(registeredComponents().length);
       expect(walkFromAlpine.visited).toEqual(
         expect.arrayContaining([resolve(SRC, 'components/xml-viewer/party-view-component.ts')])

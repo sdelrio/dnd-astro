@@ -13,7 +13,6 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@alpinejs/intersect": "^3.17.3",
     "@astrojs/alpinejs": "^1.0.0",
     "@astrojs/starlight": "^0.42.4",
     "@iconify-json/game-icons": "^1.2.4",
@@ -31,7 +30,6 @@
     "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/alpinejs": "^3.13.11",
-    "@types/alpinejs__intersect": "^3.13.4",
     "@types/node": "^26.5.1",
     "eslint": "^10.10.0",
     "eslint-plugin-astro": "^3.2.0",
