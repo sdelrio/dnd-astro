@@ -202,19 +202,9 @@ Create `src/components/feats-explorer/feat-explorer.css`:
 - Empty state styling
 - Loading state styling
 
-### Step 5: Register Alpine.js Intersect Plugin
+### Step 5: (removed) Register Alpine.js Intersect Plugin
 
-Update `astro.config.mjs` to register the intersect plugin (retained for future viewport-deferred components; Feat Explorer does not use `x-intersect`):
-```javascript
-import intersect from '@alpinejs/intersect';
-// In Alpine.js setup:
-alpinejs([intersect]);
-```
-
-Update `package.json` to add dependency:
-```json
-"@alpinejs/intersect": "^3.17.3"
-```
+This step originally registered the intersect plugin and added `@alpinejs/intersect` to `package.json`, on the theory that a viewport-deferred component might need it later. Feat Explorer never used `x-intersect`, and no other component did either, so #383 removed the registration, the dependency and its `@types` package. Nothing in this spec depends on the plugin; if a component ever needs deferred hydration, it adds the plugin back at that point.
 
 ### Step 6: Add to Starlight Sidebar
 
@@ -255,8 +245,8 @@ Search and filter through all available feats.
 | `src/components/feats-explorer/search-utils.js` | create | Fuzzy search utility functions |
 | `src/components/feats-explorer/feat-explorer.css` | create | Component styling |
 | `src/content/docs/dnd-tools/feat-explorer.mdx` | create | Starlight page for feat explorer |
-| `astro.config.mjs` | modify | Add sidebar entry + intersect plugin |
-| `package.json` | modify | Add @alpinejs/intersect dependency |
+| `astro.config.mjs` | modify | Add sidebar entry |
+| `package.json` | modify | Add @alpinejs/intersect dependency (removed in #383) |
 
 ## Edge Cases
 
@@ -308,8 +298,8 @@ Two vitest suites cover the feat explorer: `feat-filter.test.ts` on the filter a
 - Remove `src/components/feats-explorer/` directory
 - Remove `src/content/docs/dnd-tools/feat-explorer.mdx`
 - Remove sidebar entry from `astro.config.mjs`
-- Remove `@alpinejs/intersect` from `package.json`
-- Remove intersect plugin registration from `astro.config.mjs`
+- Remove `@alpinejs/intersect` from `package.json` (already removed in #383)
+- Remove intersect plugin registration from `astro.config.mjs` (already removed in #383)
 
 ## Accepted Deviations
 
@@ -321,7 +311,9 @@ The spec's Step 3 and Files table called for `src/components/feats-explorer/sear
 
 ### 2. Eager mount instead of deferred `x-intersect` hydration (#271)
 
-This archived spec originally mandated deferred loading via `x-intersect.once="init()"` with a loading state until the component scrolled into the viewport. The shipped component mounts eagerly: the root element carries `x-data="featExplorer(...)"` with the feat dataset inlined at build time, and there is no `x-intersect` binding, `init()`, or loading state. Reason: with the dataset already inlined, deferred hydration added complexity without a meaningful payload win. Binding text in `SPEC.md` (Component 2) and this spec was amended to match the delivered behavior; the Alpine intersect plugin remains registered in `src/alpine.ts` for future use. No runtime code changed with this edit.
+This archived spec originally mandated deferred loading via `x-intersect.once="init()"` with a loading state until the component scrolled into the viewport. The shipped component mounts eagerly: the root element carries `x-data="featExplorer(...)"` with the feat dataset inlined at build time, and there is no `x-intersect` binding, `init()`, or loading state. Reason: with the dataset already inlined, deferred hydration added complexity without a meaningful payload win. Binding text in `SPEC.md` (Component 2) and this spec was amended to match the delivered behavior. No runtime code changed with this edit.
+
+The plugin registration that Step 5 added survived this deviation on the argument that a future component might want deferred hydration. #383 removed it once the Feat Explorer was the only thing that had ever referenced it and no planned component did; see Accepted Deviation 7.
 
 ### 3. Level select is 7.5rem, not 6rem (#376)
 
@@ -344,6 +336,10 @@ The root element is `x-data="featExplorer"` naming a registration in `src/alpine
 The one thing this deviation changes beyond the registration is *where the dataset is read from*. A registered Alpine provider is called with no arguments - the factory receives nothing from the `x-data` string - so the payload can no longer be inlined into the attribute and handed to the factory. The component module now imports `FEATS`, `BOOKS` and `ABILITIES` from the same committed `feat-data.js`, and the factory keeps an optional data argument for the states the generated dataset cannot produce. The dataset itself is untouched: same file, same 219 records, same generated extraction, no field read or added. What changed is only the delivery, and the spec's intent is preserved - the component still mounts eagerly, still needs no `x-intersect` trigger and no loading state, and still carries its data with no network dependency on a remote schema. #387 owns making that delivery cheaper (the dataset ships as a separate cacheable asset rather than inside the bundle the Alpine entrypoint injects into every page).
 
 Behaviour is unchanged and now covered by running it: `feat-explorer-alpine.test.ts` mounts the component through `src/test-utils/alpine-dom.ts` and drives search, the three selects, the disclosure badge, the tier marks and the book labels. It replaces the two source-scanning suites that covered the component before, which read `FeatExplorer.astro` as text - the technique ADR-0010 names as the defect class that let #328 ship. `feat-explorer-responsive.test.ts` keeps its markup and CSS assertions and now reads the tier rule from the behaviour module rather than from the view.
+
+### 7. The intersect plugin is not registered (#383)
+
+Step 5 added `@alpinejs/intersect` and registered it in the Alpine entrypoint. No component ever bound `x-intersect`, and no spec reserves it for a planned one: every spec is archived, and this one had already switched to eager mount under Accepted Deviation 2. #383 removed the registration, the dependency and `@types/alpinejs__intersect`, so the entrypoint every page loads imports nothing from `node_modules`. Reason: a registration kept "for future use" has no mechanism to ever be removed, and it was a per-page cost against the least-client-JavaScript rule. The component behaviour this spec describes is untouched.
 
 ## Status
 

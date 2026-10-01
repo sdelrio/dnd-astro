@@ -70,7 +70,7 @@ All interactive components use Alpine.js for client-side behavior. This eliminat
 
 #### Component 2: Book-Filtered Feat Matrix
 * **File Location:** `src/components/feats-explorer/`
-* **Hydration Strategy:** Eager mount via `x-data` on the component root with the feat dataset inlined at build time (no deferred `x-intersect` trigger; the Alpine intersect plugin may remain registered for future use).
+* **Hydration Strategy:** Eager mount via `x-data` on the component root with the feat dataset inlined at build time (no deferred `x-intersect` trigger; the Alpine intersect plugin was removed in #383 now that nothing uses it).
 * **Mechanics:** Fuzzy client-side searching, sub-category relational indexing, and multi-select filtering over a matrix of pre-compiled rules.
 * **Events:** `@input` for search field, `@change` for filter dropdowns, `x-for` for dynamic list rendering.
 
