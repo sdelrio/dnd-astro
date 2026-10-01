@@ -27,10 +27,10 @@ ADRs capture important architectural decisions along with their context and cons
 
 ### Status Values
 
-- `accepted` — Decision is binding and active
-- `superseded` — Decision has been replaced by a newer ADR (check `superseded_by` field)
-- `deprecated` — Decision is no longer recommended
-- `proposed` — Decision is under review
+- `accepted` - Decision is binding and active
+- `superseded` - Decision has been replaced by a newer ADR (check `superseded_by` field)
+- `deprecated` - Decision is no longer recommended
+- `proposed` - Decision is under review
 
 ### For Agents
 

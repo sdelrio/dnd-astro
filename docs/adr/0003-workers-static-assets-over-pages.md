@@ -24,12 +24,12 @@ Should we use Cloudflare Pages (legacy) or Cloudflare Workers with static assets
 
 ## Considered Options
 
-- **Option A: Cloudflare Pages** — Use the legacy Pages workflow with git-connected builds and preview deployments.
-- **Option B: Cloudflare Workers with Static Assets** — Use Workers as the deployment target with static assets configuration in `wrangler.jsonc`.
+- **Option A: Cloudflare Pages** - Use the legacy Pages workflow with git-connected builds and preview deployments.
+- **Option B: Cloudflare Workers with Static Assets** - Use Workers as the deployment target with static assets configuration in `wrangler.jsonc`.
 
 ## Decision Outcome
 
-Chosen option: **Option B** — Use Cloudflare Workers with static assets
+Chosen option: **Option B** - Use Cloudflare Workers with static assets
 
 ### Consequences
 

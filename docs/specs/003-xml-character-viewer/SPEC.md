@@ -33,7 +33,7 @@ The golden-forest project has 111 Fantasy Grounds XML character sheets rendered 
 - Pre-resolve avatar image paths at build time (`.jpg` → `.png` → `faceless.svg` fallback)
 - Provide a `<PartyView>` component that reads `party.json` and renders aggregate party stats + member cards
 - Store XML source files in `src/assets/fantasy-grounds-sheets/` and avatar images in `public/fg/avatar/`
-- Keep client-side JavaScript minimal — only Alpine.js for display-mode toggles and item-level expand/collapse interactions (section-level collapse removed per #151)
+- Keep client-side JavaScript minimal - only Alpine.js for display-mode toggles and item-level expand/collapse interactions (section-level collapse removed per #151)
 - Support inline usage in Starlight MDX pages and standalone character pages
 
 ## Non-Goals
@@ -59,7 +59,7 @@ Alpine.js is already configured via `@astrojs/alpinejs`.
 
 ### Step 2: Create Build-Time XML Parser
 
-Create `src/utils/parse-character-xml.ts` — a pure Node.js module that:
+Create `src/utils/parse-character-xml.ts` - a pure Node.js module that:
 - Reads an XML string input
 - Parses it using `fast-xml-parser`'s `XMLParser` with appropriate options (`ignoreAttributes: false`, `attributeNamePrefix: "@_"`, `textNodeName: "#text"`)
 - Extracts and returns a typed character data object
@@ -123,7 +123,7 @@ Only `signed()` is needed. `formatNumber` and `timeAgo` from golden-forest are n
 
 ### Step 5: Create XmlCard Component
 
-Create `src/components/xml-viewer/XmlCard.astro` — a static Astro component that:
+Create `src/components/xml-viewer/XmlCard.astro` - a static Astro component that:
 - Accepts a `character` prop (the parsed `CharacterData` JSON)
 - Accepts a `display` prop: `'small' | 'medium' | 'large'` (default `'medium'`)
 - Accepts an optional `image` prop for avatar override (all display modes)
@@ -151,7 +151,7 @@ import XmlCard from '../../../components/xml-viewer/XmlCard.astro';
 
 ### Step 6: Create PartyView Component
 
-Create `src/components/xml-viewer/PartyView.astro` — a static Astro component that:
+Create `src/components/xml-viewer/PartyView.astro` - a static Astro component that:
 - Reads `party.json` from `public/fg/party.json` at build time (via `fs.readFileSync`)
 - For each member, loads the corresponding parsed character JSON
 - Pre-renders aggregate statistics:
@@ -175,7 +175,7 @@ const ROLE_CONFIG = {
 };
 ```
 
-Icons rendered via `IconifyIcon.astro` (ADR-0001) — zero client JS.
+Icons rendered via `IconifyIcon.astro` (ADR-0001) - zero client JS.
 
 Usage in MDX:
 
@@ -306,8 +306,8 @@ The original spec's current-party.mdx template omitted sidebar and ToC frontmatt
 ### 4. Parser extensions: `saveprof` and `filename`
 
 The original spec's `CharacterData` interface did not include `saveprof` or `filename`. The implementation adds both, and this commit updates the spec to match:
-- `saveprof: number` on each ability — required by Step 5's proficient-only save filtering.
-- `filename?: string` — set by the build hook as the array lookup key and avatar base name.
+- `saveprof: number` on each ability - required by Step 5's proficient-only save filtering.
+- `filename?: string` - set by the build hook as the array lookup key and avatar base name.
 
 ### 5. Test page for visual verification
 
