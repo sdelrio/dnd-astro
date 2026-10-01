@@ -400,8 +400,20 @@ describe('README', () => {
     const hiddenPage = 'src/content/docs/guides/xml-card-test.mdx';
     expect(content).toContain(hiddenPage);
     expect(existsSync(join(repoRoot, hiddenPage))).toBe(true);
-    expect(readFileSync(join(repoRoot, hiddenPage), 'utf8')).toMatch(/^sidebar:\n\s+hidden: true$/m);
+
+    const hiddenPageSource = readFileSync(join(repoRoot, hiddenPage), 'utf8');
+    expect(hiddenPageSource).toMatch(/^sidebar:\n\s+hidden: true$/m);
     expect(starlightSidebarBlock()).not.toContain('guides/');
+
+    // The page explains its own absence from the navigation, and says so only
+    // in its front matter: an agent auditing the archived specifications that
+    // name it would otherwise read the missing sidebar entry as a regression
+    // and add one, so the note must be there and must stay out of the body.
+    const [, frontMatter = '', body = ''] = hiddenPageSource.split(/^---$/m);
+
+    expect(frontMatter).toMatch(/unlinked from the navigation/);
+    expect(frontMatter).toMatch(/[Dd]o not add (a sidebar entry|one)/);
+    expect(body).not.toMatch(/unlinked from the navigation/);
 
     expect(content).toMatch(/[Gg]uides group was retired/);
 
