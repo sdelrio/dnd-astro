@@ -40,7 +40,7 @@ adr_constraints: []
 
 ## Files to Create/Modify
 
-- `path/to/file.ext` — {purpose}
+- `path/to/file.ext` - {purpose}
 
 ## ADR Constraints
 

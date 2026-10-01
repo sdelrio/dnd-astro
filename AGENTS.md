@@ -89,6 +89,23 @@ Single-context. ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
 - Never use the em dash "—". Use plain dash "-" instead.
 - Starlight markdown admonitions: only `:::note`, `:::tip`, `:::caution`, and `:::danger` are supported. Do not use `:::info` or `:::warning`.
 
+The em dash rule is enforced by a test, not by good intentions. See
+[the guard](src/content/prose-style.test.ts) and the covered surfaces below.
+
+### Covered prose surfaces
+
+The rule is tested over the prose this project authors: the root documents
+(`README.md`, `AGENTS.md`, `CONTEXT.md`, `SPEC.md`, `PRODUCT.md`, `DESIGN.md`),
+`docs/adr/`, `docs/agents/`, `docs/audits/`, `docs/specs/` including the index and
+the template, and the site content under `src/content/docs/`. Adding a new
+maintained document means adding it to the `proseSurfaces` list in that test;
+a pattern that matches nothing fails, so a stale path cannot turn the guard
+into a no-op.
+
+The test exempts the line above, because the rule has to quote the character it
+bans. The exemption is an exact-line allow list, and a test asserts it covers
+every em dash in `AGENTS.md` and nothing else, so it cannot quietly widen.
+
 ## Temporary Files
 
 Every temporary file (PR bodies, issue bodies, scratch files, notes, etc.) goes to `tmp/` at the repo root - write there first, e.g. `tmp/pr-<slug>.md`. That directory is gitignored; do not use `/tmp` or other system paths.

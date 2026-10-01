@@ -23,12 +23,12 @@ Should we maintain Docusaurus admonition syntax or migrate to Starlight-supporte
 
 ## Considered Options
 
-- **Option A: Maintain Docusaurus syntax** — Keep `:::info` and `:::warning` and hope for future Starlight support.
-- **Option B: Migrate to Starlight admonitions** — Replace unsupported admonitions with supported equivalents.
+- **Option A: Maintain Docusaurus syntax** - Keep `:::info` and `:::warning` and hope for future Starlight support.
+- **Option B: Migrate to Starlight admonitions** - Replace unsupported admonitions with supported equivalents.
 
 ## Decision Outcome
 
-Chosen option: **Option B** — Migrate to Starlight admonitions
+Chosen option: **Option B** - Migrate to Starlight admonitions
 
 ### Consequences
 
