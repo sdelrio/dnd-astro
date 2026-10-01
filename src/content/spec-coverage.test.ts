@@ -186,3 +186,109 @@ describe('SPEC.md component coverage', () => {
 		expect(specSource).toContain('Frameworks must be scoped strictly to individual component instances');
 	});
 });
+
+/**
+ * #385: the net that would have caught #385 before it was filed.
+ *
+ * The tech stack list named the site framework, the documentation base, the
+ * runtime, the two interactivity tiers, styling and hosting, and then said that
+ * no framework runtime is shipped. `astro-mermaid` and `mermaid` are both
+ * runtime dependencies and `astro.config.mjs` registers the former, so a reader
+ * checking the specification against the manifest found a dependency the stack
+ * never declared, next to a sentence that read as if the project ships no
+ * third-party client JavaScript at all. Neither statement was false; the
+ * specification was silent where the manifest was not, which is the failure
+ * mode here.
+ *
+ * The assertion derives its subject from the real files rather than from a
+ * hand-kept list, so it cannot rot into a tautology: it reads the integration
+ * imports out of `astro.config.mjs`, intersects them with the runtime
+ * dependencies in `package.json`, and requires each to be named in the stack
+ * list. Registering an integration without declaring it is exactly the defect,
+ * so the check follows the registration. It says nothing about whether the
+ * prose describing a dependency is *accurate*, for the same reason the
+ * component coverage guard above stays coarse - that would be a
+ * prose-matching exercise with a false positive on every rewording.
+ */
+describe('SPEC.md tech stack coverage', () => {
+	const stackList = specSource.slice(
+		specSource.indexOf('### Tech Stack Constraints'),
+		specSource.indexOf('## 2. Infrastructure & Deployment Architecture'),
+	);
+
+	const manifest = JSON.parse(
+		readFileSync(join(repoRoot, 'package.json'), 'utf8'),
+	) as { dependencies?: Record<string, string> };
+	const runtimeDependencies = Object.keys(manifest.dependencies ?? {});
+
+	const astroConfig = readFileSync(join(repoRoot, 'astro.config.mjs'), 'utf8');
+
+	/** Packages `astro.config.mjs` imports that are runtime dependencies. */
+	function registeredIntegrations(): string[] {
+		const names = new Set<string>();
+		const pattern = /from\s+'([^']+)'/g;
+		let match: RegExpExecArray | null;
+
+		while ((match = pattern.exec(astroConfig)) !== null) {
+			const specifier = match[1];
+			if (runtimeDependencies.includes(specifier)) {
+				names.add(specifier);
+			}
+		}
+
+		return [...names].sort();
+	}
+
+	it('finds the stack list and the registered integrations, so the guard is not vacuous', () => {
+		expect(stackList).not.toBe('');
+		expect(stackList).not.toBe(specSource);
+		expect(runtimeDependencies.length).toBeGreaterThan(0);
+
+		const registered = registeredIntegrations();
+
+		expect(registered).toContain('astro-mermaid');
+		expect(registered).toContain('@astrojs/alpinejs');
+	});
+
+	it('names every integration the site config registers', () => {
+		for (const name of registeredIntegrations()) {
+			expect(stackList).toContain(name);
+		}
+	});
+
+	it('names the diagram renderer, its scoping, and the decision behind it', () => {
+		// The renderer is named, the claim about *where* it loads is present,
+		// and ADR 0007 is cited the way every other architectural choice in the
+		// document is cited. A bare mention of the package would satisfy none of
+		// the three, which is why each is asserted separately.
+		expect(stackList).toMatch(/\*\*Diagram Rendering:\*\*/);
+		expect(stackList).toContain('`mermaid`');
+		expect(stackList).toContain('only on pages that contain a Mermaid diagram');
+		expect(stackList).toContain('./docs/adr/0007-mermaid-rendering-strategy.md');
+	});
+
+	it('scopes the no-framework-runtime claim so it does not read as no client JavaScript', () => {
+		// The old absolute wording is asserted absent, and the replacement has
+		// to name both halves of the scoping: what is excluded, and what is
+		// still shipped.
+		expect(stackList).not.toContain('no framework runtime is shipped');
+		expect(stackList).toMatch(/No UI framework runtime is shipped to the browser/);
+		expect(stackList).toMatch(/scoped to framework runtimes, not to client JavaScript as a whole/);
+		expect(stackList).toMatch(/Everything that does reach the browser is named in this list/);
+	});
+
+	it('agrees with the README stack table on the renderer', () => {
+		// Two documents list the stack independently. They are not required to
+		// match line for line, but the renderer row is the one the specification
+		// got wrong, so both have to name the same library.
+		const readme = readFileSync(join(repoRoot, 'README.md'), 'utf8');
+		const table = readme.slice(readme.indexOf('## Tech stack'), readme.indexOf('## Quick start'));
+		const diagramRow = table
+			.split('\n')
+			.find((line) => /^\|\s*Diagram/i.test(line));
+
+		expect(diagramRow).toBeDefined();
+		expect(diagramRow).toMatch(/mermaid/i);
+		expect(stackList).toMatch(/mermaid/i);
+	});
+});
