@@ -5,10 +5,11 @@ This project is a high-performance, secure digital compendium for D&D homebrew a
 
 ### Tech Stack Constraints
 * **Core Framework:** Astro 7.3 (Static Site Generation / SSG mode)
-* **Documentation Base:** Astro Starlight
+* **Documentation Base:** Astro Starlight (`@astrojs/starlight`)
 * **Runtime Environment:** Node.js 24
-* **Interactivity Tier 1 (Lightweight Client State):** Alpine.js
-* **Interactivity Tier 2 (Complex UI/Data Operations):** Not used - the project is Alpine-only; React is not a dependency and no framework runtime is shipped
+* **Interactivity Tier 1 (Lightweight Client State):** Alpine.js (`alpinejs`, registered through `@astrojs/alpinejs`)
+* **Interactivity Tier 2 (Complex UI/Data Operations):** Not used - the project is Alpine-only. No UI framework runtime is shipped to the browser: React, Vue, Svelte and their peers are absent from `package.json`, and no page bundles one. That claim is scoped to framework runtimes, not to client JavaScript as a whole. Everything that does reach the browser is named in this list: Alpine.js, Starlight's own small chrome scripts, and the Mermaid loader and library described below, alongside the inline scripts the build emits
+* **Diagram Rendering:** `mermaid`, rendered client-side by the `astro-mermaid` integration registered in `astro.config.mjs` (see [ADR 0007](./docs/adr/0007-mermaid-rendering-strategy.md)). The integration injects a small loader into every page, but it imports the `mermaid` library dynamically and only on pages that contain a Mermaid diagram, so the exception to the rule of least client-side JavaScript stays scoped to those pages rather than becoming site-wide
 * **Styling:** Tailwind CSS (Integrated natively via Starlight)
 * **Hosting & Security:** Cloudflare Workers static assets (see [ADR 0003](./docs/adr/0003-workers-static-assets-over-pages.md)) + Cloudflare Zero Trust (Access) via Email OTP
 
