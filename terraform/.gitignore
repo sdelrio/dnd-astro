@@ -7,6 +7,10 @@
 *.tfvars
 *.tfvars.*
 
+# The placeholder template is committed so a fresh clone can onboard. The
+# negation has to follow the patterns above or *.tfvars.* would swallow it.
+!*.tfvars.example
+
 # Terraform directory
 .terraform/
 
