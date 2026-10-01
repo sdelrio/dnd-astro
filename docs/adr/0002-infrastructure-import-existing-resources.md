@@ -23,13 +23,13 @@ How should we handle pre-existing Cloudflare resources when adopting Terraform?
 
 ## Considered Options
 
-- **Option A: Import existing resource** — Use `terraform import` to bring the dashboard-created Worker under Terraform management without recreation.
-- **Option B: Remove from Terraform** — Delete the `cloudflare_workers_script` resource from Terraform and manage the Worker exclusively via dashboard.
-- **Option C: Recreate via Terraform** — Destroy the dashboard-created Worker and let Terraform create it fresh (causes downtime).
+- **Option A: Import existing resource** - Use `terraform import` to bring the dashboard-created Worker under Terraform management without recreation.
+- **Option B: Remove from Terraform** - Delete the `cloudflare_workers_script` resource from Terraform and manage the Worker exclusively via dashboard.
+- **Option C: Recreate via Terraform** - Destroy the dashboard-created Worker and let Terraform create it fresh (causes downtime).
 
 ## Decision Outcome
 
-Chosen option: **Option A** — Import existing resource
+Chosen option: **Option A** - Import existing resource
 
 ### Consequences
 

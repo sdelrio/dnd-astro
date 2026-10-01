@@ -93,7 +93,7 @@ Create an Access application for the Worker domain with path-based policies for 
 
 **Terraform:**
 - Define `cloudflare_zero_trust_access_application` for the Worker domain
-  - `domain` must include the path suffix (e.g. `dnd-astro.oftheriver.workers.dev/reference/*`) — Cloudflare requires the domain to match the first destination URI
+  - `domain` must include the path suffix (e.g. `dnd-astro.oftheriver.workers.dev/reference/*`) - Cloudflare requires the domain to match the first destination URI
   - `destinations.uri` must be the full domain+path without scheme (e.g. `dnd-astro.oftheriver.workers.dev/reference/*`), NOT `https://...`
 - Define two `cloudflare_zero_trust_access_policy` resources with Email OTP provider:
   - Policy 1: Path matcher `/reference/*`
@@ -103,7 +103,7 @@ Create an Access application for the Worker domain with path-based policies for 
 - Set `allowed_idps` on the access application to restrict login to OTP only
 - Set `auto_redirect_to_identity = true` to skip the IdP selection page and go straight to OTP email entry
 
-**OTP behavior note:** Cloudflare intentionally shows "A code has been emailed to you" for all email addresses, regardless of whether they are in the allowed list. Blocked users never receive the PIN. This prevents email enumeration attacks — users cannot determine if an email is authorized based on the login page response.
+**OTP behavior note:** Cloudflare intentionally shows "A code has been emailed to you" for all email addresses, regardless of whether they are in the allowed list. Blocked users never receive the PIN. This prevents email enumeration attacks - users cannot determine if an email is authorized based on the login page response.
 
 **Dashboard fallback:**
 1. Go to Cloudflare Zero Trust → Access → Applications
@@ -135,7 +135,7 @@ If the custom domain was already added via the dashboard, import the resources i
 
 **How to get the IDs:**
 
-1. **account_id:** Same as Step 1 — see [Importing existing Worker](#importing-existing-worker-if-created-via-dashboard).
+1. **account_id:** Same as Step 1 - see [Importing existing Worker](#importing-existing-worker-if-created-via-dashboard).
 
 2. **workers_domain_id:** Get via Workers Domains API:
    ```bash
@@ -198,11 +198,11 @@ Note: The quotes around the resource address are required because of the `[0]` i
 
 ## Files to Create/Modify
 
-- `terraform/main.tf` — Cloudflare Worker script, Zero Trust Access application, Access policy, identity provider
-- `terraform/variables.tf` — Input variables (allowed emails, domain, etc.)
-- `terraform/terraform.tfvars` — Variable values (gitignored)
-- `terraform/.gitignore` — Exclude state files and tfvars
-- `wrangler.jsonc` — Workers configuration with static assets
+- `terraform/main.tf` - Cloudflare Worker script, Zero Trust Access application, Access policy, identity provider
+- `terraform/variables.tf` - Input variables (allowed emails, domain, etc.)
+- `terraform/terraform.tfvars` - Variable values (gitignored)
+- `terraform/.gitignore` - Exclude state files and tfvars
+- `wrangler.jsonc` - Workers configuration with static assets
 - `worker/index.js` - Hand-written Worker shim referenced as `main` in `wrangler.jsonc`; forwards requests to the `ASSETS` binding and provides the script content required by `cloudflare_workers_script`
 
 ## Cloudflare API Token Permissions
@@ -210,17 +210,17 @@ Note: The quotes around the resource address are required because of the `[0]` i
 Required for Terraform execution (`terraform apply`):
 
 ### Account-level (required for all steps)
-- **Workers Scripts: Edit** — create/manage Worker script (`cloudflare_workers_script`)
-- **Zero Trust: Edit** — create/manage Access application & policy (`cloudflare_zero_trust_access_application`, `cloudflare_zero_trust_access_policy`)
-- **Access: Organizations, Identity Providers, and Groups Write** — create/manage Access identity providers (`cloudflare_zero_trust_access_identity_provider`)
+- **Workers Scripts: Edit** - create/manage Worker script (`cloudflare_workers_script`)
+- **Zero Trust: Edit** - create/manage Access application & policy (`cloudflare_zero_trust_access_application`, `cloudflare_zero_trust_access_policy`)
+- **Access: Organizations, Identity Providers, and Groups Write** - create/manage Access identity providers (`cloudflare_zero_trust_access_identity_provider`)
 
 ### Zone-level (required for Step 4: Custom Domain)
-- **DNS: Edit** — create CNAME record for custom domain (`cloudflare_record` on specific zone)
-- **Workers Routes: Edit** — bind custom domain to Worker (`cloudflare_workers_domain`)
+- **DNS: Edit** - create CNAME record for custom domain (`cloudflare_record` on specific zone)
+- **Workers Routes: Edit** - bind custom domain to Worker (`cloudflare_workers_domain`)
 
 ### Resource scope
 - **Account Resources:** Include → Specific account (your Cloudflare account)
-- **Zone Resources:** Include → Specific zone (e.g., `lorien.cloud`) — required for custom domain DNS and routing
+- **Zone Resources:** Include → Specific zone (e.g., `lorien.cloud`) - required for custom domain DNS and routing
 
 ### Token setup summary
 1. Go to **My Profile → API Tokens → Create Token** (or edit existing)
@@ -243,13 +243,13 @@ Dashboard fallback does not require API token.
 
 ## Testing
 
-1. Run `npm run build` locally — verify `dist/` is generated
-2. Push to GitHub — verify Cloudflare Workers Builds triggers a deployment
-3. Visit `*.workers.dev` URL — verify public pages load without login
-4. Visit `*.workers.dev/reference/` — verify Zero Trust login prompt appears
-5. Visit `*.workers.dev/private/` — verify Zero Trust login prompt appears
-6. Visit `dnd-companion.lorien.cloud` — verify custom domain works
-7. Complete Email OTP flow — verify access is granted to protected paths
+1. Run `npm run build` locally - verify `dist/` is generated
+2. Push to GitHub - verify Cloudflare Workers Builds triggers a deployment
+3. Visit `*.workers.dev` URL - verify public pages load without login
+4. Visit `*.workers.dev/reference/` - verify Zero Trust login prompt appears
+5. Visit `*.workers.dev/private/` - verify Zero Trust login prompt appears
+6. Visit `dnd-companion.lorien.cloud` - verify custom domain works
+7. Complete Email OTP flow - verify access is granted to protected paths
 8. Verify static assets load correctly after authentication
 
 ## Rollback

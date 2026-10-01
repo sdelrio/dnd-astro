@@ -38,8 +38,8 @@ We need a structured workflow for agents to follow when implementing features, e
 ### Step 1: Create Documentation Structure
 
 Create `docs/specs/` directory with:
-- `_TEMPLATE.md` — Reusable spec template
-- `001-spec-workflow/SPEC.md` — This spec (the first dogfood)
+- `_TEMPLATE.md` - Reusable spec template
+- `001-spec-workflow/SPEC.md` - This spec (the first dogfood)
 
 ### Step 2: Define Template Fields
 
@@ -61,9 +61,9 @@ Add workflow rules to AGENTS.md:
 
 ## Files to Create/Modify
 
-- `docs/specs/_TEMPLATE.md` — Reusable spec template
-- `docs/specs/001-spec-workflow/SPEC.md` — This spec
-- `AGENTS.md` — Add workflow rules
+- `docs/specs/_TEMPLATE.md` - Reusable spec template
+- `docs/specs/001-spec-workflow/SPEC.md` - This spec
+- `AGENTS.md` - Add workflow rules
 
 ## ADR Constraints
 
