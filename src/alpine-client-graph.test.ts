@@ -428,5 +428,42 @@ describe('the browser-bound graph (issue #352)', () => {
       // it into the browser rather than only the test importing it.
       expect(walkFromAlpine.visited).toContain(component);
     });
+
+    it('reaches the feat dataset through a dynamic import only, so the bundler can split it', () => {
+      // #387. The component used to hold the dataset through a *static* import,
+      // which put all 219 records into the Alpine entrypoint - the bundle every
+      // page on the site loads. The whole win of that ticket is the shape of this
+      // one edge, and it is asserted here rather than as a byte count because a
+      // byte count needs a build and this is the line that decides whether the
+      // bundler has a choice to make.
+      //
+      // `edgesIn` cannot answer this, deliberately: it dedupes its results and it
+      // erases `import type`, which are the right behaviours for walking a graph
+      // and exactly the two things that would hide a static import sitting
+      // beside the dynamic one. Both spellings of the dataset specifier collapse
+      // to a single `./feat-data` entry, so a planted static import passes a
+      // deduped assertion. Hence the count below, and hence the two small
+      // patterns rather than the shared scanner: `import ... from` and
+      // `export ... from` are the value forms that pull a module into the
+      // bundle, and `import(` is the one that does not.
+      const source = read(resolve(SRC, 'components/feats-explorer/feat-explorer-component.ts'));
+      const bundling = [
+        ...source.matchAll(/^\s*(?:import|export)\s+(?!type\b)[\s\S]*?\bfrom\s+['"]\.\/feat-data['"]/gm),
+      ];
+      const dynamic = [...source.matchAll(/\bimport\s*\(\s*['"]\.\/feat-data['"]\s*\)/g)];
+
+      expect(bundling).toEqual([]);
+      expect(dynamic).toHaveLength(1);
+
+      // The dataset module itself imports nothing, so the edge that reaches it
+      // reaches nothing else. Same property `party-roles.test.ts` pins for the
+      // party view's config, for the same reason: a leaf is what keeps this split
+      // from quietly re-widening the entrypoint.
+      const dataset = resolve(SRC, 'components/feats-explorer/feat-data.js');
+      expect(edgesIn(read(dataset))).toEqual([]);
+      expect(walk(resolve(SRC, 'components/feats-explorer/feat-explorer-component.ts')).visited).toContain(
+        dataset
+      );
+    });
   });
 });

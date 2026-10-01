@@ -13,10 +13,19 @@ import { LEVEL_BUCKETS } from './feat-filter';
          "N feats found" line on the bar below, both role="status"
          aria-live="polite", so a screen reader announced the count twice on
          every keystroke. The bar's copy is gone and the count is stated here
-         once, in the head where the collection's size belongs. -->
-    <p class="fx-countline" role="status" aria-live="polite">
+         once, in the head where the collection's size belongs.
+
+         Gated on `datasetState` since #387: the dataset now arrives as its own
+         chunk, and until it does `0 of 0 feats` is a lie rather than an empty
+         sheet. x-cloak too, so a reader without JavaScript gets the heading and
+         the key and no invented count. The loading line below is deliberately
+         not a live region - it resolves into this one within a moment, and
+         announcing "fetching" and then "219 of 219" is two announcements where
+         one is enough. -->
+    <p class="fx-countline" role="status" aria-live="polite" x-cloak x-show="datasetState === 'ready'">
       <span x-text="filteredFeats.length"></span> of <span x-text="feats.length"></span> feats on this sheet
     </p>
+    <p class="fx-loading" x-cloak x-show="datasetState === 'loading'">Fetching the feat list...</p>
   </div>
 
   <!-- The filter line: search, the disclosure toggle, the three selects, and
@@ -161,7 +170,13 @@ import { LEVEL_BUCKETS } from './feat-filter';
     </template>
   </div>
 
-  <div class="fx-empty" x-cloak x-show="filteredFeats.length === 0">No feats match your filters.</div>
+  <!-- Two readings of `filteredFeats.length === 0`, and they must not share a
+       sentence. The list is full the moment the page paints when the filters
+       have excluded everything, and empty for a moment before that when the
+       dataset chunk is still in flight - so the "no match" line waits for
+       `ready`, and a fetch that never arrived says so instead. -->
+  <div class="fx-empty" x-cloak x-show="datasetState === 'ready' && filteredFeats.length === 0">No feats match your filters.</div>
+  <div class="fx-empty" x-cloak x-show="datasetState === 'failed'">The feat list could not be loaded. Reload the page to try again.</div>
 </div>
 
 <style is:global>
@@ -358,7 +373,17 @@ import { LEVEL_BUCKETS } from './feat-filter';
      and would reach every other `not-content` component too; it is not this
      change's to make. */
   [data-fx] .fx-title h2.fx-page-title{ font-size:1.35rem; font-weight:600; letter-spacing:.04em; color: var(--fx-heading); }
-  .fx-countline{ font-family: var(--sl-font-table); font-size:.8125rem; letter-spacing:.04em; text-transform:uppercase; color: var(--fx-ink-soft); font-variant-numeric: tabular-nums; }
+  /* The count line and the in-flight line that replaces it share one rule, so the
+     head cannot reflow between the two states: same size, same tracking, same
+     soft ink. Only the stance differs - the count is tabular because it changes
+     as you type and its digits must not shuffle, the loading line is italic
+     because it is a state rather than a number. Italic and no spinner: there is
+     no animation to interrupt and no reduced-motion question to answer, and a
+     reader who lands here learns what is happening rather than that something
+     is. */
+  .fx-countline, .fx-loading{ font-family: var(--sl-font-table); font-size:.8125rem; letter-spacing:.04em; text-transform:uppercase; color: var(--fx-ink-soft); }
+  .fx-countline{ font-variant-numeric: tabular-nums; }
+  .fx-loading{ font-style:italic; }
 
   /* The tier key. A dl, so the marks and the names are a definition rather than
      a run of glyphs; the marks carry the three seal inks and nothing else, so
