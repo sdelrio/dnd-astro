@@ -225,10 +225,11 @@ describe('parseCharacterXML', () => {
       </root>
     `;
     const result = parseCharacterXML(xml);
+    // id-00003 is a field-less record: Fantasy Grounds writes it as a placeholder
+    // and it has nothing to read, so it must not become a blank inventory entry.
     expect(result?.inventory).toEqual([
       { name: 'Rope', count: 2, weight: 10, carried: 1 },
       { name: 'Torch', count: 0, weight: 0, carried: 0 },
-      { name: '', count: 0, weight: 0, carried: 0 },
     ]);
     const withoutInventorylist = parseCharacterXML(`
       <root><character><name type="string">Empty</name></character></root>
@@ -528,6 +529,70 @@ describe('parseCharacterXML', () => {
     const result = parseCharacterXML(xml);
     expect(result?.classes[0].name).toBe('Barbarian');
     expect(result?.classes[0].subclass).toBeUndefined();
+  });
+
+  it('entity-decodes and number-coerces an encoded proficiency bonus', () => {
+    const xml = `
+      <root>
+        <character>
+          <profbonus>&#43;3</profbonus>
+        </character>
+      </root>
+    `;
+    expect(parseCharacterXML(xml)?.profBonus).toBe(3);
+  });
+
+  it('reads a real sheet proficiency bonus unchanged', () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/draknor.xml'), 'utf8');
+    // Entity decoding must not disturb an already-plain prof bonus.
+    expect(parseCharacterXML(xml)?.profBonus).toBe(3);
+  });
+
+  it('does not collect a nested look-alike node under the language list', () => {
+    const xml = `
+      <root>
+        <character>
+          <languagelist>
+            <id-00001><name type="string">Common</name></id-00001>
+            <language><name type="string">Dwarvish</name></language>
+          </languagelist>
+        </character>
+      </root>
+    `;
+    expect(parseCharacterXML(xml)?.languages).toEqual(['Common']);
+  });
+
+  it('does not collect a nested look-alike node under the feat list', () => {
+    const xml = `
+      <root>
+        <character>
+          <featlist>
+            <id-00001><name type="string">Alert</name></id-00001>
+            <feat><name type="string">Lucky</name></feat>
+          </featlist>
+        </character>
+      </root>
+    `;
+    expect(parseCharacterXML(xml)?.feats).toEqual(['Alert']);
+  });
+
+  it('does not collect a nested look-alike node under the feature list', () => {
+    const xml = `
+      <root>
+        <character>
+          <featurelist>
+            <id-00001>
+              <name type="string">Second Wind</name>
+              <source type="string">Fighter</source>
+            </id-00001>
+            <feature><name type="string">Extra Attack</name></feature>
+          </featurelist>
+        </character>
+      </root>
+    `;
+    expect(parseCharacterXML(xml)?.features).toEqual([
+      { level: 0, name: 'Second Wind', source: 'Fighter' },
+    ]);
   });
 
   it('returns null if no <character> node', () => {

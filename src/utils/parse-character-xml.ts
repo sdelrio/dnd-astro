@@ -109,21 +109,40 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   // Defensive: Find <character> node
   const root = js?.root?.character || js?.character;
   if (!root) return null;
+  interface XmlNode {
+    '#text'?: string;
+    [key: string]: XmlField | undefined;
+  }
+  // A field is a node object when the sheet tags carry attributes, and a bare
+  // text value when they do not (e.g. a top-level <profbonus>). Both shapes
+  // carry the same characters, so read whichever one is there.
+  type XmlField = XmlNode | string | number;
   // Helper for extracting collections by id keys
-  type XmlFields = Record<string, { '#text'?: string }>;
-  function getCollection(obj: Record<string, XmlFields> | undefined): XmlFields[] {
-    if (!obj) return [];
-    return Object.values(obj).filter((item) => typeof item === 'object');
+  /**
+   * Fantasy Grounds collections are keyed by generated record identifiers
+   * (`id-NNNNN`). Filter to those keys: sheets nest look-alike nodes with the
+   * same child shape elsewhere in the tree (e.g. a <powers/> inside an
+   * inventory item, or a <language/> sibling inside <languagelist>), and
+   * collecting one of those invents a phantom entry with a blank name.
+   * Field-less records (`<id-00004 />`) parse to a bare string rather than a
+   * node, so keep the object check too: they have nothing to read.
+   */
+  function getCollection(obj: XmlField | undefined): XmlNode[] {
+    if (!obj || typeof obj !== 'object') return [];
+    return Object.entries(obj)
+      .filter(([key, item]) => key.startsWith('id-') && typeof item === 'object')
+      .map(([, item]) => item as XmlNode);
   }
   // Patch: decode entities in all text output
   // Parse top-level values
-  const getText = (obj: XmlFields | undefined, key: string) => {
-  const val = obj?.[key]?.['#text'];
-  if (typeof val === 'string') return he.decode(val);
-  if (val == null) return '';
-  // handle numbers or other (should not happen for text fields, but guard for tests)
-  return he.decode(String(val));
-};
+  const getText = (obj: XmlField | undefined, key: string) => {
+    const field = obj && typeof obj === 'object' ? obj[key] : undefined;
+    const val = typeof field === 'object' && field !== null ? field['#text'] : field;
+    if (typeof val === 'string') return he.decode(val);
+    if (val == null) return '';
+    // handle numbers or other (should not happen for text fields, but guard for tests)
+    return he.decode(String(val));
+  };
   // Classes
   // Classes node may be <classes>.<id-XXXXX> for each class taken
   // Subclass resolution order: class-node <specialization> -> feature entry
@@ -179,8 +198,9 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   const tempHp = Number(getText(root.hp, 'temporary') || 0);
   const speed = Number(getText(root.speed, 'total') || 0);
   const initiative = Number(getText(root.initiative, 'total') || 0);
-  // Prof bonus
-  const profBonus = Number(root.profbonus?.['#text'] || 0);
+  // Prof bonus: read like every other defensive total, so an encoded value is
+  // decoded and coerced rather than parsed from raw text.
+  const profBonus = Number(getText(root, 'profbonus') || 0);
   // Skills: the prof-only list (prof > 0) keeps its SPEC-003 shape, allSkills
   // exposes every entry, and passives read every entry regardless of prof (a
   // prof 0 skill still has a passive value).
@@ -219,48 +239,36 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   // Powers: direct children of <character> only (root.powers is already the
   // direct node, so nested <powers/> inside inventory items never reach here).
   // Entries use id-NNNNN keys like every other FG collection.
-  const powersNode = root.powers ?? {};
-  const powers = Object.keys(powersNode)
-    .filter((key) => key.startsWith('id-'))
-    .map((key) => powersNode[key])
-    .map((p) => ({
-      level: Number(getText(p, 'level') || 0),
-      name: getText(p, 'name'),
-      group: getText(p, 'group'),
-      prepared: Number(getText(p, 'prepared') || 0),
-      preparedDomain: Number(getText(p, 'preparedDomain') || 0),
-    }));
-  const weaponsNode = root.weaponlist ?? {};
-  const weapons = Object.keys(weaponsNode)
-    .filter((key) => key.startsWith('id-'))
-    .map((key) => weaponsNode[key])
-    .map((w) => ({
-      name: getText(w, 'name'),
-      attackbonus: Number(getText(w, 'attackbonus') || 0),
-      attackstat: getText(w, 'attackstat'),
-      properties: getText(w, 'properties'),
-      carried: Number(getText(w, 'carried') || 0),
-      type: Number(getText(w, 'type') || 0),
-      damage: getCollection(w.damagelist).map((d) => ({
-        bonus: Number(getText(d, 'bonus') || 0),
-        dice: getText(d, 'dice'),
-        stat: getText(d, 'stat'),
-        statmult: Number(getText(d, 'statmult') || 1),
-        type: getText(d, 'type'),
-      })),
-    }));
-  const inventoryNode = root.inventorylist ?? {};
-  const inventory = Object.keys(inventoryNode)
-    .filter((key) => key.startsWith('id-'))
-    .map((key) => inventoryNode[key])
-    .map((item) => ({
-      name: getText(item, 'name'),
-      count: Number(getText(item, 'count') || 0),
-      weight: Number(getText(item, 'weight') || 0),
-      carried: Number(getText(item, 'carried') || 0),
-    }));
+  const powers = getCollection(root.powers).map((p) => ({
+    level: Number(getText(p, 'level') || 0),
+    name: getText(p, 'name'),
+    group: getText(p, 'group'),
+    prepared: Number(getText(p, 'prepared') || 0),
+    preparedDomain: Number(getText(p, 'preparedDomain') || 0),
+  }));
+  const weapons = getCollection(root.weaponlist).map((w) => ({
+    name: getText(w, 'name'),
+    attackbonus: Number(getText(w, 'attackbonus') || 0),
+    attackstat: getText(w, 'attackstat'),
+    properties: getText(w, 'properties'),
+    carried: Number(getText(w, 'carried') || 0),
+    type: Number(getText(w, 'type') || 0),
+    damage: getCollection(w.damagelist).map((d) => ({
+      bonus: Number(getText(d, 'bonus') || 0),
+      dice: getText(d, 'dice'),
+      stat: getText(d, 'stat'),
+      statmult: Number(getText(d, 'statmult') || 1),
+      type: getText(d, 'type'),
+    })),
+  }));
+  const inventory = getCollection(root.inventorylist).map((item) => ({
+    name: getText(item, 'name'),
+    count: Number(getText(item, 'count') || 0),
+    weight: Number(getText(item, 'weight') || 0),
+    carried: Number(getText(item, 'carried') || 0),
+  }));
   const coins: Coins = { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 };
-  const coinsNode = (root.coins ?? {}) as Record<string, XmlFields | string>;
+  const coinsNode = (root.coins ?? {}) as Record<string, XmlField>;
   for (const entry of Object.values(coinsNode)) {
     if (!entry || typeof entry !== 'object') continue;
     const denomination = COIN_DENOMINATIONS[getText(entry, 'name').toUpperCase()];
