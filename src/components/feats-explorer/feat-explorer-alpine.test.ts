@@ -19,13 +19,20 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import FeatExplorer from './FeatExplorer.astro';
 import { BOOKS, FEATS } from './feat-data';
-import { featExplorerComponent } from './feat-explorer-component';
+import { featDataset, featExplorerComponent } from './feat-explorer-component';
 import { mountAlpine, type MountedAlpine } from '@/test-utils/alpine-dom';
 
 let harness: MountedAlpine;
 
 beforeEach(async () => {
+  // Mounted with no props, exactly as the page renders it, so every test below
+  // drives the shipped delivery path: the component fetches the dataset chunk
+  // rather than receiving it. Awaiting the module's own loader - rather than
+  // sleeping and hoping - is what makes that deterministic; the chunk is already
+  // in the module graph under test, so there is no timing to race.
   harness = await mountAlpine(FeatExplorer);
+  await featDataset();
+  await harness.settle();
 });
 
 /** The rendered cards, in dataset order. */
@@ -247,10 +254,59 @@ describe('the book label, on states the shipped dataset does not contain', () =>
     expect(featExplorerComponent({ books: {} }).bookLabel({ book: 'phb' })).toBe('phb');
   });
 
-  it('defaults to the whole generated dataset, so the page is never empty', () => {
+  it('starts empty and says so, rather than pretending the sheet is empty', () => {
+    // The counterpart to the mounted tests above, and the reason the count line
+    // is gated. Called with no data at all, so this is the pre-delivery state:
+    // the grid is empty, and the page's own words must be about the fetch rather
+    // than about the reader's filters.
     const component = featExplorerComponent();
-    expect(component.feats).toHaveLength(FEATS.length);
-    expect(component.filteredFeats).toHaveLength(FEATS.length);
-    expect(component.abilities).toHaveLength(6);
+    expect(component.datasetState).toBe('loading');
+    expect(component.feats).toHaveLength(0);
+    expect(component.filteredFeats).toHaveLength(0);
+  });
+});
+
+describe('the dataset arrives as its own chunk, not inside the page', () => {
+  // #387. The component used to hold the dataset through a static import, which
+  // put all 219 records into the Alpine entrypoint - the bundle injected into
+  // every page on the site. These are the tests that pin the replacement shape.
+
+  it('loads the whole generated dataset into a component that was given none', async () => {
+    // Mounted with no props and awaited past the loader, this is the assertion
+    // that the split did not cost the component its data.
+    expect(cards()).toHaveLength(FEATS.length);
+    expect(countline()).toBe(`${FEATS.length} of ${FEATS.length} feats on this sheet`);
+    expect(harness.messages).toEqual([]);
+  });
+
+  it('fills both selects from the chunk, not just the grid', async () => {
+    const book = harness.window.document.querySelector('#fx-book') as unknown as HTMLSelectElement;
+    const ability = harness.window.document.querySelector('#fx-ability') as unknown as HTMLSelectElement;
+    expect(book.options).toHaveLength(Object.keys(BOOKS).length + 1);
+    expect(ability.options).toHaveLength(6 + 1);
+  });
+
+  it('answers a search typed while the chunk was still in flight', async () => {
+    // The re-run in `init()`'s success path. Without it the arriving cards would
+    // ignore a query the reader had already typed, which is the one regression
+    // a lazily delivered dataset can introduce.
+    const fresh = await mountAlpine(FeatExplorer);
+    const input = fresh.window.document.querySelector('#fx-search') as unknown as HTMLInputElement;
+    input.value = 'lucky';
+    input.dispatchEvent(new fresh.window.Event('input', { bubbles: true }) as unknown as Event);
+    await featDataset();
+    await fresh.settle(350);
+    const names = [...fresh.window.document.querySelectorAll('.fx-name')].map((el) =>
+      (el.textContent ?? '').trim()
+    );
+    expect(names).toEqual(['Lucky']);
+  });
+
+  it('requests the dataset once, however many times the loader is called', async () => {
+    // At most once per page is half the ticket: a cache that missed on every
+    // root would be no cheaper than one shared import. The promise is cached at
+    // module scope, so identity is the assertion - a re-import would resolve to
+    // a different promise even where it happened to be free.
+    expect(featDataset()).toBe(featDataset());
   });
 });

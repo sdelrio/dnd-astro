@@ -83,9 +83,9 @@ Two other files sit directly in `src/components/` and are deliberately **not** a
 * **File Location:** `src/components/feats-explorer/`
   * `FeatExplorer.astro` - the view
   * `feat-explorer-component.ts` - the behaviour factory, registered as `Alpine.data('featExplorer', ...)`
-  * `feat-data.js` and `feat-filter.ts` - the dataset inlined at build time, and the pure matching helpers
+  * `feat-data.js` and `feat-filter.ts` - the generated dataset and the pure matching helpers. `feat-data.js` is fetched as its own content-hashed chunk, reached from the behaviour module by a dynamic import, so it stays out of the site-wide entrypoint (#387, ADR-0015)
 * **Spec:** [SPEC-006: Book-Filtered Feat Matrix](./docs/specs/006-feat-matrix/SPEC.md) (archived)
-* **Hydration Strategy:** Eager mount via `x-data` on the component root with the feat dataset inlined at build time (no deferred `x-intersect` trigger; the Alpine intersect plugin was removed in #383 now that nothing uses it).
+* **Hydration Strategy:** Eager mount via `x-data` on the component root (no deferred `x-intersect` trigger; the Alpine intersect plugin was removed in #383 now that nothing uses it). `init()` requests the dataset chunk immediately and the view names the brief in-flight state, so no scroll trigger and no deferred hydration.
 * **Mechanics:** Fuzzy client-side searching, sub-category relational indexing, and multi-select filtering over a matrix of pre-compiled rules.
 * **Events:** `x-model` with `@input.debounce.300ms` for the search field, `x-model` with `@change` for the ability, book and tier dropdowns, `@click` to open the filter panel and to clear filters, `x-for` for dynamic list rendering, `x-show` with `x-cloak` for the panel, the active-filter badge and the empty state.
 
