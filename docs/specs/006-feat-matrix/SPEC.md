@@ -16,7 +16,7 @@ adr_constraints: []
 
 ## Summary
 
-An Alpine.js component for browsing and filtering D&D feats with fuzzy search, multi-select filters for ability, book, and level. Replaces the React-based FeatBrowser from golden-forest with a lighter, faster Alpine.js implementation that mounts eagerly with the feat dataset available to the client at build time. The behaviour is a registered Alpine module (`src/components/feats-explorer/feat-explorer-component.ts`, `x-data="featExplorer"`) rather than an inline script; see Accepted Deviation 6.
+An Alpine.js component for browsing and filtering D&D feats with fuzzy search, multi-select filters for ability, book, and level. Replaces the React-based FeatBrowser from golden-forest with a lighter, faster Alpine.js implementation that mounts eagerly with the feat dataset fetched from a generated, content-hashed module of the site's own. The behaviour is a registered Alpine module (`src/components/feats-explorer/feat-explorer-component.ts`, `x-data="featExplorer"`) rather than an inline script; see Accepted Deviation 6. The dataset is delivered by a dynamic import rather than bundled into the Alpine entrypoint; see Accepted Deviation 8.
 
 ## Problem Statement
 
@@ -31,7 +31,7 @@ Players need to quickly find feats during character creation and leveling. The g
 - Filter by level requirement (0, 4+)
 - Show result count for current filters
 - Clear all filters at once
-- Eager mount with the feat dataset inlined at build time (no `x-intersect` deferral)
+- Eager mount (no `x-intersect` deferral), with the feat dataset arriving from its own content-hashed chunk rather than inlined into the document or into the site-wide Alpine entrypoint
 - Zero React runtime dependency
 
 ## Non-Goals
@@ -166,7 +166,7 @@ Run once to generate data, then commit the output file.
 
 Create `src/components/feats-explorer/FeatExplorer.astro`:
 
-1. **Root element**: `<div x-data="featExplorer({...inlined dataset...})">` (eager mount, no `x-intersect` trigger)
+1. **Root element**: `<div x-data="featExplorer">` (eager mount, no `x-intersect` trigger)
 
 2. **Filter controls section**:
    - Search input: `<input type="text" x-model="searchQuery" @input.debounce.300ms="filterFeats()" placeholder="Search feats...">`
@@ -240,7 +240,7 @@ Search and filter through all available feats.
 | File | Action | Purpose |
 |------|--------|---------|
 | `scripts/extract-feats.js` | create | Node.js script to extract feats from golden-forest MDX |
-| `src/components/feats-explorer/feat-data.js` | create | Generated feat metadata (219 feats) |
+| `src/components/feats-explorer/feat-data.js` | create | Generated feat metadata (219 feats). Fetched as its own chunk since #387; not bundled into the Alpine entrypoint |
 | `src/components/feats-explorer/FeatExplorer.astro` | create | Alpine.js feat browser component |
 | `src/components/feats-explorer/search-utils.js` | create | Fuzzy search utility functions |
 | `src/components/feats-explorer/feat-explorer.css` | create | Component styling |
@@ -256,7 +256,7 @@ Search and filter through all available feats.
 4. **Mobile UX**: Filter dropdowns stack vertically on mobile
 5. **Long feat names**: Truncate with ellipsis if > 50 characters
 6. **Rapid typing**: Debounce search input (300ms) to prevent excessive re-renders
-7. **Eager mount**: Dataset is inlined via `x-data`; no loading state or viewport trigger is required
+7. **Eager mount**: `init()` fetches the dataset chunk the moment Alpine initialises the root; there is no viewport trigger and no deferred hydration. There is a brief in-flight state while the chunk arrives, which the page states in the head and which is not the deferred mount this spec once rejected - see Accepted Deviation 8.
 
 ## Accessibility
 
@@ -270,7 +270,7 @@ Search and filter through all available feats.
 
 ### Automated Tests
 
-Two vitest suites cover the feat explorer: `feat-filter.test.ts` on the filter and fuzzy-search logic, which lives in `feat-filter.ts` and not inline in `FeatExplorer.astro`, and `feat-explorer-responsive.test.ts` on the component's surface, its palette discipline and its responsive behaviour. Repo-wide verification runs the AGENTS.md commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
+Three vitest suites cover the feat explorer: `feat-filter.test.ts` on the filter and fuzzy-search logic, which lives in `feat-filter.ts` and not inline in `FeatExplorer.astro`; `feat-explorer-responsive.test.ts` on the component's surface, its palette discipline and its responsive behaviour; and `feat-explorer-alpine.test.ts` on the component's behaviour as a mounted DOM. Since #387 that last suite mounts the component the shipped way - no data argument, so the component fetches its own chunk - and additionally pins the delivery itself: the whole dataset arrives, both selects fill from it, a search typed before it lands is answered, the loader resolves to one promise however often it is called, and the component module reaches the dataset through a dynamic import rather than a static one. Repo-wide verification runs the AGENTS.md commands from the repo root before opening a PR: `pnpm lint`, `pnpm typecheck` (`CI=true pnpm typecheck` for noninteractive runs), `pnpm test`, `pnpm build`.
 
 ### Acceptance Criteria
 1. **Page load**: Visit `/dnd-tools/feat-explorer/` - page renders without errors
@@ -285,10 +285,16 @@ Two vitest suites cover the feat explorer: `feat-filter.test.ts` on the filter a
 10. **Empty state**: Apply impossible filter combo - "No feats match" message shown
 11. **Responsive**: Grid is 1 column on a phone and 2 from `sm` up; it does not reach 3 columns (see Accepted Deviations 4)
 12. **No React**: Page bundle contains no React runtime
+13. **Dataset as one cacheable asset**: `dist/_astro/` holds a single content-hashed `feat-data.<hash>.js` carrying the 219 records, requested once, and the site-wide Alpine entrypoint no longer contains them (see Accepted Deviation 8)
+14. **Cache behaviour**: two builds of an unchanged dataset emit byte-identical filenames, so an unchanged dataset busts nothing. A data change renames the data chunk and, because the entrypoint's loader names that chunk by its hashed URL, the entrypoint too. The invalidation is narrowed to 75,904 bytes rather than removed; [ADR-0015](../../adr/0015-feat-dataset-as-a-dynamic-import-chunk.md) records the measurement
+15. **Safe degradation**: with JavaScript off, the page shows the heading, the search box and the tier key, and states no feat count
+16. **Cost on this page is stated**: a cold visit here is +0.7% gzip bytes and one extra round trip, against -3,527 gzip bytes on every other page of the site
 
 ### Manual Verification
 - Open browser DevTools, verify no React components in Components tab
-- Check Network tab - no unnecessary JS downloads
+- Check Network tab - the only JS beyond the site entrypoint is one content-hashed `feat-data.<hash>.js`, requested once. It sits under `/_astro/` like every other hashed bundle on the site, so it inherits whatever caching policy those already have; the content hash is what makes that policy safe rather than what creates it
+- Reload the page - the feat-data request is served from cache and the grid returns identically
+- Visit a page without the component and confirm the Network tab shows no feat asset at all
 - Test on mobile viewport - filters stack, grid responsive
 - At desktop widths, verify Ability is approximately one third narrower and Book remains unchanged, Search receives the freed space, and Level is 7.5rem rather than the 6rem first specified, because the custom caret reserves 2.25rem on the right (#91, amended by Accepted Deviations 3).
 - The user visually accepted the width refinement. Production build validation passed via `pnpm build`; Astro checks and lint now run via `pnpm typecheck` and `pnpm lint` (see AGENTS.md Verification).
@@ -311,7 +317,9 @@ The spec's Step 3 and Files table called for `src/components/feats-explorer/sear
 
 ### 2. Eager mount instead of deferred `x-intersect` hydration (#271)
 
-This archived spec originally mandated deferred loading via `x-intersect.once="init()"` with a loading state until the component scrolled into the viewport. The shipped component mounts eagerly: the root element carries `x-data="featExplorer(...)"` with the feat dataset inlined at build time, and there is no `x-intersect` binding, `init()`, or loading state. Reason: with the dataset already inlined, deferred hydration added complexity without a meaningful payload win. Binding text in `SPEC.md` (Component 2) and this spec was amended to match the delivered behavior. No runtime code changed with this edit.
+This archived spec originally mandated deferred loading via `x-intersect.once="init()"` with a loading state until the component scrolled into the viewport. The shipped component mounts eagerly: the root element carries `x-data="featExplorer"` and there is no `x-intersect` binding and no scroll trigger. Reason: with the dataset already in the browser's hands, deferred hydration added complexity without a meaningful payload win. Binding text in `SPEC.md` (Component 2) and this spec was amended to match the delivered behavior. No runtime code changed with this edit.
+
+Two later tickets touched the surrounding sentences without reopening the decision. #379 took the dataset out of the `x-data` argument (Accepted Deviation 6) and #387 took it out of the bundle (Accepted Deviation 8). The component still mounts as soon as Alpine initialises its root; what changed is that the dataset now arrives as its own chunk rather than already being inlined, so there is a brief in-flight state the page names. Deferred hydration is still rejected, for the reason this deviation gives.
 
 The plugin registration that Step 5 added survived this deviation on the argument that a future component might want deferred hydration. #383 removed it once the Feat Explorer was the only thing that had ever referenced it and no planned component did; see Accepted Deviation 7.
 
@@ -333,13 +341,35 @@ The tier is derived from the feat's `level` and not from the `category` field th
 
 The root element is `x-data="featExplorer"` naming a registration in `src/alpine.ts`, and the behaviour lives in `src/components/feats-explorer/feat-explorer-component.ts`. This spec's Summary, Goals, Edge Case 7 and Accepted Deviation 2 all described the previous shape: an inline `<script>` in the view that assigned a `featExplorer` factory to `window`, invoked from the markup as `x-data="featExplorer({...inlined dataset...})"`. ADR-0010 forbids all three halves of that shape.
 
-The one thing this deviation changes beyond the registration is *where the dataset is read from*. A registered Alpine provider is called with no arguments - the factory receives nothing from the `x-data` string - so the payload can no longer be inlined into the attribute and handed to the factory. The component module now imports `FEATS`, `BOOKS` and `ABILITIES` from the same committed `feat-data.js`, and the factory keeps an optional data argument for the states the generated dataset cannot produce. The dataset itself is untouched: same file, same 219 records, same generated extraction, no field read or added. What changed is only the delivery, and the spec's intent is preserved - the component still mounts eagerly, still needs no `x-intersect` trigger and no loading state, and still carries its data with no network dependency on a remote schema. #387 owns making that delivery cheaper (the dataset ships as a separate cacheable asset rather than inside the bundle the Alpine entrypoint injects into every page).
+The one thing this deviation changes beyond the registration is *where the dataset is read from*. A registered Alpine provider is called with no arguments - the factory receives nothing from the `x-data` string - so the payload can no longer be inlined into the attribute and handed to the factory. The component module reached for `FEATS`, `BOOKS` and `ABILITIES` in the same committed `feat-data.js`, and the factory kept an optional data argument for the states the generated dataset cannot produce. The dataset itself is untouched: same file, same 219 records, same generated extraction, no field read or added. What changed is only the delivery, and the spec's intent is preserved - the component still mounts eagerly, still needs no `x-intersect` trigger, and still carries its data with no network dependency on a remote schema. #387 then made that delivery cheaper; see Accepted Deviation 8.
 
 Behaviour is unchanged and now covered by running it: `feat-explorer-alpine.test.ts` mounts the component through `src/test-utils/alpine-dom.ts` and drives search, the three selects, the disclosure badge, the tier marks and the book labels. It replaces the two source-scanning suites that covered the component before, which read `FeatExplorer.astro` as text - the technique ADR-0010 names as the defect class that let #328 ship. `feat-explorer-responsive.test.ts` keeps its markup and CSS assertions and now reads the tier rule from the behaviour module rather than from the view.
 
 ### 7. The intersect plugin is not registered (#383)
 
 Step 5 added `@alpinejs/intersect` and registered it in the Alpine entrypoint. No component ever bound `x-intersect`, and no spec reserves it for a planned one: every spec is archived, and this one had already switched to eager mount under Accepted Deviation 2. #383 removed the registration, the dependency and `@types/alpinejs__intersect`, so the entrypoint every page loads imports nothing from `node_modules`. Reason: a registration kept "for future use" has no mechanism to ever be removed, and it was a per-page cost against the least-client-JavaScript rule. The component behaviour this spec describes is untouched.
+
+### 8. The dataset ships as its own content-hashed chunk, fetched by a dynamic import (#387)
+
+Accepted Deviations 1 through 7 all left one question open: the dataset was in the bundle. #271 put it in an `x-data` attribute, #379 moved it into a module the Alpine entrypoint imports, and the entrypoint is injected into every page on the site - so 26,138 bytes of minified feat data was downloaded by readers looking at a dice roller, and re-downloaded by all 129 pages on every rebuild that touched any of the five components in that bundle. The measured before/after is in the comments on #387 and in [ADR-0015](../../adr/0015-feat-dataset-as-a-dynamic-import-chunk.md).
+
+The delivery is now: `feat-explorer-component.ts` imports `feat-data` **type-only** and reaches the values through one dynamic `import()` with a literal specifier, wrapped in a module-scoped memoised promise. The bundler emits the dataset as its own chunk, requests it from `init()`, and serves it under a content hash. The site-wide entrypoint drops from 101,561 to 75,904 bytes, so every page that does not host this component is 3,527 gzip bytes lighter on a cold load.
+
+This spec's intent is preserved, and each point is checked rather than asserted:
+
+- **Eager mount, no deferred scroll trigger.** `init()` fires the moment Alpine initialises the root, which is the moment the static import used to populate the state. No `x-intersect`, no viewport gating.
+- **No dependency on a remote schema.** The dataset is still generated into this repository at build time from a committed file. Nothing is fetched from a third party, and the chunk fails to load only if this site's own deployment is broken.
+- **Same data, same component, same behaviour.** Same file, same 219 records, no field added or read. Filtering, the tier marks, the book labels and the tier threshold are untouched.
+
+Three things did change, and this spec records them rather than leaving them to be rediscovered:
+
+- **There is a brief in-flight state.** The component carries `datasetState` as `loading` / `ready` / `failed`, and the view names each: a "Fetching the feat list..." line in the head while the chunk is in the air, the count line once it lands, and a reload prompt if it never does. The old single check could not tell "no feats have arrived" apart from "your filters excluded everything", which are different things to say to a reader.
+- **`init()` re-runs `filterFeats()` on arrival.** A reader who typed into the search box while the chunk was in flight asked a question of data that had not yet arrived; the arriving records have to answer it. This is the one regression a lazily delivered dataset introduces, and it has a test.
+- **No JavaScript now shows less, and that is an improvement.** The count line and both new lines are `x-cloak`ed, so a reader without JavaScript sees the heading, the search box and the tier key, and no count - where previously it read "0 of 0 feats on this sheet".
+
+The `x-data` argument remains on the factory for the states the generated dataset cannot produce (a book key with no name, no book map at all). Passing it marks the component ready from the first frame, which is also why the mounted tests can reach those branches without a fetch.
+
+Two costs are recorded here because this deviation reads as a pure win and it is not. **A cold visit to this page now costs one extra round trip and 0.7% more gzip bytes** than before, because the dataset moves from inside the first response into a second request. And **a data change still rehashes the site-wide entrypoint**, because the loader inside it names the chunk by its hashed URL - so the cache invalidation this change most invites is narrowed, not removed. Both are measured in ADR-0015.
 
 ## Status
 
