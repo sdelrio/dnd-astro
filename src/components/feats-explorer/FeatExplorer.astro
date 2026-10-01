@@ -423,12 +423,18 @@ const initialData = {
 </style>
 
 <script>
-  import { FEATS, BOOKS, ABILITIES } from './feat-data';
+  import { FEATS, ABILITIES } from './feat-data';
   import { filterFeats } from './feat-filter';
+
+  /** The book key to book name map, as it reaches the browser: JSON in, keyed
+      by an arbitrary feat's `book`, which is a string and not one of four
+      known literals. `typeof BOOKS` is the literal's own shape, and indexing
+      that with a plain string is the error #377 fixed. */
+  type BookLabels = Record<string, string>;
 
   interface FeatExplorerData {
     feats?: typeof FEATS;
-    books?: typeof BOOKS;
+    books?: BookLabels;
     abilities?: typeof ABILITIES;
   }
 
@@ -446,7 +452,7 @@ const initialData = {
       feats: data.feats || [],
       filteredFeats: data.feats ? [...data.feats] : [],
       abilities: data.abilities || [],
-      books: data.books || {},
+      books: data.books ?? {},
       searchQuery: '',
       selectedAbility: 'All',
       selectedBook: 'All',
