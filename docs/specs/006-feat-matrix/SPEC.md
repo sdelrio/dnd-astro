@@ -16,7 +16,7 @@ adr_constraints: []
 
 ## Summary
 
-An Alpine.js component for browsing and filtering D&D feats with fuzzy search, multi-select filters for ability, book, and level. Replaces the React-based FeatBrowser from golden-forest with a lighter, faster Alpine.js implementation that mounts eagerly with the feat dataset inlined at build time.
+An Alpine.js component for browsing and filtering D&D feats with fuzzy search, multi-select filters for ability, book, and level. Replaces the React-based FeatBrowser from golden-forest with a lighter, faster Alpine.js implementation that mounts eagerly with the feat dataset available to the client at build time. The behaviour is a registered Alpine module (`src/components/feats-explorer/feat-explorer-component.ts`, `x-data="featExplorer"`) rather than an inline script; see Accepted Deviation 6.
 
 ## Problem Statement
 
@@ -336,6 +336,14 @@ Step 4 called for a responsive grid of 1/2/3 columns and Acceptance Criterion 11
 Step 4 called for "Level badge colors (green for origin, blue for general)". Blue was never built and should not have been: it is a cool value, and the Warm-Only Rule in DESIGN.md reserves this system's colour to the warm ramps, which the repo's own `tailwind.test.ts` enforces. The shipped marks are the wax-seal medallions described in DESIGN.md's Feat Codex Panel entry: Origin on `--color-moss-800`/`--color-moss-100`, General on `--color-gold`, Epic Boon on `--color-oxblood`, each inverted per theme. Moss is a shared token rather than a private value, and it is a deliberate widening of the palette: from bark, gold and oxblood alone the three tiers cannot all be told apart in light, where Origin and Epic would both be forced dark. The spec sentence was amended and now points here. No runtime code changed with this edit.
 
 The tier is derived from the feat's `level` and not from the `category` field the Data Schema declares. `category` carries only `Origin` and `General` across all 219 records and never `Epic`, so it cannot express the third tier. The `level >= 19` threshold also merges the Level 19 and Level 21 filter buckets into one `EB` seal, which the on-page legend states explicitly.
+
+### 6. The behaviour is a registered Alpine module, and the dataset is no longer an inlined `x-data` argument (#379)
+
+The root element is `x-data="featExplorer"` naming a registration in `src/alpine.ts`, and the behaviour lives in `src/components/feats-explorer/feat-explorer-component.ts`. This spec's Summary, Goals, Edge Case 7 and Accepted Deviation 2 all described the previous shape: an inline `<script>` in the view that assigned a `featExplorer` factory to `window`, invoked from the markup as `x-data="featExplorer({...inlined dataset...})"`. ADR-0010 forbids all three halves of that shape.
+
+The one thing this deviation changes beyond the registration is *where the dataset is read from*. A registered Alpine provider is called with no arguments - the factory receives nothing from the `x-data` string - so the payload can no longer be inlined into the attribute and handed to the factory. The component module now imports `FEATS`, `BOOKS` and `ABILITIES` from the same committed `feat-data.js`, and the factory keeps an optional data argument for the states the generated dataset cannot produce. The dataset itself is untouched: same file, same 219 records, same generated extraction, no field read or added. What changed is only the delivery, and the spec's intent is preserved - the component still mounts eagerly, still needs no `x-intersect` trigger and no loading state, and still carries its data with no network dependency on a remote schema. #387 owns making that delivery cheaper (the dataset ships as a separate cacheable asset rather than inside the bundle the Alpine entrypoint injects into every page).
+
+Behaviour is unchanged and now covered by running it: `feat-explorer-alpine.test.ts` mounts the component through `src/test-utils/alpine-dom.ts` and drives search, the three selects, the disclosure badge, the tier marks and the book labels. It replaces the two source-scanning suites that covered the component before, which read `FeatExplorer.astro` as text - the technique ADR-0010 names as the defect class that let #328 ship. `feat-explorer-responsive.test.ts` keeps its markup and CSS assertions and now reads the tier rule from the behaviour module rather than from the view.
 
 ## Status
 

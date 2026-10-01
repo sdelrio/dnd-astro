@@ -2,6 +2,16 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 
 const source = readFileSync(new URL('./FeatExplorer.astro', import.meta.url), 'utf8');
+/**
+ * The behaviour this component's markup drives moved out of the view into its
+ * own module under ADR-0010, so the assertions that pin it read that module
+ * rather than the view. What each one is actually protecting is unchanged: the
+ * count has to be the badge's, and the panel has to start closed. That the
+ * count rises as selects are chosen is now asserted by running the component
+ * in `feat-explorer-alpine.test.ts`, which is the only kind of test that can
+ * tell a working expression from a broken one.
+ */
+const component = readFileSync(new URL('./feat-explorer-component.ts', import.meta.url), 'utf8');
 
 describe('FeatExplorer phone adaptation', () => {
   // Four stacked full-width controls put the first result card below the fold
@@ -39,7 +49,7 @@ describe('FeatExplorer phone adaptation', () => {
 
   it('reports the active select count on the toggle', () => {
     expect(source).toContain('activeFilterCount()');
-    expect(source).toContain('filtersOpen: false');
+    expect(component).toContain('filtersOpen: false');
   });
 
   // The clear control is on the filter line, not on its own row and not inside
@@ -369,9 +379,9 @@ describe('FeatExplorer count and tier key', () => {
     const filter = readFileSync(new URL('./feat-filter.ts', import.meta.url), 'utf8');
 
     // The seal: epic at 19 and above, so both buckets are inside it.
-    const component = source.match(/level === 0 \? 'origin' : level >= (\d+) \? 'epic' : 'general'/);
-    expect(component).not.toBeNull();
-    expect(Number(component![1])).toBe(19);
+    const seal = component.match(/level === 0 \? 'origin' : level >= (\d+) \? 'epic' : 'general'/);
+    expect(seal).not.toBeNull();
+    expect(Number(seal![1])).toBe(19);
 
     // And the filter really does still separate 19 from 21, which is the whole
     // reason the note has to exist.

@@ -1,18 +1,11 @@
 ---
-import { FEATS, BOOKS, ABILITIES } from './feat-data';
 import { LEVEL_BUCKETS } from './feat-filter';
-
-const initialData = {
-  feats: FEATS,
-  books: BOOKS,
-  abilities: ABILITIES
-};
 ---
 
 <div
   data-fx="codex"
   class="not-content"
-  x-data={`featExplorer(${JSON.stringify(initialData)})`}
+  x-data="featExplorer"
 >
   <div class="fx-title">
     <h2 class="fx-page-title">Feat Codex</h2>
@@ -421,90 +414,3 @@ const initialData = {
      spend 28px on both sides, not because one of them was carrying a ribbon. */
   @media (max-width:39.999rem){ [data-fx]{ padding:1.25rem 1.25rem; } }
 </style>
-
-<script>
-  import { FEATS, ABILITIES } from './feat-data';
-  import { filterFeats } from './feat-filter';
-
-  /** The book key to book name map, as it reaches the browser: JSON in, keyed
-      by an arbitrary feat's `book`, which is a string and not one of four
-      known literals. `typeof BOOKS` is the literal's own shape, and indexing
-      that with a plain string is the error #377 fixed. */
-  type BookLabels = Record<string, string>;
-
-  interface FeatExplorerData {
-    feats?: typeof FEATS;
-    books?: BookLabels;
-    abilities?: typeof ABILITIES;
-  }
-
-  declare global {
-    interface Window {
-      featExplorer: typeof featExplorer;
-    }
-  }
-
-  /** The two-letter mark stamped into the tier medallion. */
-  const TIER_MONO: Record<string, string> = { origin: 'OR', general: 'GE', epic: 'EB' };
-
-  function featExplorer(data: FeatExplorerData) {
-    return {
-      feats: data.feats || [],
-      filteredFeats: data.feats ? [...data.feats] : [],
-      abilities: data.abilities || [],
-      books: data.books ?? {},
-      searchQuery: '',
-      selectedAbility: 'All',
-      selectedBook: 'All',
-      selectedLevel: 'All',
-      filtersOpen: false,
-
-      filterFeats() {
-        this.filteredFeats = filterFeats(this.feats, {
-          search: this.searchQuery,
-          ability: this.selectedAbility,
-          book: this.selectedBook,
-          level: this.selectedLevel,
-        });
-      },
-
-      clearFilters() {
-        this.searchQuery = '';
-        this.selectedAbility = 'All';
-        this.selectedBook = 'All';
-        this.selectedLevel = 'All';
-        this.filterFeats();
-      },
-
-      hasActiveFilters() {
-        return this.searchQuery !== '' || this.activeFilterCount() > 0;
-      },
-
-      /** Counts the selects only. The search box is always visible below sm, so
-          a query is not a reason to reveal the collapsed panel. */
-      activeFilterCount() {
-        return [this.selectedAbility, this.selectedBook, this.selectedLevel]
-          .filter((value) => value !== 'All')
-          .length;
-      },
-
-      tierKey(level: number) {
-        return level === 0 ? 'origin' : level >= 19 ? 'epic' : 'general';
-      },
-
-      tierName(level: number) {
-        return level === 0 ? 'Origin' : level >= 19 ? 'Epic Boon' : 'General';
-      },
-
-      tierMono(key: string) {
-        return TIER_MONO[key] ?? '';
-      },
-
-      bookLabel(feat: { book?: string }) {
-        return feat.book ? this.books[feat.book] || feat.book : 'Unattributed';
-      },
-    };
-  };
-
-  window.featExplorer = featExplorer;
-</script>

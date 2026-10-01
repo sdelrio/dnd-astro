@@ -30,9 +30,14 @@ import { fileURLToPath } from 'node:url';
  *
  * - `src/alpine.ts`, the entrypoint injected into every page. A bad edge here
  *   breaks the whole site.
- * - the client scripts embedded in `.astro` files, which is where a
- *   self-registering component like the feat explorer lives. A bad edge there
- *   breaks exactly one page, silently, which is quieter and not less bad.
+ * - the client scripts embedded in `.astro` files. A bad edge there breaks
+ *   exactly one page, silently, which is quieter and not less bad.
+ *
+ * ADR-0010 has since moved every interactive component off the second shape:
+ * the Feat Explorer was the last one whose behaviour lived in an embedded
+ * script, and its migration was #379. The root is kept because the shape is
+ * still open to the next component that reaches for an embedded script, and a
+ * sweep that is deleted with its last member has nothing left to catch.
  */
 
 const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -298,6 +303,10 @@ describe('the browser-bound graph (issue #352)', () => {
         { name: 'pointBuyComponent', specifier: '@/components/point-buy/point-buy-component' },
         { name: 'diceRollerComponent', specifier: '@/components/dice-roller/dice-roller-component' },
         { name: 'partyViewComponent', specifier: '@/components/xml-viewer/party-view-component' },
+        {
+          name: 'featExplorerComponent',
+          specifier: '@/components/feats-explorer/feat-explorer-component',
+        },
       ]);
 
       const reached = components.map(({ specifier }) => resolveFirstParty(specifier, ALPINE_ENTRY));
@@ -356,40 +365,51 @@ describe('the browser-bound graph (issue #352)', () => {
   });
 
   describe('the client scripts embedded in .astro files', () => {
-    const scripts = astroFiles()
-      .map((file) => ({ file, specifiers: edgesIn(clientSource(file)) }))
-      .filter(({ specifiers }) => specifiers.length > 0);
+    // Every `.astro` file carrying a `<script>` block, whether or not it has
+    // reached for an import yet. Filtering to the files that *do* import
+    // something would leave a script that grows its first edge - a bad one -
+    // unswept on the day it is written, because the filter is evaluated once at
+    // module load.
+    const scripts = astroFiles().filter((file) => read(file).includes('<script'));
 
     it('finds the embedded client scripts, so the sweep is not empty', () => {
       // The same non-vacuity guard for the second root. A sweep that matched no
       // `<script>` block would report a clean graph having looked at nothing.
-      expect(scripts.map(({ file }) => label(file))).toContain(
-        'src/components/feats-explorer/FeatExplorer.astro'
-      );
+      expect(scripts.map(label)).toContain('src/components/ThemeSelect.astro');
       expect(scripts.length).toBeGreaterThan(0);
     });
 
     it('reaches no Node builtin from any embedded client script', () => {
       // A self-registering component lives here, so the same mistake breaks one
       // page silently instead of the whole site. Quieter, not less bad.
-      const findings = scripts.flatMap(({ file }) =>
+      const findings = scripts.flatMap((file) =>
         walk(file).leaks.map((leak) => ({ entry: label(file), ...leak }))
       );
       expect(findings).toEqual([]);
     });
 
-    it('follows an embedded script edge into a first-party module, not just its own source', () => {
-      // Proves the `.astro` half of the sweep reaches *past* the file it was
-      // handed. A walker that only read the `<script>` block itself would pass
-      // the test above having never looked at `feat-filter.ts`.
-      const featExplorer = walk(resolve(SRC, 'components/feats-explorer/FeatExplorer.astro'));
+    it('follows an edge out of a behaviour module into a first-party module, not just its own source', () => {
+      // Proves the walk reaches *past* the file it was handed. A walker that
+      // only read the handed-in module would pass the test above having never
+      // looked at `feat-filter.ts`.
+      //
+      // This used to walk `FeatExplorer.astro` itself, because the Feat Explorer
+      // was the one component whose behaviour was an embedded script
+      // (#379 moved it into a registered module). It walks the module the
+      // entrypoint now imports instead, which is the same edge - the component
+      // reaching its filter - one hop further along.
+      const component = resolve(SRC, 'components/feats-explorer/feat-explorer-component.ts');
+      const featExplorer = walk(component);
       expect(featExplorer.visited).toEqual(
         expect.arrayContaining([
-          resolve(SRC, 'components/feats-explorer/FeatExplorer.astro'),
+          component,
           resolve(SRC, 'components/feats-explorer/feat-filter.ts'),
         ])
       );
       expect(featExplorer.unresolved).toEqual([]);
+      // And it is reachable from the entrypoint, so the site really does pull
+      // it into the browser rather than only the test importing it.
+      expect(walkFromAlpine.visited).toContain(component);
     });
   });
 });
