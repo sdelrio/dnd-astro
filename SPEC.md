@@ -59,31 +59,66 @@ Standard rule documentation must use built-in Starlight components. These genera
 Used exclusively for local client-side interaction that doesn't rely on remote backend schemas or computational manipulation.
 * **Scope:** Mobile navigation states, UI toggle state (light/dark sync adjustments), and minor aesthetic view changes.
 
-### Alpine.js Interactive Components
-All interactive components use Alpine.js for client-side behavior. This eliminates React runtime overhead (~40KB) and keeps JavaScript minimal across all pages. Each component is self-contained in its own directory under `src/components/`.
+### Interactive Component Inventory
+The site ships exactly five interactive components, one directory each under `src/components/`. There is no sixth, and a new one is added by creating a directory here and naming it in this section.
+
+Four of the five are Alpine components. Their behaviour lives in a `.ts` module beside the `.astro` view, exports a factory, and is registered once in the site-wide entrypoint `src/alpine.ts` as `Alpine.data('<name>', factory)`. The markup then names the registration with a bare `x-data="<name>"` on the component root. No component assigns to `window`, and none declares a `Window` interface. See [ADR-0010](./docs/adr/0010-alpine-data-registration.md) for the decision, and [ADR-0013](./docs/adr/0013-browser-safe-data-module-boundary.md) for the boundary that keeps a browser-bound module from reaching a build-side one.
+
+The fifth, the rulebook spread, is deliberately not an Alpine component, and says so below.
+
+Two other files sit directly in `src/components/` and are deliberately **not** among the five. `IconifyIcon.astro` is a pure build-time Astro component covered in its own subsection above. `ThemeProvider.astro` and `ThemeSelect.astro` are Starlight theme overrides injected through the `components` map in `astro.config.mjs`; they are site chrome rather than tool content, they own a small inline script each, and no `x-data` scope is registered for them. They are listed in the file tree below so the tree stays accurate, and they are named here so their absence from the inventory reads as a decision rather than an oversight.
 
 #### Component 1: Dice Roller & Character Sheet Generator
 * **File Location:** `src/components/dice-roller/`
-* **Hydration Strategy:** Immediate via Alpine.js `x-init` on the component root element.
+  * `DiceRoller.astro` - the view
+  * `dice-roller-component.ts` - the behaviour factory, registered as `Alpine.data('diceRoller', ...)`
+  * `dice-utils.ts` - the pure roll and formatting helpers the factory delegates to
+* **Spec:** [SPEC-005: Dice Roller & Character Sheet Generator](./docs/specs/005-dice-roller/SPEC.md) (archived)
+* **Hydration Strategy:** Eager mount. The root carries `x-data="diceRoller"`, and the factory runs once on init. There is no `x-init` and no deferred trigger.
 * **Mechanics:** Mathematical randomization models for multi-dice pools (4d6-drop-lowest for ability scores), modifier injections, and programmatic output into an ephemeral JSON state representing temporary base statistics.
-* **Events:** `@click` for roll buttons, `x-model` for modifier inputs, `x-show`/`x-transition` for result display.
+* **Events:** `@click` on the roll buttons and on the swap handles, `@keydown.escape.window` to cancel a staged swap, `x-for` to render the die pips and the ability rows, `x-if` to mount the staged-swap panel, `x-show` for the per-ability rolling pulse, and `x-show` with `x-cloak` for the result log.
 
 #### Component 2: Book-Filtered Feat Matrix
 * **File Location:** `src/components/feats-explorer/`
+  * `FeatExplorer.astro` - the view
+  * `feat-explorer-component.ts` - the behaviour factory, registered as `Alpine.data('featExplorer', ...)`
+  * `feat-data.js` and `feat-filter.ts` - the dataset inlined at build time, and the pure matching helpers
+* **Spec:** [SPEC-006: Book-Filtered Feat Matrix](./docs/specs/006-feat-matrix/SPEC.md) (archived)
 * **Hydration Strategy:** Eager mount via `x-data` on the component root with the feat dataset inlined at build time (no deferred `x-intersect` trigger; the Alpine intersect plugin was removed in #383 now that nothing uses it).
 * **Mechanics:** Fuzzy client-side searching, sub-category relational indexing, and multi-select filtering over a matrix of pre-compiled rules.
-* **Events:** `@input` for search field, `@change` for filter dropdowns, `x-for` for dynamic list rendering.
+* **Events:** `x-model` with `@input.debounce.300ms` for the search field, `x-model` with `@change` for the ability, book and tier dropdowns, `@click` to open the filter panel and to clear filters, `x-for` for dynamic list rendering, `x-show` with `x-cloak` for the panel, the active-filter badge and the empty state.
 
-#### Component 3: Fantasy Grounds XML Character Sheet Viewer
+#### Component 3: Point Buy Ability Score Calculator
+* **File Location:** `src/components/point-buy/`
+  * `PointBuy.astro` - the view
+  * `point-buy-component.ts` - the behaviour factory, registered as `Alpine.data('pointBuy', ...)`
+  * `point-buy-utils.ts` - the pure score, cost and modifier helpers. It re-exports the ability names, labels and modifier maths from `dice-roller/dice-utils.ts` rather than redeclaring them, so the two tools cannot drift apart.
+* **Hydration Strategy:** Eager mount. The root carries `x-data="pointBuy"`, registered in the same site-wide entrypoint as every other Alpine component. An agent extending this tool must add to the factory, not to a `<script>` inside the `.astro` file.
+* **Mechanics:** A 27-point pool spent across the six abilities, scores bounded to 8-15, on the non-linear 5e cost table (1 point per step to 13, then 2 for each of the last two). Each press announces the resulting score, its modifier and the points remaining into a polite live region. A two-press trade moves a score from one ability to another: the first press picks an ability up, the second names where its score goes, and pressing the picked ability again puts it back down. Named starting spreads load in one press, and a reset returns the sheet to its default.
+* **Events:** `@click` on each ability's increase, decrease and trade handles, on each starting-spread button, and on reset. A drawable picked state is backed by `aria-pressed` and by the live region, because a ring on one of six names tells a screen reader nothing.
+
+#### Component 4: Fantasy Grounds XML Character Sheet Viewer
 * **File Location:** `src/components/xml-viewer/`
-* **Spec:** [SPEC-003: XML Character Sheet Viewer](./docs/specs/003-xml-character-viewer/SPEC.md)
-* **Hydration Strategy:** Static Layout Pre-rendering (Build-time compilation) with Alpine.js for lightweight client interactions (display-mode toggle, expand/collapse, role filtering).
+  * `PartyView.astro` - the party view, registered as `Alpine.data('partyView', ...)` via `party-view-component.ts`
+  * `CharSearch.astro` - the character search, registered as `Alpine.data('charSearch', ...)` via `char-search-component.ts`
+  * `XmlCard.astro` and its satellites (`SavesTable`, `SkillsTable`, `CompactAbilityGrid`, `SectionHeader`) - the per-character card, rendered at build time and hydrating nothing
+  * `char-filter.ts`, `party-roles.ts`, `party-roster.ts`, `skill-display.ts`, `weapon-display.ts`, `inventory-display.ts`, `card-plate.ts`, `section-heading.ts` - the pure display and filter helpers
+* **Spec:** [SPEC-003: XML Character Sheet Viewer](./docs/specs/003-xml-character-viewer/SPEC.md) (archived)
+* **Hydration Strategy:** Static Layout Pre-rendering (Build-time compilation) with Alpine.js for lightweight client interactions (display-mode toggle, expand/collapse, role filtering). This is the one component directory holding two separate `x-data` roots, so it occupies two registration lines in `src/alpine.ts`.
 * **Execution Flow:** 
   1. During the Astro project compilation phase (`astro build`), a build hook reads `.xml` files from `src/assets/fantasy-grounds-sheets/` via Node.js.
   2. `fast-xml-parser` maps the proprietary Fantasy Grounds XML node trees into clean JSON schemas.
   3. Avatar image paths are pre-resolved at build time (`.jpg` → `.png` → `faceless.svg` fallback).
-  4. The JSON data is injected into Astro components via static props at build time.
+  4. The JSON is written to `src/generated/characters.json` and is read by every consumer through the single typed entry point `src/utils/generated-characters.ts`, so the shapes cannot drift apart. The parser itself is a build-side module, which is why a browser-bound module in this directory may not import it (see [ADR-0013](./docs/adr/0013-browser-safe-data-module-boundary.md)).
   5. Alpine.js handles client-side display-mode toggles and interactive filtering.
+
+#### Component 5: Rulebook Spread (Site Index)
+* **File Location:** `src/components/rulebook-index/`
+  * `RulebookSpread.astro` - the view, and the one scroll listener it owns
+  * `rulebook-parts.ts` - the content model: three parts, each with a stable folio per entry
+* **Hydration Strategy:** Not Alpine, and not by omission. This is the site's only component that carries a scoped `<script>` of its own rather than an `Alpine.data` registration, and the choice is what keeps it the cheapest page on the site: one scroll listener, one `requestAnimationFrame`, and two property writes, with no Alpine scope and no framework runtime involved. The behaviour is not importable and so is not unit tested, which is the trade ADR-0010 makes for a component whose whole client cost is a progress readout. Any expansion past that should be a migration to a registered component, not a second embedded script.
+* **Mechanics:** The index is set as an open rulebook spread: two printed leaves (House Rules, Reference) and one raised tools panel, with a gutter between them. The gutter reports where the reader is - the current part's Roman numeral and the sheet's scroll fraction as a custom property - and CSS crossfades the numeral and scales the fill. Positions come from `offsetTop` rather than `getBoundingClientRect`, because the gutter is `position: sticky` and a rect would lie. There is deliberately no entrance animation: on an index, a row that has not appeared yet is a row the reader thinks is missing.
+* **Events:** `scroll` and `resize` listeners, both passive, both funnelled through a single `requestAnimationFrame`. No `x-data`, no `x-show`, no `x-for`.
 
 ---
 
@@ -94,15 +129,33 @@ Agents executing changes in this repository must maintain the following file sys
 ```text
 ├── .github/workflows/    # CI Automation (Optional, Cloudflare hooks directly to Git)
 ├── docs/
-│   └── adr/                         # Architecture Decision Records
+│   ├── adr/                         # Architecture Decision Records (the binding decisions)
+│   ├── specs/                       # Per-feature specifications, indexed in docs/specs/README.md
+│   ├── agents/                      # Agent-facing process notes
+│   └── audits/                      # Dated audit reports
 ├── src/
 │   ├── assets/
 │   │   └── fantasy-grounds-sheets/  # Canonical storage for source .xml dossiers
 │   ├── components/
 │   │   ├── IconifyIcon.astro        # Zero-JS Astro component for Iconify icons in MDX
+│   │   ├── ThemeProvider.astro      # Starlight theme override (injected via astro.config.mjs)
+│   │   ├── ThemeSelect.astro        # Starlight theme override (injected via astro.config.mjs)
 │   │   ├── dice-roller/             # Alpine.js component for RNG and sheet generation
 │   │   ├── feats-explorer/          # Alpine.js component for advanced lookup tables
+│   │   ├── point-buy/               # Alpine.js component for the 27-point pool calculator
+│   │   ├── rulebook-index/          # Site index, set as a spread; no Alpine, one scroll script
 │   │   └── xml-viewer/              # Alpine.js component for character presentation
+│   ├── generated/
+│   │   └── characters.json          # THE generated artifact: build-hook output from the .xml sheets
+│   ├── styles/
+│   │   ├── tailwind.css             # Site stylesheet, loaded as Starlight customCss
+│   │   └── contrast.ts              # Contrast-ratio helper used by the colour tests
+│   ├── test-utils/
+│   │   └── alpine-dom.ts            # Mounts a component with astro/container and boots real Alpine
+│   ├── utils/                       # Build-side helpers: XML parsing, the build hook, chunking
+│   ├── types/                       # Shared ambient declarations
+│   ├── alpine.ts                    # THE site-wide Alpine entrypoint: every Alpine.data registration
+│   ├── content.config.ts            # Content collection config (the docs collection, via Starlight)
 │   ├── content/
 │   │   └── docs/                    # Starlight MDX files (Standard static rulebooks)
 │   └── pages/                       # Custom Astro routes bypassing default Starlight if needed
@@ -111,6 +164,16 @@ Agents executing changes in this repository must maintain the following file sys
 └── SPEC.md                          # This architectural specification document
 ```
 
+### The Five Entries That Carry Load
+
+Five of the paths above are load-bearing in a way that is easy to mistake for incidental, so they are called out rather than left to the tree:
+
+* **`src/alpine.ts` - the Alpine entrypoint.** `@astrojs/alpinejs` is configured with `entrypoint: '/src/alpine.ts'`, so this one file is injected into **every page on the site**. It holds the only `Alpine.data` registrations in the project, one per `x-data` root: `diceRoller`, `featExplorer`, `pointBuy`, `partyView`, `charSearch`. A new interactive component is not wired up until it is registered here, and a bad import edge here is site-wide, not page-wide (ADR-0013). `src/alpine-client-graph.test.ts` walks the module graph from this file to keep it browser-safe.
+* **`src/content.config.ts` - the content configuration.** Declares the `docs` collection with Starlight's `docsLoader` and `docsSchema`. This is what gives the rulebook pages frontmatter, the sidebar, and type checking.
+* **`src/styles/` - the styles directory.** `src/styles/tailwind.css` is the site stylesheet and is wired in through Starlight's `customCss` in `astro.config.mjs`, not imported by a component. `src/styles/contrast.ts` is a shared helper the colour tests use.
+* **`src/test-utils/alpine-dom.ts` - the test harness.** Renders a component with `astro/container` and boots a real Alpine over it, so behaviour is exercised by clicking real controls in a real DOM rather than by scanning `.astro` source text for strings. ADR-0010 requires this shape, and the source-scanning tests it replaced could not tell a working Alpine expression from a broken one.
+* **`src/generated/` - the generated-data directory.** Holds `src/generated/characters.json`, the single artifact written by the XML build hook and consumed by the character pages and the card components. It is generated, not authored: do not hand-edit it, and do not expect it to exist in a fresh clone until a render command has run.
+
 ---
 
 ## 5. Development Integrity Rules for Agents
@@ -118,5 +181,10 @@ Agents executing changes in this repository must maintain the following file sys
 1. **Keep Alpine.js Scopes Isolated:** Each component must define its own `x-data` scope. Never nest Alpine.js components in ways that cause scope leakage or variable shadowing.
 2. **Prevent Hydration Mismatch:** Ensure that data injected into Astro components from static frontmatter matches exactly between server-side pre-rendering and client-side Alpine.js activation.
 3. **No Direct DOM Mutations:** Let Alpine.js control reactive state and DOM updates. For Starlight documentation pages, rely strictly on declarative HTML attributes.
-4. **Enforce Component Splitting:** Do not cluster all 3 systems into a single monolithic bundle. Treat the Dice Roller, Feat Matrix, and XML Viewer as strictly separate Alpine.js components.
+4. **Enforce Component Splitting:** Do not cluster the five systems into a single monolithic bundle. Treat the Dice Roller, Feat Matrix, Point Buy Calculator, XML Viewer and Rulebook Spread as strictly separate components.
+5. **New Interactive Component Checklist:** A sixth component is a directory under `src/components/` plus a line in this section. To be complete it needs:
+   1. A `.ts` module beside the `.astro` view, exporting a factory that returns every helper the template's expressions call.
+   2. An `Alpine.data('<name>', factory)` registration in `src/alpine.ts`, and a bare `x-data="<name>"` on the component root. The one exception is the Rulebook Spread, which is not an Alpine component, and it is documented as such in section 3.
+   3. A runtime test through `src/test-utils/alpine-dom.ts`. Per ADR-0010 a new component is expected to arrive with one: an Alpine expression is a string, and only running it catches a broken one.
+   4. No `window` assignment, and no import edge from a browser-bound module into a build-side one (ADR-0013).
 
