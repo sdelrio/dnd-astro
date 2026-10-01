@@ -127,6 +127,7 @@ describe('SPEC.md component coverage', () => {
 			'pointBuy',
 			'diceRoller',
 			'partyView',
+			'xmlCard',
 			'featExplorer',
 		]);
 	});

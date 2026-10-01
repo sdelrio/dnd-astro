@@ -15,14 +15,16 @@ import { skillRank } from '@/components/xml-viewer/skill-display';
 import { cardPlateClass } from '@/components/xml-viewer/card-plate';
 import SkillsTable from '@/components/xml-viewer/SkillsTable.astro';
 import SavesTable, { type SaveTableRow } from '@/components/xml-viewer/SavesTable.astro';
-import SectionHeader from '@/components/xml-viewer/SectionHeader.astro';
+
 import {
   sectionHeadingClass,
+  sectionHeadingTrailingClass,
   sectionSubheadingClass,
   sectionGroupClass,
   sectionLegendClass,
 } from '@/components/xml-viewer/section-heading';
 import CompactAbilityGrid from '@/components/xml-viewer/CompactAbilityGrid.astro';
+import { CARD_TABS, type CardTabId } from '@/components/xml-viewer/card-tabs';
 
 interface Props {
   character: CharacterData;
@@ -41,6 +43,11 @@ const RANKS: Record<string, number> = { small: 0, medium: 1, large: 2 };
 function rank(mode: string): number {
   return RANKS[mode] ?? 0;
 }
+// The tab bar's six panels are the display mode's whole content model, so every
+// one of them is reachable at medium and at large. What the display mode still
+// decides is *how much* a panel holds, not whether the panel exists: `allSaves`,
+// `allSkills`, `passives` and `feats` stay large-only, so a medium card shows the
+// proficient saves and the proficient skills while a large one shows all of them.
 const sectionPolicy = {
   avatar: 'small' as const,
   tags: 'small' as const,
@@ -52,10 +59,10 @@ const sectionPolicy = {
   passives: 'large' as const,
   languages: 'medium' as const,
   feats: 'large' as const,
-  weapons: 'large' as const,
-  inventory: 'large' as const,
-  features: 'large' as const,
-  powers: 'large' as const,
+  weapons: 'medium' as const,
+  inventory: 'medium' as const,
+  features: 'medium' as const,
+  powers: 'medium' as const,
 } as const;
 type SectionKey = keyof typeof sectionPolicy;
 function canShow(section: SectionKey): boolean {
@@ -90,10 +97,14 @@ const {
 const classString = classes.map((c) => `${c.name} ${c.level}`).join(' / ');
 const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).join(' / ');
 // Section labels were once absolutely-positioned tabs at `opacity-0` that only
-// appeared on hover, which hid them from keyboard focus and touch alike. They
-// are real, always-visible headings now, and every one of them - here and in
-// SectionHeader - is the same class, so the card reads as a single heading
-// system. See section-heading.ts.
+// appeared on hover, which hid them from keyboard focus and touch alike. They are
+// real, always-visible headings now, and every one of them is the same class, so
+// the card reads as a single heading system. See section-heading.ts.
+//
+// Only the sections that live inside a panel carry one. The six panels
+// themselves are named by their tab, so an `h3` repeating that word twenty
+// pixels below the tab would be a second copy of it, and a screen reader would
+// read the same name twice.
 
 // Build-time avatar resolution happens in the shared helper: an explicit
 // image prop wins when the file exists (missing files fall back to
@@ -197,10 +208,72 @@ const splitSavesGroup =
   (showLanguages || showFeats) &&
   (showLanguages ? languages.length : 0) <= SAVES_SPLIT_MAX_LANGUAGES &&
   (showFeats ? feats.length : 0) <= SAVES_SPLIT_MAX_FEATS;
+
+// --- Section menu ----------------------------------------------------------
+// A menu entry is only offered for a section the card actually has something to
+// put in it. A bar whose fourth entry opens an empty sheet is worse than a
+// shorter one.
+//
+// Overview is unconditional: Vitals and Abilities render for every character, so
+// it is never empty and the bar always has a landing entry.
+//
+// The two modes above medium are different instruments, not two settings of one:
+// medium is a `small` roster card with more room than it needs, so its sections
+// compete for a vertical column and only one should be open. A full character
+// sheet is a long scroll already, so hiding five of six sections behind a click
+// costs the reader their sense of the whole; there the bar is a table of
+// contents that jumps. Hence two modes and one bar between them.
+//
+// The section headings follow from that split rather than being decided beside it.
+// At medium the visible tab names the open panel, so a heading inside it repeats a
+// word the reader is already looking at. At large there is no tab and no selection
+// state - the bar is a row of links that all look alike, and the page is one long
+// scroll - so a section that is nothing but tables gives the reader no way to tell
+// where they have landed. Every section names itself at large, in the same
+// `sectionHeadingClass` treatment as Vitals and Saving Throws.
+//
+// That the heading *level* differs by mode is the honest structure in each rather
+// than an inconsistency: at large the panel heading is the `h3` and its `Level N`
+// groups genuinely sit inside it, so they step to `h4`/`h5`. At medium no panel
+// heading exists, so the same groups sit directly under the card name and stay at
+// `h3`/`h4`. `h2 > h3 > h4 > h5` is contiguous in both.
+const tabbed = display === 'medium';
+const jumping = display === 'large';
+
+// The `Level N` groups in Features and Powers, and the power group names beneath
+// them, as tag names rather than literals. Astro resolves a capitalised binding in
+// a tag position to the element it names, so this is one heading written once at
+// two levels instead of a duplicated subtree or a `set:html` escape hatch - and
+// the level is decided in one place, where the reason for it is written down.
+const levelHeading = jumping ? 'h4' : 'h3';
+const groupHeading = jumping ? 'h5' : 'h4';
+const LevelHeading = levelHeading;
+const GroupHeading = groupHeading;
+
+// Anchor ids have to exist in the server-rendered HTML, because at large the bar
+// is plain `<a href="#...">` and needs no JavaScript to work. `filename` is the
+// XML basename, which is unique per character - and `large` renders one card per
+// page, so the prefix only has to be stable, not globally coordinated.
+const cardId = `xmlcard-${character.filename ?? 'card'}`;
+const sectionId = (id: CardTabId) => `${cardId}-${id}`;
+
+const tabAvailability: Record<CardTabId, boolean> = {
+  overview: true,
+  skills: showSkills,
+  inventory: showInventory,
+  weapons: showWeapons,
+  features: showFeatures,
+  powers: showPowers,
+};
+
+const tabs = CARD_TABS.filter((tab) => tabAvailability[tab.id]);
+const tabIds = tabs.map((tab) => tab.id).join(' ');
 ---
 
 <div
   class="not-content @container w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-hidden font-sans text-sm"
+  x-data={tabbed ? 'xmlCard' : undefined}
+  data-card-tabs={tabbed ? tabIds : undefined}
 >
   <header class="char-header">
     {character.filename && link ? (
@@ -236,10 +309,65 @@ const splitSavesGroup =
     </div>
   </header>
 
+  {/* The section bar. It is a `tablist` at medium and a table of contents at
+      large, and the two are different elements rather than one element with a
+      mode switch: a tab hides what it does not select, so it must ship
+      `aria-selected` and a roving tabindex, and a jump link hides nothing, so
+      those would be lies. It also means the large sheet needs no JavaScript at
+      all - `href="#..."` and a fragment identifier are enough. */}
+  {jumping ? (
+    <nav class="char-tabs" aria-label="Character sections">
+      {tabs.map((tab) => (
+        <a class="char-tab" href={`#${sectionId(tab.id)}`} data-tab={tab.id}>
+          <span class="char-tab-label">{tab.label}</span>
+        </a>
+      ))}
+    </nav>
+  ) : tabbed ? (
+    <div
+      class="char-tabs"
+      role="tablist"
+      aria-label="Character sections"
+      x-cloak
+      @keydown="step($event)"
+    >
+      {tabs.map((tab) => (
+        <button
+          type="button"
+          class="char-tab"
+          role="tab"
+          data-tab={tab.id}
+          :aria-selected={`isActive('${tab.id}')`}
+          :tabindex={`isActive('${tab.id}') ? 0 : -1`}
+          @click={`select('${tab.id}')`}
+        >
+          <span class="char-tab-label">{tab.label}</span>
+        </button>
+      ))}
+    </div>
+  ) : null}
+
   <div class="p-4 space-y-4">
-    <div class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
+    {/*
+      One panel per tab. The Overview panel holds Vitals, Abilities, Passive
+      Skills, Saving Throws, Languages and Feats: everything that describes the
+      character rather than listing what they can do or carry. The `x-show` is
+      the only thing hiding an inactive panel - the section's markup is
+      identical either way, so switching tabs cannot re-style a section, only
+      reveal it.
+    */}
+    <div
+      class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}
+      role={tabbed ? 'tabpanel' : undefined}
+      data-panel="overview"
+      id={jumping ? sectionId('overview') : undefined}
+      x-show={tabbed ? "active === 'overview'" : undefined}
+      x-cloak={tabbed ? true : undefined}
+    >
       <section class="relative group/overview">
-        {display === 'large' && <h3 class={`${sectionHeadingClass} mb-2`}>Overview</h3>}
+        {/* No `Overview` heading: the tab names this panel. The sections inside
+            it are Vitals, Abilities, Passive Skills, Saving Throws, Languages and
+            Feats, and each is its own h3 under the card's h2 name. */}
         <div class="space-y-2">
           <section class="relative group">
             <h3 class={`${sectionHeadingClass} mb-2`}>Vitals</h3>
@@ -355,177 +483,241 @@ const splitSavesGroup =
       )}
     </div>
 
-    {(showSkills || showInventory) && (
-      <div class={showSkills && showInventory ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
-        {showSkills && (
-          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-            <SectionHeader title="Skills" />
-            <SkillsTable
-              rows={canShow('allSkills') ? sortedAllSkills : proficientSkills}
-              columns={canShow('allSkills') ? 2 : 1}
-            />
-          </section>
-        )}
+    {/* Each remaining panel is one section, full width. The card used to pair
+        Skills beside Inventory and Features beside Powers at `@6xl`; with a
+        panel per tab there is nothing beside them to pair with, and the
+        two-column split bought nothing but a shorter page. */}
+    {showSkills && (
+      <div
+        role={tabbed ? 'tabpanel' : undefined}
+        data-panel="skills"
+        id={jumping ? sectionId('skills') : undefined}
+        x-show={tabbed ? "active === 'skills'" : undefined}
+        x-cloak={tabbed ? true : undefined}
+      >
+        {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Skills</h3>}
+        <SkillsTable
+          rows={canShow('allSkills') ? sortedAllSkills : proficientSkills}
+          columns={canShow('allSkills') ? 2 : 1}
+        />
+      </div>
+    )}
 
-        {showInventory && (
-          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-            <SectionHeader
-              title="Inventory"
-              trailing={inventoryRows.length > 0
-                ? `${inventoryWeight} / ${inventoryCapacity} lb. carried`
-                : undefined}
-            />
+    {showInventory && (
+      <div
+        role={tabbed ? 'tabpanel' : undefined}
+        data-panel="inventory"
+        id={jumping ? sectionId('inventory') : undefined}
+        x-show={tabbed ? "active === 'inventory'" : undefined}
+        x-cloak={tabbed ? true : undefined}
+      >
+{/* The carried-weight total annotates the inventory contents, so it sits with
+            them. At large it rides the heading's baseline again - it always did,
+            and it is the only trailing value on the card, so a heading without
+            it looks like an oversight. At medium the tab names the panel, so the
+            total leads the section on its own line with no heading to ride. */}
+        {jumping ? (
+          <div class="flex flex-col gap-1 mb-2 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2">
+            <h3 class={sectionHeadingClass}>Inventory</h3>
             {inventoryRows.length > 0 && (
-              <div class={cardPlateClass}>
-                <table class="w-full text-sm">
-                  <thead>
-                    <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                      <th class="text-left font-medium pb-1">Item</th>
-                      <th class="text-right font-medium pb-1">Count</th>
-                      <th class="text-right font-medium pb-1">Weight</th>
-                      <th class="text-left font-medium pb-1">State</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {inventoryRows.map((item) => (
-                      <tr class="border-t border-gray-200 dark:border-gray-700">
-                        <td class="py-1 text-gray-700 dark:text-gray-300">{item.name}</td>
-                        <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.count}</td>
-                        <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.weight}</td>
-                        <td class="py-1 text-gray-500 dark:text-gray-400">{item.state}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <span class={sectionHeadingTrailingClass}>
+                {inventoryWeight} / {inventoryCapacity} lb. carried
+              </span>
             )}
-            <div class={`mt-2 ${cardPlateClass}`}>
-              <div class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Current Wealth</div>
-              <div class="grid grid-cols-5 gap-1 text-center">
-                {coinRows.map((coin) => (
-                  <div>
-                    <div class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">{coin.label}</div>
-                    <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{coin.value}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+          </div>
+        ) : (
+          inventoryRows.length > 0 && (
+            <p class={`mb-2 ${sectionHeadingTrailingClass}`}>
+              {inventoryWeight} / {inventoryCapacity} lb. carried
+            </p>
+          )
         )}
+        {inventoryRows.length > 0 && (
+          <div class={cardPlateClass}>
+            {/* Four columns cannot hold a ~330px card. Weight and State drop
+                out below `@lg` and reappear as a second line under the item
+                name, so the row still carries a name and three figures at every
+                width - which is the whole of ADR-0014's argument. It is a
+                container query because the card is 1230px on a character sheet
+                and 358px in a roster at the same viewport. */}
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  <th class="text-left font-medium pb-1">Item</th>
+                  <th class="text-right font-medium pb-1">Count</th>
+                  <th class="hidden @lg:table-cell text-right font-medium pb-1">Weight</th>
+                  <th class="hidden @lg:table-cell text-left font-medium pb-1">State</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inventoryRows.map((item) => (
+                  <tr class="border-t border-gray-200 dark:border-gray-700">
+                    <td class="py-1 text-gray-700 dark:text-gray-300">
+                      {item.name}
+                      <span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">
+                        {item.weight} &middot; {item.state}
+                      </span>
+                    </td>
+                    <td class="py-1 text-right text-gray-700 dark:text-gray-300">{item.count}</td>
+                    <td class="hidden @lg:table-cell py-1 text-right text-gray-700 dark:text-gray-300">{item.weight}</td>
+                    <td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">{item.state}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        <div class={`mt-2 ${cardPlateClass}`}>
+          <div class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Current Wealth</div>
+          <div class="grid grid-cols-5 gap-1 text-center">
+            {coinRows.map((coin) => (
+              <div>
+                <div class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">{coin.label}</div>
+                <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{coin.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     )}
 
     {showWeapons && (
-      <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-        <SectionHeader title="Equipped Weapons" />
+      <div
+        role={tabbed ? 'tabpanel' : undefined}
+        data-panel="weapons"
+        id={jumping ? sectionId('weapons') : undefined}
+        x-show={tabbed ? "active === 'weapons'" : undefined}
+        x-cloak={tabbed ? true : undefined}
+      >
+        {/* "Equipped Weapons", not "Weapons": the menu entry is the short name,
+            the section is the sheet's own outline, and the distinction is the
+            point of keeping both. */}
+        {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Equipped Weapons</h3>}
         <div class={cardPlateClass}>
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                <th class="text-left font-medium pb-1">ATK</th>
-                <th class="text-left font-medium pb-1">Weapon</th>
-                <th class="text-left font-medium pb-1">Properties</th>
-                <th class="text-right font-medium pb-1">Damage</th>
-              </tr>
-            </thead>
-            <tbody>
+          {/* Same constraint as the inventory table: Properties drops out below
+            `@lg` and rides under the weapon name. The attack bonus stays its own
+            column at every width - it is the column a player reaches for. */}
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  <th class="text-left font-medium pb-1">ATK</th>
+                  <th class="text-left font-medium pb-1">Weapon</th>
+                  <th class="hidden @lg:table-cell text-left font-medium pb-1">Properties</th>
+                  <th class="text-right font-medium pb-1">Damage</th>
+                </tr>
+              </thead>
+              <tbody>
               {weaponRows.map((weapon) => (
                 <tr class="border-t border-gray-200 dark:border-gray-700">
                   <td class="py-1 font-mono font-semibold text-gray-900 dark:text-gray-100">{weapon.attack}</td>
-                  <td class="py-1 text-gray-700 dark:text-gray-300">{weapon.name}</td>
-                  <td class="py-1 text-gray-500 dark:text-gray-400">{weapon.properties}</td>
+                  <td class="py-1 text-gray-700 dark:text-gray-300">
+                    {weapon.name}
+                    {weapon.properties && (
+                      <span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">{weapon.properties}</span>
+                    )}
+                  </td>
+                  <td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">{weapon.properties}</td>
                   <td class="py-1 text-right text-gray-700 dark:text-gray-300">{weapon.damage}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </section>
+      </div>
     )}
 
-    {(showFeatures || showPowers) && (
-      <div class={showFeatures && showPowers ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}>
-        {showFeatures && (
-          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-            <SectionHeader title="Features" />
-            <div class={cardPlateClass}>
-              {featuresByLevel.map((group) => (
+    {showFeatures && (
+      <div
+        role={tabbed ? 'tabpanel' : undefined}
+        data-panel="features"
+        id={jumping ? sectionId('features') : undefined}
+        x-show={tabbed ? "active === 'features'" : undefined}
+        x-cloak={tabbed ? true : undefined}
+      >
+        {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Features</h3>}
+        <div class={cardPlateClass}>
+          {featuresByLevel.map((group) => (
+            <div>
+              {/* `Level N` sits one step below whatever owns it. At medium the
+                  tab names the panel and there is no panel heading, so the card
+                  name owns it and `h3` is correct. At large the Features heading
+                  above owns it, and `h4` is what keeps the outline contiguous -
+                  two `h3`s in a row here would say Features and its first level
+                  group are siblings. */}
+              <LevelHeading class={`${sectionSubheadingClass} mt-3 mb-1`}>Level {group.level}</LevelHeading>
+              <div class="flex flex-wrap gap-2">
+                {group.items.map((feature) => (
+                  <span
+                    class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300"
+                    title={feature.source ? `Source: ${feature.source}` : undefined}
+                  >{feature.name}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {showPowers && (
+      <div
+        role={tabbed ? 'tabpanel' : undefined}
+        data-panel="powers"
+        id={jumping ? sectionId('powers') : undefined}
+        x-show={tabbed ? "active === 'powers'" : undefined}
+        x-cloak={tabbed ? true : undefined}
+      >
+        {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Powers</h3>}
+        <div class={cardPlateClass}>
+          {powersByLevel.map((levelGroup) => (
+            <div>
+              {/* Same level rule as Features, for the same reason. */}
+              <LevelHeading class={`${sectionSubheadingClass} mt-3 mb-1`}>Level {levelGroup.level}</LevelHeading>
+              {levelGroup.groups.map((group) => (
                 <div>
-                  <h4 class={`${sectionSubheadingClass} mt-3 mb-1`}>
-                    Level {group.level}
-                  </h4>
+                  <GroupHeading class={`${sectionGroupClass} mt-2 mb-1`}>{group.name}</GroupHeading>
                   <div class="flex flex-wrap gap-2">
-                    {group.items.map((feature) => (
-                      <span
-                        class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300"
-                        title={feature.source ? `Source: ${feature.source}` : undefined}
-                      >{feature.name}</span>
-                    ))}
+                    {group.items.map((power) => {
+                      const mark = powerMark(power);
+                      return (
+                        <span
+                          class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1"
+                          title={power.group ? `Group: ${power.group}` : undefined}
+                        >
+                          {power.name}
+                          {mark === 'always' && (
+                            <>
+                              <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" aria-hidden="true"></span>
+                              <span class="sr-only">Always prepared (class/subclass)</span>
+                            </>
+                          )}
+                          {mark === 'prepared' && (
+                            <>
+                              <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
+                              <span class="sr-only">Prepared</span>
+                            </>
+                          )}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
             </div>
-          </section>
-        )}
-
-        {showPowers && (
-          <section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
-            <SectionHeader title="Powers" />
-            <div class={cardPlateClass}>
-              {powersByLevel.map((levelGroup) => (
-                <div>
-                  <h4 class={`${sectionSubheadingClass} mt-3 mb-1`}>
-                    Level {levelGroup.level}
-                  </h4>
-                  {levelGroup.groups.map((group) => (
-                    <div>
-                      <h5 class={`${sectionGroupClass} mt-2 mb-1`}>
-                        {group.name}
-                      </h5>
-                      <div class="flex flex-wrap gap-2">
-                        {group.items.map((power) => {
-                          const mark = powerMark(power);
-                          return (
-                            <span
-                              class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300 inline-flex items-center gap-1"
-                              title={power.group ? `Group: ${power.group}` : undefined}
-                            >
-                              {power.name}
-                              {mark === 'always' && (
-                                <>
-                                  <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" aria-hidden="true"></span>
-                                  <span class="sr-only">Always prepared (class/subclass)</span>
-                                </>
-                              )}
-                              {mark === 'prepared' && (
-                                <>
-                                  <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                                  <span class="sr-only">Prepared</span>
-                                </>
-                              )}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
-              {hasPowerMarks && (
-                <div class={`mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 ${sectionLegendClass}`}>
-                  <span class="inline-flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                    Prepared
-                  </span>
-                  <span class="inline-flex items-center gap-1">
-                    <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" aria-hidden="true"></span>
-                    Always prepared (class/subclass)
-                  </span>
-                </div>
-              )}
+          ))}
+          {hasPowerMarks && (
+            <div class={`mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4 ${sectionLegendClass}`}>
+              <span class="inline-flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
+                Prepared
+              </span>
+              <span class="inline-flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full border border-[#c68000]" aria-hidden="true"></span>
+                Always prepared (class/subclass)
+              </span>
             </div>
-          </section>
-        )}
+          )}
+        </div>
       </div>
     )}
   </div>
@@ -688,6 +880,143 @@ const splitSavesGroup =
   [data-theme='dark'] .char-hp-label,
   [data-theme='dark'] .char-hp-temp {
     color: #c7c0be;
+  }
+
+  /* --- The section tab bar ------------------------------------------------
+     It sits on the header's own surface and closes with the same 2px gold rule
+     the header closes with, so the head reads as one band: identity above, the
+     way into the sheet below. Two gold rules stacked would be two accents
+     bracketing one surface, and the second would carry no meaning. */
+  .char-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 2px;
+    /* Zero vertical padding is the point of the bar: it is a menu strip that sits
+       flush against the header above it and the sheet below it, so the band reads
+       as one instrument rather than a control floating between two blocks. */
+    padding: 0 8px;
+    background: #f8f6f5;
+    border-bottom: 2px solid #c9ad6a;
+  }
+  /* Six tabs measure ~560px with their counts, so they fit one line on a
+     character sheet and do not fit in a two-column party roster. The card is
+     its own container, so the switch is a container query rather than a
+     viewport one: the same card is 1230px on a character page and ~400px in the
+     roster, and it is the card, not the window, that has to fit.
+     Wrapping rather than scrolling is the whole decision: a horizontally
+     scrolling strip hides two of six sections behind an edge most readers never
+     find, and at 320px it clips its own last tab. */
+  @container (max-width: 620px) {
+    .char-tabs {
+      flex-wrap: wrap;
+      padding: 0 8px;
+    }
+  }
+  .char-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    /* WCAG 2.5.8. The label is 11px; the target is 44. */
+    min-height: 44px;
+    /* 8px, not 12px: at 12px each item carried 12px of air on both sides and the
+       six labels drifted apart into a loose strip instead of a menu. The 44px
+       target is held by `min-height` and by the bar's own padding, so tightening
+       the horizontal inset costs nothing a thumb needs. */
+    padding: 0 8px;
+    font-family: 'ScalySans', 'Bookinsanity', Georgia, serif;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #605552;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease;
+  }
+  .char-tab-label {
+    white-space: nowrap;
+  }
+  /* The bar is an `<a>` at large and a `<button>` at medium, so the shared
+     properties have to be reset on both rather than inherited from one. */
+  .char-tab {
+    text-decoration: none;
+  }
+  /* No `scroll-margin-top` here on purpose. `html` already carries
+     `scroll-padding-top: 88px`, which clears the 64px sticky site header. A
+     per-section offset would *add* to it rather than replace it and land the
+     section 112px down with a band of empty page above it. The global value is
+     the one that has to clear the header, so it is the only one. */
+  /* Selection is carried by four channels, not by colour alone: aria-selected for
+     assistive tech, the weight step, the gold marker, and the tinted fill. The
+     marker is 2px rather than 1px because it is the same cue the header rule is
+     and at 1px it read as a hairline with no direction. */
+  .char-tab[aria-selected='true'] {
+    font-weight: 600;
+    color: #58180d;
+  }
+  .char-tab[aria-selected='true']::after {
+    content: '';
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 0;
+    height: 2px;
+    background: #58180d;
+  }
+  /* Hover tints sit inside `@media (hover: hover)`: `:hover` sticks after a tap
+     on iOS and never fires for a stylus, so an ungated tint goes stale on
+     exactly the device that needs a different channel. Press feedback is
+     ungated, because `:active` is correct for a mouse held down and for a
+     finger on contact alike. */
+  @media (hover: hover) {
+    .char-tab:hover {
+      background: #f1eceb;
+      color: #2a2010;
+    }
+  }
+  .char-tab:active {
+    background: #f1eceb;
+    color: #2a2010;
+  }
+  /* Bark-black against the Bark 100 band is 14.9:1, and it is never the same
+     value as the control it outlines. */
+  .char-tab:focus-visible {
+    outline: 2px solid #1b1716;
+    outline-offset: -2px;
+  }
+
+  [data-theme='dark'] .char-tabs {
+    background: #2e2421;
+    border-bottom-color: #867347;
+  }
+  [data-theme='dark'] .char-tab {
+    color: #c7c0be;
+  }
+  [data-theme='dark'] .char-tab[aria-selected='true'] {
+    color: #f7860f;
+  }
+  [data-theme='dark'] .char-tab[aria-selected='true']::after {
+    background: #f7860f;
+  }
+  @media (hover: hover) {
+    [data-theme='dark'] .char-tab:hover {
+      background: #3f3632;
+      color: #f1eceb;
+    }
+  }
+  [data-theme='dark'] .char-tab:active {
+    background: #3f3632;
+    color: #f1eceb;
+  }
+  [data-theme='dark'] .char-tab:focus-visible {
+    outline-color: #f8f6f5;
   }
 
   @container (max-width: 400px) {
