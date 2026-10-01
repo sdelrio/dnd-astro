@@ -1,9 +1,94 @@
 import { describe, it, expect } from 'vitest';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const repoRoot = join(__dirname, '../..');
 const readme = readFileSync(join(repoRoot, 'README.md'), 'utf8');
+const adrIndex = readFileSync(join(repoRoot, 'docs/adr/README.md'), 'utf8');
+const configSource = readFileSync(join(repoRoot, 'astro.config.mjs'), 'utf8');
+
+/** The Starlight `sidebar: [...]` block, located by bracket matching. */
+function starlightSidebarBlock() {
+  const start = configSource.indexOf('sidebar: [');
+
+  if (start === -1) {
+    return '';
+  }
+
+  let depth = 0;
+
+  for (let index = configSource.indexOf('[', start); index < configSource.length; index++) {
+    const char = configSource[index];
+
+    if (char === "'" || char === '"') {
+      const close = configSource.indexOf(char, index + 1);
+
+      if (close === -1) {
+        break;
+      }
+
+      index = close;
+    } else if (char === '[') {
+      depth++;
+    } else if (char === ']') {
+      depth--;
+
+      if (depth === 0) {
+        return configSource.slice(start, index + 1);
+      }
+    }
+  }
+
+  return '';
+}
+
+/** Top-level sidebar group labels. A group label is followed by its `items`. */
+function configuredSidebarGroups() {
+  return [...starlightSidebarBlock().matchAll(/label: '([^']+)',\s*items: \[/g)].map(
+    (match) => match[1]
+  );
+}
+
+/** The group names in the one sidebar table the README documents. */
+function documentedSidebarGroups(markdown: string) {
+  const start = markdown.indexOf('sidebar groups are configured');
+  const groups: string[] = [];
+
+  if (start === -1) {
+    return groups;
+  }
+
+  for (const line of markdown.slice(start).split('\n')) {
+    if (!/^\s*\|/.test(line)) {
+      if (groups.length > 0) {
+        break;
+      }
+
+      continue;
+    }
+
+    const cell = line.match(/^\|\s*([^|]+?)\s*\|/)?.[1];
+
+    if (cell !== undefined && cell !== 'Group' && !/^-+$/.test(cell)) {
+      groups.push(cell);
+    }
+  }
+
+  return groups;
+}
+
+/** Decision IDs the index lists, e.g. '0001' ... '0014'. */
+function indexedDecisionIds() {
+  return [...adrIndex.matchAll(/^\| (\d{4}) \|/gm)].map((match) => match[1]);
+}
+
+/** Decision IDs that exist as files, so the index itself cannot go stale. */
+function decisionFileIds() {
+  return readdirSync(join(repoRoot, 'docs/adr'))
+    .map((name) => name.match(/^(\d{4})-/)?.[1])
+    .filter((id): id is string => id !== undefined)
+    .sort();
+}
 
 const adrPaths = {
   icon: 'docs/adr/0001-icon-component.md',
@@ -282,16 +367,43 @@ describe('README', () => {
     expect(rendering).toContain(adrPaths.tableStriping);
   });
 
-  it('documents content authoring, the sidebar groups, and the admonition restriction', () => {
+  it('records a decision range that matches the highest indexed decision', () => {
+    const indexed = indexedDecisionIds();
+    const onDisk = decisionFileIds();
+    const highest = onDisk[onDisk.length - 1];
+
+    expect(indexed.length).toBeGreaterThan(0);
+    expect(indexed).toEqual(onDisk);
+
+    const adrLine = treeEntries(fencedBlock(section('Project structure'))).find(
+      (entry) => entry.path === 'docs/adr/'
+    );
+    const range = adrLine?.line.match(/ADR (\d{4})\s*-\s*(\d{4})/);
+
+    expect(range).not.toBeNull();
+    expect(range?.[1]).toBe(indexed[0]);
+    expect(range?.[2]).toBe(highest);
+  });
+
+  it('documents the sidebar groups that actually exist and the hidden guides page', () => {
     const content = section('Content authoring');
 
     expect(content).toContain('src/content/docs/');
     expect(content).toMatch(/MDX/);
     expect(content).toContain('astro.config.mjs');
 
-    for (const group of ['Guides', 'D&D rule fixes', 'D&D Tools', 'Fantasy Grounds']) {
-      expect(content).toContain(group);
-    }
+    const groups = configuredSidebarGroups();
+    expect(groups.length).toBeGreaterThan(0);
+    expect(documentedSidebarGroups(content)).toEqual(groups);
+    expect(groups).not.toContain('Guides');
+
+    const hiddenPage = 'src/content/docs/guides/xml-card-test.mdx';
+    expect(content).toContain(hiddenPage);
+    expect(existsSync(join(repoRoot, hiddenPage))).toBe(true);
+    expect(readFileSync(join(repoRoot, hiddenPage), 'utf8')).toMatch(/^sidebar:\n\s+hidden: true$/m);
+    expect(starlightSidebarBlock()).not.toContain('guides/');
+
+    expect(content).toMatch(/[Gg]uides group was retired/);
 
     expect(content).toMatch(
       /Admonitions follow the restriction listed under \[Rendering conventions\]\(#rendering-conventions\)/
