@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@alpinejs/intersect':
-        specifier: ^3.17.3
-        version: 3.17.3
       '@astrojs/alpinejs':
         specifier: ^1.0.0
         version: 1.0.0(@types/alpinejs@3.13.11)(alpinejs@3.17.3)
@@ -57,9 +54,6 @@ importers:
       '@types/alpinejs':
         specifier: ^3.13.11
         version: 3.13.11
-      '@types/alpinejs__intersect':
-        specifier: ^3.13.4
-        version: 3.13.4
       '@types/node':
         specifier: ^26.5.1
         version: 26.5.1
@@ -92,9 +86,6 @@ importers:
         version: 5.0.0(@types/node@26.5.1)(happy-dom@20.14.5)(vite@8.2.2(@types/node@26.5.1)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))
 
 packages:
-
-  '@alpinejs/intersect@3.17.3':
-    resolution: {integrity: sha512-uBlcZ5UnEPGVlGCdXHguPgwMiBZJqNA1vrIBvbP6qBjeYJx4nE4YlWQztXBTJgZbU5BtWKo9pGZbzvFOlX+T/Q==}
 
   '@antfu/install-pkg@2.1.0':
     resolution: {integrity: sha512-sdg9NxU3zR4Mnawfbc/x6GB5Wf17WYud5qOuEuxXjaKpYpMkISSJEjItGebXJ2bQ4DIcly4NYH23mtkGJjvKUw==}
@@ -1157,9 +1148,6 @@ packages:
 
   '@types/alpinejs@3.13.11':
     resolution: {integrity: sha512-3KhGkDixCPiLdL3Z/ok1GxHwLxEWqQOKJccgaQL01wc0EVM2tCTaqlC3NIedmxAXkVzt/V6VTM8qPgnOHKJ1MA==}
-
-  '@types/alpinejs__intersect@3.13.4':
-    resolution: {integrity: sha512-yoX6WO7AleeULOQvPz7rrx7FJmu6l033bM7QiGcWyvZjqF2KIut99ByUZO6OWUQuYmbRjxsKthGiUYNaAywHiA==}
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
@@ -3397,8 +3385,6 @@ packages:
 
 snapshots:
 
-  '@alpinejs/intersect@3.17.3': {}
-
   '@antfu/install-pkg@2.1.0':
     dependencies:
       package-manager-detector: 1.8.0
@@ -4289,10 +4275,6 @@ snapshots:
     optional: true
 
   '@types/alpinejs@3.13.11': {}
-
-  '@types/alpinejs__intersect@3.13.4':
-    dependencies:
-      '@types/alpinejs': 3.13.11
 
   '@types/chai@5.2.3':
     dependencies:
