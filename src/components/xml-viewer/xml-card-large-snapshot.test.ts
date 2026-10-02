@@ -97,16 +97,27 @@ const fixtureCharacter: CharacterData = {
   coins: { pp: 0, gp: 57, ep: 0, sp: 28, cp: 92 },
 };
 
+/**
+ * The panels in reading order, then the sections inside the Overview panel.
+ *
+ * The five single-section panels are found by their `data-panel` hook rather than
+ * by a heading, because they have no heading: the tab names them. Overview is the
+ * only panel with sections of its own, so its inner sections are still marked by
+ * their headings.
+ */
 const SECTION_MARKERS: Array<[label: string, marker: string]> = [
-  ['Overview', '>Overview</h3>'],
+  ['Overview', 'data-panel="overview"'],
+  ['Vitals', '>Vitals</h3>'],
+  ['Abilities', '>Abilities</h3>'],
+  ['Passive Skills', '>Passive Skills</h3>'],
   ['Saving Throws', '>Saving Throws</h3>'],
   ['Languages', '>Languages</div>'],
   ['Feats', '>Feats</div>'],
-  ['Skills', '>Skills</h3>'],
-  ['Inventory', '>Inventory</h3>'],
-  ['Equipped Weapons', '>Equipped Weapons</h3>'],
-  ['Features', '>Features</h3>'],
-  ['Powers', '>Powers</h3>'],
+  ['Skills', 'data-panel="skills"'],
+  ['Inventory', 'data-panel="inventory"'],
+  ['Equipped Weapons', 'data-panel="weapons"'],
+  ['Features', 'data-panel="features"'],
+  ['Powers', 'data-panel="powers"'],
 ];
 
 let container: AstroContainer;

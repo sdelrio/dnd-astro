@@ -22,11 +22,38 @@ describe('XmlCard section semantics', () => {
     // `hoverLabelClass` was `opacity-0` until `group-hover`, which hid every
     // label from keyboard focus and from touch entirely.
     expect(source, 'hoverLabelClass still exists').not.toContain('hoverLabelClass');
-    for (const label of ['Overview', 'Vitals', 'Passive Skills', 'Saving Throws']) {
+    // Overview is not here: the menu entry names its panel at both modes, and a
+    // heading repeating that word below the bar would be the same name twice.
+    for (const label of ['Vitals', 'Passive Skills', 'Saving Throws']) {
       expect(source, `${label} is not a heading`).toMatch(
         new RegExp(`<h3[^>]*>${label}</h3>`),
       );
     }
+    expect(source, 'the Overview panel has a heading repeating its menu entry').not.toContain(
+      '>Overview</h3>',
+    );
+    // The five other sections name themselves only at large, where the bar is a
+    // row of identical links with no selection state and the page is one long
+    // scroll. This guard cannot tell the two modes apart from source alone, so it
+    // checks the guard rather than the absence: a bare `<h3>Skills</h3>` with no
+    // `jumping &&` in front of it would repeat the tab at medium, which is the
+    // regression this rule exists to prevent. The rendered per-mode behaviour is
+    // asserted in `xml-card-passives.test.ts`.
+    for (const label of ['Skills', 'Equipped Weapons', 'Features', 'Powers']) {
+      expect(source, `${label} has a heading that is not gated on large`).toMatch(
+        new RegExp(`\\{jumping && <h3[^>]*>${label}</h3>`),
+      );
+    }
+    // Inventory's is inside a flex row rather than a bare h3, because it carries
+    // the carried-weight total on its baseline.
+    expect(source, 'Inventory has an ungated heading').toMatch(
+      /jumping \? \([\s\S]*?<h3 class=\{sectionHeadingClass\}>Inventory<\/h3>/,
+    );
+    // Medium is the mode where the tab is the name, so the headings must not leak
+    // across: the medium branch of each one has to exist and carry no heading.
+    expect(source, 'the medium branch still renders a section heading').not.toMatch(
+      /\) : \([\s\S]{0,80}<h3 class=\{`\$\{sectionHeadingClass\} mb-2`\}>/,
+    );
   });
 
   it('steps the heading levels down from the card name', () => {
@@ -42,10 +69,28 @@ describe('XmlCard section semantics', () => {
     expect(source, 'a section label is still an h2').not.toMatch(
       /<h2 class=\{`\$\{sectionHeadingClass\} mb-2`\}>/,
     );
-    // No level is skipped on the way down.
-    for (const level of [2, 3, 4, 5]) {
-      expect(source, `h${level} is unused`).toMatch(new RegExp(`<h${level}[ >]`));
-    }
+    // No level is skipped on the way down, in either mode. The deepest heading is
+    // now an h5 rather than an h4, because at large a section names itself and its
+    // power groups genuinely nest beneath it: h2 card name, h3 section, h4 Level N,
+    // h5 group. At medium the same groups sit directly under the card name at
+    // h3/h4. Both are contiguous, which is the property being guarded - the h5 is
+    // not a skip, it is a fourth step.
+    expect(source, 'a heading level was skipped on the way down').not.toMatch(/<h6[ >]/);
+    // The four levels are bound in one place, so the tags are literals only there.
+    // A literal h3/h4/h5 elsewhere in the card would mean a level decided outside
+    // the one place that documents why it differs by mode.
+    expect(source, 'h2 is unused').toMatch(/<h2 class="char-name"/);
+    // The card name is a literal h2, so the bound levels start at h3 and run down
+    // to the group name one step below whatever owns it at that mode.
+    expect(source, 'the Level N heading level is not bound').toContain(
+      "jumping ? 'h4' : 'h3'",
+    );
+    expect(source, 'the power group heading level is not bound').toContain(
+      "jumping ? 'h5' : 'h4'",
+    );
+    expect(source, 'the Level N heading is not bound through the shared tag').not.toMatch(
+      /<h3 class=\{`\$\{sectionSubheadingClass\} mt-3 mb-1`\}>/,
+    );
   });
 
   it('does not put conflicting margin utilities in one heading', () => {

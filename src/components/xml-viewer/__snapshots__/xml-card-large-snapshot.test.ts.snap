@@ -22,10 +22,29 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <span class="char-hp-temp">+5 temp</span>
 </div>
 </header>
+<nav class="char-tabs" aria-label="Character sections">
+<a class="char-tab" href="#xmlcard-snapshot-hero-overview" data-tab="overview">
+<span class="char-tab-label">Overview</span>
+</a>
+<a class="char-tab" href="#xmlcard-snapshot-hero-skills" data-tab="skills">
+<span class="char-tab-label">Skills</span>
+</a>
+<a class="char-tab" href="#xmlcard-snapshot-hero-inventory" data-tab="inventory">
+<span class="char-tab-label">Inventory</span>
+</a>
+<a class="char-tab" href="#xmlcard-snapshot-hero-weapons" data-tab="weapons">
+<span class="char-tab-label">Weapons</span>
+</a>
+<a class="char-tab" href="#xmlcard-snapshot-hero-features" data-tab="features">
+<span class="char-tab-label">Features</span>
+</a>
+<a class="char-tab" href="#xmlcard-snapshot-hero-powers" data-tab="powers">
+<span class="char-tab-label">Powers</span>
+</a>
+</nav>
 <div class="p-4 space-y-4">
-<div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4">
+<div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4" data-panel="overview" id="xmlcard-snapshot-hero-overview">
 <section class="relative group/overview">
-<h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Overview</h3>
 <div class="space-y-2">
 <section class="relative group">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Vitals</h3>
@@ -212,8 +231,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </div>
-<div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4">
-<section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+<div data-panel="skills" id="xmlcard-snapshot-hero-skills">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Skills</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
@@ -334,8 +352,8 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </span>Half proficiency</span>
 </div>
 </div>
-</section>
-<section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+</div>
+<div data-panel="inventory" id="xmlcard-snapshot-hero-inventory">
 <div class="flex flex-col gap-1 mb-2 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)">Inventory</h3>
 <span class="text-[0.625rem] uppercase tracking-[0.06em] text-gray-500 dark:text-gray-400">56.0 / 270 lb. carried</span>
@@ -346,34 +364,38 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
 <th class="text-left font-medium pb-1">Item</th>
 <th class="text-right font-medium pb-1">Count</th>
-<th class="text-right font-medium pb-1">Weight</th>
-<th class="text-left font-medium pb-1">State</th>
+<th class="hidden @lg:table-cell text-right font-medium pb-1">Weight</th>
+<th class="hidden @lg:table-cell text-left font-medium pb-1">State</th>
 </tr>
 </thead>
 <tbody>
 <tr class="border-t border-gray-200 dark:border-gray-700">
-<td class="py-1 text-gray-700 dark:text-gray-300">Greatsword</td>
+<td class="py-1 text-gray-700 dark:text-gray-300">Greatsword<span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">6.0 lb. &middot; Equipped</span>
+</td>
 <td class="py-1 text-right text-gray-700 dark:text-gray-300">1</td>
-<td class="py-1 text-right text-gray-700 dark:text-gray-300">6.0 lb.</td>
-<td class="py-1 text-gray-500 dark:text-gray-400">Equipped</td>
+<td class="hidden @lg:table-cell py-1 text-right text-gray-700 dark:text-gray-300">6.0 lb.</td>
+<td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">Equipped</td>
 </tr>
 <tr class="border-t border-gray-200 dark:border-gray-700">
-<td class="py-1 text-gray-700 dark:text-gray-300">Handaxe</td>
+<td class="py-1 text-gray-700 dark:text-gray-300">Handaxe<span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">2.0 lb. &middot; Equipped</span>
+</td>
 <td class="py-1 text-right text-gray-700 dark:text-gray-300">2</td>
-<td class="py-1 text-right text-gray-700 dark:text-gray-300">2.0 lb.</td>
-<td class="py-1 text-gray-500 dark:text-gray-400">Equipped</td>
+<td class="hidden @lg:table-cell py-1 text-right text-gray-700 dark:text-gray-300">2.0 lb.</td>
+<td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">Equipped</td>
 </tr>
 <tr class="border-t border-gray-200 dark:border-gray-700">
-<td class="py-1 text-gray-700 dark:text-gray-300">Scale Mail</td>
+<td class="py-1 text-gray-700 dark:text-gray-300">Scale Mail<span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">45.0 lb. &middot; Equipped</span>
+</td>
 <td class="py-1 text-right text-gray-700 dark:text-gray-300">1</td>
-<td class="py-1 text-right text-gray-700 dark:text-gray-300">45.0 lb.</td>
-<td class="py-1 text-gray-500 dark:text-gray-400">Equipped</td>
+<td class="hidden @lg:table-cell py-1 text-right text-gray-700 dark:text-gray-300">45.0 lb.</td>
+<td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">Equipped</td>
 </tr>
 <tr class="border-t border-gray-200 dark:border-gray-700">
-<td class="py-1 text-gray-700 dark:text-gray-300">Potion of Healing</td>
+<td class="py-1 text-gray-700 dark:text-gray-300">Potion of Healing<span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">0.5 lb. &middot; Carried</span>
+</td>
 <td class="py-1 text-right text-gray-700 dark:text-gray-300">2</td>
-<td class="py-1 text-right text-gray-700 dark:text-gray-300">0.5 lb.</td>
-<td class="py-1 text-gray-500 dark:text-gray-400">Carried</td>
+<td class="hidden @lg:table-cell py-1 text-right text-gray-700 dark:text-gray-300">0.5 lb.</td>
+<td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">Carried</td>
 </tr>
 </tbody>
 </table>
@@ -403,9 +425,8 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </div>
-</section>
 </div>
-<section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+<div data-panel="weapons" id="xmlcard-snapshot-hero-weapons">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Equipped Weapons</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <table class="w-full text-sm">
@@ -413,29 +434,30 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
 <th class="text-left font-medium pb-1">ATK</th>
 <th class="text-left font-medium pb-1">Weapon</th>
-<th class="text-left font-medium pb-1">Properties</th>
+<th class="hidden @lg:table-cell text-left font-medium pb-1">Properties</th>
 <th class="text-right font-medium pb-1">Damage</th>
 </tr>
 </thead>
 <tbody>
 <tr class="border-t border-gray-200 dark:border-gray-700">
 <td class="py-1 font-mono font-semibold text-gray-900 dark:text-gray-100">+6</td>
-<td class="py-1 text-gray-700 dark:text-gray-300">Greatsword</td>
-<td class="py-1 text-gray-500 dark:text-gray-400">reroll 2</td>
+<td class="py-1 text-gray-700 dark:text-gray-300">Greatsword<span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">reroll 2</span>
+</td>
+<td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">reroll 2</td>
 <td class="py-1 text-right text-gray-700 dark:text-gray-300">2d6+4 Slashing</td>
 </tr>
 <tr class="border-t border-gray-200 dark:border-gray-700">
 <td class="py-1 font-mono font-semibold text-gray-900 dark:text-gray-100">+6</td>
-<td class="py-1 text-gray-700 dark:text-gray-300">Handaxe</td>
-<td class="py-1 text-gray-500 dark:text-gray-400">-</td>
+<td class="py-1 text-gray-700 dark:text-gray-300">Handaxe<span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">-</span>
+</td>
+<td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">-</td>
 <td class="py-1 text-right text-gray-700 dark:text-gray-300">d6+4 Slashing</td>
 </tr>
 </tbody>
 </table>
 </div>
-</section>
-<div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4">
-<section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+</div>
+<div data-panel="features" id="xmlcard-snapshot-hero-features">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Features</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div>
@@ -451,8 +473,8 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </div>
-</section>
-<section class="border-t border-gray-100 dark:border-gray-700 pt-4 @6xl:border-t-0 @6xl:pt-0">
+</div>
+<div data-panel="powers" id="xmlcard-snapshot-hero-powers">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Powers</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div>
@@ -494,7 +516,6 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </span>Always prepared (class/subclass)</span>
 </div>
 </div>
-</section>
 </div>
 </div>
 </div>"
