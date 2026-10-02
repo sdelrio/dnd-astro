@@ -910,6 +910,48 @@ describe('XmlCard Overview group', () => {
     expect(await renderCard('medium')).not.toContain('char-tab-count');
   });
 
+  it('leaves every panel visible to a reader without JavaScript', async () => {
+    // `[x-cloak]` is `display: none !important`, so a cloaked panel is invisible
+    // until Alpine boots - and a reader without JavaScript never boots it.
+    // Cloaking all six would render a medium card as a header and nothing else,
+    // which is strictly worse than the one-long-column layout the menu replaced.
+    // The panels opt out with `data-no-cloak`; the bar keeps its cloak, because six
+    // labels that do nothing are worse than no bar at all.
+    const html = await renderCard('medium', {
+      inventory: [{ name: 'Rope', count: 1, weight: 10, carried: 1 }],
+      weapons: [
+        {
+          name: 'Longsword',
+          attackbonus: 0,
+          attackstat: '',
+          properties: '',
+          carried: 2,
+          type: 0,
+          damage: [{ bonus: 0, dice: 'd8', stat: 'base', statmult: 1, type: 'slashing' }],
+        },
+      ],
+      features: [{ level: 1, name: 'Rage', source: 'Barbarian' }],
+      powers: [{ level: 1, name: 'Bless', group: 'Spells', prepared: 0, preparedDomain: 0 }],
+    });
+    expect(html, 'no panel declares the cloak opt-out').toMatch(/data-no-cloak="[^"]+"/);
+    for (const id of ['overview', 'skills', 'inventory', 'weapons', 'features', 'powers']) {
+      const open = html.indexOf(`data-panel="${id}"`);
+      expect(open, `${id} panel is missing from the markup`).toBeGreaterThan(-1);
+      const tag = html.slice(html.lastIndexOf('<div', open), html.indexOf('>', open));
+      expect(tag, `${id} panel is cloaked, so a no-JS reader sees nothing`).not.toContain(
+        'x-cloak',
+      );
+    }
+    const barStart = html.indexOf('role="tablist"');
+    expect(barStart, 'the tab bar is missing').toBeGreaterThan(-1);
+    // The whole opening tag, not a slice ending at `role`: `x-cloak` is declared
+    // after it, so a slice cut at the role would never see it.
+    const barTag = html.slice(html.lastIndexOf('<div', barStart), html.indexOf('>', barStart));
+    expect(barTag, 'the bar is not cloaked, so a no-JS reader gets six dead labels').toContain(
+      'x-cloak',
+    );
+  });
+
   it('gives the overview and saving throws one half each at ultra-wide container widths', async () => {
     // Only the Overview panel still splits. It is the one panel holding two
     // independent groups - what the character is and what they can do - so the

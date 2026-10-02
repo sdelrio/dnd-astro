@@ -3,10 +3,13 @@
 // appears.
 //
 // The order is the reading order of a printed character sheet, not an arbitrary
-// list: identity first, then what a character can do (Skills, Weapons, Features,
-// Powers), then what they carry (Inventory). Overview leads because it is the one
-// panel that is never empty - Vitals and Abilities render for every character - so
-// it is always a valid landing panel.
+// list: identity first, then abilities (Skills), then the two things a character
+// is judged on at the table (Inventory, Weapons), then what they can do (Features,
+// Powers). Inventory sits before Weapons because that is the order every published
+// character sheet uses, and because the reader usually wants to know what a
+// character is carrying before what they are holding. Overview leads because it is
+// the one section that is never empty - Vitals and Abilities render for every
+// character - so it is always a valid landing section.
 //
 // `label` is the tab's own name and may be shorter than the section heading
 // underneath it: the Weapons tab is "Weapons" while the section it opens is
@@ -23,7 +26,3 @@ export const CARD_TABS = [
 ] as const;
 
 export type CardTabId = (typeof CARD_TABS)[number]['id'];
-
-export function cardTabLabel(id: CardTabId): string {
-  return CARD_TABS.find((tab) => tab.id === id)?.label ?? id;
-}

@@ -43,11 +43,17 @@ const RANKS: Record<string, number> = { small: 0, medium: 1, large: 2 };
 function rank(mode: string): number {
   return RANKS[mode] ?? 0;
 }
-// The tab bar's six panels are the display mode's whole content model, so every
-// one of them is reachable at medium and at large. What the display mode still
-// decides is *how much* a panel holds, not whether the panel exists: `allSaves`,
+// The menu's six sections are the display mode's whole content model, so every one
+// of them is reachable at medium and at large. What the display mode still decides
+// is *how much* a section holds, not whether the section exists: `allSaves`,
 // `allSkills`, `passives` and `feats` stay large-only, so a medium card shows the
 // proficient saves and the proficient skills while a large one shows all of them.
+//
+// The four sections promoted to medium here (`weapons`, `inventory`, `features`,
+// `powers`) were large-only before the menu existed. Promoting them is what makes
+// the roster card complete rather than a truncated large card, which is the whole
+// reason the menu is here: a bar over sections a mode cannot see would be a bar
+// with three dead entries. ADR-0016 carries the reasoning.
 const sectionPolicy = {
   avatar: 'small' as const,
   tags: 'small' as const,
@@ -355,6 +361,15 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
       the only thing hiding an inactive panel - the section's markup is
       identical either way, so switching tabs cannot re-style a section, only
       reveal it.
+
+      No `x-cloak` on a panel, deliberately, and `data-no-cloak="no-js-reader-loses-the-card"` marks the opt-out
+      for `tailwind.test.ts`. `[x-cloak]` is `display: none !important`, so a
+      cloaked panel is invisible until Alpine boots - and a reader without
+      JavaScript never boots it. Cloaking all six would render a medium card as a
+      header and nothing else, which is strictly worse than the one-long-column
+      layout this replaced. Without the cloak a no-JS reader gets every panel, in
+      order: the pre-menu layout, intact. The bar keeps its cloak because there
+      the alternative is six labels that do nothing.
     */}
     <div
       class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}
@@ -362,7 +377,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
       data-panel="overview"
       id={jumping ? sectionId('overview') : undefined}
       x-show={tabbed ? "active === 'overview'" : undefined}
-      x-cloak={tabbed ? true : undefined}
+      data-no-cloak="no-js-reader-loses-the-card"
     >
       <section class="relative group/overview">
         {/* No `Overview` heading: the tab names this panel. The sections inside
@@ -493,7 +508,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
         data-panel="skills"
         id={jumping ? sectionId('skills') : undefined}
         x-show={tabbed ? "active === 'skills'" : undefined}
-        x-cloak={tabbed ? true : undefined}
+        data-no-cloak="no-js-reader-loses-the-card"
       >
         {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Skills</h3>}
         <SkillsTable
@@ -509,7 +524,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
         data-panel="inventory"
         id={jumping ? sectionId('inventory') : undefined}
         x-show={tabbed ? "active === 'inventory'" : undefined}
-        x-cloak={tabbed ? true : undefined}
+        data-no-cloak="no-js-reader-loses-the-card"
       >
 {/* The carried-weight total annotates the inventory contents, so it sits with
             them. At large it rides the heading's baseline again - it always did,
@@ -587,7 +602,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
         data-panel="weapons"
         id={jumping ? sectionId('weapons') : undefined}
         x-show={tabbed ? "active === 'weapons'" : undefined}
-        x-cloak={tabbed ? true : undefined}
+        data-no-cloak="no-js-reader-loses-the-card"
       >
         {/* "Equipped Weapons", not "Weapons": the menu entry is the short name,
             the section is the sheet's own outline, and the distinction is the
@@ -632,7 +647,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
         data-panel="features"
         id={jumping ? sectionId('features') : undefined}
         x-show={tabbed ? "active === 'features'" : undefined}
-        x-cloak={tabbed ? true : undefined}
+        data-no-cloak="no-js-reader-loses-the-card"
       >
         {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Features</h3>}
         <div class={cardPlateClass}>
@@ -665,7 +680,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
         data-panel="powers"
         id={jumping ? sectionId('powers') : undefined}
         x-show={tabbed ? "active === 'powers'" : undefined}
-        x-cloak={tabbed ? true : undefined}
+        data-no-cloak="no-js-reader-loses-the-card"
       >
         {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Powers</h3>}
         <div class={cardPlateClass}>
@@ -899,7 +914,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
     background: #f8f6f5;
     border-bottom: 2px solid #c9ad6a;
   }
-  /* Six tabs measure ~560px with their counts, so they fit one line on a
+  /* Six entries measure ~430px, so they fit one line on a
      character sheet and do not fit in a two-column party roster. The card is
      its own container, so the switch is a container query rather than a
      viewport one: the same card is 1230px on a character page and ~400px in the
@@ -910,14 +925,14 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
   @container (max-width: 620px) {
     .char-tabs {
       flex-wrap: wrap;
-      padding: 0 8px;
     }
   }
   .char-tab {
     position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    /* No `gap`: it separated the label from the count, and the counts are gone.
+       The entries' own 8px padding carries the rhythm now. */
     /* WCAG 2.5.8. The label is 11px; the target is 44. */
     min-height: 44px;
     /* 8px, not 12px: at 12px each item carried 12px of air on both sides and the
@@ -925,6 +940,9 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
        target is held by `min-height` and by the bar's own padding, so tightening
        the horizontal inset costs nothing a thumb needs. */
     padding: 0 8px;
+    /* The bar is an `<a>` at large and a `<button>` at medium, so this one
+       property has to be neutralised on both rather than inherited from one. */
+    text-decoration: none;
     font-family: 'ScalySans', 'Bookinsanity', Georgia, serif;
     font-size: 0.6875rem;
     font-weight: 500;
@@ -943,20 +961,20 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
   .char-tab-label {
     white-space: nowrap;
   }
-  /* The bar is an `<a>` at large and a `<button>` at medium, so the shared
-     properties have to be reset on both rather than inherited from one. */
-  .char-tab {
-    text-decoration: none;
-  }
-  /* No `scroll-margin-top` here on purpose. `html` already carries
-     `scroll-padding-top: 88px`, which clears the 64px sticky site header. A
-     per-section offset would *add* to it rather than replace it and land the
-     section 112px down with a band of empty page above it. The global value is
-     the one that has to clear the header, so it is the only one. */
-  /* Selection is carried by four channels, not by colour alone: aria-selected for
-     assistive tech, the weight step, the gold marker, and the tinted fill. The
-     marker is 2px rather than 1px because it is the same cue the header rule is
-     and at 1px it read as a hairline with no direction. */
+  /* No `scroll-margin-top` here on purpose, and it is not an omission. Starlight
+     sets `scroll-padding-top` on `html` in `Page.astro` to `1.5rem` plus the nav
+     and mobile-TOC heights, which is what keeps an anchor target clear of the
+     sticky header. A per-section `scroll-margin-top` would *add* to that rather
+     than replace it: measured, it put every jumped-to section 112px down with a
+     band of empty page above it. The global value is the one that knows the
+     header height, so it is the only one that should be set. */
+  /* Selection is carried by four channels, not by colour alone: `aria-selected` for
+     assistive tech, a weight step from 500 to 600, a colour step from bark-600 to
+     Oxblood, and the 2px marker at the lower edge in that same ink. Three of the
+     four survive a greyscale or a forced-colours rendering; only the colour step
+     does not, and it is never the only one.
+     The marker is 2px rather than 1px because it is the same cue the header rule
+     is and at 1px it read as a hairline with no direction. */
   .char-tab[aria-selected='true'] {
     font-weight: 600;
     color: #58180d;

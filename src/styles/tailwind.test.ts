@@ -305,8 +305,16 @@ describe('x-cloak', () => {
   // Only top-level `x-show` regions can flash. Children of <template x-if> and
   // <template x-for> are inert until Alpine processes them, so they never paint
   // - the template content is removed from the document entirely.
-  it('is applied to every x-show region that is not inside a template', () => {
+  //
+  // An `x-show` region may also opt out where a flash is the cheaper failure.
+  // `XmlCard`'s panels are the case: cloaking them costs a reader without
+  // JavaScript the entire card, because `[x-cloak]` is `display: none
+  // !important` and nothing ever removes it for them. They opt out with
+  // `data-no-cloak` and a comment saying why, so the exemption cannot spread by
+  // accident - an uncommented `data-no-cloak` is itself an offender.
+  it('is applied to every x-show region that is not inside a template or exempt', () => {
     const offenders: string[] = [];
+    const unexplained: string[] = [];
     for (const file of globSync('src/components/**/*.astro')) {
       let source = readFileSync(file, 'utf8');
       // Remove innermost templates first: a non-greedy strip would stop at the
@@ -318,10 +326,24 @@ describe('x-cloak', () => {
         source = next;
       }
       for (const m of source.matchAll(/<div([^>]*\bx-show=[^>]*)>/g)) {
-        if (!/\bx-cloak\b/.test(m[1])) offenders.push(`${file}: ${m[0].slice(0, 70)}`);
+        if (/\bx-cloak\b/.test(m[1])) continue;
+        // The exemption has to carry its reason in its own value, not in a
+        // comment above one of the six sites: five of them are far from any
+        // comment, and a reason that lives elsewhere does not travel with the
+        // attribute. A bare `data-no-cloak` is an offender.
+        const exempt = /\bdata-no-cloak="([^"]*)"/.exec(m[1]);
+        if (exempt) {
+          if (!exempt[1].trim()) unexplained.push(`${file}: ${m[0].slice(0, 70)}`);
+          continue;
+        }
+        offenders.push(`${file}: ${m[0].slice(0, 70)}`);
       }
     }
     expect(offenders, `unguarded x-show: ${offenders.join(' | ')}`).toEqual([]);
+    expect(
+      unexplained,
+      `x-show exempted from x-cloak without stating why: ${unexplained.join(' | ')}`,
+    ).toEqual([]);
   });
 });
 
