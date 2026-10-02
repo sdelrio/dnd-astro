@@ -98,9 +98,11 @@ value of a character sheet.
   by the entry's `min-height`, so tightening the inset costs a thumb nothing.
 - **The bar wraps below 620px of container width; it never scrolls.** A scrolling
   strip hides two of six sections behind an edge most readers never find.
-- **A jumped-to section adds no `scroll-margin-top` of its own.** `html` already
-  carries `scroll-padding-top: 88px` to clear the 64px sticky site header, and a
-  per-section offset stacks on that rather than replacing it.
+- **A jumped-to section adds no `scroll-margin-top` of its own.** Starlight sets
+  `scroll-padding-top` on `html` in `Page.astro` to `1.5rem` plus the nav and
+  mobile-TOC heights, and that is what clears the sticky header. A per-section
+  offset stacks on it rather than replacing it; measured, it pushed every target
+  112px down.
 - **The section heading is the jump target's first visible line**, so a link lands
   the reader on the name rather than on a table with the name scrolled off above it.
 
@@ -130,12 +132,17 @@ at every width.
   one, and the keyboard contract came with it rather than being designed
   separately.
 - Bad, because `medium` is the site's first client-side state inside a component
-  that was previously rendered at build time and hydrating nothing. Every panel is
-  still in the markup, so a reader without JavaScript sees the Overview panel and
-  no bar at all - the `x-cloak` hides the dead controls rather than showing six
-  labels that do nothing, but it cannot restore the other five panels to a no-JS
-  reader. This is the accepted cost of a tab bar over server-rendered content,
-  and it is why the six sections stayed in the DOM rather than being fetched.
+  that was previously rendered at build time and hydrating nothing. A reader
+  without JavaScript gets every panel in the markup, in order, and no bar - the
+  pre-menu layout, intact. That is deliberate: the bar is cloaked so its dead
+  labels stay off the page, but the panels are **not** cloaked, because
+  `[x-cloak]` is `display: none !important` and cloaking them would render a
+  medium card as a header and nothing else. Graceful degradation is worth more
+  here than suppressing a flash of panels on the way to boot.
+- Bad, because a reader with JavaScript sees all six panels for the frame or two
+  between first paint and Alpine booting, where they saw one. The panels are the
+  same server-rendered markup either way, so this is a reveal rather than a
+  fetch, and the alternative - cloaking - costs a no-JS reader the whole card.
 - Bad, because the two pairing grids at `@6xl` (Skills beside Inventory, Features
   beside Powers) are gone. Only the Overview panel still splits, because it alone
   holds two independent groups. A large character sheet is now taller than it
