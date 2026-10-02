@@ -321,6 +321,7 @@ describe('the browser-bound graph (issue #352)', () => {
         { name: 'pointBuyComponent', specifier: '@/components/point-buy/point-buy-component' },
         { name: 'diceRollerComponent', specifier: '@/components/dice-roller/dice-roller-component' },
         { name: 'partyViewComponent', specifier: '@/components/xml-viewer/party-view-component' },
+        { name: 'xmlCardComponent', specifier: '@/components/xml-viewer/xml-card-component' },
         {
           name: 'featExplorerComponent',
           specifier: '@/components/feats-explorer/feat-explorer-component',

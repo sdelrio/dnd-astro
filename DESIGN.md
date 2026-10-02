@@ -386,20 +386,26 @@ Defined once in `ROLE_CONFIG` (`src/components/xml-viewer/party-roster.ts`) and 
 | Utility | `#6b2f4c` | `#b07a94` |
 
 ### Card sections
-The card's subdivisions are headed, not labelled by tooltip or hover. Heading
-levels step down from the card name, which is the `h2` (Starlight supplies the
-page `h1`): sections are `h3`, and the "Level N" groups inside Features and Powers
-are `h4` with the group name at `h5`.
+The card's subdivisions are headed, not labelled by tooltip or hover. The six
+**panels** are named by their tabs and carry no heading of their own; the
+sections *inside* a panel are headed. Heading levels step down from the card name,
+which is the `h2` (Starlight supplies the page `h1`): the inner sections are
+`h3`, and the "Level N" groups inside Features and Powers are `h3` too with the
+power group name at `h4`. They were `h4` and `h5` under a Features and Powers
+`h3` that the tab bar removed; promoting them is what keeps the outline unbroken
+after the panels stopped having headings of their own. See **Character Card**.
 
 One treatment, and it is one class: `sectionHeadingClass` in
 `section-heading.ts`, 0.7rem uppercase semibold with 0.08em tracking in
 `accent-high` - the **Section Label** step, one notch above Pill. Every section
-heading is it - Overview, Vitals, Abilities, Passive Skills, Saving Throws,
-Skills, Inventory, Equipped Weapons, Features and Powers - at every display
-mode. Below a section heading the ramp steps down once, to 0.625rem: the
+heading is it - Vitals, Abilities, Passive Skills and Saving Throws, the four that
+live inside the Overview panel - at every display mode. It is not the treatment
+for the six panels themselves: those are tabs, and the tab label carries the
+Section Label's size and tracking at 11px with the count beside it. Below a
+section heading the ramp steps down once, to 0.625rem: the
 `Level N` groups inside Features and Powers, the power group name beneath them,
-the value on a heading's baseline, and the proficiency and prepared-dot legends.
-Case and weight carry the last step, not size.
+the value annotating a heading's baseline, and the proficiency and prepared-dot
+legends. Case and weight carry the last step, not size.
 
 There used to be two treatments, a micro-label for the dense upper region and a
 1rem `SectionHeader` for the full-width blocks lower down. The `SectionHeader`
@@ -418,12 +424,18 @@ read as one thing at large and another at medium, and a medium reader had no way
 to tell an expertise dot from a proficient one because medium had none. The rule
 is that a display mode may shorten a section, never re-style it: medium lists the
 proficient skills and the proficient saves, large lists all of them, and both
-render the same table.
+render the same table. **A tab switch is not a display mode**, and it does not
+restyle anything either - every panel is server-rendered and hidden with
+`x-show`, so the markup a reader gets is identical whichever tab is open.
 
 The subdivisions are `<section>` elements but are deliberately **unnamed**. A
 `<section>` maps to a `region` landmark only when it has an accessible name, and
 the party page renders six cards - naming them produced "Vitals" as a landmark six
-times over, which is worse than no names. The heading carries the navigation.
+times over, which is worse than no names. The heading carries the navigation. The
+six **panels** are the exception and are named: a `tabpanel` is given an
+`aria-labelledby` pointing at its tab, which is the tab pattern's own wiring and
+not a landmark. `role="tabpanel"` is not a landmark role either way, so six cards
+put six tabpanels on the page and none of them becomes one.
 
 ### Cards / Containers
 - **Corner Style:** 8px (`rounded-lg`).
@@ -581,7 +593,18 @@ head line is the one that survived; the bar and its copy are gone.
   | danger | `#58180d` / `#c2603f` | `#58180d` / `#d98a6b` | `#f7ebe6` / `#3d1f18` |
 
   Every border steps lighter in dark: the dark fills sit close enough to the light-theme border values that the border vanished against them (tip was 1.17:1, danger 1.10:1). `tailwind.test.ts` holds every cell to 3:1 for the border and 4.5:1 for the title.
-- **Character Card:** The largest composition - a container-query card whose sections appear by display mode (small/medium/large), from portrait-plus-vitals up to full skills, inventory, weapons, features, and powers. Display mode selects which sections appear and how many rows they list; it does not select a different design for one. Skills and Saving Throws render the same table card at medium and large, and medium passes only the proficient rows where large passes all of them.
+- **Character Card:** The largest composition - a container-query card whose six sections sit behind a **menu bar**. The bar sits on the header's own surface and closes with the same 2px gold rule the header closes with, so identity and navigation read as one band; the six entries in reading order are Overview, Skills, Inventory, Weapons, Features, Powers. It has **zero vertical padding** and 8px horizontal padding on the bar and on each entry, so it sits flush between header and sheet and reads as a menu strip rather than a control floating between two blocks; the 44px target is held by each entry's `min-height`, so the tight inset costs a thumb nothing. **A menu entry is offered only for a section with something in it** - an entry that opens an empty sheet is worse than a shorter bar - and Overview is unconditional because Vitals and Abilities render for every character. Six entries measure ~560px, so the bar **wraps below 620px of container width rather than scrolling**: a scrolling strip hides two of six sections behind an edge most readers never find. It is a *container* query because the card is 1230px on a character sheet and ~358px in a two-column roster at the same viewport, and it is the card, not the window, that has to fit.
+
+  **The display mode decides what the menu does, not what it holds - the two are different instruments.** At `medium` (the roster) it is a standard `role="tablist"`: roving `tabindex`, one Tab press leaves the bar, the arrows and Home/End move within it, activation follows focus because every panel is already in the DOM, and selection rides four channels, never colour alone - `aria-selected`, a weight step, a 2px Oxblood/Gold Leaf marker at the entry's lower edge, and the tinted fill. Every panel is server-rendered and hidden with `x-show`, so switching reveals rather than fetches. At `large` it is a `<nav>` of `<a href="#...">` and every section is rendered visible, because a full character sheet is already a page-long scroll and hiding five of six sections costs the reader their sense of the whole character. That mode carries no `x-data`, no `x-show` and no `x-cloak`, so **the large sheet needs no JavaScript for its menu** - a fragment identifier is the whole mechanism, and selection states are absent
+because `aria-selected` on a link that hides nothing would be false. A jumped-to
+section adds no `scroll-margin-top` of its own: `html` already carries
+`scroll-padding-top: 88px` for the 64px sticky header, and the two would stack.
+
+  **Whether a section names itself is a heading-level decision, and it differs by display mode.** At `medium` a panel has no heading of its own: the visible tab names it, and an `h3` repeating that word twenty pixels below would be the same name twice - read twice by a screen reader, seen twice by an eye. At `large` every section names itself, in the same `sectionHeadingClass` treatment as Vitals and Saving Throws. The argument that removed the headings is true on the roster and false on a character page: there is no tab, no selection state, and the page is one long scroll, so a section that is only tables and pills arrives unlabelled and the reader cannot tell where they have landed. Inventory's carried-weight total rides its heading's baseline again - the pairing it always had, and the only trailing value on the card.
+
+  **That moves the `Level N` groups down a level, and correctly so.** Under a Features `h3` at large, the level groups are genuinely inside it and sit at `h4`, with a power group name at `h5`; two `h3`s in a row would claim Features and its first level group are siblings. At medium, where no section heading exists, the same groups step straight down from the card name and stay at `h3`/`h4`. The tag is chosen in one place rather than written twice, and `h2 > h3 > h4 > h5` is contiguous in both modes - the deepest heading on a Card is now `h5`, and that is a fourth step rather than a skipped one.
+
+  Display mode selects **how much** a panel holds, never whether the panel exists: medium and large both carry all six tabs, and what differs is that medium passes the proficient saves and the proficient skills where large passes all of them. Skills and Saving Throws render the same table card at both. The card used to pair sections side by side at `@6xl` - Skills beside Inventory, Features beside Powers - and one pairing grid survives, inside the Overview panel, because that panel alone holds two independent groups; a panel holding a single section has nothing to put beside it. Promoting Inventory and Weapons to medium put their four- and three-column tables into a 358px card for the first time, so both **drop a column below `@lg` and carry it as a second line under the name**: Weight and State for inventory, Properties for weapons. The attack bonus stays its own column at every width, because it is the column a player reaches for. That is ADR-0014's argument applied to a table - a row's width is its container's, and it must hold a name and its figures at any width - and it is a container query for the same reason the tab bar's is.
 - **Tool Panel:** The material every D&D tool surface is built from, so the page that opens a tool and the page that lists the tools are made of one surface. There are three instances of it - the **Ledger Panel** (Point Buy), the **Dice Tray Panel** (Dice Roller), and the **Tools Panel** in the rulebook spread, which is the surface `.rb-panel` and the reference both other tools were built against - and they are three instances of one panel, not three designs: same Bark 100 (#f8f6f5) surface stepping to Bark 800 (#2e2421), same 1px Gold Rule (#c9ad6a) border stepping to Gold Rule Dark (#867347), same 8px radius, same card-rest in light and **no shadow** in dark, same 3px accent cap (Oxblood in light, Gold Leaf in dark) as the only accent bar, and the same head built as **the Card Heading's construction**: a printed title in Cinzel at 1.35rem/600 in the theme's heading ink over a meta line in ScalySans at 0.8125rem, uppercase, 0.04em tracked, in Bark 600 (Bark 400 in dark), closed by a **2px Gold Rule at its lower edge**, which steps to Gold Rule Dark. That rule is the reason for the shape: a head banded only by a dotted leader reads as another row of the sheet, while a head closed by a rule at its own lower edge reads as a heading over what it heads. The cap above and the rule below bracket the surface without either carrying colour alone. A tool surface is a themed surface; one that held its paper fixed across both themes was the same object in light and in dark, which is the one outcome a theme toggle exists to prevent. Every value is a `--pb-*`, `--dr-*` or `--rb-*` custom property declared once and re-declared under `:root[data-theme='dark']`, and a test enforces that re-declaration for the first two.
 
   The **Ledger Panel's** body is a ruled leaf of six ability lines. The points readout is **not in the head** - it is in the foot, beside `SPENT`, because a governing number set in a title band reads as a headline rather than as the state of the sheet, and because down there the three figures answer the only three questions asked of a spread: how strong, how much, how much is left. It is `POINTS LEFT`, and it is the **third of three identical entries** - label at the Micro Label step, figure at the Title step (1.25rem Cinzel 600, tabular), one item each, in one row: no leader, no step up, no separate treatment. It reached the same figures by the same dotted leader and at a step of its own through Revision 4, and that made the remainder the loudest object on a surface whose job is six numbers; a leader out to the right only means "look here". When the pool empties the label reads `POOL SPENT`, which is how a finished sheet reads as finished without the figure having to become a status.

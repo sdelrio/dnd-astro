@@ -21,6 +21,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 | 0013 | Split Browser-Safe Data Out of Build-Side Modules, and Import It Type-Only | accepted | 2026-09-26 |
 | 0014 | Tool Abilities Are Ruled Rows, Not Tiles | accepted | 2026-09-27 |
 | 0015 | Deliver the Feat Dataset as a Dynamic Import, Not a Static One | accepted | 2026-10-01 |
+| 0016 | The Character Card's Sections Sit Behind a Menu, Not One Scrolling Column | accepted | 2026-10-01 |
 
 ## About ADRs
 

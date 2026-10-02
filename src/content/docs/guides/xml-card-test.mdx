@@ -105,10 +105,21 @@ Wrap them in a centered container.
 
 ## Display: Medium
 
-Everything from small mode, plus full ability grid, languages, and proficiency
+Everything from small mode, plus the full ability grid, languages, and proficiency
 bonus. Saving Throws and Skills are the same table card the large display uses,
 holding only the proficient saves and the proficient skills. This is the default
 size.
+
+Medium and large carry the **same six sections** - Overview, Skills, Inventory,
+Weapons, Features, Powers - and an entry appears only when the card has something
+to put in it, so a character with no inventory has no Inventory entry. They differ
+in what the bar does, not in what it holds. At medium it is a tab bar: clicking an
+entry opens that section and closes the others. Switching changes nothing about a
+section's design - every panel is rendered on the server and hidden with `x-show`,
+so a switch reveals rather than reloads.
+
+Keyboard: one Tab press enters the bar, the arrow keys and Home/End move between
+tabs, and the selected tab is the bar's only tab stop.
 
 ### Basic Usage
 
@@ -134,11 +145,23 @@ Verify two medium cards display side by side on PC workstation screens.
 
 ## Display: Large
 
-The complete card: portrait (floated right), subclass, feats, features grouped
-by level, powers grouped by level and group, passive skills, the full
-all-skills table, equipped weapons, inventory with current wealth, all six
-saving throws, and the Overview group. The display mode is fixed at build time
-by the `display` prop the mounting page passes; there is no in-card toggle.
+The complete card: the same six sections as medium, with more in each. Subclass and
+deity join the header, feats and passive skills join the Overview panel, the
+all-skills table lists every skill rather than the proficient ones, and all six
+saving throws are shown. The display mode is fixed at build time by the `display`
+prop the mounting page passes; there is no in-card display-mode toggle.
+
+At large the bar **jumps rather than hides**. Every section is rendered visible
+and each entry is an anchor link to it, so the bar is a table of contents for a
+page you are already scrolling, and it works with JavaScript disabled - no
+`x-data`, no `x-show`. Nothing is marked selected, because nothing is hidden.
+
+Each section also carries its own heading here - Skills, Inventory, Equipped
+Weapons, Features, Powers - in the same micro-label style as Vitals and Saving
+Throws. There is no tab naming the open section at this size, so the heading is
+what tells you where you are on a long scroll, and it is what a jump link lands
+on. Medium does not show them: the tab is the name there. Inventory's heading
+carries its carried-weight total on the baseline.
 
 The complete card uses Akinori below; four terse edge-case cards follow for
 what Akinori cannot show.
@@ -147,8 +170,8 @@ what Akinori cannot show.
 
 Akinori covers subclass, feats, powers grouped by level and group, features
 grouped by level, passive skills, the full all-skills table (half proficiency
-on Arcana and Medicine), equipped weapons, inventory and current wealth, all
-six saving throws, and the Overview group.
+on Arcana and Medicine), equipped weapons, inventory and current wealth, and all
+six saving throws.
 
 ```mdx
 <XmlCard character={akinori} display="large" />
@@ -196,20 +219,36 @@ at build time.
 
 <XmlCard character={garaele} image="dontexists.jpg" display="large" />
 
-### Ultra-Wide Layout
+### Section Menu and Responsive Behaviour
 
-On card containers at least 72rem wide (`@6xl`), large cards pair their
-sections into two columns: the Overview group sits beside Saving Throws,
-Languages, and Feats; Skills sits beside Inventory and Current Wealth;
-Equipped Weapons spans the full width; and Features sits beside Powers. On
-containers at least 80rem wide (`@7xl`), the Saving Throws group splits
-again: Saving Throws takes the left half while Languages and Feats stack in
-the right half. That extra split only happens when Languages and Feats hold
-few enough pills to fit, otherwise the group stays in a single column. Below
-72rem the sections stack in a single full-width column. The docs column here
-is narrower than that threshold, so the paired layout never appears on this
-page - open the [Akinori character sheet](/fantasy-grounds/characters/akinori)
-to see it at full width (the portrait on that page links to the same URL).
+**The menu bar** is six entries on the card's own surface, flush against the header
+above and the sheet below. It sits on one line when the card is wide enough for it
+and wraps to two below 620px of *container* width, which is the width of a card in
+the two-column party roster rather than the width of the window. It never scrolls: a
+scrolling strip would hide two of six sections behind an edge most readers never
+find. Each entry's 44px minimum height holds at every width, and the 8px
+horizontal padding is there to keep the labels reading as one band, not to make
+the target small.
+
+**The Overview panel** is the only one that splits: on card containers at least
+72rem wide (`@6xl`) the character sits in the left half and Saving Throws,
+Languages and Feats take the right. On containers at least 80rem wide (`@7xl`),
+that right half splits again - Saving Throws left, Languages and Feats stacked
+right - and only when they hold few enough pills to fit. Every other panel holds
+one section, so there is nothing to put beside it and each is full width.
+
+**The inventory and weapons tables** drop a column on a narrow card. Below `@lg`,
+inventory folds Weight and State into a second line under the item name, and
+weapons folds Properties under the weapon name; the attack bonus and the damage
+column stay their own columns at every width, because those are the columns a
+player reaches for mid-session.
+
+The docs column here is narrower than the `@6xl` threshold, so the paired layout
+never appears on this page - open the
+[Akinori character sheet](/fantasy-grounds/characters/akinori) to see it at full
+width (the portrait on that page links to the same URL). The
+[current party page](/fantasy-grounds/current-party/) is where the narrow card
+shows up: six cards in two columns, each with a wrapped tab bar.
 
 ## Notes
 

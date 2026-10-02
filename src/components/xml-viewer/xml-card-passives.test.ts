@@ -54,19 +54,52 @@ async function renderCard(
   });
 }
 
+/**
+ * The markup of one tab panel, by its `data-panel` hook.
+ *
+ * The card used to be one flat column of `<section>` elements, so each of these
+ * sections could be sliced out by walking back from its heading to the nearest
+ * `<section>` and forward to the next `</section>`. The tab bar made every
+ * section its own panel, so the section is now found by its panel instead: the
+ * old walk still terminates, it just stops at the wrong element and swallows the
+ * panels after it - which is how a passing test can start asserting about the
+ * neighbours. Slicing by panel also matches what the section now *is*: one tab,
+ * one panel, one section.
+ */
+function panel(html: string, id: string): string {
+  const open = html.indexOf(`data-panel="${id}"`);
+  if (open === -1) return '';
+  const start = html.lastIndexOf('<div', open);
+  // Panels nest tables and cards several divs deep, so the closing tag has to be
+  // matched by depth. A first-match `</div>` stops inside the first plate and
+  // the slice comes back truncated.
+  let depth = 0;
+  for (let cursor = start; cursor < html.length; cursor += 1) {
+    const nextOpen = html.indexOf('<div', cursor);
+    const nextClose = html.indexOf('</div>', cursor);
+    if (nextClose === -1) return html.slice(start);
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      depth += 1;
+      cursor = nextOpen + '<div'.length - 1;
+    } else {
+      depth -= 1;
+      cursor = nextClose + '</div>'.length - 1;
+      if (depth === 0) return html.slice(start, cursor + 1);
+    }
+  }
+  return html.slice(start);
+}
+
 function passiveSection(html: string): string {
   const marker = html.indexOf('Passive Skills');
+  if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
   return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
 }
 
 function skillsSection(html: string): string {
-  const marker = html.indexOf('>Skills</h3>');
-  if (marker === -1) return '';
-  const start = html.lastIndexOf('<section', marker);
-  const end = html.indexOf('</section>', marker);
-  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+  return panel(html, 'skills');
 }
 
 function skillRows(section: string): string[] {
@@ -95,11 +128,7 @@ function passiveSubcards(section: string): string[] {
 }
 
 function weaponsSection(html: string): string {
-  const marker = html.indexOf('>Equipped Weapons</h3>');
-  if (marker === -1) return '';
-  const start = html.lastIndexOf('<section', marker);
-  const end = html.indexOf('</section>', marker);
-  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+  return panel(html, 'weapons');
 }
 
 function weaponRows(section: string): string[] {
@@ -107,23 +136,19 @@ function weaponRows(section: string): string[] {
 }
 
 function inventorySection(html: string): string {
-  const marker = html.indexOf('>Inventory</h3>');
-  if (marker === -1) return '';
-  const start = html.lastIndexOf('<section', marker);
-  const end = html.indexOf('</section>', marker);
-  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+  return panel(html, 'inventory');
 }
 
 function inventoryRows(section: string): string[] {
   return section.split('<tr').slice(1);
 }
 
-function inventoryHeadingRow(section: string): string {
-  const heading = section.indexOf('>Inventory</h3>');
-  if (heading === -1) return '';
-  const start = section.lastIndexOf('<div', heading);
-  const end = section.indexOf('</div>', heading);
-  return section.slice(start, end === -1 ? undefined : end + '</div>'.length);
+function featuresSection(html: string): string {
+  return panel(html, 'features');
+}
+
+function powersSection(html: string): string {
+  return panel(html, 'powers');
 }
 
 function savesSection(html: string): string {
@@ -152,22 +177,6 @@ function saveRow(table: string, short: string): string {
   const matches = saveRows(table).filter((row) => row.includes(`>${short}<`));
   expect(matches).toHaveLength(1);
   return matches[0];
-}
-
-function featuresSection(html: string): string {
-  const marker = html.indexOf('>Features</h3>');
-  if (marker === -1) return '';
-  const start = html.lastIndexOf('<section', marker);
-  const end = html.indexOf('</section>', marker);
-  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
-}
-
-function powersSection(html: string): string {
-  const marker = html.indexOf('>Powers</h3>');
-  if (marker === -1) return '';
-  const start = html.lastIndexOf('<section', marker);
-  const end = html.indexOf('</section>', marker);
-  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
 }
 
 function powerPill(section: string, name: string): string {
@@ -513,9 +522,14 @@ describe('XmlCard Equipped Weapons section', () => {
     expect(handaxeRow).toContain('>-<');
   });
 
-  it('hides the section in small and medium modes at build time', async () => {
+  it('renders in medium mode too, since every section is a tab there', async () => {
+    // Weapons was large-only until the tab bar. It is a tab panel now, so the
+    // display mode decides how many columns the table uses and not whether the
+    // table exists: a reader on a phone can reach the same section.
     expect(await renderCard('small', { weapons: [greatsword] })).not.toContain('Equipped Weapons');
-    expect(await renderCard('medium', { weapons: [greatsword] })).not.toContain('Equipped Weapons');
+    expect(weaponsSection(await renderCard('medium', { weapons: [greatsword] }))).toContain(
+      '>Greatsword<'
+    );
   });
 
   it('hides the section when no weapon is equipped', async () => {
@@ -524,17 +538,19 @@ describe('XmlCard Equipped Weapons section', () => {
     expect(await renderCard('large', { weapons: [] })).not.toContain('Equipped Weapons');
   });
 
-  it('places the section after Feats and before Features in large mode', async () => {
+  it('places the panel after Overview and before Features in large mode', async () => {
+    // Tab order is the reading order of a printed character sheet: what the
+    // character is, then what they can do, then what they carry.
     const html = await renderCard('large', {
       feats: ['Alert'],
       weapons: [greatsword],
       features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
     });
-    const feats = html.indexOf('>Feats</div>');
-    const weapons = html.indexOf('>Equipped Weapons</h3>');
-    const features = html.indexOf('>Features</h3>');
-    expect(feats).toBeGreaterThan(-1);
-    expect(weapons).toBeGreaterThan(feats);
+    const overview = html.indexOf('data-panel="overview"');
+    const weapons = html.indexOf('data-panel="weapons"');
+    const features = html.indexOf('data-panel="features"');
+    expect(overview).toBeGreaterThan(-1);
+    expect(weapons).toBeGreaterThan(overview);
     expect(features).toBeGreaterThan(weapons);
   });
 });
@@ -599,22 +615,42 @@ describe('XmlCard Inventory section', () => {
     expect(section).toContain('68.0 / 270 lb. carried');
   });
 
-  it('renders the carried weight on the heading row, right-aligned and baseline-aligned', async () => {
-    const row = inventoryHeadingRow(await renderInventory());
-    expect(row).toContain('>Inventory</h3>');
-    expect(row).toContain('68.0 / 270 lb. carried');
-    expect(row.indexOf('68.0 / 270 lb. carried')).toBeGreaterThan(
-      row.indexOf('>Inventory</h3>')
-    );
-    expect(row).toContain('@md:flex-row');
-    expect(row).toContain('@md:items-baseline');
-    expect(row).toContain('@md:justify-between');
+  it('renders the carried weight on the Inventory heading baseline at large', async () => {
+    // The total annotates the contents, so it sits with them, and at large it
+    // rides the heading's baseline again. It only ever rode it - the tab-name
+    // arrangement removed the heading and nothing replaced the pairing, which
+    // left a heading-shaped gap where a heading should be.
+    const section = await renderInventory();
+    expect(section).toContain('>Inventory</h3>');
+    expect(section).toContain('68.0 / 270 lb. carried');
+    // Same flex row as every other heading-plus-trailing-value pair on the card,
+    // so the total sits on the baseline rather than wrapping under the label.
+    expect(section).toContain('@md:items-baseline');
+    const heading = section.indexOf('>Inventory</h3>');
+    const weight = section.indexOf('68.0 / 270 lb. carried');
+    expect(heading).toBeGreaterThan(-1);
+    expect(weight).toBeGreaterThan(heading);
+    expect(section.indexOf('>Item</th>')).toBeGreaterThan(weight);
   });
 
-  it('leaves the Inventory heading alone when nothing is carried', async () => {
+  it('leaves the Inventory heading to the tab at medium', async () => {
+    // At medium the tab is the name the reader is looking at, so the heading is a
+    // second copy of the same word twenty pixels below it. The total still leads
+    // the section, just without a heading to ride.
+    const html = await renderCard('medium', {
+      abilities: strongAbilities,
+      inventory: alberichInventory,
+      coins: alberichCoins,
+    });
+    const section = inventorySection(html);
+    expect(section).not.toContain('>Inventory</h3>');
+    expect(section).toContain('68.0 / 270 lb. carried');
+  });
+
+  it('omits the carried weight entirely when nothing is carried', async () => {
     const section = await renderInventory({ inventory: [droppedGem] });
-    expect(section).toContain('>Inventory</h3>');
     expect(section).not.toContain('lb. carried');
+    expect(section).toContain('Current Wealth');
   });
 
   it('drops carried 0 items from the table and the weight total', async () => {
@@ -636,13 +672,17 @@ describe('XmlCard Inventory section', () => {
     expect(section).toContain('>92</div>');
   });
 
-  it('hides the section in small and medium modes at build time', async () => {
+  it('renders in medium mode too, since every section is a tab there', async () => {
     expect(
       await renderCard('small', { inventory: alberichInventory, coins: alberichCoins })
     ).not.toContain('Current Wealth');
-    expect(
+    const medium = inventorySection(
       await renderCard('medium', { inventory: alberichInventory, coins: alberichCoins })
-    ).not.toContain('Current Wealth');
+    );
+    expect(medium).toContain('Current Wealth');
+    // The base character's STR is 16, so the capacity is 240 rather than the
+    // 270 the strong-STR fixture above carries. Both are the same assertion.
+    expect(medium).toContain('68.0 / 240 lb. carried');
   });
 
   it('hides the section when nothing is carried and all coins are zero', async () => {
@@ -659,7 +699,7 @@ describe('XmlCard Inventory section', () => {
     expect(section).not.toContain('Sold Gem');
   });
 
-  it('places the section after Skills and before Equipped Weapons in large mode', async () => {
+  it('places the panel after Skills and before Equipped Weapons in large mode', async () => {
     const html = await renderCard('large', {
       abilities: strongAbilities,
       inventory: alberichInventory,
@@ -675,10 +715,10 @@ describe('XmlCard Inventory section', () => {
       }],
       features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
     });
-    const skills = html.indexOf('>Skills</h3>');
-    const inventory = html.indexOf('>Inventory</h3>');
-    const weapons = html.indexOf('>Equipped Weapons</h3>');
-    const features = html.indexOf('>Features</h3>');
+    const skills = html.indexOf('data-panel="skills"');
+    const inventory = html.indexOf('data-panel="inventory"');
+    const weapons = html.indexOf('data-panel="weapons"');
+    const features = html.indexOf('data-panel="features"');
     expect(skills).toBeGreaterThan(-1);
     expect(inventory).toBeGreaterThan(skills);
     expect(weapons).toBeGreaterThan(inventory);
@@ -788,11 +828,11 @@ describe('XmlCard Saving Throws section', () => {
     expect(medium).toContain('font-mono');
   });
 
-  it('stays between Passive Skills and Skills', async () => {
+  it('stays between Passive Skills and the Skills panel', async () => {
     const html = await renderCard('large');
     const passives = html.indexOf('Passive Skills');
     const saves = html.indexOf('>Saving Throws</h3>');
-    const skills = html.indexOf('>Skills</h3>');
+    const skills = html.indexOf('data-panel="skills"');
     expect(passives).toBeGreaterThan(-1);
     expect(saves).toBeGreaterThan(passives);
     expect(skills).toBeGreaterThan(saves);
@@ -800,34 +840,84 @@ describe('XmlCard Saving Throws section', () => {
 });
 
 describe('XmlCard Overview group', () => {
-  it('groups Vitals, Abilities, and Passive Skills under one large-mode label', async () => {
+  it('holds Vitals, Abilities and Passive Skills in the Overview panel', async () => {
+    // The panel is named by its tab, so there is no `Overview` heading to be
+    // above the three sections; what is asserted is that they are inside the
+    // panel and in that order, which is what the group was for.
     const html = await renderCard('large');
-    const overview = html.indexOf('>Overview</h3>');
+    const overview = html.indexOf('data-panel="overview"');
+    const vitals = html.indexOf('>Vitals</h3>');
     const abilities = html.indexOf('>Abilities</h3>');
     const passives = html.indexOf('Passive Skills');
     const saves = html.indexOf('>Saving Throws</h3>');
+    const skills = html.indexOf('data-panel="skills"');
     expect(overview).toBeGreaterThan(-1);
-    expect(abilities).toBeGreaterThan(overview);
+    expect(vitals).toBeGreaterThan(overview);
+    expect(abilities).toBeGreaterThan(vitals);
     expect(passives).toBeGreaterThan(abilities);
     expect(saves).toBeGreaterThan(passives);
+    expect(skills).toBeGreaterThan(saves);
+    expect(html).not.toContain('>Overview</h3>');
   });
 
-  it('omits the Overview label from small and medium cards', async () => {
-    expect(await renderCard('small')).not.toContain('>Overview</h3>');
-    expect(await renderCard('medium')).not.toContain('>Overview</h3>');
-  });
-
-  it('labels the Overview group with an always-visible heading', async () => {
+  it('names the Overview panel through an always-visible menu entry, not a hover label', async () => {
     const html = await renderCard('large');
-    expect(html).toContain('>Overview</h3>');
+    expect(html).toContain('aria-label="Character sections"');
+    expect(html).toContain('data-tab="overview"');
     expect(html).not.toContain('group-has-[section:hover]/overview:opacity-0!');
   });
 
+  it('jumps to sections at large instead of hiding them, and ships no JavaScript for it', async () => {
+    // A full sheet is already a long scroll, so hiding five of six sections behind
+    // a click costs the reader their sense of the whole. At large the bar is a
+    // table of contents: a real `href` to a real `id`, which is why it needs no
+    // `x-data`, no `x-show` and no `x-cloak` to work.
+    const html = await renderCard('large');
+    expect(html).toContain('href="#xmlcard-testhero-overview"');
+    expect(html).toContain('id="xmlcard-testhero-overview"');
+    expect(html).not.toContain('role="tablist"');
+    expect(html).not.toContain('role="tabpanel"');
+    expect(html).not.toContain('x-show');
+    expect(html).not.toContain('x-data');
+    // Every menu entry must point at something that exists, or it is a dead link.
+    for (const href of html.match(/href="#(xmlcard-[^"]+)"/g) ?? []) {
+      const target = href.slice('href="#'.length, -1);
+      expect(html, `${target} is linked but never rendered`).toContain(`id="${target}"`);
+    }
+  });
+
+  it('shows every section at large, so the jump bar replaces rather than adds', async () => {
+    const html = await renderCard('large');
+    expect(html).toContain('data-panel="overview"');
+    expect(html).toContain('data-panel="skills"');
+  });
+
+  it('keeps medium a tablist that shows one section at a time', async () => {
+    // The two modes are different instruments, not two settings of one. Medium
+    // cards compete for a vertical column, so `role="tablist"` and the hidden
+    // panels are correct there and only there.
+    const html = await renderCard('medium');
+    expect(html).toContain('role="tablist"');
+    expect(html).toContain('role="tabpanel"');
+    expect(html).toContain('x-show="active === \'overview\'"');
+    expect(html).not.toContain('<nav class="char-tabs"');
+  });
+
+  it('prints no counts on the menu, in either mode', async () => {
+    // The count was a decision instrument for "is opening this worth the press".
+    // Removed: it sat to the right of the label and broke the menu rhythm.
+    expect(await renderCard('large')).not.toContain('char-tab-count');
+    expect(await renderCard('medium')).not.toContain('char-tab-count');
+  });
+
   it('gives the overview and saving throws one half each at ultra-wide container widths', async () => {
+    // Only the Overview panel still splits. It is the one panel holding two
+    // independent groups - what the character is and what they can do - so the
+    // split earns its place; a panel holding a single section has nothing to
+    // put beside it.
     const html = await renderCard('large');
     expect(html).toContain('grid grid-cols-1 @6xl:grid-cols-2 gap-4');
-    expect(html).toContain('@6xl:border-t-0');
-    expect(html).toContain('@6xl:pt-0');
+    expect(html.split('grid grid-cols-1 @6xl:grid-cols-2 gap-4')).toHaveLength(2);
   });
 
   it('keeps one full-width column when the right-hand stack is empty', async () => {
@@ -862,6 +952,12 @@ describe('XmlCard ultra-wide section pairing', () => {
   const feature = { level: 1, name: 'Second Wind', source: 'Fighter' };
   const power = { level: 1, name: 'Bless', group: 'Cleric', prepared: 1, preparedDomain: 0 };
   const someCoins = { pp: 0, gp: 5, ep: 0, sp: 0, cp: 0 };
+  const noProficiency = Object.fromEntries(
+    Object.entries(baseCharacter.abilities).map(([key, ability]) => [
+      key,
+      { ...ability, saveprof: 0 },
+    ])
+  );
 
   async function renderPaired(): Promise<string> {
     return renderCard('large', {
@@ -879,7 +975,7 @@ describe('XmlCard ultra-wide section pairing', () => {
     const saves = html.indexOf('>Saving Throws</h3>');
     const languages = html.indexOf('>Languages</div>');
     const feats = html.indexOf('>Feats</div>');
-    const skills = html.indexOf('>Skills</h3>');
+    const skills = html.indexOf('data-panel="skills"');
     expect(saves).toBeGreaterThan(-1);
     expect(languages).toBeGreaterThan(saves);
     expect(feats).toBeGreaterThan(languages);
@@ -889,43 +985,47 @@ describe('XmlCard ultra-wide section pairing', () => {
     expect(html).toContain('<div class="space-y-2"><section class="relative group">');
   });
 
-  it('pairs Skills with Inventory and leaves Equipped Weapons full width', async () => {
+  it('gives Skills, Inventory, Weapons, Features and Powers a panel each, in tab order', async () => {
+    // The card used to pair Skills beside Inventory and Features beside Powers at
+    // `@6xl`. With a tab per section there is nothing beside a panel to pair
+    // with, so each is full width and the pairing grids are gone: one remains,
+    // for the Overview panel, which alone holds two independent groups.
     const html = await renderPaired();
-    const skills = html.indexOf('>Skills</h3>');
-    const inventory = html.indexOf('>Inventory</h3>');
-    const wealth = html.indexOf('Current Wealth');
-    const weapons = html.indexOf('>Equipped Weapons</h3>');
-    expect(skills).toBeGreaterThan(-1);
-    expect(inventory).toBeGreaterThan(skills);
-    expect(wealth).toBeGreaterThan(inventory);
-    expect(weapons).toBeGreaterThan(wealth);
+    const order = ['overview', 'skills', 'inventory', 'weapons', 'features', 'powers'].map(
+      (id) => html.indexOf(`data-panel="${id}"`)
+    );
+    expect(order.every((at) => at > -1)).toBe(true);
+    expect(order).toEqual([...order].sort((a, b) => a - b));
+    expect(pairingGridCount(html)).toBe(1);
   });
 
-  it('pairs Features with Powers', async () => {
-    const html = await renderPaired();
-    const features = html.indexOf('>Features</h3>');
-    const powers = html.indexOf('>Powers</h3>');
-    expect(features).toBeGreaterThan(-1);
-    expect(powers).toBeGreaterThan(features);
+  it('drops the pairing grid at medium when nothing sits beside the overview', async () => {
+    // The only pairing left is inside the Overview panel, and its right-hand
+    // stack is Saving Throws, Languages and Feats. Medium can reach none of
+    // them for a character with no proficiency and no languages, so the panel
+    // falls to a single column rather than reserving half its width for nothing.
+    const noRight = await renderCard('medium', {
+      abilities: noProficiency,
+      languages: [],
+      feats: [],
+    });
+    expect(noRight).not.toContain('Saving Throws');
+    expect(pairingGridCount(noRight)).toBe(0);
   });
 
-  it('renders three ultra-wide pairing grids for a full large card', async () => {
-    expect(pairingGridCount(await renderPaired())).toBe(3);
-  });
-
-  it('drops the pairing grid when the right-hand section is absent', async () => {
-    const noRight = await renderCard('large', {
+  it('drops a panel entirely when the section has nothing in it', async () => {
+    // The Inventory and Powers panels are absent here, and the tab bar does not
+    // offer tabs for them: a tab that opens an empty sheet is worse than one
+    // fewer tab.
+    const html = await renderCard('large', {
       inventory: [],
       coins: { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 },
       powers: [],
     });
-    expect(pairingGridCount(noRight)).toBe(1);
-  });
-
-  it('gives the major sections a borderless top at ultra-wide widths', async () => {
-    const html = await renderPaired();
-    const borderless = 'pt-4 @6xl:border-t-0 @6xl:pt-0';
-    expect(html.split(borderless).length - 1).toBe(5);
+    expect(html).not.toContain('data-panel="inventory"');
+    expect(html).not.toContain('data-panel="powers"');
+    expect(html).not.toContain('data-tab="inventory"');
+    expect(html).not.toContain('data-tab="powers"');
   });
 });
 
@@ -1063,21 +1163,35 @@ describe('XmlCard Features pills card', () => {
     return section.slice(start, marker + `>${name}</span>`.length);
   }
 
-  it('wraps the Features content in one accent card below the heading', async () => {
+  it('wraps the Features content in one accent card under a heading at large', async () => {
+    // At large the panel names itself: the bar is a row of identical-looking links
+    // with no selection state, so a section that is only pills and no heading gives
+    // the reader no way to tell where they have landed on a page-long scroll.
     const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
     expect(section).toContain('>Features</h3>');
     expect(section).toContain('border-t-[3px]');
     expect(section).toContain('border-t-[#58180d]');
     expect(section).toContain('border border-gray-300');
     expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
-    const headingIndex = section.indexOf('>Features</h3>');
-    const cardIndex = section.indexOf('rounded-[7px]');
-    expect(cardIndex).toBeGreaterThan(headingIndex);
+    // The heading leads and the card follows it, rather than the card being the
+    // panel's first element because there was no heading.
+    expect(section.indexOf('>Features</h3>')).toBeGreaterThan(section.indexOf('data-panel="features"'));
+    expect(section.indexOf('rounded-[7px]')).toBeGreaterThan(section.indexOf('>Features</h3>'));
+  });
+
+  it('leaves the Features heading to the tab at medium', async () => {
+    const section = featuresSection(await renderCard('medium', { features: sampleFeatures }));
+    expect(section).not.toContain('>Features</h3>');
+    // No panel heading means the level groups step straight down from the card
+    // name instead of nesting under one.
+    expect(section).toContain('>Level 1</h3>');
   });
 
   it('renders every feature as a Languages/Feats-style pill inside the card', async () => {
     const section = featuresSection(await renderCard('large', { features: sampleFeatures }));
     const card = featureCard(section);
+    // `Level N` is an h4 at large: the Features heading owns it, and two h3s in a
+    // row here would claim Features and its first level group are siblings.
     expect(card).toContain('>Level 1</h4>');
     expect(card).toContain('>Level 2</h4>');
     for (const feature of sampleFeatures) {
@@ -1128,9 +1242,11 @@ describe('XmlCard Features pills card', () => {
     }
   });
 
-  it('hides the section in small and medium modes at build time', async () => {
+  it('renders in medium mode too, since every section is a tab there', async () => {
     expect(await renderCard('small', { features: sampleFeatures })).not.toContain('Features');
-    expect(await renderCard('medium', { features: sampleFeatures })).not.toContain('Features');
+    expect(featuresSection(await renderCard('medium', { features: sampleFeatures }))).toContain(
+      '>Second Wind</span>'
+    );
   });
 });
 
@@ -1197,7 +1313,8 @@ describe('XmlCard Powers pills card', () => {
     return section.slice(section.indexOf('rounded-[7px]'));
   }
 
-  it('wraps the Powers content in one accent card below the heading', async () => {
+  it('wraps the Powers content in one accent card under a heading at large', async () => {
+    // At large the panel names itself, for the same reason Features does.
     const section = powersSection(
       await renderCard('large', { powers: [preparedSpell, nonSpell] })
     );
@@ -1206,14 +1323,24 @@ describe('XmlCard Powers pills card', () => {
     expect(section).toContain('border-t-[#58180d]');
     expect(section).toContain('border border-gray-300');
     expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
-    const headingIndex = section.indexOf('>Powers</h3>');
-    const cardIndex = section.indexOf('rounded-[7px]');
-    expect(cardIndex).toBeGreaterThan(headingIndex);
+    expect(section.indexOf('rounded-[7px]')).toBeGreaterThan(section.indexOf('>Powers</h3>'));
     const card = powersCard(section);
+    // Powers nests one level deeper than Features: a `Level N`, then the group
+    // name inside it. Both step down from the new Powers heading.
     expect(card).toContain('>Level 3</h4>');
     expect(card).toContain('>Spells</h5>');
     expect(card).toContain('>Bless<');
     expect(card).toContain('flex flex-wrap gap-2');
+  });
+
+  it('leaves the Powers heading to the tab at medium', async () => {
+    const section = powersSection(
+      await renderCard('medium', { powers: [preparedSpell, nonSpell] })
+    );
+    expect(section).not.toContain('>Powers</h3>');
+    const card = powersCard(section);
+    expect(card).toContain('>Level 3</h3>');
+    expect(card).toContain('>Spells</h4>');
   });
 
   it('renders every power as a Languages/Feats-style pill with no disclosure', async () => {
@@ -1242,6 +1369,8 @@ describe('XmlCard Powers pills card', () => {
   });
 
   it('renders an empty-group power under the Other fallback heading', async () => {
+    // `Other` is a group name inside a `Level N`, so it follows both down a step
+    // from the Powers heading at large.
     const section = powersSection(await renderCard('large', { powers: [ungrouped] }));
     expect(section).toContain('>Other</h5>');
   });
@@ -1260,16 +1389,19 @@ describe('XmlCard Powers pills card', () => {
     expect(powerPillNames(section)).toEqual(['Yankee', 'Alpha', 'Zulu', 'Bravo']);
   });
 
-  it('leaves no expand/collapse affordance or Alpine state anywhere in the card', async () => {
+  it('leaves no expand/collapse affordance inside the Powers card', async () => {
+    // The card itself carries Alpine state now - the tab bar is one component -
+    // so this asserts on the Powers panel's own contents rather than the whole
+    // card. What it is protecting is that a power pill stays a pill: no
+    // disclosure, no nested expansion, nothing to open inside the section.
     const html = await renderCard('large', { powers: [preparedSpell, nonSpell] });
     const card = powersCard(powersSection(html));
     for (const marker of forbidden) {
       expect(card).not.toContain(marker);
     }
-    expect(html).not.toContain('expandedSections');
-    expect(html).not.toContain('toggleSection');
-    expect(html).not.toContain('isExpanded');
-    expect(html).not.toContain('x-data');
+    for (const stale of ['expandedSections', 'toggleSection', 'isExpanded']) {
+      expect(html).not.toContain(stale);
+    }
   });
 
   it('marks a prepared spell with a filled gold dot and a Prepared text alternative', async () => {
@@ -1336,9 +1468,11 @@ describe('XmlCard Powers pills card', () => {
     expect(noMarks).not.toContain('Always prepared (class/subclass)');
   });
 
-  it('hides the section in small and medium modes at build time', async () => {
+  it('renders in medium mode too, since every section is a tab there', async () => {
     expect(await renderCard('small', { powers: [preparedSpell] })).not.toContain('Powers');
-    expect(await renderCard('medium', { powers: [preparedSpell] })).not.toContain('Powers');
+    expect(powersSection(await renderCard('medium', { powers: [preparedSpell] }))).toContain(
+      '>Bless<'
+    );
   });
 });
 
