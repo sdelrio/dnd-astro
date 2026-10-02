@@ -43,7 +43,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </a>
 </nav>
 <div class="p-4 space-y-4">
-<div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4" data-panel="overview" id="xmlcard-snapshot-hero-overview">
+<div class="grid grid-cols-1 @6xl:grid-cols-2 gap-4" data-panel="overview" id="xmlcard-snapshot-hero-overview" data-no-cloak="no-js-reader-loses-the-card">
 <section class="relative group/overview">
 <div class="space-y-2">
 <section class="relative group">
@@ -231,7 +231,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </div>
-<div data-panel="skills" id="xmlcard-snapshot-hero-skills">
+<div data-panel="skills" id="xmlcard-snapshot-hero-skills" data-no-cloak="no-js-reader-loses-the-card">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Skills</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div class="grid grid-cols-1 @lg:grid-cols-2 gap-2">
@@ -353,7 +353,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </div>
-<div data-panel="inventory" id="xmlcard-snapshot-hero-inventory">
+<div data-panel="inventory" id="xmlcard-snapshot-hero-inventory" data-no-cloak="no-js-reader-loses-the-card">
 <div class="flex flex-col gap-1 mb-2 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)">Inventory</h3>
 <span class="text-[0.625rem] uppercase tracking-[0.06em] text-gray-500 dark:text-gray-400">56.0 / 270 lb. carried</span>
@@ -426,7 +426,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </div>
-<div data-panel="weapons" id="xmlcard-snapshot-hero-weapons">
+<div data-panel="weapons" id="xmlcard-snapshot-hero-weapons" data-no-cloak="no-js-reader-loses-the-card">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Equipped Weapons</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <table class="w-full text-sm">
@@ -457,7 +457,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </table>
 </div>
 </div>
-<div data-panel="features" id="xmlcard-snapshot-hero-features">
+<div data-panel="features" id="xmlcard-snapshot-hero-features" data-no-cloak="no-js-reader-loses-the-card">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Features</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div>
@@ -474,7 +474,7 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </div>
-<div data-panel="powers" id="xmlcard-snapshot-hero-powers">
+<div data-panel="powers" id="xmlcard-snapshot-hero-powers" data-no-cloak="no-js-reader-loses-the-card">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Powers</h3>
 <div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div>
