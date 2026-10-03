@@ -21,7 +21,7 @@ IMPECCABLE_SKILLS_opencode := .opencode/skills
 IMPECCABLE_SKILLS_claude   := .claude/skills
 IMPECCABLE_SKILLS          := $(IMPECCABLE_SKILLS_$(IMPECCABLE_PROVIDER))
 
-.PHONY: help test lint typecheck build check capture measure upgrade \
+.PHONY: help test lint typecheck build check capture measure handbook upgrade \
         submodule-init submodule-update submodule-link
 
 # The design review capture command. See ADR-0012.
@@ -30,6 +30,10 @@ CAPTURE := node .opencode/lib/design-review/capture.mjs
 # The rendered-verification command: overflow, contrast, tap, pointer.
 # Pass the subcommand and its flags: make measure ARGS='tap --selector ...'
 MEASURE := node .opencode/lib/design-review/measure.mjs
+
+# The printed handbook: the eight house-rule pages as one A4 vector PDF, one
+# fixed-size sheet per page. See ADR-0020.
+HANDBOOK := node .opencode/lib/design-review/handbook.mjs
 
 help:
 	@printf "\n"
@@ -41,6 +45,10 @@ help:
 	@printf "  $(GREEN)make typecheck$(RESET)  🔍  Astro diagnostics (noninteractive)\n"
 	@printf "  $(GREEN)make test$(RESET)       🧪  Vitest unit tests\n"
 	@printf "  $(GREEN)make build$(RESET)      🏗️  Production build to ./dist/\n"
+	@printf "\n"
+	@printf "$(MAGENTA)Print$(RESET)\n"
+	@printf "  $(GREEN)make handbook$(RESET)  📕  Print the eight house-rule pages into one A4 PDF of fixed-size sheets\n"
+	@printf "$(DIM)                     ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tmp/spike.pdf'$(RESET)\n"
 	@printf "\n"
 	@printf "$(MAGENTA)Design review$(RESET)\n"
 	@printf "  $(GREEN)make capture$(RESET)    📸  Write desktop.png (1440) and mobile.png (390) for review\n"
@@ -87,6 +95,13 @@ capture:
 # docs/audits/2026-09-26-rendered-verification-report.md.
 measure:
 	$(MEASURE) $(ARGS)
+
+# Writes one A4 vector PDF of the eight dnd/ house-rule pages, one sheet per
+# page, and refuses to write a file that does not read back as the document the
+# layout produced. Needs the dev server; pass ARGS='--start-dev-server' to let it
+# start and stop the documented one.
+handbook:
+	$(HANDBOOK) $(ARGS)
 
 upgrade:
 	pnpm dlx @astrojs/upgrade

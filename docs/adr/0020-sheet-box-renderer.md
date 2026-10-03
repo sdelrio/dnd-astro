@@ -1,5 +1,5 @@
 ---
-status: proposed
+status: accepted
 date: 2026-10-03
 supersedes: null
 superseded_by: null
@@ -88,18 +88,15 @@ the first without anything failing.
 ## Decision Outcome
 
 **The handbook is rendered by one page route that lays its content out into
-fixed-size sheet boxes, and printed by extending ADR-0012's browser stack with a
-new command that drives it. The route is emitted through the screen-media
-cascade; page geometry comes from explicit fixed-size boxes and a break after
-each, not from print media.**
+sheet boxes, and printed by extending ADR-0012's browser stack with a new
+command that drives it. The route is emitted through the screen-media cascade;
+page geometry comes from explicit boxes and a break after each, not from print
+media.**
 
-Status is `proposed` rather than `accepted` for one reason, and it is a real one:
-the pagination assumption is unproven. Before any real content is rendered, the
-first ticket runs a two-sheet fixture and reads back the actual page count and the
-actual sheet boxes from the written PDF. If page-size and break rules do not
-paginate reliably while the page is emulated as screen media, this decision is
-wrong in its central mechanism and is rewritten rather than patched. **The spike
-result is recorded in this ADR and the status moves to `accepted` when it passes.**
+This started `proposed` because the pagination assumption was unproven, and it is
+now `accepted` because the spike ran and is recorded below. The spike answered
+its question in the affirmative and also broke one clause of the mechanism, which
+is why the sheet box is a `min-height` box rather than a fixed-height one.
 
 ### Geometry
 
@@ -112,24 +109,71 @@ Stated once, in one place, as the numbers every later ticket inherits:
 | Sheet box | 643 x 972 CSS px |
 | Columns (default) | 2, each 306px, 30px gutter |
 
-The sheet box is the exact size of the page content area. It is a fixed-height
-box with a break after it, which is what makes a page boundary a property of the
-DOM rather than a hope about the renderer.
+The sheet box is the exact size of the page content area: A4 less the margins is
+642.5 x 971.3 CSS px, rounded up to whole pixels, because a sheet one pixel short
+would clip the last line of a rule.
 
-### The spike this decision rests on
+It is a `min-height` box with a break after it, and the spike is why that is not
+written as `height`. A page boundary is still a property of the DOM rather than a
+hope about the renderer, and a source page that fits is still exactly one page. A
+source page that does not fit spans the pages it needs; splitting it into named
+sheets is the later ticket's job.
 
-The open question is narrow and it is the reason the status is `proposed`:
+### The spike, and what it measured
+
+The question this decision rested on was narrow:
 
 > Do page-size and break rules still paginate when the page is emulated as screen
 > media rather than print media?
 
-It matters more than it looks, because of a fact about this specific site.
-Starlight's own print stylesheet re-declares the site's colour ramp to a cool blue
-at hue 224. The warm bark ramp survives today only because the site's own
-stylesheet loads later in the cascade. If the handbook had to be rendered under
-print media, that cascade ordering becomes load-bearing in a second place, and it
-would be discovered at the end of the work rather than at the start. The spike is
-where it gets discovered.
+**Yes.** The two-sheet fixture at `/handbook/spike-fixture/` printed two pages,
+one per sheet, read back out of the written file: PDF magic `%PDF-1.4`, a `%%EOF`
+trailer, two `/Type /Page` objects, a `/Count 2` page tree, and a page box of
+`[0 0 594.95996 841.91998]` - A4 as Chrome writes it. The sheet boxes measured
+643 x 972 CSS px in the rendered page, which is A4 less the margins rounded up.
+The forced break after each sheet paginated, the trailing break was suppressed on
+the last sheet, and no blank page appeared at the end. Screen-media emulation
+loses nothing that print media was providing, so Starlight's print stylesheet is
+never in play and the cascade ordering it would have made load-bearing is not.
+
+The colour question the spike existed to protect is settled by measurement too.
+Under screen emulation the site stylesheet's own ramp is what is on the page:
+`--sl-color-gray-6` computes to `#f1eceb`, the bark step, and not to the
+`hsl(224, 20%, 94%)` Starlight's print stylesheet would have declared.
+
+**What the spike broke.** The decision as proposed said the sheet box would be a
+fixed-height box. It is not, because a fixed height does not paginate its own
+overflow, and the failure is silent and out of order. Measured on a two-sheet
+fixture where the first source page was 3122px and the second 86px: the first
+sheet's content past its box landed on the pages after it, but the *second*
+sheet's box was placed at the end of the first one's border box, so the second
+sheet printed in the middle of the first one's spill. Paragraph 43, then sheet
+two's heading, then paragraph 44. Both sheets were in the file and neither was
+readable.
+
+`min-height` fixes it and costs the mechanism nothing: a source page that fits is
+still exactly one page, and one that does not fit spans the pages it needs with
+the next source page still starting on a fresh sheet. The mechanism is rewritten
+here rather than patched because it was wrong in its central claim, which is what
+`proposed` status was for.
+
+**What else the spike measured, and the ticket recorded:**
+
+- The print fragmentainer holds 972 CSS px of document per page plus a fraction.
+  A fixture of exactly 1944px printed two pages; the same fixture one pixel taller
+  printed three. The page count a run checks is therefore a floor and a ceiling
+  rather than an exact total: the floor is one page per source page, which is what
+  catches a lost or shared sheet, and the ceiling is the arithmetic of the measured
+  extents, which catches a document that grew.
+- Chrome writes A4 as 594.96 x 841.92pt, which is 0.32pt off the exact 595.28 x
+  841.89. The validator's one-point tolerance is what lets a correct file pass, and
+  the measured value is in the test rather than the nominal one.
+- The display face is a variable font, so Chrome writes it as a Type3 font whose
+  glyphs are vector procedures with a `ToUnicode` map. The body face is a
+  `CIDFontType2` with an embedded `FontFile2`. Text is selectable and searchable in
+  both: the headings and the body of the fixture both extract as their own words.
+- The dev toolbar hides itself with `@media print`, which screen-media emulation
+  does not apply, so the print stylesheet hides it outright.
 
 ### What is settled regardless of the spike
 
@@ -155,18 +199,19 @@ accepted ADRs intact:
   Starting one is an explicit opt-in flag that shells out to that same command.
 - **Every written file is staged and renamed, and read back.** A file that is
   absent, empty, truncated or the wrong length is a failure, not a warning, and
-  validation covers the PDF magic, the end-of-file trailer and the real page
-  count rather than trusting that the write landed.
+  validation covers the PDF magic, the end-of-file trailer, the page box and the
+  real page count rather than trusting that the write landed.
 - **The PNG and the PDF come from the same stylesheet and the same DOM.** One
   stylesheet serves both, which is what makes a PNG evidence about the PDF rather
   than a second opinion. The later per-sheet PNGs are a corollary of this and
   nothing else.
 
-### What the spike result will settle
+### What the spike result settled
 
-Recorded here when it lands, and this section is the reason the file is not
-`accepted`: whether the route is emulated as screen media, or whether print media
-is required and the cascade ordering above is accepted as load-bearing.
+Recorded above: the route is emitted as screen media, not print media, and the
+cascade ordering between Starlight's stylesheet and the site's own is not
+load-bearing in a second place. The sheet box is a `min-height` box. The page
+count is checked as bounds, not as an exact total.
 
 ## Consequences
 
@@ -183,10 +228,17 @@ is required and the cascade ordering above is accepted as load-bearing.
 - Good, because the handbook is a rendering of the house rules rather than a second
   statement of them. A rule edited on the site and regenerated reaches the artifact,
   and the manifest is what makes a missed regeneration fail.
-- Bad, because the central mechanism is unproven. Page-size and break behaviour
-  under screen-media emulation is exactly the kind of thing that works on a
-  two-sheet fixture and misbehaves at forty, and the status being `proposed` says
-  so in the one document an implementer is obliged to read.
+- Good, because the spike found the one clause of this mechanism that was wrong
+  before a single house rule was printed into the artifact. A fixed-height sheet
+  box prints the following sheet inside the previous sheet's overflow, and nothing
+  about that is visible in the file's structure: both sheets are in the PDF and the
+  page count is plausible.
+- Bad, because the exact page count cannot be predicted from the page's own
+  geometry, so the check is a floor and a ceiling. The print fragmentainer's
+  capacity is fractional and a print layout can be a little shorter than its screen
+  measurement, so a run knows how many pages there must be and how many there can
+  be, and not the number in between. The split report replaces that with exact
+  per-sheet counts.
 - Bad, because the artifact is a committed binary in a repository that is
   otherwise text. That is the deliberate trade: a downloadable handbook has to be
   in the tree for the publisher page to link to something stable, and the
@@ -210,3 +262,6 @@ is required and the cascade ordering above is accepted as load-bearing.
 - [ADR-0011](0011-headless-browser-mcp-server.md) - the manifest boundary and the browser boundary this decision keeps intact
 - [ADR-0012](0012-dependency-free-cdp-capture-client.md) - the client, browser-resolution order, font gate and dev-server boundary this decision reuses rather than duplicates
 - [ADR-0019](0019-self-host-cinzel.md) - the deterministic display face the font gate depends on
+- Issue #420: this decision's spike, the generator command and the print route
+- `src/pages/handbook/spike-fixture.astro`: the two-sheet fixture the spike ran
+  against, kept as the regression that the mechanism still paginates

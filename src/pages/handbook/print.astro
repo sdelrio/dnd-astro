@@ -1,0 +1,47 @@
+---
+/**
+ * The Handbook's print route: the eight house-rule pages, in sidebar order, as
+ * one inert document.
+ *
+ * The route renders content and nothing else. There is no sidebar, no table of
+ * contents and no navigation, because a printed sheet is the rule and nothing
+ * else; there is no client-side JavaScript, because the artifact must not be a
+ * page a reader could run code on; and the sheets themselves are not marked
+ * here. The section below is a *source page*, and the command turns source
+ * pages into sheets at document start, so the committed route is HTML that
+ * does nothing on its own.
+ *
+ * See ADR-0020 and `make handbook`.
+ */
+import { getCollection, render } from 'astro:content';
+
+import PrintDocument from '../../layouts/PrintDocument.astro';
+import { handbookSourcePages } from '../../utils/handbook';
+
+const entries = await getCollection('docs');
+const bySlug = new Map(entries.map((entry) => [entry.id, entry]));
+
+const sourcePages = await Promise.all(
+  handbookSourcePages(entries).map(async (source) => {
+    const entry = bySlug.get(source.slug);
+
+    // The ids come from the same collection a moment ago, so this cannot happen
+    // - and if it somehow does, a Handbook missing a house rule silently is
+    // worse than a build that says which one.
+    if (!entry) throw new Error(`No docs entry for ${source.slug}, so the Handbook cannot print it.`);
+
+    return { ...source, ...(await render(entry)) };
+  })
+);
+---
+
+<PrintDocument title="D&D House Rules">
+  {
+    sourcePages.map(({ slug, title, Content }) => (
+      <section class="sl-markdown-content" data-handbook-source={slug} data-handbook-title={title}>
+        <h1>{title}</h1>
+        <Content />
+      </section>
+    ))
+  }
+</PrintDocument>
