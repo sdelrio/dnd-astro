@@ -30,17 +30,27 @@ const sourcePages = await Promise.all(
     // worse than a build that says which one.
     if (!entry) throw new Error(`No docs entry for ${source.slug}, so the Handbook cannot print it.`);
 
-    return { ...source, ...(await render(entry)) };
+    return { ...source, columns: entry.data.columns, ...(await render(entry)) };
   })
 );
 ---
 
 <PrintDocument title="D&D House Rules">
   {
-    sourcePages.map(({ slug, title, Content }) => (
-      <section class="sl-markdown-content" data-handbook-source={slug} data-handbook-title={title}>
+    sourcePages.map(({ slug, title, columns, Content }) => (
+      <section
+        class="sl-markdown-content"
+        data-handbook-source={slug}
+        data-handbook-title={title}
+        data-handbook-columns={columns}
+      >
         <h1>{title}</h1>
-        <Content />
+        {/* The measure the columns fill. The title above it and the footer the
+            command injects below it are page furniture, and furniture does not
+            belong inside a two-column measure. */}
+        <div data-handbook-flow>
+          <Content />
+        </div>
       </section>
     ))
   }

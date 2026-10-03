@@ -36,7 +36,7 @@
  * pnpm-workspace.yaml`, which must come back empty (ADR-0007, ADR-0011).
  */
 
-import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -49,7 +49,10 @@ import {
   formatPdfFontGateFailure,
   pageCountBounds,
   parseArgs,
+  pngFileName,
+  rasterSize,
   validatePdf,
+  validatePng,
 } from './handbook-helpers.mjs';
 import { LAYOUT_GLOBAL, sheetAssignmentScript } from './handbook-sheet.mjs';
 import {
@@ -233,9 +236,9 @@ export async function run(argv) {
         // `preferCSSPageSize` is what makes the geometry the stylesheet's to
         // choose: the `@page` size and margins in the print stylesheet are the
         // only place the page size is written down. `printBackground` because a
-        // sheet is not a sheet without its ink.
+        // sheet is not a sheet without its ink, and the parchment is ink.
         { printBackground: true, preferCSSPageSize: true },
-        sessionId,
+        sessionId
       );
 
       const bytes = Buffer.from(printed.data, 'base64');
@@ -247,6 +250,21 @@ export async function run(argv) {
         clearStaleArtifact(outPath, label);
         return 1;
       }
+
+      const captures = await captureSheets({ client, sessionId, layout, options });
+
+      if (captures.problems.length > 0) {
+        log.error('The per-sheet captures were not written because they did not read back as sheets:');
+        for (const problem of captures.problems) log.error(`  ${problem}`);
+        for (const name of captures.expected) clearStaleArtifact(join(captures.dir, name), name);
+        clearStaleArtifact(outPath, label);
+        return 1;
+      }
+
+      for (const name of captures.expectedNames) {
+        if (!captures.written.includes(name)) clearStaleArtifact(join(captures.dir, name), name);
+      }
+
 
       // Written to a staging sibling and renamed, so a crash mid-write cannot
       // leave a half-written PDF at the path a reader looks at.
@@ -294,6 +312,211 @@ class RouteError extends Error {
     super(message);
     this.name = 'RouteError';
   }
+}
+
+/**
+ * One line per sheet: where it is in the document and how tall it turned out to
+ * be.
+ *
+ * Read from `offsetTop` and `offsetHeight` rather than from a bounding box,
+ * because the captures move the page and a bounding box reports the move. These
+ * are the layout positions, so a capture that shifted a sheet shows up as no
+ * change here - which is the claim being made - while a capture that actually
+ * relaid a sheet out would not.
+ */
+const LAYOUT_FINGERPRINT_SCRIPT = `(() => [...document.querySelectorAll('[data-handbook-source]')]
+  .map((element) =>
+    \`\${element.getAttribute('data-handbook-source')}@\${element.offsetTop}+\${element.offsetHeight}\`
+  )
+  .join('|'))()`;
+
+/**
+ * Where a sheet's printed page starts, in document coordinates, for the capture.
+ *
+ * Every capture is the first page box of the document, and each sheet is moved
+ * onto it in turn while the others are hidden.
+ *
+ * The page box is the sheet's content area plus the margins the `@page` rule
+ * declares, and ADR-0020 aligns the sheet with the *content*: the margins exist
+ * in the page box and nowhere in the document. So the document has to be put
+ * where the page box puts the content before a capture can show the page.
+ *
+ * Built by construction rather than inferred, and that is the whole point. Laying
+ * the sheets out on a page grid would have to know how many pages the sheets
+ * before each one took, and ADR-0020 records that the page count is a floor and a
+ * ceiling rather than an exact total - measured, this document bounds between 8
+ * and 39 pages and prints 37. A grid the run lays out itself has no such
+ * uncertainty, and hiding the other sheets is what keeps a four-page sheet's
+ * second page out of the next sheet's capture.
+ *
+ * The move is a transform rather than margins, for two reasons. Margins between
+ * adjacent sheets collapse, so the sheet before this one's bottom margin and this
+ * one's top margin would become one number and the arithmetic would be wrong by
+ * however much the larger was. And a transform lays nothing out, so the document
+ * the capture is taken from is the document the PDF was printed from - which is
+ * checked rather than assumed, by comparing the layout either side of it.
+ *
+ * The capture is the sheet's *first* printed page. A sheet that spans three pages
+ * has three, and only the first is capturable: the page boxes of pages two and
+ * three exist only in the fragmentainer, and the run says which sheets those are.
+ */
+function pageGridOffset(sheet, page) {
+  return page.marginTop - sheet.top;
+}
+
+/** The first page box, which is where every capture is taken. */
+export const PAGE_CAPTURE_TOP = 0;
+
+/**
+ * Write one capture per sheet, at an exact raster size, from the same DOM the PDF
+ * is printed from.
+ *
+ * Three things make a capture evidence about the artifact rather than a second
+ * opinion about it, and all three are here:
+ *
+ *   - **The page box, not the sheet box.** A reader holds a page with margins on
+ *     it. At the page box and a vertical raster scale of 2 that is 1588 x 2246,
+ *     and the size is read back out of the PNG header rather than trusted from
+ *     the capture call.
+ *   - **The margins the `@page` rule adds.** ADR-0020 aligns the sheet with the
+ *     page's *content* and leaves the margins to the page box, so the rendered
+ *     document is the printable area with no page around it. The body is offset
+ *     by the declared left margin and each sheet is moved down by the declared
+ *     top margin, one sheet at a time with the others hidden - a translation of
+ *     the same layout and not a second layout, because it is applied by a
+ *     transform and undone afterwards. The layout either side of it is compared
+ *     and the run refuses if it differs, which is what makes "the same DOM" a
+ *     checked claim rather than an asserted one.
+ *   - **One file per sheet.** A sheet that spills onto a second page has no
+ *     second capture, because the top margin of page two exists only in the page
+ *     box and there is nowhere on screen for it to be captured from. The run
+ *     says which sheets those are rather than writing a picture of the wrong page.
+ */
+async function captureSheets({ client, sessionId, layout, options }) {
+  const dir = resolve(REPO_ROOT, options.pngDir);
+  const expected = rasterSize({ page: layout.page, rasterScale: options.rasterScale });
+  const problems = [];
+  const written = [];
+  const expectedNames = layout.sheets.map((sheet) => pngFileName(sheet.number));
+
+  mkdirSync(dir, { recursive: true });
+
+  // Cleared first, so a run that produced fewer sheets than the last one did not
+  // leave that run's captures behind: a stale `sheet-09.png` in a book of eight
+  // is a page that is not in the book.
+  for (const name of readdirSync(dir)) {
+    if (/^sheet-\d+\.png$/.test(name)) rmSync(join(dir, name), { force: true });
+  }
+
+  // The page box, not the sheet box: a reader holds a page with margins on it,
+  // and the sheet box is only that page's content area. Each sheet is moved onto
+  // the first page box in turn, with the others hidden, and all of it is put back
+  // afterwards.
+  const before = await evaluate(client, sessionId, LAYOUT_FINGERPRINT_SCRIPT);
+  const extent = Math.max(
+    ...layout.sheets.map((sheet) => layout.page.marginTop + sheet.box.height + layout.page.marginBottom)
+  );
+  const apply = `(() => {
+     const style = document.createElement('style');
+     style.setAttribute('data-handbook-capture-inset', '');
+     style.textContent = [
+       'body { margin-left: ${layout.page.marginLeft}px; }',
+       ':root { min-height: ${extent}px; }',
+       '[data-handbook-sheet] { visibility: hidden; }',
+     ].join('\\n');
+     document.head.appendChild(style);
+     return true;
+   })()`;
+  const restore = `(() => {
+     for (const node of document.querySelectorAll('[data-handbook-capture-inset]')) node.remove();
+     for (const sheet of document.querySelectorAll('[data-handbook-source]')) sheet.removeAttribute('style');
+     return true;
+   })()`;
+  // One sheet at a time, shown by inline style over a stylesheet that hides them
+  // all. Hiding every sheet with a rule and then showing one with a second rule
+  // would leave all of them visible, because each sheet carries both.
+  const showOnly = (offset, number) => `(() => {
+     for (const sheet of document.querySelectorAll('[data-handbook-source]')) sheet.removeAttribute('style');
+     const sheet = document.querySelector('[data-handbook-sheet="${number}"]');
+     sheet.style.visibility = 'visible';
+     sheet.style.transform = 'translateY(${offset}px)';
+     return true;
+   })()`;
+
+  await evaluate(client, sessionId, apply);
+
+  try {
+    for (const sheet of layout.sheets) {
+      await evaluate(client, sessionId, showOnly(pageGridOffset(sheet, layout.page), sheet.number));
+      const name = pngFileName(sheet.number);
+      const shot = await client.send(
+        'Page.captureScreenshot',
+        {
+          format: 'png',
+          captureBeyondViewport: true,
+          clip: {
+            x: 0,
+            y: PAGE_CAPTURE_TOP,
+            width: layout.page.width,
+            height: layout.page.height,
+            scale: options.rasterScale,
+          },
+        },
+        sessionId
+      );
+
+      const bytes = Buffer.from(shot.data, 'base64');
+      const verdict = validatePng({ label: name, bytes, expected });
+
+      if (!verdict.ok) {
+        problems.push(...verdict.problems);
+        continue;
+      }
+
+      const target = join(dir, name);
+      const staging = `${target}.part`;
+      writeFileSync(staging, bytes);
+      renameSync(staging, target);
+
+      const readBack = validatePng({ label: name, bytes: readFileSync(target), expected });
+
+      if (!readBack.ok) {
+        problems.push(...readBack.problems.map((problem) => `${name} on disk: ${problem}`));
+        rmSync(target, { force: true });
+        continue;
+      }
+
+      written.push(name);
+    }
+  } finally {
+    await evaluate(client, sessionId, restore);
+  }
+
+  const after = await evaluate(client, sessionId, LAYOUT_FINGERPRINT_SCRIPT);
+  if (after !== before) {
+    problems.push(
+      'Moving the page for the captures changed the sheets, so the PNGs would be a picture of a ' +
+        'different document from the PDF. Nothing about that is acceptable in an artifact meant to be ' +
+        'evidence about it.'
+    );
+  }
+
+  const spanning = layout.sheets.filter((sheet) => sheet.pages > 1);
+  if (spanning.length > 0) {
+    log.warn(
+      `${spanning.length} of ${layout.sheets.length} sheets span more than one printed page and are ` +
+        'captured at their first page only: the top margin of a second page exists only in the page box, ' +
+        'and there is nowhere on screen to capture it from. Splitting source pages into sheets that are ' +
+        'one page each is what closes that gap.'
+    );
+  }
+
+  log.info(
+    `Captures: ${written.length} of ${expectedNames.length} sheets at ` +
+      `${expected.width} x ${expected.height}px (raster scale ${options.rasterScale}), in ${options.pngDir}`
+  );
+
+  return { dir, expected, problems, written, expectedNames };
 }
 
 /**

@@ -326,6 +326,32 @@
   color: #58180d;
 }
 
+/* The horizontal rule, which means "start a new sheet" in the printed Handbook.
+ *
+ * In the house-rule pages an `hr` is an authoring instruction: everything after
+ * it starts on a fresh sheet of the book. A divider that means something in one
+ * medium and nothing in the other is worse than no divider, and the site had no
+ * `hr` styling at all - so on the website a rule was an unstyled grey line the
+ * browser invented, which reads as a mistake rather than as an instruction.
+ *
+ * It is drawn in the same gold and at the same 2px as every other rule on the
+ * site, because it is the same thing: a divider that says "a new part starts
+ * here". The dark step is `gold-rule-dark`, which exists for exactly this - the
+ * light step disappears against bark-black.
+ *
+ * Scoped to the documentation content rather than to `hr` everywhere: this is a
+ * documentation-layer element, and a bare `hr` selector would also restyle a rule
+ * inside a Card, where the components already draw their own. */
+.sl-markdown-content hr:not(:where(.not-content *)) {
+  border: 0;
+  border-top: 2px solid var(--color-gold-rule);
+  margin-block: 1.5rem;
+}
+
+:root[data-theme='dark'] .sl-markdown-content hr:not(:where(.not-content *)) {
+  border-top-color: var(--color-gold-rule-dark);
+}
+
 /* D&D theme heading colors and underlines */
 .sl-markdown-content h2:not(:where(.not-content *)) {
   border-bottom: 2px solid #c9ad6a;

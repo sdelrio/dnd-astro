@@ -105,6 +105,34 @@ makes a stale artifact fail rather than ship. The hash is content-based, never a
 timestamp.
 _Avoid_: Lockfile, checksum, report, index, log
 
+**Capture**:
+One Sheet's page, as a PNG at an exact raster size, taken from the same DOM and
+the same stylesheet the PDF is printed from. A Capture is evidence about the
+Handbook rather than a second opinion about it, which is why its size is read back
+out of the file rather than trusted from the write. It is not a screenshot: a
+screenshot is whatever the viewport happened to be.
+_Avoid_: Screenshot, thumbnail, preview, image
+
+**Column**:
+One of the Sheet's two 306px measures. An element too wide for its Column spans
+both, measured rather than declared, so wide tables are the expected case in a
+book of reference tables. A source page may set `columns: 1` and print in one.
+_Avoid_: Text wrap, measure, gutter, span, break
+
+**Ornament**:
+The decorative rule at the centre of a Sheet's footer, generated from the site's
+own gold rule token so it belongs to the existing rule vocabulary. It is a
+committed file rather than a stylesheet value, which is what lets it be replaced
+without touching code.
+_Avoid_: Flourish, glyph, icon, divider, border
+
+**Parchment**:
+The paper a Sheet is printed on: one committed, tileable, generated image rather
+than a gradient in a stylesheet. Its contrast against body text is measured
+against its darkest pixel, because a decorative background behind text is where
+contrast quietly goes and a texture's average is not its darkest pixel.
+_Avoid_: Background, texture, paper, surface, pattern
+
 ## Vocabulary notes
 
 **folio** on the index page is a contents-entry number, not a print folio. It is

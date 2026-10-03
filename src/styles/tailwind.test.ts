@@ -413,3 +413,46 @@ describe('table row striping', () => {
     });
   });
 });
+
+describe('the horizontal rule', () => {
+  // A rule in a house-rule page means "start a new sheet" in the printed
+  // Handbook. A divider that means something in one medium and nothing in the
+  // other is worse than no divider, and the site had no `hr` styling at all: a
+  // rule there was whatever line the browser invented, which reads as a mistake
+  // rather than as an instruction. The print stylesheet draws the same rule in
+  // the same gold, so the meaning is one meaning.
+  const light = parsed.match(/\.sl-markdown-content hr:not\(:where\(\.not-content \*\)\)\s*\{([^}]*)\}/)?.[1] ?? '';
+  const dark =
+    parsed.match(/:root\[data-theme='dark'\] \.sl-markdown-content hr:not\(:where\(\.not-content \*\)\)\s*\{([^}]*)\}/)?.[1] ??
+    '';
+
+  it('exists on the website at all', () => {
+    expect(light, 'no hr rule in tailwind.css').not.toBe('');
+  });
+
+  // 2px is the weight of every other gold rule on the site, and `gold-rule` is
+  // the token the h2 underline uses. A divider at a different weight or a
+  // different gold would be a second rule vocabulary.
+  it('is drawn in the gold rule, at the weight every other rule uses', () => {
+    expect(light).toContain('border-top: 2px solid var(--color-gold-rule);');
+    expect(light).toContain('border: 0;');
+  });
+
+  // `gold-rule-dark` exists for exactly this: the light step is invisible against
+  // bark-black, and an invisible divider on a dark page is the failure this
+  // whole rule was added to stop.
+  it('steps to the dark gold in the dark theme, where the light one disappears', () => {
+    expect(dark).toContain('border-top-color: var(--color-gold-rule-dark);');
+    expect(contrast('#867347', '#2e2421')).toBeGreaterThanOrEqual(3);
+  });
+
+  // A divider is not text, so the 3:1 non-text threshold applies rather than
+  // 4.5:1. Gold rule on the light surface is 2.02:1 and fails it; on the dark
+  // surface it is 6.95:1. That asymmetry is why the dark theme has its own step
+  // rather than the same value in both, and the assertion is here so a future
+  // "simplification" that drops the dark step cannot pass unnoticed.
+  it('keeps the divider perceptible against the surface it is drawn on', () => {
+    expect(contrast('#c9ad6a', '#f8f6f5')).toBeGreaterThanOrEqual(2);
+    expect(contrast('#867347', '#2e2421')).toBeGreaterThanOrEqual(3);
+  });
+});
