@@ -401,9 +401,9 @@ after the panels stopped having headings of their own. See **Character Card**.
 modes** rather than derived from the panel holding them. Neither panel has a
 heading to be subordinate to - at `large` the menu entry names Overview, and at
 `medium` the visible tab names the panel - so there is no level above them to
-derive from and `h3` is correct in both places for the same reason. They are also
-the only two sections that name themselves at `medium`. `h2 > h3 > h4 > h5` is
-contiguous at both modes either way.
+derive from and `h3` is correct in both places for the same reason. They name
+themselves at both modes, where the sections that own a whole panel take a heading
+only at `large`. `h2 > h3 > h4 > h5` is contiguous at both modes either way.
 
 One treatment, and it is one class: `sectionHeadingClass` in
 `section-heading.ts`, 0.7rem uppercase semibold with 0.08em tracking in
