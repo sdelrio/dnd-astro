@@ -42,27 +42,19 @@ export default defineConfig({
       title: 'D&D Companion',
       description: 'D&D rules, Fantasy Grounds xml visualizer.',
       customCss: ['./src/styles/tailwind.css'],
+      // ADR-0019: the display face is served from this repository, so the
+      // head has no third-party font dependency left to warm up. The preload
+      // replaces what the two preconnects used to do, and goes on the face
+      // itself because the face is now the render-blocking request.
       head: [
         {
           tag: 'link',
           attrs: {
-            rel: 'preconnect',
-            href: 'https://fonts.googleapis.com',
-          },
-        },
-        {
-          tag: 'link',
-          attrs: {
-            rel: 'preconnect',
-            href: 'https://fonts.gstatic.com',
+            rel: 'preload',
+            href: '/fonts/Cinzel.woff2',
+            as: 'font',
+            type: 'font/woff2',
             crossorigin: 'anonymous',
-          },
-        },
-        {
-          tag: 'link',
-          attrs: {
-            rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
           },
         },
       ],

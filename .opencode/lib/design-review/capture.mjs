@@ -66,7 +66,7 @@ export const DEFAULTS = {
   outDir: '.impeccable/review',
   captures: 'desktop=1440x900,mobile=390x844',
   font: 'Cinzel',
-  fontUrl: 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap',
+  fontUrl: '/fonts/Cinzel.woff2',
   theme: 'light',
 };
 
@@ -100,7 +100,10 @@ Options:
                              encode in one image, where a full-page shot would be
                              silently truncated.
   --simulate-font-cdn-outage
-                           block the font CDN before loading, to prove the gate fails
+                           block the font CDN before loading. Since ADR-0019 the display
+                           face is local, so the gate now stays green through this: that
+                           green is the point, because it shows a capture no longer
+                           depends on a third party answering.
   --help                   this text
 
 Browser resolution (never downloads one):
@@ -344,10 +347,11 @@ export async function run(argv) {
     client = await CdpClient.connect(debuggerUrl);
 
     if (options.simulateFontCdnOutage) {
-      // Blocking the CDN is how the font gate is tested for real rather than
-      // argued about: the request genuinely fails, the page genuinely falls
-      // back, and the gate has to notice.
-      log.warn(`Blocked the font CDN (${FONT_CDN_PATTERNS.join(', ')}) to test the gate.`);
+      // Since ADR-0019 the display face is served from the repository, so
+      // blocking the CDN must leave the gate green. Blocking it anyway is how
+      // that is demonstrated rather than asserted: the request genuinely
+      // fails, and the gate still passes.
+      log.warn(`Blocked the font CDN (${FONT_CDN_PATTERNS.join(', ')}) to confirm the gate no longer depends on it.`);
     }
 
     const results = [];
