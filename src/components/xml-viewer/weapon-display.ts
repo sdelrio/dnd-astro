@@ -103,14 +103,19 @@ function damageString(weapon: Weapon, abilities: Abilities): string {
 
 /**
  * One set of weapon rows: the equipped weapons, or the carried-but-not-equipped
- * ones. The card asks for both and renders a table per set, so a display mode
+ * ones. The card asks for both and renders a table per set, so a display layer
  * cannot decide what a character is holding.
+ *
+ * `set` is required rather than defaulting to `equipped`. A default here would
+ * restore the hazard this parameter exists to remove: a call site that forgets it
+ * would silently get the in-hand weapons again and the carried ones would vanish
+ * from the card without anything failing.
  */
 export function toWeaponRows(
   weapons: Weapons,
   abilities: Abilities,
   profBonus: number,
-  set: WeaponSet = 'equipped'
+  set: WeaponSet
 ): WeaponRow[] {
   return weapons
     .filter((weapon) => weapon.carried === WEAPON_CARRIED[set])

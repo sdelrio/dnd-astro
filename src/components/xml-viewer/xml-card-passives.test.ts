@@ -788,44 +788,64 @@ describe('XmlCard Weapons section', () => {
 
   it('gives both tables the same columns and the same responsive column rule', async () => {
     // A stowed weapon is as usable as a held one, so the carried table is the same
-    // table: same ATK, Weapon, Properties and Damage columns, and Properties still
-    // drops under the weapon name below `@lg` rather than forcing a sideways scroll.
+    // table. Asserted by comparing the two rather than by pinning a class string:
+    // ADR-0009's warning is that a test written against the markup you happened to
+    // produce passes on the wrong markup, so the invariant is "the two tables agree
+    // and Properties drops under the name", not "this literal class is present".
     const section = weaponsSection(
       await renderCard('large', { weapons: [greatsword, longsword] })
     );
-    for (const heading of ['Equipped Weapons', 'Carried Weapons']) {
-      const table = tablesFor(section, heading);
-      for (const column of ['ATK', 'Weapon', 'Properties', 'Damage']) {
-        expect(table, `${heading} lost its ${column} column`).toContain(`>${column}</th>`);
-      }
-      expect(table, `${heading} keeps its Properties column at every width`).toContain(
-        'hidden @lg:table-cell'
+    const equipped = tablesFor(section, 'Equipped Weapons');
+    const carried = tablesFor(section, 'Carried Weapons');
+
+    /** Each column's header cell class, keyed by its visible header. */
+    function columnRules(table: string): Record<string, string> {
+      return Object.fromEntries(
+        [...table.matchAll(/<th class="([^"]*)"[^>]*>([^<]*)<\/th>/g)].map(([, cls, label]) => [
+          label,
+          cls,
+        ])
       );
-      expect(table, `${heading} does not drop Properties under the name`).toContain(
-        'block @lg:hidden'
-      );
-      // ATK and Damage keep their own columns at every width, so a narrow card
-      // loses a column rather than the two figures a player reaches for.
-      for (const column of ['ATK', 'Damage']) {
-        const th = new RegExp(`<th class="([^"]*)"[^>]*>${column}</th>`).exec(table)?.[1] ?? '';
-        expect(th, `${heading} hides its ${column} column on a narrow card`).not.toContain('hidden');
-      }
     }
+    const equippedColumns = columnRules(equipped);
+    expect(Object.keys(equippedColumns).sort()).toEqual(['ATK', 'Damage', 'Properties', 'Weapon']);
+    expect(columnRules(carried)).toEqual(equippedColumns);
+
+    // Properties is the column that gives: it leaves the row below `@lg` and rides
+    // under the weapon name instead of forcing the card sideways.
+    expect(equippedColumns.Properties).toContain('hidden');
+    expect(equippedColumns.Properties).toContain('@lg:table-cell');
+    // ATK and Damage keep their own columns at every width, because they are the
+    // two figures a player reaches for mid-session.
+    for (const kept of ['ATK', 'Damage']) {
+      expect(equippedColumns[kept], `${kept} is hidden on a narrow card`).not.toContain('hidden');
+    }
+    expect(equipped).toContain('block @lg:hidden');
+    expect(carried).toContain('block @lg:hidden');
   });
 
   it('names the section once and each table under it at large', async () => {
     // Two sibling headings claiming to be one section is not an outline, so the
     // section takes the h3 and each table an h4 beneath it.
-    const section = weaponsSection(
+    const both = weaponsSection(
       await renderCard('large', { weapons: [greatsword, longsword] })
     );
-    expect(section.match(/<h3/g)).toHaveLength(1);
-    expect(section).toContain('>Weapons</h3>');
-    expect(section.match(/<h4/g)).toHaveLength(2);
-    expect(section.indexOf('>Weapons</h3>')).toBeLessThan(section.indexOf('>Equipped Weapons</h4>'));
-    expect(section.indexOf('>Equipped Weapons</h4>')).toBeLessThan(
-      section.indexOf('>Carried Weapons</h4>')
+    expect(both.match(/<h3/g)).toHaveLength(1);
+    expect(both).toContain('>Weapons</h3>');
+    expect(both.match(/<h4/g)).toHaveLength(2);
+    expect(both.indexOf('>Weapons</h3>')).toBeLessThan(both.indexOf('>Equipped Weapons</h4>'));
+    expect(both.indexOf('>Equipped Weapons</h4>')).toBeLessThan(
+      both.indexOf('>Carried Weapons</h4>')
     );
+
+    // One subheading per *rendered* table, so the equipped-only case is not left
+    // with a bare table under the section heading or a heading for a table that
+    // is not there.
+    const equippedOnly = weaponsSection(await renderCard('large', { weapons: [greatsword] }));
+    expect(equippedOnly.match(/<h3/g)).toHaveLength(1);
+    expect(equippedOnly.match(/<h4/g)).toHaveLength(1);
+    expect(equippedOnly).toContain('>Equipped Weapons</h4>');
+    expect(equippedOnly).not.toContain('Carried Weapons');
   });
 
   it('carries no heading at medium, where the tab names the panel', async () => {

@@ -36,7 +36,8 @@ describe('toWeaponRows', () => {
         }),
       ],
       abilities,
-      2
+      2,
+      'equipped'
     );
     expect(rows).toEqual([
       { name: 'Greatsword', attack: '+6', properties: 'reroll 2', damage: '2d6+4 Slashing' },
@@ -51,7 +52,8 @@ describe('toWeaponRows', () => {
         weapon({ name: 'Equipped' }),
       ],
       abilities,
-      2
+      2,
+      'equipped'
     );
     expect(rows).toEqual([{ name: 'Equipped', attack: '+6', properties: '-', damage: '' }]);
   });
@@ -109,7 +111,8 @@ describe('toWeaponRows', () => {
     const rows = toWeaponRows(
       [weapon({ name: 'Warlock Blade', attackbonus: 2, attackstat: 'charisma' })],
       abilities,
-      2
+      2,
+      'equipped'
     );
     expect(rows[0].attack).toBe('+7');
   });
@@ -118,7 +121,8 @@ describe('toWeaponRows', () => {
     const rows = toWeaponRows(
       [weapon({ name: 'Mystery Blade', attackbonus: 1, attackstat: 'luck' })],
       abilities,
-      2
+      2,
+      'equipped'
     );
     expect(rows[0].attack).toBe('+3');
   });
@@ -134,7 +138,7 @@ describe('toWeaponRows', () => {
       type: 2,
       damage: [{ bonus: 0, dice: 'd6', stat: 'base', statmult: 1, type: 'piercing' }],
     });
-    const rows = toWeaponRows([ranged, thrown], abilities, 2);
+    const rows = toWeaponRows([ranged, thrown], abilities, 2, 'equipped');
     expect(rows[0].attack).toBe('+4');
     expect(rows[0].damage).toBe('d8+2 Piercing');
     expect(rows[1].attack).toBe('+6');
@@ -158,7 +162,8 @@ describe('toWeaponRows', () => {
         }),
       ],
       abilities,
-      2
+      2,
+      'equipped'
     );
     expect(rows[0].damage).toBe('2d6');
     expect(rows[1].damage).toBe('d8+2d6');
@@ -178,7 +183,8 @@ describe('toWeaponRows', () => {
         }),
       ],
       abilities,
-      2
+      2,
+      'equipped'
     );
     expect(rows[0].damage).toBe('d6+8 Slashing');
     expect(rows[1].damage).toBe('d6 Slashing');
@@ -196,7 +202,8 @@ describe('toWeaponRows', () => {
         }),
       ],
       abilities,
-      2
+      2,
+      'equipped'
     );
     expect(rows[0].damage).toBe('d8+5 Piercing, Magic; d6+4 Fire');
   });
@@ -205,7 +212,8 @@ describe('toWeaponRows', () => {
     const rows = toWeaponRows(
       [weapon({ name: 'Off-hand', damage: [{ bonus: 2, dice: 'd6', stat: '', statmult: 1, type: '' }] })],
       abilities,
-      2
+      2,
+      'equipped'
     );
     expect(rows[0].damage).toBe('d6+2');
   });
@@ -219,7 +227,8 @@ describe('toWeaponRows', () => {
         }),
       ],
       abilities,
-      2
+      2,
+      'equipped'
     );
     expect(rows[0].damage).toBe('+4 Piercing');
   });

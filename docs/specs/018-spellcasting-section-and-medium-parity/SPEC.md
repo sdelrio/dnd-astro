@@ -1,5 +1,5 @@
 ---
-status: draft
+status: active
 title: "Spellcasting section on the card, and medium parity for passives, save proficiency and carried weapons"
 author: "opencode"
 date: "2026-10-03"
