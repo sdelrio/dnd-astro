@@ -1,0 +1,46 @@
+---
+/**
+ * The shell every printed document is rendered into: an inert HTML page with
+ * the site's own styling and the print routes' page geometry, and no chrome.
+ *
+ * Three decisions live here rather than in the routes that use it.
+ *
+ * **No site chrome.** No sidebar, no table of contents, no header, no skip
+ * link, so a printed sheet is the rule and nothing else. That is also why this
+ * is not `StarlightPage`: the chrome is not something to hide with print CSS,
+ * it is something not to render.
+ *
+ * **No client-side JavaScript.** ADR-0020 requires the committed route to be
+ * inert HTML, because the artifact must not be a page a reader could run code
+ * on. The sheet assignment the generator needs is injected at document start by
+ * the command instead, through the same mechanism the capture command uses to
+ * seed the theme before the first paint.
+ *
+ * **The site's own styles.** The house rules print with the fonts, colours and
+ * spacing they have on the website, which means Starlight's base stylesheets and
+ * the site's own stylesheet and nothing else. There is no print stylesheet here
+ * to disagree with the screen one, which is what ADR-0020's spike is about.
+ */
+import '../styles/tailwind.css';
+import '../styles/handbook-print.css';
+
+import { starlightBaseCss } from '../utils/starlight-base-css';
+
+interface Props {
+  /** The document title, which is also the PDF's title. */
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    <style is:inline set:html={starlightBaseCss()} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
