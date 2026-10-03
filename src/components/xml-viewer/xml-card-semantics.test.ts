@@ -41,11 +41,24 @@ describe('XmlCard section semantics', () => {
     // `jumping &&` in front of it would repeat the tab at medium, which is the
     // regression this rule exists to prevent. The rendered per-mode behaviour is
     // asserted in `xml-card-passives.test.ts`.
-    for (const label of ['Skills', 'Equipped Weapons', 'Features', 'Powers']) {
+    for (const label of ['Skills', 'Weapons', 'Features', 'Powers']) {
       expect(source, `${label} has a heading that is not gated on large`).toMatch(
-        new RegExp(`\\{jumping && <h3[^>]*>${label}</h3>`),
+        new RegExp(`\\{jumping && <h3[^>]*>${label}</h3`),
       );
     }
+    // The Weapons section holds two tables now, so it takes one heading naming the
+    // section and an `h4` per rendered table beneath it. Two sibling headings
+    // claiming to be one section is not an outline, and the level matters as much:
+    // `h2 > h3 > h4 > h5` has to stay contiguous, so a table's own name is a step
+    // below the section rather than a second `h3`.
+    for (const label of ['Equipped Weapons', 'Carried Weapons']) {
+      expect(source, `${label} has a subheading that is not gated on large`).toMatch(
+        new RegExp(`\\{jumping && \\(?\\s*<h4[^>]*>${label}</h4`),
+      );
+    }
+    expect(source, 'a weapon table names itself at the section level').not.toMatch(
+      /<h3[^>]*>(Equipped|Carried) Weapons</,
+    );
     // Inventory's is inside a flex row rather than a bare h3, because it carries
     // the carried-weight total on its baseline.
     expect(source, 'Inventory has an ungated heading').toMatch(
@@ -178,13 +191,36 @@ describe('XmlCard proficiency and preparation marks', () => {
   // cannot distinguish gold-on-bark from bark-on-bark cannot tell which saves or
   // spells are prepared at all.
   const SOLO_MARKS = [
-    ['Proficient', 'saveprof > 0'],
     ['Prepared', "mark === 'prepared'"],
     ['Always prepared (class/subclass)', "mark === 'always'"],
   ] as const;
 
   it.each(SOLO_MARKS)('gives the %s mark a text alternative', (text) => {
     expect(source, `no sr-only "${text}"`).toContain(`<span class="sr-only">${text}</span>`);
+  });
+
+  it('draws the Proficient mark from one shared definition, so one legend covers both places', () => {
+    // The Abilities tiles and the Saving Throws table both mark a proficient save,
+    // and a reader learns that legend once. Two call sites each holding a gold hex
+    // is a legend that survives only until one of them is edited, so the colour,
+    // the shape and the screen-reader word live in `proficiency-mark.ts` and both
+    // call sites reference them.
+    const mark = readFileSync(new URL('proficiency-mark.ts', import.meta.url), 'utf8');
+    expect(mark, 'the coin lost its gold').toMatch(/proficiencyCoinClass = '[^']*bg-\[#c68000\]/);
+    expect(mark, 'the coin lost its shape').toContain('rounded-full');
+    expect(mark, 'the mark lost its screen-reader word').toContain(
+      "proficiencyMarkLabel = 'Proficient'"
+    );
+    for (const file of ['XmlCard.astro', 'SavesTable.astro']) {
+      const callSite = readFileSync(new URL(file, import.meta.url), 'utf8');
+      expect(callSite, `${file} does not use the shared coin`).toContain('proficiencyCoinClass');
+      expect(callSite, `${file} does not use the shared label`).toContain('proficiencyMarkLabel');
+    }
+    // The glyph is decorative on both surfaces, because the sr-only word is what
+    // carries the meaning to assistive tech.
+    expect(source, 'a proficiency coin is announced as well as labelled').not.toMatch(
+      /class=\{proficiencyCoinClass\}(?![^>]*aria-hidden)/,
+    );
   });
 
   it('hides the mark glyphs from assistive tech, since the text carries meaning', () => {

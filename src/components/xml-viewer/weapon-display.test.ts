@@ -43,17 +43,66 @@ describe('toWeaponRows', () => {
     ]);
   });
 
-  it('only includes equipped (carried 2) weapons and renders empty properties as a dash', () => {
+  it('keeps only equipped (carried 2) weapons and renders empty properties as a dash', () => {
     const rows = toWeaponRows(
       [
-        weapon({ name: 'Stowed', carried: 1, properties: 'Finesse' }),
-        weapon({ name: 'Sold', carried: 0 }),
+        weapon({ name: 'In the pack', carried: 1, properties: 'Finesse' }),
+        weapon({ name: 'Left behind', carried: 0 }),
         weapon({ name: 'Equipped' }),
       ],
       abilities,
       2
     );
     expect(rows).toEqual([{ name: 'Equipped', attack: '+6', properties: '-', damage: '' }]);
+  });
+
+  it('lists carried-but-not-equipped weapons when the card asks for the carried set', () => {
+    // A character with three weapons in the pack showed only the two in hand. The
+    // builder decides which set it is building rather than the card asking for one
+    // by name, so the display layer can never put a weapon in both tables.
+    const rows = toWeaponRows(
+      [
+        weapon({ name: 'Longsword', carried: 1, properties: 'Versatile' }),
+        weapon({ name: 'Greatsword', carried: 2 }),
+        weapon({ name: 'Left behind', carried: 0 }),
+      ],
+      abilities,
+      2,
+      'carried'
+    );
+    expect(rows).toEqual([
+      { name: 'Longsword', attack: '+6', properties: 'Versatile', damage: '' },
+    ]);
+  });
+
+  it('computes carried weapons exactly as it computes equipped ones', () => {
+    // A stowed weapon is as usable as a held one, so its attack bonus and its
+    // damage come from the same arithmetic rather than from a second copy of it.
+    const carried = [
+      weapon({
+        name: 'Handaxe',
+        carried: 1,
+        type: 2,
+        damage: [{ bonus: 0, dice: 'd6', stat: 'base', statmult: 1, type: 'slashing' }],
+      }),
+    ];
+    expect(toWeaponRows(carried, abilities, 2, 'carried')[0]).toEqual(
+      toWeaponRows([{ ...carried[0], carried: 2 }], abilities, 2, 'equipped')[0]
+    );
+  });
+
+  it('never returns the same weapon in both sets, and never returns a stowed one', () => {
+    const all = [
+      weapon({ name: 'Greatsword', carried: 2 }),
+      weapon({ name: 'Crossbow', carried: 1 }),
+      weapon({ name: 'Wand', carried: 0 }),
+    ];
+    const equipped = toWeaponRows(all, abilities, 2, 'equipped').map((row) => row.name);
+    const carried = toWeaponRows(all, abilities, 2, 'carried').map((row) => row.name);
+    expect(equipped).toEqual(['Greatsword']);
+    expect(carried).toEqual(['Crossbow']);
+    expect(equipped.filter((name) => carried.includes(name))).toEqual([]);
+    expect([...equipped, ...carried]).not.toContain('Wand');
   });
 
   it('adds the weapon attack bonus and the named attack stat bonus', () => {

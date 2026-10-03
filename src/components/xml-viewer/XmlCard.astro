@@ -13,6 +13,10 @@ import {
 } from '@/components/xml-viewer/inventory-display';
 import { skillRank } from '@/components/xml-viewer/skill-display';
 import { cardPlateClass } from '@/components/xml-viewer/card-plate';
+import {
+  proficiencyCoinClass,
+  proficiencyMarkLabel,
+} from '@/components/xml-viewer/proficiency-mark';
 import SkillsTable from '@/components/xml-viewer/SkillsTable.astro';
 import SavesTable, { type SaveTableRow } from '@/components/xml-viewer/SavesTable.astro';
 
@@ -23,6 +27,7 @@ import {
   sectionGroupClass,
   sectionLegendClass,
 } from '@/components/xml-viewer/section-heading';
+import WeaponsTable from '@/components/xml-viewer/WeaponsTable.astro';
 import CompactAbilityGrid from '@/components/xml-viewer/CompactAbilityGrid.astro';
 import LanguagesFeats from '@/components/xml-viewer/LanguagesFeats.astro';
 import { CARD_TABS, type CardTabId } from '@/components/xml-viewer/card-tabs';
@@ -48,9 +53,10 @@ function rank(mode: string): number {
 // (ADR-0017). Each entry below is the minimum display mode required for that
 // section to appear, read at three ranks: small renders identity, avatar and
 // tags and nothing that needs a panel to hold it; medium adds the recognition
-// material a roster card is for, which is Skills, Languages and Feats and not
-// Saving Throws; large adds Saving Throws back and adds nothing of its own.
-// `canShow()` is the single build-time source of truth for which sections render.
+// material a roster card is for, which is Skills, Languages, Feats and the
+// passive scores, and not Saving Throws; large adds Saving Throws back and adds
+// nothing of its own. `canShow()` is the single build-time source of truth for
+// which sections render.
 //
 // Two of these entries are row-set reductions rather than section-existence
 // decisions, and they are the ones a mode still *shortens* rather than drops.
@@ -66,6 +72,12 @@ function rank(mode: string): number {
 // the whole reason the menu is there: a bar over sections a mode cannot see would
 // be a bar with three dead entries. ADR-0016 carries that reasoning; ADR-0017
 // replaces its rule that a display mode never decides whether a section exists.
+//
+// `passives` was promoted on the same reasoning later: it already renders inside
+// the Overview panel and already owns its three plates, so it costs a medium card
+// nothing that is not already on the page. The passive scores are a recognition
+// fact about a character - whether the party notices things - rather than a number
+// the reader computes with, which is what medium is for.
 const sectionPolicy = {
   avatar: 'small' as const,
   tags: 'small' as const,
@@ -74,7 +86,7 @@ const sectionPolicy = {
   allSaves: 'large' as const,
   skills: 'medium' as const,
   allSkills: 'large' as const,
-  passives: 'large' as const,
+  passives: 'medium' as const,
   languages: 'medium' as const,
   feats: 'medium' as const,
   weapons: 'medium' as const,
@@ -180,7 +192,13 @@ const sortedAllSkills = [...allSkills].sort((a, b) => a.name.localeCompare(b.nam
 // and `stat` to draw the dots and the ability column.
 const proficientSkills = sortedAllSkills.filter((skill) => skillRank(skill.prof) !== 'none');
 
-const weaponRows = toWeaponRows(weapons, abilities, profBonus);
+// The two sets the Weapons section puts in two tables. Equipped is what is in
+// hand, carried is what is on the character but not in hand, and the third
+// `carried` value is neither - it is not the character's kit, so the builder
+// leaves it out of both. The sets are disjoint by construction, which is what
+// stops one weapon appearing twice, and the panel exists when either is non-empty.
+const equippedWeaponRows = toWeaponRows(weapons, abilities, profBonus, 'equipped');
+const carriedWeaponRows = toWeaponRows(weapons, abilities, profBonus, 'carried');
 
 const inventoryRows = toInventoryRows(inventory);
 const inventoryWeight = carriedWeight(inventory);
@@ -229,7 +247,8 @@ const showSkillsTable = canShow('allSkills')
 // the Overview panel instead, so they are not content here.
 const showSkills =
   canShow('skills') && (showSkillsTable || (!canShow('allSkills') && (showLanguages || showFeats)));
-const showWeapons = canShow('weapons') && weaponRows.length > 0;
+const showWeapons =
+  canShow('weapons') && (equippedWeaponRows.length > 0 || carriedWeaponRows.length > 0);
 const showInventory = canShow('inventory') && hasInventory;
 const showFeatures = canShow('features') && featuresByLevel.length > 0;
 const showPowers = canShow('powers') && powersByLevel.length > 0;
@@ -455,14 +474,34 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
                 <div
                   class="grid grid-cols-3 @lg:grid-cols-6 gap-1"
                 >
-                  {abilityNames.map((abilityName, i) => (
-                    <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
-                      <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{abilityShort[i]}</div>
-                      <div class="text-xl font-bold text-gray-900 dark:text-gray-100">{signed(lookupAbility(abilityName).bonus)}</div>
-                      <div class="text-sm text-gray-600 dark:text-gray-400">{lookupAbility(abilityName).score}</div>
-                      <div class="text-xs text-gray-500 dark:text-gray-400">SAVE {signed(lookupAbility(abilityName).save)}</div>
-                    </div>
-                  ))}
+                  {abilityNames.map((abilityName, i) => {
+                    const ability = lookupAbility(abilityName);
+                    return (
+                      <div class="text-center p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] [border-top-left-radius:45%] [border-top-right-radius:45%] [border-bottom-left-radius:8px] [border-bottom-right-radius:8px]">
+                        <div class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">{abilityShort[i]}</div>
+                        <div class="text-xl font-bold text-gray-900 dark:text-gray-100">{signed(ability.bonus)}</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">{ability.score}</div>
+                        {/* The tile prints `SAVE +7` and nothing else, so a Fighter's
+                            ability plus proficiency and a Wizard's raw Intelligence
+                            looked identical on the same character. The coin is the
+                            Saving Throws table's coin - one class, one legend - and it
+                            sits on the save line because the save is what it qualifies.
+                            The compact grid at small is a different component and has no
+                            room for a mark, so it stays as it is. */}
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                          <span class="inline-flex items-center gap-1">
+                            <span>SAVE {signed(ability.save)}</span>
+                            {ability.saveprof > 0 && (
+                              <>
+                                <span class={proficiencyCoinClass} aria-hidden="true"></span>
+                                <span class="sr-only">{proficiencyMarkLabel}</span>
+                              </>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
               </>
@@ -633,40 +672,30 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
         x-show={tabbed ? "active === 'weapons'" : undefined}
         data-no-cloak="no-js-reader-loses-the-card"
       >
-        {/* "Equipped Weapons", not "Weapons": the menu entry is the short name,
-            the section is the sheet's own outline, and the distinction is the
-            point of keeping both. */}
-        {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Equipped Weapons</h3>}
-        <div class={cardPlateClass}>
-          {/* Same constraint as the inventory table: Properties drops out below
-            `@lg` and rides under the weapon name. The attack bonus stays its own
-            column at every width - it is the column a player reaches for. */}
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                  <th class="text-left font-medium pb-1">ATK</th>
-                  <th class="text-left font-medium pb-1">Weapon</th>
-                  <th class="hidden @lg:table-cell text-left font-medium pb-1">Properties</th>
-                  <th class="text-right font-medium pb-1">Damage</th>
-                </tr>
-              </thead>
-              <tbody>
-              {weaponRows.map((weapon) => (
-                <tr class="border-t border-gray-200 dark:border-gray-700">
-                  <td class="py-1 font-mono font-semibold text-gray-900 dark:text-gray-100">{weapon.attack}</td>
-                  <td class="py-1 text-gray-700 dark:text-gray-300">
-                    {weapon.name}
-                    {weapon.properties && (
-                      <span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">{weapon.properties}</span>
-                    )}
-                  </td>
-                  <td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">{weapon.properties}</td>
-                  <td class="py-1 text-right text-gray-700 dark:text-gray-300">{weapon.damage}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* One heading names the section and each table names itself beneath it.
+            Two sibling headings claiming to be one section is not an outline. This
+            is the one place where the section heading matches its tab label: the
+            panel used to be headed "Equipped Weapons", which was the tab's word plus
+            a qualifier, and it now holds more than the weapons in hand. */}
+        {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Weapons</h3>}
+        {equippedWeaponRows.length > 0 && (
+          <>
+            {jumping && (
+              <h4 class={`${sectionSubheadingClass} mb-1`}>Equipped Weapons</h4>
+            )}
+            <WeaponsTable rows={equippedWeaponRows} label="Equipped weapons" />
+          </>
+        )}
+        {/* Carried-but-not-equipped, omitted when the pack is empty: a section must
+            not open onto a second, empty sheet. At medium neither table takes a
+            heading, because the tab names the panel - the rule every other medium
+            section already follows - so the tables keep an accessible name instead. */}
+        {carriedWeaponRows.length > 0 && (
+          <>
+            {jumping && <h4 class={`${sectionSubheadingClass} mt-3 mb-1`}>Carried Weapons</h4>}
+            <WeaponsTable rows={carriedWeaponRows} label="Carried weapons" />
+          </>
+        )}
       </div>
     )}
 

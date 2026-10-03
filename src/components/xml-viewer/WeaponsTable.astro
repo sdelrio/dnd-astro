@@ -1,0 +1,58 @@
+---
+// One weapon table: the same columns and the same responsive column rule for
+// every set the card renders.
+//
+// The Weapons section draws one table per `carried` set, so the markup lives
+// here rather than in XmlCard.astro for the same reason `SavesTable.astro` and
+// `SkillsTable.astro` own theirs: two copies of four columns and a `@lg` rule is
+// two things to keep in step, and the carried table is only useful to a reader if
+// it is as complete as the equipped one. A stowed weapon is as usable as a held
+// one, so it gets the attack bonus and the damage, not a summary.
+//
+// `label` is the table's accessible name rather than a visible caption. At large
+// each table has an `h4` under the section heading, and at medium the tab names
+// the panel so no table carries a heading at all - which leaves the two tables
+// with the same four column headers and nothing to tell a screen reader which is
+// which. Two unlabelled grids would be "what is in my hand" and "what is in my
+// bag" arriving as the same table twice.
+import { cardPlateClass } from '@/components/xml-viewer/card-plate';
+import type { WeaponRow } from '@/components/xml-viewer/weapon-display';
+
+interface Props {
+  rows: WeaponRow[];
+  label: string;
+}
+
+const { rows, label } = Astro.props;
+---
+
+<div class={cardPlateClass}>
+  {/* Same constraint as the inventory table: Properties drops out below `@lg`
+      and rides under the weapon name. The attack bonus stays its own column at
+      every width - it is the column a player reaches for. */}
+  <table class="w-full text-sm" aria-label={label}>
+    <thead>
+      <tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+        <th class="text-left font-medium pb-1">ATK</th>
+        <th class="text-left font-medium pb-1">Weapon</th>
+        <th class="hidden @lg:table-cell text-left font-medium pb-1">Properties</th>
+        <th class="text-right font-medium pb-1">Damage</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((weapon) => (
+        <tr class="border-t border-gray-200 dark:border-gray-700">
+          <td class="py-1 font-mono font-semibold text-gray-900 dark:text-gray-100">{weapon.attack}</td>
+          <td class="py-1 text-gray-700 dark:text-gray-300">
+            {weapon.name}
+            {weapon.properties && (
+              <span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">{weapon.properties}</span>
+            )}
+          </td>
+          <td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">{weapon.properties}</td>
+          <td class="py-1 text-right text-gray-700 dark:text-gray-300">{weapon.damage}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>

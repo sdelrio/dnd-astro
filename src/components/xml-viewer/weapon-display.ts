@@ -13,6 +13,28 @@ export interface WeaponRow {
   damage: string;
 }
 
+/**
+ * The two sets the card puts in two tables.
+ *
+ * A Fantasy Grounds `carried` value is three-valued, and the third is not this
+ * character's kit at all - it is the weapon left behind or sold, so it is excluded
+ * from both. The builder used to hard-code "equipped" and throw the rest away,
+ * which is why a character carrying a longsword, a crossbow and a wand in the pack
+ * showed one weapon. Naming the two sets here rather than deciding between them
+ * means the display layer cannot put the same weapon in both tables: the two
+ * values are disjoint by construction, not by a filter someone remembers.
+ */
+export const WEAPON_CARRIED = {
+  /** In hand. */
+  equipped: 2,
+  /** On the character but not in hand. */
+  carried: 1,
+  /** Not part of the character's kit. Never listed. */
+  stowed: 0,
+} as const;
+
+export type WeaponSet = 'equipped' | 'carried';
+
 function abilityBonus(abilities: Abilities, stat: string): number {
   return abilities[stat]?.bonus ?? 0;
 }
@@ -79,13 +101,19 @@ function damageString(weapon: Weapon, abilities: Abilities): string {
     .join('; ');
 }
 
+/**
+ * One set of weapon rows: the equipped weapons, or the carried-but-not-equipped
+ * ones. The card asks for both and renders a table per set, so a display mode
+ * cannot decide what a character is holding.
+ */
 export function toWeaponRows(
   weapons: Weapons,
   abilities: Abilities,
-  profBonus: number
+  profBonus: number,
+  set: WeaponSet = 'equipped'
 ): WeaponRow[] {
   return weapons
-    .filter((weapon) => weapon.carried === 2)
+    .filter((weapon) => weapon.carried === WEAPON_CARRIED[set])
     .map((weapon) => ({
       name: weapon.name,
       attack: signed(attackTotal(weapon, abilities, profBonus)),

@@ -12,10 +12,11 @@
 // character - so it is always a valid landing section.
 //
 // `label` is the tab's own name and may be shorter than the section heading
-// underneath it: the Weapons tab is "Weapons" while the section it opens is
-// "Equipped Weapons". The tab bar is an index; the headings are the sheet's
-// outline. Keeping both is the point, so neither borrows the other's wording by
-// accident.
+// underneath it. The tab bar is an index; the headings are the sheet's outline.
+// Keeping both is the point, so neither borrows the other's wording by accident.
+// Weapons is the one section where the two agree: it used to be headed "Equipped
+// Weapons", the tab's word plus a qualifier, and it now holds a second table of
+// carried weapons as well, so the honest name for the whole is the tab's.
 export const CARD_TABS = [
   { id: 'overview', label: 'Overview' },
   { id: 'skills', label: 'Skills' },
