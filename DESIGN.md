@@ -390,18 +390,28 @@ The card's subdivisions are headed, not labelled by tooltip or hover. The six
 **panels** are named by their tabs and carry no heading of their own; the
 sections *inside* a panel are headed. Heading levels step down from the card name,
 which is the `h2` (Starlight supplies the page `h1`): the inner sections are
-`h3`, and the "Level N" groups inside Features and Powers are `h3` too with the
-power group name at `h4`. They were `h4` and `h5` under a Features and Powers
+`h3`, and the "Level N" groups inside Features and Powers step to `h4` at large,
+where the Features and Powers headings own them, and stay at `h3` at medium, where
+they sit directly under the card name. The power group name is one step below the
+"Level N" group at each mode. They were `h4` and `h5` under a Features and Powers
 `h3` that the tab bar removed; promoting them is what keeps the outline unbroken
 after the panels stopped having headings of their own. See **Character Card**.
+
+**Languages and Feats are the one pair whose level is fixed at `h3` in both
+modes** rather than derived from the panel holding them. Neither panel has a
+heading to be subordinate to - at `large` the menu entry names Overview, and at
+`medium` the visible tab names the panel - so there is no level above them to
+derive from and `h3` is correct in both places for the same reason. They are also
+the only two sections that name themselves at `medium`. `h2 > h3 > h4 > h5` is
+contiguous at both modes either way.
 
 One treatment, and it is one class: `sectionHeadingClass` in
 `section-heading.ts`, 0.7rem uppercase semibold with 0.08em tracking in
 `accent-high` - the **Section Label** step, one notch above Pill. Every section
-heading is it - Vitals, Abilities, Passive Skills and Saving Throws, the four that
-live inside the Overview panel - at every display mode. It is not the treatment
-for the six panels themselves: those are tabs, and the tab label carries the
-Section Label's size and tracking at 11px with the count beside it. Below a
+heading is it - Vitals, Abilities, Passive Skills, Saving Throws, Languages and
+Feats - at every display mode. It is not the treatment for the six panels
+themselves: those are tabs, and the tab label carries the
+Section Label's size and tracking at 11px. Below a
 section heading the ramp steps down once, to 0.625rem: the
 `Level N` groups inside Features and Powers, the power group name beneath them,
 the value annotating a heading's baseline, and the proficiency and prepared-dot
@@ -422,11 +432,19 @@ and the column count. Medium used to swap in a bare name/value grid instead: no
 plate, no ability column, no proficiency dots, no legend. The section therefore
 read as one thing at large and another at medium, and a medium reader had no way
 to tell an expertise dot from a proficient one because medium had none. The rule
-is that a display mode may shorten a section, never re-style it: medium lists the
-proficient skills and the proficient saves, large lists all of them, and both
-render the same table. **A tab switch is not a display mode**, and it does not
-restyle anything either - every panel is server-rendered and hidden with
-`x-show`, so the markup a reader gets is identical whichever tab is open.
+is that a display mode may shorten a section but never re-style it: medium lists
+the proficient skills, large lists all of them, and both render the same table.
+**A tab switch is not a display mode**, and it does not restyle anything either -
+every panel is server-rendered and hidden with `x-show`, so the markup a reader
+gets is identical whichever tab is open.
+
+Languages and Feats (`LanguagesFeats.astro`) are the same idea at panel scale: one
+component, one pill plate per section, mounted in the Overview panel at `large`
+and the Skills panel at `medium`. Neither section's name sits *inside* its plate.
+It was an uppercase micro-label beside the pills at `@md`, so at the 358px a
+roster card measures the section name was the part that wrapped before the first
+pill did; as a heading it is in the one position every other section name is in,
+on the gold rule rather than inside the plate.
 
 The subdivisions are `<section>` elements but are deliberately **unnamed**. A
 `<section>` maps to a `region` landmark only when it has an accessible name, and
@@ -608,11 +626,19 @@ because `aria-selected` on a link that hides nothing would be false. A jumped-to
   card header and no card. Uncloaked, they get every section in the markup, in
   order: the pre-menu layout, intact.
 
-  **Whether a section names itself is a heading-level decision, and it differs by display mode.** At `medium` a panel has no heading of its own: the visible tab names it, and an `h3` repeating that word twenty pixels below would be the same name twice - read twice by a screen reader, seen twice by an eye. At `large` every section names itself, in the same `sectionHeadingClass` treatment as Vitals and Saving Throws. The argument that removed the headings is true on the roster and false on a character page: there is no tab, no selection state, and the page is one long scroll, so a section that is only tables and pills arrives unlabelled and the reader cannot tell where they have landed. Inventory's carried-weight total rides its heading's baseline again - the pairing it always had, and the only trailing value on the card.
+  **Whether a section names itself is a heading-level decision, and it differs by display mode - with one pair that does not differ.** At `medium` a panel has no heading of its own: the visible tab names it, and an `h3` repeating that word twenty pixels below would be the same name twice - read twice by a screen reader, seen twice by an eye. At `large` every section names itself, in the same `sectionHeadingClass` treatment as Vitals and Saving Throws. The argument that removed the headings is true on the roster and false on a character page: there is no tab, no selection state, and the page is one long scroll, so a section that is only tables and pills arrives unlabelled and the reader cannot tell where they have landed. Inventory's carried-weight total rides its heading's baseline again - the pairing it always had, and the only trailing value on the card.
+
+  **Languages and Feats are the exception, and the exception is the point.** They name themselves at `medium` too, at the same `h3`, because the rule that a medium panel is named by its tab protects against a heading that repeats *the tab's own word* - and neither of these two is the tab's word. Neither panel that holds them has a heading at either mode, so there is no level above them to derive from; `h3` under the card name is correct in both places for one reason, and that reason is written at the mount sites rather than left to be inferred.
 
   **That moves the `Level N` groups down a level, and correctly so.** Under a Features `h3` at large, the level groups are genuinely inside it and sit at `h4`, with a power group name at `h5`; two `h3`s in a row would claim Features and its first level group are siblings. At medium, where no section heading exists, the same groups step straight down from the card name and stay at `h3`/`h4`. The tag is chosen in one place rather than written twice, and `h2 > h3 > h4 > h5` is contiguous in both modes - the deepest heading on a Card is now `h5`, and that is a fourth step rather than a skipped one.
 
-  Display mode selects **how much** a panel holds, never whether the panel exists: medium and large both carry all six tabs, and what differs is that medium passes the proficient saves and the proficient skills where large passes all of them. Skills and Saving Throws render the same table card at both. The card used to pair sections side by side at `@6xl` - Skills beside Inventory, Features beside Powers - and one pairing grid survives, inside the Overview panel, because that panel alone holds two independent groups; a panel holding a single section has nothing to put beside it. Promoting Inventory and Weapons to medium put their four- and three-column tables into a 358px card for the first time, so both **drop a column below `@lg` and carry it as a second line under the name**: Weight and State for inventory, Properties for weapons. The attack bonus stays its own column at every width, because it is the column a player reaches for. That is ADR-0014's argument applied to a table - a row's width is its container's, and it must hold a name and its figures at any width - and it is a container query for the same reason the tab bar's is.
+  Display mode decides **which sections exist and which panel holds them** (ADR-0017, which replaces the earlier rule that a mode only ever shortens a section). Read at three ranks rather than as three lists of sections: `small` renders identity, avatar and tags and nothing that needs a panel to hold it; `medium` renders Skills, Languages and Feats and does not render Saving Throws, the two pill sections riding the Skills panel because that is a panel of short lists; `large` renders every section `medium` renders, adds Saving Throws back to the Overview panel, and adds nothing of its own. The mode may not be described by restating that list - that is how a list and the `sectionPolicy` map drift apart in the first place.
+
+  Medium is a **glance**, and the sections on it are recognition material: who is this character, not what does this number come from. Saving Throws is a 3-6 row table of figures the character page and the large sheet print properly and a roster reader computes with rather than reads; Feats are the single most identifying thing on a D&D character, and they did not render at `medium` at all before this. That is a trade, not an oversight: a reader who wants a saving throw has to leave the roster for it, and the roster is for recognition.
+
+  What that means for the bar: **a menu entry exists only for a section the card has something to put in it**, and the two pill sections count as content in the Skills panel. `showSkills` at `medium` is therefore `proficientSkills.length > 0 || showLanguages || showFeats`, or a character with feats and no proficient skills would have its feats deleted by a rule about hiding empty sheets. Overview stays unconditional, because Vitals and Abilities render for every character.
+
+  The card used to pair sections side by side at `@6xl` - Skills beside Inventory, Features beside Powers - and one pairing grid survives, inside the **Overview panel at `large`**, because there that panel alone holds two independent groups: the character in the left half, Saving Throws and the pill sections in the right. At `medium` it is a single column, because there is nothing that could sit beside the character at any width. Promoting Inventory and Weapons to medium put their four- and three-column tables into a 358px card for the first time, so both **drop a column below `@lg` and carry it as a second line under the name**: Weight and State for inventory, Properties for weapons. The attack bonus stays its own column at every width, because it is the column a player reaches for. That is ADR-0014's argument applied to a table - a row's width is its container's, and it must hold a name and its figures at any width - and it is a container query for the same reason the tab bar's is.
 - **Tool Panel:** The material every D&D tool surface is built from, so the page that opens a tool and the page that lists the tools are made of one surface. There are three instances of it - the **Ledger Panel** (Point Buy), the **Dice Tray Panel** (Dice Roller), and the **Tools Panel** in the rulebook spread, which is the surface `.rb-panel` and the reference both other tools were built against - and they are three instances of one panel, not three designs: same Bark 100 (#f8f6f5) surface stepping to Bark 800 (#2e2421), same 1px Gold Rule (#c9ad6a) border stepping to Gold Rule Dark (#867347), same 8px radius, same card-rest in light and **no shadow** in dark, same 3px accent cap (Oxblood in light, Gold Leaf in dark) as the only accent bar, and the same head built as **the Card Heading's construction**: a printed title in Cinzel at 1.35rem/600 in the theme's heading ink over a meta line in ScalySans at 0.8125rem, uppercase, 0.04em tracked, in Bark 600 (Bark 400 in dark), closed by a **2px Gold Rule at its lower edge**, which steps to Gold Rule Dark. That rule is the reason for the shape: a head banded only by a dotted leader reads as another row of the sheet, while a head closed by a rule at its own lower edge reads as a heading over what it heads. The cap above and the rule below bracket the surface without either carrying colour alone. A tool surface is a themed surface; one that held its paper fixed across both themes was the same object in light and in dark, which is the one outcome a theme toggle exists to prevent. Every value is a `--pb-*`, `--dr-*` or `--rb-*` custom property declared once and re-declared under `:root[data-theme='dark']`, and a test enforces that re-declaration for the first two.
 
   The **Ledger Panel's** body is a ruled leaf of six ability lines. The points readout is **not in the head** - it is in the foot, beside `SPENT`, because a governing number set in a title band reads as a headline rather than as the state of the sheet, and because down there the three figures answer the only three questions asked of a spread: how strong, how much, how much is left. It is `POINTS LEFT`, and it is the **third of three identical entries** - label at the Micro Label step, figure at the Title step (1.25rem Cinzel 600, tabular), one item each, in one row: no leader, no step up, no separate treatment. It reached the same figures by the same dotted leader and at a step of its own through Revision 4, and that made the remainder the loudest object on a surface whose job is six numbers; a leader out to the right only means "look here". When the pool empties the label reads `POOL SPENT`, which is how a finished sheet reads as finished without the figure having to become a status.
