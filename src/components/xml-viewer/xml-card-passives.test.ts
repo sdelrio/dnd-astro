@@ -32,6 +32,7 @@ const baseCharacter: CharacterData = {
   features: [],
   powers: [],
   weapons: [],
+  spellSlots: Array.from({ length: 9 }, (_, i) => ({ level: i + 1, max: 0, used: 0 })),
   inventory: [],
   coins: { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 },
   filename: 'testhero',
@@ -2129,6 +2130,300 @@ describe('XmlCard avatar resolution', () => {
   it('probes the filename slug when neither image prop nor stored path exists', async () => {
     const html = await renderCard('large', { avatarPath: undefined, filename: 'antonidas' });
     expect(portraitImg(html)).toContain('src="/fg/avatar/antonidas.png"');
+  });
+});
+
+describe('XmlCard Spellcasting section', () => {
+  // A Wizard 5: Intelligence 18 (+4), proficiency +3. Every figure below is a
+  // printed formula over those two parsed values, worked out here rather than
+  // recomputed by the test, because the whole point of the section is that the
+  // sheet stores neither figure.
+  const casterAbilities = {
+    ...baseCharacter.abilities,
+    intelligence: { score: 18, bonus: 4, save: 2, saveprof: 0 },
+    wisdom: { score: 12, bonus: 1, save: 1, saveprof: 0 },
+    charisma: { score: 8, bonus: -1, save: -1, saveprof: 0 },
+  };
+  const caster: Partial<CharacterData> = {
+    classes: [{ name: 'Wizard', level: 5 }],
+    abilities: casterAbilities,
+    profBonus: 3,
+    powers: [
+      { level: 1, name: 'Fire Bolt', group: 'Spells', prepared: 1, preparedDomain: 0 },
+    ],
+    spellSlots: [
+      { level: 1, max: 4, used: 2 },
+      { level: 2, max: 3, used: 2 },
+      { level: 3, max: 2, used: 0 },
+      { level: 4, max: 0, used: 0 },
+      { level: 5, max: 0, used: 0 },
+      { level: 6, max: 0, used: 0 },
+      { level: 7, max: 0, used: 0 },
+      { level: 8, max: 0, used: 0 },
+      { level: 9, max: 0, used: 0 },
+    ],
+  };
+
+  function spellcastingSection(html: string): string {
+    return panel(html, 'spellcasting');
+  }
+
+  function tabIds(html: string): string[] {
+    return [...html.matchAll(/data-tab="([a-z]+)"/g)].map(([, id]) => id);
+  }
+
+  /**
+   * The label and figure of every plate in the panel, in render order.
+   *
+   * What a reader of the card gets from a plate is its uppercase label above a
+   * bold figure, so that is what this returns. Sliced by the plate's own data
+   * hook rather than by its class list, so a restyle of the plate does not turn
+   * every assertion here into a rewrite - the Weapons column test makes the same
+   * argument about pinning a class string.
+   */
+  function plates(section: string): Array<{ label: string; figure: string }> {
+    return [...section.matchAll(/data-plate="[a-z-]+"[\s\S]*?<div[^>]*uppercase[^>]*>([^<]*)<\/div><div[^>]*>([^<]*)<\/div>/g)].map(
+      ([, label, figure]) => ({ label: label.trim(), figure: figure.trim() })
+    ).filter((plate) => plate.label !== '');
+  }
+
+  /** The slot plates only, keyed by the level they label. */
+  function slotPlates(section: string): Array<[level: string, figure: string]> {
+    return [...section.matchAll(/data-slot="(\d)"[\s\S]*?<div[^>]*uppercase[^>]*>([^<]*)<\/div><div[^>]*>([^<]*)<\/div>/g)].map(
+      ([, level, label, figure]) => [level, `${label.trim()} ${figure.trim()}`]
+    );
+  }
+
+  it('offers a Spellcasting entry and panel for a caster at medium and large', async () => {
+    for (const display of ['medium', 'large'] as const) {
+      const html = await renderCard(display, caster);
+      expect(tabIds(html), `${display} tab`).toContain('spellcasting');
+      const section = spellcastingSection(html);
+      expect(section, `${display} panel`).toContain('data-panel="spellcasting"');
+      expect(section).toContain('>INT +4<');
+    }
+  });
+
+  it('gives the large card a jump link to the section, as a fragment identifier', async () => {
+    // The large sheet's whole navigation is `href="#..."` and needs no JavaScript,
+    // so the anchor has to be in the server-rendered HTML with the id it targets.
+    const html = await renderCard('large', { ...caster, filename: 'caster' });
+    expect(html).toContain('href="#xmlcard-caster-spellcasting"');
+    expect(html).toContain('id="xmlcard-caster-spellcasting"');
+  });
+
+  it('renders in the markup for a reader without JavaScript', async () => {
+    // The panels are deliberately not `x-cloak`ed, because `[x-cloak]` is
+    // `display: none !important` and a cloaked panel would delete the card for
+    // anyone the script never runs on.
+    const html = await renderCard('medium', caster);
+    expect(html).toContain('data-no-cloak="no-js-reader-loses-the-card"');
+    expect(html).not.toMatch(/data-panel="spellcasting"[^>]*x-cloak/);
+  });
+
+  it('leaves the entry out for a martial character with no spell powers', async () => {
+    // ADR-0016's rule: a menu entry exists only for a section with something in
+    // it. A Fighter who casts nothing has nothing to open.
+    const martial: Partial<CharacterData> = {
+      classes: [{ name: 'Fighter', level: 3, subclass: 'Champion' }],
+      powers: [{ level: 1, name: 'Rage', group: 'Fighter Actions', prepared: 0, preparedDomain: 0 }],
+    };
+    for (const display of ['medium', 'large'] as const) {
+      const html = await renderCard(display, martial);
+      expect(tabIds(html), `${display} tab`).not.toContain('spellcasting');
+      expect(spellcastingSection(html)).toBe('');
+    }
+  });
+
+  it('keeps the entry for a half-caster whose only casting class is a subclass', async () => {
+    // An Eldritch Knight whose sheet lists no spell entries at all still casts.
+    // The gate has to be satisfied by the subclass alone, or these spells become
+    // the one thing the card cannot account for.
+    const halfCaster: Partial<CharacterData> = {
+      classes: [{ name: 'Fighter', level: 3, subclass: 'Eldritch Knight' }],
+      powers: [{ level: 1, name: 'Second Wind', group: 'Fighter Actions', prepared: 0, preparedDomain: 0 }],
+    };
+    const section = spellcastingSection(await renderCard('medium', halfCaster));
+    expect(section).toContain('data-panel="spellcasting"');
+    expect(section).toContain('>INT +0<');
+  });
+
+  it('keeps the entry for a character whose only casting evidence is one spell power', async () => {
+    const cantripCaster: Partial<CharacterData> = {
+      classes: [{ name: 'Fighter', level: 3, subclass: 'Champion' }],
+      powers: [{ level: 3, name: 'Shillelagh', group: 'Spells', prepared: 1, preparedDomain: 0 }],
+    };
+    expect(tabIds(await renderCard('medium', cantripCaster))).toContain('spellcasting');
+  });
+
+  it('shows the three figures in one row of plates, laid out like the Vitals row', async () => {
+    const section = spellcastingSection(await renderCard('large', caster));
+    const row = plates(section).filter((p) => !/Level \d/.test(p.label));
+    expect(row.map((p) => p.label)).toEqual(['Casting Ability', 'Save DC', 'Attack Bonus']);
+    // Same plate treatment as Vitals: three across, one label above one figure.
+    expect(section).toContain('grid grid-cols-3 gap-2 text-center');
+    expect(section.match(/rounded-\[7px\]/g)?.length).toBe(6);
+  });
+
+  it.each([
+    [
+      'a Wizard',
+      { classes: [{ name: 'Wizard', level: 5 }], abilities: casterAbilities, profBonus: 3 },
+      'INT +4',
+      '15',
+      '+7',
+    ],
+    [
+      'a Cleric with Wisdom 16 and proficiency 3',
+      {
+        classes: [{ name: 'Cleric', level: 5 }],
+        abilities: {
+          ...casterAbilities,
+          intelligence: { score: 12, bonus: 1, save: 1, saveprof: 0 },
+          wisdom: { score: 16, bonus: 3, save: 5, saveprof: 1 },
+        },
+        profBonus: 3,
+      },
+      'WIS +3',
+      '14',
+      '+6',
+    ],
+    [
+      'a Paladin with Charisma 18 and proficiency 2',
+      {
+        classes: [{ name: 'Paladin', level: 5 }],
+        abilities: {
+          ...casterAbilities,
+          charisma: { score: 18, bonus: 4, save: 6, saveprof: 1 },
+        },
+        profBonus: 2,
+      },
+      'CHA +4',
+      '14',
+      '+6',
+    ],
+  ])('matches the printed formulae for %s', async (_name, overrides, ability, dc, attack) => {
+    const section = spellcastingSection(await renderCard('large', { ...caster, ...overrides }));
+    expect(plates(section).map((p) => p.figure).slice(0, 3)).toEqual([ability, dc, attack]);
+  });
+
+  it('takes the casting ability from the higher-level class in a multiclass character', async () => {
+    // Fighter 12 / Wizard 2: the Wizard is the lower-level class and the one that
+    // casts, so the card shows Intelligence rather than the Fighter's Strength.
+    const section = spellcastingSection(
+      await renderCard('large', {
+        ...caster,
+        classes: [
+          { name: 'Fighter', level: 12 },
+          { name: 'Wizard', level: 2 },
+        ],
+      })
+    );
+    expect(section).toContain('>INT +4<');
+  });
+
+  it('marks an unresolvable casting ability as inferred rather than as recorded', async () => {
+    // The sheet names no casting class, so the card picked the best of the three.
+    // Saying so is the difference between a number the reader can check and a
+    // number they have to trust. The spell power is what opens the entry: the
+    // character casts something the sheet recorded as a spell, but no class or
+    // subclass of theirs says which ability it came from.
+    const martial: Partial<CharacterData> = {
+      classes: [{ name: 'Fighter', level: 3, subclass: 'Champion' }],
+      powers: [{ level: 3, name: 'Shillelagh', group: 'Cantrips', prepared: 1, preparedDomain: 0 }],
+      abilities: {
+        ...casterAbilities,
+        intelligence: { score: 10, bonus: 0, save: 0, saveprof: 0 },
+        wisdom: { score: 14, bonus: 2, save: 2, saveprof: 0 },
+      },
+    };
+    const section = spellcastingSection(await renderCard('large', martial));
+    expect(section).toContain('>WIS +2<');
+    expect(section).toContain('Inferred');
+    expect(section).toContain('best of Wisdom, Intelligence and Charisma');
+  });
+
+  it('does not mark a resolved casting ability as inferred', async () => {
+    const section = spellcastingSection(await renderCard('large', caster));
+    expect(section).not.toContain('Inferred');
+  });
+
+  it('renders one slot plate per level with slots, labelled by level and used out of total', async () => {
+    const section = spellcastingSection(await renderCard('large', caster));
+    expect(slotPlates(section)).toEqual([
+      ['1', 'Level 1 2/4'],
+      ['2', 'Level 2 2/3'],
+      ['3', 'Level 3 0/2'],
+    ]);
+  });
+
+  it('leaves out a level with no slots rather than showing it as zeroes', async () => {
+    const section = spellcastingSection(await renderCard('large', caster));
+    expect(section).not.toContain('Level 4');
+    expect(section).not.toContain('0/0');
+  });
+
+  it('renders no slot plates at all for a character with no slots', async () => {
+    // An empty plate grid is the first thing a panel shows, and it says nothing
+    // except that the sheet has nine nodes.
+    const section = spellcastingSection(
+      await renderCard('large', {
+        ...caster,
+        spellSlots: caster.spellSlots?.map((slot) => ({ ...slot, max: 0, used: 0 })),
+      })
+    );
+    expect(slotPlates(section)).toEqual([]);
+    expect(section).toContain('>Casting Ability<');
+  });
+
+  it('names the section once at large and not at all at medium', async () => {
+    // The same heading rule every other section follows: at medium the visible tab
+    // names the open panel, so a heading repeats a word the reader is already
+    // looking at.
+    const large = spellcastingSection(await renderCard('large', caster));
+    expect(large).toContain('>Spellcasting</h3>');
+    expect(large.match(/<h3/g)).toHaveLength(1);
+    const medium = spellcastingSection(await renderCard('medium', caster));
+    expect(medium).not.toContain('<h3');
+    expect(medium).toContain('data-panel="spellcasting"');
+  });
+
+  it('places the panel directly after Skills, where a printed sheet puts it', async () => {
+    // The index is ordered as a printed sheet reads: what the character is made
+    // of, then what it can do. Spellcasting is an ability-derived summary, so it
+    // belongs with Skills rather than down among the carried things.
+    const html = await renderCard('large', {
+      ...caster,
+      filename: 'caster',
+      inventory: [{ name: 'Rope', count: 1, weight: 10, carried: 1 }],
+      weapons: [
+        {
+          name: 'Quarterstaff',
+          attackbonus: 0,
+          attackstat: '',
+          properties: 'Versatile',
+          carried: 2,
+          type: 0,
+          damage: [{ bonus: 0, dice: 'd6', stat: 'base', statmult: 1, type: 'bludgeoning' }],
+        },
+      ],
+      features: [{ level: 1, name: 'Arcane Recovery', source: 'Wizard' }],
+    });
+    expect(tabIds(html)).toEqual([
+      'overview',
+      'skills',
+      'spellcasting',
+      'inventory',
+      'weapons',
+      'features',
+      'powers',
+    ]);
+    expect(html.indexOf('data-panel="spellcasting"')).toBeGreaterThan(
+      html.indexOf('data-panel="skills"')
+    );
+    expect(html.indexOf('data-panel="spellcasting"')).toBeLessThan(
+      html.indexOf('data-panel="inventory"')
+    );
   });
 });
 

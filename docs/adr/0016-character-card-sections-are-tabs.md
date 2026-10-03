@@ -15,9 +15,20 @@ tags: [components, accessibility, layout, characters]
 > replacement rule is that the display mode decides which sections exist and which
 > panel holds them, and the heading treatment of Languages and Feats is fixed at
 > `h3` at both modes because neither panel carries a heading of its own. Everything
-> else in this decision is unchanged and remains binding: the six sections, the
-> menu bar, medium as a tablist and large as a table of contents, and Overview as
-> the unconditional landing entry.
+> else in this decision is unchanged and remains binding: the menu bar, medium as a
+> tablist and large as a table of contents, and Overview as the unconditional
+> landing entry.
+>
+> **The section count is amended by [ADR-0018](0018-card-section-bar-carries-a-seventh-entry.md).**
+> The six sections below are seven: Spellcasting was added to the index directly
+> after Skills, on a gate that keeps it off the bar for a character who cannot cast.
+> The count was a consequence of what the card had to show rather than a target, so
+> this ADR records the rest of the decision unchanged: the menu bar, medium as a
+> tablist and large as a table of contents, the bar on the header's own surface
+> below the gold rule, the "a menu entry exists only for a section with content"
+> rule, wrapping rather than scrolling below 620px of container width, and Overview
+> as the unconditional landing entry. Every "six" and "two of six" below is a stale
+> count and not a stale rule.
 
 ## Context and Problem Statement
 

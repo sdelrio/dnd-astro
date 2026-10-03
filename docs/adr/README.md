@@ -23,6 +23,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 | 0015 | Deliver the Feat Dataset as a Dynamic Import, Not a Static One | accepted | 2026-10-01 |
 | 0016 | The Character Card's Sections Sit Behind a Menu, Not One Scrolling Column | accepted | 2026-10-01 |
 | 0017 | Medium Is a Glance, So It Carries Languages and Feats and Drops Saving Throws | accepted | 2026-10-03 |
+| 0018 | The Card's Section Bar Carries a Seventh Entry, for Spellcasting | accepted | 2026-10-03 |
 
 ## About ADRs
 

@@ -99,6 +99,7 @@ describe('toFilterableCharacters', () => {
     features: [{ level: 1, name: 'Favored Enemy', source: 'Ranger' }],
     powers: [],
     weapons: [],
+    spellSlots: Array.from({ length: 9 }, (_, i) => ({ level: i + 1, max: 0, used: 0 })),
     inventory: [],
     coins: { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 },
     filename: 'aelar',

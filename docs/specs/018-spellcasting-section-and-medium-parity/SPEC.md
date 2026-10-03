@@ -1,5 +1,5 @@
 ---
-status: active
+status: archived
 title: "Spellcasting section on the card, and medium parity for passives, save proficiency and carried weapons"
 author: "opencode"
 date: "2026-10-03"
@@ -14,15 +14,18 @@ affects:
   - src/components/xml-viewer/weapon-display.test.ts
   - src/components/xml-viewer/spellcasting-display.ts
   - src/components/xml-viewer/spellcasting-display.test.ts
+  - src/components/xml-viewer/SpellcastingPanel.astro
   - src/components/xml-viewer/card-tabs.ts
   - src/components/xml-viewer/XmlCard.astro
   - src/components/xml-viewer/xml-card-passives.test.ts
   - src/components/xml-viewer/xml-card-semantics.test.ts
   - src/components/xml-viewer/xml-card-tabs-alpine.test.ts
+  - src/components/xml-viewer/xml-card-large-snapshot.test.ts
   - src/components/xml-viewer/__snapshots__/xml-card-large-snapshot.test.ts.snap
+  - src/utils/build-xml-characters.test.ts
   - src/content/docs/guides/xml-card-test.mdx
   - DESIGN.md
-adr_constraints: [0016, 0017, 0009, 0014]
+adr_constraints: [0016, 0017, 0009, 0014, 0018]
 ---
 
 # SPEC: Spellcasting section on the card, and medium parity for passives, save proficiency and carried weapons

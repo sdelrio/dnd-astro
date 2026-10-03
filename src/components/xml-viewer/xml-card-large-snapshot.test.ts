@@ -87,6 +87,30 @@ const fixtureCharacter: CharacterData = {
       type: 2,
       damage: [{ bonus: 0, dice: 'd6', stat: 'base', statmult: 1, type: 'slashing' }],
     },
+    {
+      name: 'Longsword',
+      attackbonus: 0,
+      attackstat: '',
+      properties: 'Versatile',
+      carried: 1,
+      type: 0,
+      damage: [{ bonus: 0, dice: 'd8', stat: 'base', statmult: 1, type: 'slashing' }],
+    },
+  ],
+  // Two populated levels out of nine. The Spellcasting section renders one plate
+  // per level with slots, so this is the only fixture in the repo that reaches
+  // that code from a real parse: without it the drift guard would only ever see a
+  // caster with no slots at all.
+  spellSlots: [
+    { level: 1, max: 4, used: 2 },
+    { level: 2, max: 3, used: 1 },
+    { level: 3, max: 0, used: 0 },
+    { level: 4, max: 0, used: 0 },
+    { level: 5, max: 0, used: 0 },
+    { level: 6, max: 0, used: 0 },
+    { level: 7, max: 0, used: 0 },
+    { level: 8, max: 0, used: 0 },
+    { level: 9, max: 0, used: 0 },
   ],
   inventory: [
     { name: 'Greatsword', count: 1, weight: 6, carried: 2 },
@@ -100,10 +124,15 @@ const fixtureCharacter: CharacterData = {
 /**
  * The panels in reading order, then the sections inside the Overview panel.
  *
- * The five single-section panels are found by their `data-panel` hook rather than
- * by a heading, because they have no heading: the tab names them. Overview is the
- * only panel with sections of its own, so its inner sections are still marked by
- * their headings.
+ * The single-section panels are found by their `data-panel` hook rather than by a
+ * heading, because they have no heading: the tab names them. Overview is the only
+ * panel with sections of its own, so its inner sections are still marked by their
+ * headings.
+ *
+ * The labels are the panel names, not the headings above them. `Weapons` rather
+ * than `Equipped Weapons`: the panel takes one heading naming the section and an
+ * `h4` per rendered table beneath it, and the old label here named a table where
+ * the index means the panel.
  */
 const SECTION_MARKERS: Array<[label: string, marker: string]> = [
   ['Overview', 'data-panel="overview"'],
@@ -114,8 +143,9 @@ const SECTION_MARKERS: Array<[label: string, marker: string]> = [
   ['Languages', '>Languages</h3>'],
   ['Feats', '>Feats</h3>'],
   ['Skills', 'data-panel="skills"'],
+  ['Spellcasting', 'data-panel="spellcasting"'],
   ['Inventory', 'data-panel="inventory"'],
-  ['Equipped Weapons', 'data-panel="weapons"'],
+  ['Weapons', 'data-panel="weapons"'],
   ['Features', 'data-panel="features"'],
   ['Powers', 'data-panel="powers"'],
 ];
