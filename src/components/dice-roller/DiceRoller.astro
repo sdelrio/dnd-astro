@@ -66,6 +66,7 @@ import { ABILITY_LABELS, ABILITY_MARKS, ABILITY_NAMES } from './dice-utils';
         type="button"
         @click="rollAll()"
         :disabled="isRolling"
+        :class="{ 'is-rolling': isRolling }"
         class="dr-roll bg-(--sl-color-accent-contrast) text-(color:--sl-color-text-invert) [@media(hover:hover)]:hover:bg-(--sl-color-accent-high)"
         aria-label="Roll all ability scores"
       >
@@ -556,8 +557,8 @@ import { ABILITY_LABELS, ABILITY_MARKS, ABILITY_NAMES } from './dice-utils';
 
   /* The authored moment. One motion on the surface, and it is on the control
      the visitor is about to press rather than scattered across the rows: the
-     die tips over and settles as the button goes down. Ungated, for the reason
-     the roll button's press already gives - a gated press excludes touch. */
+     die turns over as the button goes down. Ungated, for the reason the roll
+     button's press already gives - a gated press excludes touch. */
   .dr-mark {
     transition: transform 220ms cubic-bezier(0.2, 0.9, 0.25, 1);
   }
@@ -566,9 +567,95 @@ import { ABILITY_LABELS, ABILITY_MARKS, ABILITY_NAMES } from './dice-utils';
     transform: rotate(-32deg) scale(0.88);
   }
 
+  /* The hover turn, and the reason it is an animation rather than a transition.
+
+     The obvious way to write this is `transition: transform` plus
+     `transform: rotate(360deg)` on hover. It renders nothing: a full revolution
+     lands on the angle it started from, so the transition has identical start
+     and end poses and interpolates between two identical matrices - a die that
+     does not move, on a control whose whole job is to answer back before the
+     press. Any angle short of 360 leaves the die standing on edge when the
+     pointer leaves, which is worse than no motion at all.
+
+     So it is a one-shot keyframe animation, which can carry the die through the
+     whole revolution and hand it back at the resting pose when it ends. The
+     scale bump is what makes the turn legible in the frames nearest the press:
+     the first thing a visitor sees is the die change size, and the revolution
+     is what they then read as the cause.
+
+     520ms is one deliberate revolution at a rate that reads as a turn rather
+     than a wobble, and the ease is out-heavy so most of the travel happens
+     early - a linear 360 reads as a slow grind, which is not what a die does.
+
+     No fill mode, and that is load-bearing rather than tidy. The last keyframe
+     is the resting pose, so a fill has nothing to hold - and `both` actively
+     costs the press feedback: a filling animation keeps applying its final
+     value, and an animation outranks a normal declaration in the cascade, so a
+     filled turn silently overrode `.dr-roll:active`'s tilt and left the press
+     with no die feedback at all in the one case that matters, which is pressing
+     with the pointer already on the control. */
+  @keyframes dr-mark-turn {
+    0% {
+      transform: rotate(0deg) scale(1);
+    }
+    45% {
+      transform: rotate(196deg) scale(1.14);
+    }
+    100% {
+      transform: rotate(360deg) scale(1);
+    }
+  }
+
+  @keyframes dr-mark-spin {
+    from {
+      transform: rotate(0deg) scale(1.06);
+    }
+    to {
+      transform: rotate(360deg) scale(1.06);
+    }
+  }
+
   @media (hover: hover) {
     .dr-roll:hover:not(:disabled) .dr-mark {
-      transform: rotate(14deg);
+      animation: dr-mark-turn 520ms cubic-bezier(0.22, 0.75, 0.3, 1);
+    }
+  }
+
+  /* The rolling loop. Bounded by the roll rather than by a timer, because the
+     state that starts it is the state that ends it: `is-rolling` is set from
+     `isRolling`, which the button is already disabled from and which the last
+     ability's timer clears. So there is nothing to cancel and nothing that can
+     outlive the roll - remove the class and the animation stops on the frame.
+
+     Linear and deliberately without a fill mode, so it stops *dead*. No fill means
+     no spin-down and no easing curve to unwind, and the problem with a spin-down
+     is that a die still easing round after the score lands reads as a result that
+     is not finished yet. Continuous rather than a single nudge for the same
+     reason: the roll is six abilities at 450ms each, so it runs 2700ms, and a
+     one-shot 520ms turn would be over inside the first fifth of it and leave a
+     disabled button looking inert for the rest. At 700ms a revolution the roll
+     covers about 3.9 turns - fast enough to read as a die, slow enough not to
+     strobe.
+
+     Not hover-gated, because it never was a hover: the button is disabled for
+     the whole roll, so `:hover` cannot match and cannot be the signal. */
+  .dr-roll.is-rolling .dr-mark {
+    animation: dr-mark-spin 700ms linear infinite;
+  }
+
+  /* Both motions are decorative loops, so both are suppressed for a visitor who
+     has asked for reduced motion - the same rule the panel's own rolling
+     indicator above already follows, and both neutralised by name rather than by
+     a blanket `animation: none` on the surface, which would also have stopped
+     the indicator and left the roll with no motion at all.
+
+     Press feedback is deliberately not in this list. It is not a decorative
+     loop, and gating it on `hover` excludes touch, which is the asymmetry
+     ADR-0009 decision 4 is about. */
+  @media (prefers-reduced-motion: reduce) {
+    .dr-roll:hover:not(:disabled) .dr-mark,
+    .dr-roll.is-rolling .dr-mark {
+      animation: none;
     }
   }
 
