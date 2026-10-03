@@ -97,7 +97,7 @@ Committed layout, with generated output annotated:
 
 ```text
 docs/                    Architecture decisions, specs, and agent workflow docs
-  adr/                   Accepted architecture decision records (ADR 0001 - 0018)
+  adr/                   Accepted architecture decision records (ADR 0001 - 0020)
   agents/                Issue tracker, triage, and domain conventions
   specs/                 Feature specifications
 public/                  Static assets served as-is
