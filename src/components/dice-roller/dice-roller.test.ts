@@ -70,12 +70,46 @@ const decl = (selector: string, property: string): string => {
   return found![1].trim();
 };
 
-/** The rem value as pixels. The root is 16px and the document does not change it. */
+/**
+ * The rem value as pixels. The root is 16px and the document does not change it.
+ *
+ * A `calc()` of rem lengths is summed rather than rejected, because the handle's
+ * floor is computed from the mark's own tokens on purpose and the row-floor
+ * arithmetic has to see through it. A `calc()` mixing in anything else throws
+ * rather than being silently read as zero.
+ */
 const rem = (value: string): number => {
+  const calc = value.match(/^calc\((.*)\)$/);
+  if (calc) {
+    // Split on an operator surrounded by whitespace, never on the hyphen inside a
+    // custom property's name: `var(--dr-name-floor)` is one term, not two.
+    const terms = calc[1].split(/\s+([+-])\s+/);
+    return terms.reduce((total, term) => {
+      const px = term === '+' || term === '-' ? 0 : rem(term.trim());
+      return total + (term === '-' ? -px : px);
+    }, 0);
+  }
+  // A `var()` term resolves against the panel's own block, so a floor computed
+  // from tokens reads as the number it computes to rather than as text.
+  const reference = value.match(/^var\(--dr-([\w-]+)\)$/);
+  if (reference) {
+    return rem(decl('.dr', `--dr-${reference[1]}`));
+  }
   const m = value.match(/^([\d.]+)rem$/);
   expect(m, `${value} is not a rem length`).not.toBeNull();
   return Number(m![1]) * 16;
 };
+
+/**
+ * The trade handle's own floor, read from the stylesheet rather than written into
+ * the assertions that depend on it.
+ *
+ * Both the row-layout guards and the mark's read this, because the mark lives
+ * inside the handle: what the narrowest row has to fit is the handle's floor, and
+ * a floor that forgot the mark would let every one of those guards pass on a row
+ * wider than the number it checked.
+ */
+const tradeMin = () => rem(decl('.dr-trade', 'min-width'));
 
 const VOID_ELEMENTS = new Set([
   'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input',
@@ -343,6 +377,68 @@ function hexValue(raw: string, what: string): string {
 
 function painted(theme: 'light' | 'dark', el: PaintTarget, properties: string[], what: string): string {
   return hexValue(valueOf(theme, el, ...properties), what);
+}
+
+/**
+ * The same resolution, but through the panel's own custom properties.
+ *
+ * `painted` needs a hex and this stylesheet paints almost nothing in one: the
+ * surface is `--dr-surface`, the ink is `--dr-ink`, and both are declared in the
+ * `.dr` blocks as `var(--color-…)` references into `tailwind.css`. Reading them
+ * as literals would mean pasting the palette into the assertion, which is the
+ * hole the whole resolver above was written to close. So the chain is followed
+ * out to the hex: theme block, then the palette.
+ *
+ * A token that resolves to anything but a hex throws, so a themed surface
+ * repainted with a `color-mix` or a named colour fails here rather than
+ * silently comparing nothing.
+ */
+const palette = readFileSync(new URL('../../styles/tailwind.css', import.meta.url), 'utf8');
+
+/** A `--color-*` value out of the theme palette, which is where the chain ends. */
+function paletteValue(name: string, what: string): string {
+  const found = palette.match(new RegExp(`${name}:\\s*(#[0-9a-f]{3,8})\\s*;`, 'i'));
+  if (!found) {
+    throw new Error(`${what} resolves to ${name}, which is not a hex in tailwind.css`);
+  }
+  return found[1].toLowerCase();
+}
+
+/** A `--dr-*` token's hex in one theme, following the reference chain to the palette. */
+function token(theme: 'light' | 'dark', name: string, what: string): string {
+  const block =
+    theme === 'dark'
+      ? source.match(/:global\(:root\[data-theme='dark'\]\) \.dr \{([\s\S]*?)\n {2}\}/)?.[1] ?? ''
+      : source.match(/\n {2}\.dr \{([\s\S]*?)\n {2}\}/)?.[1] ?? '';
+  const raw = block.match(new RegExp(`--dr-${name}:\\s*([^;]+);`))?.[1].trim();
+  if (!raw) {
+    throw new Error(`--dr-${name} is not declared for the ${theme} theme`);
+  }
+  const referenced = raw.match(/^var\((--[\w-]+)\)$/);
+  if (!referenced) {
+    throw new Error(`${what} is "${raw}", which is not a reference this resolver can follow`);
+  }
+  return paletteValue(referenced[1], `${what} (--dr-${name})`);
+}
+
+/**
+ * The colour an element paints with in one theme, resolving its own custom
+ * properties through the panel's blocks.
+ *
+ * Falls back to the cascade for anything that is already a literal, so one
+ * helper serves both the rules that use a hex directly and the ones that name a
+ * token.
+ */
+function themedPaint(
+  theme: 'light' | 'dark',
+  el: PaintTarget,
+  properties: string[],
+  what: string
+): string {
+  const raw = valueOf(theme, el, ...properties);
+  const tokenName = raw.match(/^var\(--dr-([\w-]+)\)$/);
+  if (tokenName) return token(theme, tokenName[1], what);
+  return paintToken(raw, what);
 }
 
 /** The class list of a round button, read from the markup rather than assumed. */
@@ -719,6 +815,234 @@ describe('DiceRoller stats window', () => {
   });
 });
 
+/**
+ * The mark beside each ability's name.
+ *
+ * Point Buy draws its mark with `IconifyIcon` on each row, which works there
+ * because its rows are rendered at build time. The roller's rows are cloned by
+ * an `x-for`, so the template cannot know which ability it is cloning for: one
+ * inline mark in the template would draw the same mark six times.
+ *
+ * So the six marks are drawn once at build time into a sprite of `<symbol>`
+ * elements, and each row draws its own with `<use>` whose href is bound to that
+ * row's name. Binding by name is what makes the mark travel with the name: a
+ * swap exchanges two rolls between two rows and leaves every name where it was,
+ * so a mark bound to the name cannot end up beside the wrong ability.
+ */
+describe('DiceRoller ability marks', () => {
+  /**
+   * The sprite, where the six marks are drawn once at build time.
+   *
+   * Bounded by the rows that follow rather than by the first `</svg>`, so an icon
+   * rendered inside the sprite one day cannot truncate the capture to nothing and
+   * leave every assertion here passing on an empty string.
+   */
+  const sprite = (): string => {
+    const open = source.indexOf('<svg class="dr-mark-sprite"');
+    expect(open, 'no mark sprite in the panel').toBeGreaterThan(-1);
+    const close = source.indexOf('<div class="js-only">', open);
+    expect(close, 'the sprite is not closed before the rows').toBeGreaterThan(-1);
+    return source.slice(open, close);
+  };
+
+  /** The trade handle and everything inside it. */
+  const handle = (): string => {
+    const click = source.indexOf('@click="selectAbility(index)"');
+    expect(click, 'the trade handle has no click binding').toBeGreaterThan(-1);
+    const open = source.lastIndexOf('<button', click);
+    return source.slice(open, source.indexOf('</button>', open));
+  };
+
+  it('draws one mark per ability into a sprite, from the shared table', () => {
+    // The sprite is one map over the vocabulary's own six, and each symbol is
+    // named for the ability it stands for rather than for its position, which is
+    // what lets a row find its mark by name. How many symbols that map produces
+    // is asserted on the rendered sprite in `ability-marks.test.ts`, because the
+    // count here would only be counting map expressions in the source.
+    expect(source).toContain('icon={ABILITY_MARKS[code]}');
+    expect(sprite()).toContain('ABILITY_NAMES.map');
+    expect(sprite()).toContain('symbolId={`dr-mark-${ABILITY_LABELS[code]}`}');
+    // No icon literal anywhere in the roller: every mark it draws comes from the
+    // table, which is what makes the two panels' six marks the same six.
+    expect(source).not.toContain("'game-icons:");
+  });
+
+  it('binds each row to the mark for its own name, so a swap cannot move a mark', () => {
+    // The href is the row's name and nothing else. Index would look equivalent
+    // today - the rows never reorder - but it is the property that actually
+    // identifies the ability, and an index binding would go quietly wrong the
+    // first time the state order stopped matching the sheet's.
+    expect(handle()).toContain(":href=\"'#dr-mark-' + ability.name\"");
+    expect(handle()).not.toMatch(/:href="[^"]*index/);
+  });
+
+  it('puts the mark inside the handle, before the name, on its baseline', () => {
+    const mark = handle().indexOf('<use');
+    const name = handle().indexOf('class="dr-name"');
+    expect(mark, 'the handle draws no mark').toBeGreaterThan(-1);
+    expect(name, 'the handle has no name').toBeGreaterThan(-1);
+    expect(mark, 'the mark does not precede the name').toBeLessThan(name);
+    // Same baseline, not just adjacent: a mark sitting on its own line above the
+    // name turns six rows into twelve lines and the sheet into a list.
+    expect(decl('.dr-mark-line', 'align-items')).toBe('baseline');
+  });
+
+  it('hides the mark from assistive technology and leaves the row label alone', () => {
+    // The mark is a picture of the ability the name already spells out, so it is
+    // decoration. `IconifyIcon` gives an icon `aria-hidden` unless it is given a
+    // `label`, so the guard is that the sprite is drawn without one - a label
+    // here would announce six pictures and say nothing the row label has not.
+    expect(sprite()).toContain('aria-hidden="true"');
+    expect(sprite()).not.toContain('label=');
+    // The row's own accessible name is unchanged: still the handle's label,
+    // naming the ability and the action, and still the only name on the button.
+    expect(handle()).toContain(":aria-label=\"'Select ' + ability.name + ' for swap'\"");
+  });
+
+  it('keeps the mark a fixed, unshrinkable box beside a name that wraps nowhere', () => {
+    // The six rows have to stay on one column whether a row is rolled or not, so
+    // the mark cannot be sized by its content or allowed to give ground to a long
+    // name. `flex-shrink: 0` is what stops the mark being the thing that
+    // collapses on the longest name.
+    expect(decl('.dr-ability-mark', 'width')).toBe(decl('.dr-ability-mark', 'height'));
+    expect(decl('.dr-ability-mark', 'flex-shrink')).toBe('0');
+    expect(decl('.dr-name', 'white-space')).toBe('nowrap');
+  });
+
+  it('holds the mark to the graphic contrast bar on the panel in both themes', () => {
+    // The mark carries no information the name does not, so it is not text and
+    // the bar is WCAG 1.4.11's 3:1 rather than 4.5:1. Soft ink rather than the
+    // name's own: six full-strength marks beside six names would be six times
+    // the ink for one extra reading of the same word.
+    for (const theme of ['light', 'dark'] as const) {
+      const mark = themedPaint(
+        theme,
+        { classes: ['dr-ability-mark'], pseudos: [] },
+        ['color'],
+        'the ability mark'
+      );
+      const panel = themedPaint(
+        theme,
+        { classes: ['dr-panel'], pseudos: [] },
+        ['background'],
+        'the panel'
+      );
+      expect(contrast(mark, panel), `the mark on the panel in ${theme}`).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+it('accounts for the mark in the handle floor the narrowest row reads', () => {
+    // The mark is inside the trade handle, so the handle's `min-width` is the
+    // floor the narrowest-row assertion reads - and that floor is what keeps the
+    // name on the row at 320px. A mark wider than the floor leaves would push the
+    // longest name off the row, and the dice tray beside it is wider, so the row
+    // would still fit and nothing else on the surface would notice.
+    //
+    // Asserted against the tokens rather than against the mark's own rule, so the
+    // floor is tied to the thing it has to cover: widen the mark token and the
+    // floor follows it, because both are the same value.
+    const nameFloor = rem(decl('.dr', '--dr-name-floor'));
+    const markSize = rem(decl('.dr', '--dr-mark-size'));
+    const markGap = rem(decl('.dr', '--dr-mark-gap'));
+    expect(decl('.dr-ability-mark', 'width')).toBe('var(--dr-mark-size)');
+    expect(decl('.dr-mark-line', 'gap')).toBe('var(--dr-mark-gap)');
+    // The floor is the names, plus the mark and the gap between them.
+    expect(tradeMin(), 'the handle floor does not cover the mark and its gap').toBe(
+      nameFloor + markSize + markGap
+    );
+    // And it is a computed floor rather than a written-out number: a literal
+    // would pass this once and go stale the next time the mark changed.
+    expect(decl('.dr-trade', 'min-width')).toContain('calc(');
+    expect(tradeMin()).toBeGreaterThan(markSize + markGap);
+  });
+});
+
+/**
+ * The modifier total, the one figure that answers "how strong is this sheet".
+ *
+ * It sits in the foot but outside the Stats block, which is a window over the
+ * whole session and only exists once a full roll has happened: a total that
+ * appeared with the first session figure would be blank for the six rolls before
+ * it, and a total that was missing until then would be exactly the number a
+ * player wants after re-rolling one ability.
+ */
+describe('DiceRoller modifier total', () => {
+  /** The foot's total line, from its opening element to the figure's own close. */
+  const totalLine = (): string => {
+    const open = source.indexOf('<p class="dr-total-line"');
+    expect(open, 'no total line in the foot').toBeGreaterThan(-1);
+    return source.slice(open, source.indexOf('</p>', open));
+  };
+
+  it('labels the figure as the sheet\'s own, not as a session figure', () => {
+    // The label is the only place the scope can be stated, because the number is
+    // identical either way. The Stats block below it says "last 50 rolls" on its
+    // own head, so a bare "Modifier total" here would be read as another sample.
+    expect(totalLine()).toContain('Modifier total');
+    expect(totalLine()).toContain('this sheet');
+  });
+
+  it('pairs the label and the figure the way Point Buy does', () => {
+    // The same micro-label over the same figure step, so the two tools' feet
+    // read as one object: a label and a number, nothing between them.
+    expect(totalLine()).toMatch(/class="dr-soft micro-label"[^>]*>\s*Modifier total/);
+    expect(totalLine()).toMatch(/class="dr-total"/);
+    expect(decl('.dr-total', 'font-variant-numeric')).toBe('tabular-nums');
+    expect(decl('.dr-total', 'font-size')).toBe(decl('.dr-stat-fig', 'font-size'));
+  });
+
+  it('sits in the foot, above the Stats block and outside its gate', () => {
+    const total = source.indexOf('class="dr-total"');
+    const foot = source.indexOf('class="dr-foot"');
+    const gate = source.indexOf('sessionRolls.length === 0');
+    expect(total, 'no total figure in the markup').toBeGreaterThan(-1);
+    expect(total, 'the total is not in the foot').toBeGreaterThan(foot);
+    // The Stats block is gated on a session sample having been taken; the total
+    // is not gated at all, so it precedes that template rather than sitting
+    // inside it.
+    expect(total, 'the total is inside the session gate').toBeLessThan(gate);
+    // Not in the head either: a governing number set in a title band reads as a
+    // headline rather than as the state of the sheet, which is why Point Buy's
+    // own totals sit in its foot beside the figures they are the remainder of.
+    expect(total).toBeGreaterThan(source.indexOf('@click="rollAll()"'));
+  });
+
+  it('reads a plain 0 before anything is rolled', () => {
+    // The server-rendered figure, which is what a reader sees before Alpine
+    // boots and what the page falls back to. Zero is a true statement about an
+    // unrolled sheet rather than a result pretending to be one, and it is plain
+    // because `+0` is not a thing a modifier does.
+    expect(source).toMatch(/class="dr-total"[^>]*x-text="modifierTotal\(\)"\s*>\s*0\s*</);
+    expect(source).not.toMatch(/class="dr-total"[^>]*>\s*\+0\s*</);
+  });
+
+  it('takes the figure from the shared sum and the shared signing rule', () => {
+    // Not a second sum and a second sign rule: the roller and Point Buy print the
+    // same figure about the same sheet, and two copies of either is a copy that
+    // will disagree with the other one.
+    expect(component).toContain('dice.totalModifier(this.abilities)');
+    expect(component).toContain('dice.formatModifierTotal(');
+  });
+
+  it('has the figure clear its background in both themes', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      const figure = themedPaint(
+        theme,
+        { classes: ['dr-total'], pseudos: [] },
+        ['color'],
+        'the total'
+      );
+      const panel = themedPaint(
+        theme,
+        { classes: ['dr-panel'], pseudos: [] },
+        ['background'],
+        'the panel'
+      );
+      expect(contrast(figure, panel), `the total on the panel in ${theme}`).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+});
+
 describe('DiceRoller responsive layout', () => {
   /**
    * The row replaced a 2/3-column tile grid, so none of the geometry the old
@@ -737,7 +1061,6 @@ describe('DiceRoller responsive layout', () => {
   const trayPad = () => rem(decl('.dr-dice', 'padding'));
   const plate = () => rem(decl('.dr-plate', 'width'));
   const reroll = () => rem(decl('.dr-reroll', 'width'));
-  const tradeMin = () => rem(decl('.dr-trade', 'min-width'));
   const rowGap = () => rem(decl('.dr-row', 'gap'));
   const panelPad = () => rem(decl('.dr-panel', 'padding'));
 
@@ -778,18 +1101,19 @@ describe('DiceRoller responsive layout', () => {
    * bug it catches is invisible in one theme: a token left at its light value
    * renders correctly on the theme you are looking at.
    *
-   * `die-size` and `accent` are exempt, and legitimately so. The die is one
-   * measured size on the surface, not a themed one - it is read by the
-   * row-floor arithmetic, and a dark-theme override would silently invalidate
-   * every number that block computes. `accent` is the live Starlight token,
-   * which already carries both themes.
+   * `die-size`, the mark's `mark-size`, `mark-gap` and `name-floor`, and
+   * `accent` are exempt, and legitimately so. Each of the four is a measured
+   * box on the surface rather than a themed one - they are read by the row-floor
+   * arithmetic, and a dark-theme override would silently invalidate every number
+   * that block computes, which is the worse failure of the two. `accent` is the
+   * live Starlight token, which already carries both themes.
    */
   it('re-declares every themed property for the dark theme', () => {
     const light = source.match(/\n {2}\.dr \{([\s\S]*?)\n {2}\}/)?.[1] ?? '';
     const dark =
       source.match(/:global\(:root\[data-theme='dark'\]\) \.dr \{([\s\S]*?)\n {2}\}/)?.[1] ??
       '';
-    const THEME_OWNS = new Set(['accent', 'die-size']);
+    const THEME_OWNS = new Set(['accent', 'die-size', 'mark-size', 'mark-gap', 'name-floor']);
     const props = [...light.matchAll(/--dr-([a-z-]+):/g)].map((m) => m[1]);
     expect(props.length, 'no --dr-* properties found in the light block').toBeGreaterThan(6);
     for (const prop of props.filter((p) => !THEME_OWNS.has(p))) {

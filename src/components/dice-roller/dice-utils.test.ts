@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rollDie, rollDice, rollAbility, getTopThreeIndices, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog, swapAbilities, type Ability } from './dice-utils';
+import { rollDie, rollDice, rollAbility, getTopThreeIndices, calculateModifier, formatModifier, updateAbilityWithRoll, calculateStats, formatStats, formatResultLog, swapAbilities, totalModifier, formatModifierTotal, ABILITY_LABELS, ABILITY_MARKS, ABILITY_NAMES, type Ability } from './dice-utils';
 
 describe('rollDie', () => {
   it('returns a number between 1 and sides', () => {
@@ -303,6 +303,74 @@ describe('formatResultLog', () => {
   it('handles negative modifier', () => {
     const abilities = [{ name: 'STR', sum: 7, modifier: -2 }];
     expect(formatResultLog(abilities)).toBe('STR 7 (-2)');
+  });
+});
+
+/**
+ * The marks, beside the codes and the names for the reason the names are: both
+ * tools print the same six abilities, so both print the same six marks, and a
+ * mark declared in one tool's island would be one more thing to keep in step.
+ */
+describe('ABILITY_MARKS', () => {
+  it('gives every ability a mark, and no ability a second one', () => {
+    expect(Object.keys(ABILITY_MARKS)).toEqual([...ABILITY_NAMES]);
+  });
+
+  it('draws all six from one family, so the six read as a set', () => {
+    // `game-icons` throughout is the decision, not an accident: the marks are
+    // solid silhouettes, and six borrowed glyphs from six sets read as six
+    // unrelated stickers rather than as the sheet's six abilities.
+    expect([...new Set(Object.values(ABILITY_MARKS).map((icon) => icon.split(':')[0]))]).toEqual([
+      'game-icons',
+    ]);
+  });
+
+  it('pairs each mark with one name, so no two abilities are the same picture', () => {
+    const marks = ABILITY_NAMES.map((code) => ABILITY_MARKS[code]);
+    expect(new Set(marks).size, `two abilities share a mark: ${marks.join(', ')}`).toBe(
+      ABILITY_NAMES.length,
+    );
+  });
+
+  it('is declared beside the ability names it sits next to', () => {
+    // The order is the 5e one and the names' order, so a reader of this file can
+    // see all three tables line up without counting braces.
+    expect(Object.keys(ABILITY_MARKS)).toEqual(Object.keys(ABILITY_LABELS));
+  });
+});
+
+describe('totalModifier', () => {
+  const sheet = (...modifiers: number[]) =>
+    modifiers.map((modifier) => ({ modifier })) as Ability[];
+
+  it('adds the six modifiers, whichever way they point', () => {
+    // 15, 9, 14, 7, 12 and 13 rolled: +2, -1, +2, -2, +1 and +1.
+    expect(totalModifier(sheet(2, -1, 2, -2, 1, 1))).toBe(3);
+  });
+
+  it('reads zero for an unrolled sheet, rather than a negative default', () => {
+    // Zero is a true statement about a sheet nobody has rolled, and the same one
+    // a blank Point Buy sheet makes about itself before any points are spent.
+    expect(totalModifier(sheet(0, 0, 0, 0, 0, 0))).toBe(0);
+    expect(totalModifier([])).toBe(0);
+  });
+
+  it('does not care about order, because a trade cannot change it', () => {
+    expect(totalModifier(sheet(-2, 2, 1, -1, 1, 2))).toBe(totalModifier(sheet(2, -1, 2, -2, 1, 1)));
+  });
+});
+
+describe('formatModifierTotal', () => {
+  it('writes a plain 0, because +0 is not a thing a modifier does', () => {
+    expect(formatModifierTotal(0)).toBe('0');
+    expect(formatModifierTotal(0)).not.toMatch(/[+-]/);
+  });
+
+  it('carries its sign everywhere else, since the figure is a bonus', () => {
+    expect(formatModifierTotal(6)).toBe('+6');
+    expect(formatModifierTotal(1)).toBe('+1');
+    expect(formatModifierTotal(-6)).toBe('-6');
+    expect(formatModifierTotal(-1)).toBe('-1');
   });
 });
 

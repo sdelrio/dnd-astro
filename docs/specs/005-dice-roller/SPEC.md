@@ -227,8 +227,18 @@ Accepted Deviation 1 above recorded that styling ships as Tailwind utilities on 
 
 The Goals list the abilities as `(STR, DEX, CON, INT, WIS, CHA)` and that form shipped until PR #375. The rows, the `aria-label`s, the roll log, the swap panel and the live region now all print the sheet's full names - Strength, Dexterity, Constitution, Intelligence, Wisdom, Charisma - from a shared `ABILITY_LABELS` table in `dice-utils.ts`. The short codes remain the *key* the maths, the presets and the score trade address, and are never printed. Reason: a player reads "Constitution" on a character sheet, and the Point Buy tool beside it already printed the full names, so the two tools disagreed about the same six abilities.
 
+### 8. Marks and a modifier total, added after the panel shipped (#411)
+
+Two things the panel did not have when it shipped, both about the six rows reading as one sheet rather than six separate ones. Neither was in this spec; they are recorded here so a future reviewer does not read them as scope creep against a plan that never asked for them.
+
+**A mark beside each name.** The same `game-icons` silhouette Point Buy puts beside its six names, so the two tools read as one set rather than one product borrowing six glyphs from another. `ABILITY_MARKS` is declared in `dice-utils.ts` beside `ABILITY_LABELS` and the ability codes, and `PointBuy.astro` reads it rather than holding its own row table - the local `ABILITY_ROWS` table went with it, because a second pairing of ability to picture is exactly the drift the shared table exists to prevent. The roller draws the six through a `<symbol>` sprite and a `<use>` per row, because its rows are cloned by an Alpine `x-for` and an icon rendered inline in the template would be the same icon six times; the `<use>` href is bound to the row's **name**, not its index, so the mark travels with the name when a swap moves two rolls between two rows.
+
+**A modifier total in the foot.** One figure answering "how strong is this sheet", in the foot rather than the head and **outside** the `<template x-if>` that gates the Stats block: that block is a window over the last 50 rolls and does not exist until a full roll has happened, while the total describes the sheet on screen and is true after a single roll. It reads a plain `0` on an unrolled sheet and is spoken in the roll-all announcement, after the six scores it is a total of. The sum and the signing rule are the shared `totalModifier` and `formatModifierTotal` in `dice-utils.ts`; Point Buy's own `formatTotalModifier` is now spelled through the same rule rather than keeping a second copy of it.
+
+Reason both are here rather than nowhere: the panel asked the reader to add six modifiers up themselves on the one page whose whole job is producing them, and the two tools were the only two in the site that printed the same six abilities and did not look like it.
+
 ## Status
 
 - [x] Implementation complete
-- [x] Tests passing (836 unit tests, build verified)
+- [x] Tests passing (1122 unit tests, build verified)
 - [x] ADR updated ([ADR-0014](../../adr/0014-tool-rows-not-tiles.md) supersedes ADR-0009 Decision 1; the 44px and 16px floors are unchanged)

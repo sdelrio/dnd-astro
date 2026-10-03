@@ -7,9 +7,26 @@ interface Props {
   width?: string;
   class?: string;
   label?: string;
+  /**
+   * Emit a `<symbol id>` rather than a standalone `<svg>`, for a sprite an
+   * `<use>` element draws by reference.
+   *
+   * The case is a row an Alpine `x-for` clones: the template cannot know which
+   * ability it is being cloned for, so one inline icon in the template would draw
+   * the same icon once per row. A sprite holds one copy of each and the row picks
+   * its own, which is why the two Point Buy and the Dice Roller share are drawn
+   * through this rather than one of them inline.
+   *
+   * A symbol is not drawn where it is declared, so `width`, `class` and `label`
+   * belong on the `<use>` that references it and are not carried here. The
+   * `aria-hidden` is kept: the sprite is a decorative library whether or not any
+   * given `<use>` draws from it, and a `<symbol>` in the accessibility tree is an
+   * icon with no name.
+   */
+  symbolId?: string;
 }
 
-const { icon, width = '1em', class: className, label } = Astro.props;
+const { icon, width = '1em', class: className, label, symbolId } = Astro.props;
 
 const [prefix, name] = icon.split(':');
 
@@ -21,7 +38,9 @@ const iconData = iconSet?.icons?.[name];
 if (iconData) {
   const w = iconData.width ?? iconSet.width ?? 512;
   const h = iconData.height ?? iconSet.height ?? 512;
-  svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">${iconData.body}</svg>`;
+  svg = symbolId
+    ? `<symbol id="${symbolId}" viewBox="0 0 ${w} ${h}" aria-hidden="true">${iconData.body}</symbol>`
+    : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}">${iconData.body}</svg>`;
 } else {
   console.error(`Icon not found: ${icon}`);
 }
@@ -32,8 +51,12 @@ const a11yAttrs = label
 ---
 
 <Fragment
-  set:html={svg.replace(
-    /<svg/,
-    `<svg width="${width}" height="${width}" class="${className ?? ''}" ${Object.entries(a11yAttrs).map(([k, v]) => `${k}="${v}"`).join(' ')}`
-  )}
+  set:html={
+    symbolId
+      ? svg
+      : svg.replace(
+          /<svg/,
+          `<svg width="${width}" height="${width}" class="${className ?? ''}" ${Object.entries(a11yAttrs).map(([k, v]) => `${k}="${v}"`).join(' ')}`
+        )
+  }
 />

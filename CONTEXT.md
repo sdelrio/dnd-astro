@@ -61,3 +61,11 @@ Exchanging the scores of two Ability Scores on the Point Buy sheet. A trade
 moves both values at once, so the spend and the modifier total are unchanged by
 construction and it cannot overspend.
 _Avoid_: Swap, exchange, drag-and-drop reorder
+
+**Modifier total**:
+The six Ability Scores added up once each is read as a bonus or a penalty. It is
+the one figure that says whether an allocation or a roll is any good - a spread
+can spend all 27 points and still be a worse character than one that spends 25 -
+and both the Point Buy ledger and the Dice Roller panel print it. A trade never
+changes it.
+_Avoid_: Total bonus, score total, power level
