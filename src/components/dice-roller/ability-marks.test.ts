@@ -55,6 +55,15 @@ function markPaths(harness: MountedAlpine, which: 'roller' | 'buy'): Record<stri
 }
 
 describe('the marks both tools print', () => {
+  it('draws the sprite as six symbols, one for each ability', async () => {
+    // Six symbols in the rendered DOM rather than six in the source: the sprite
+    // is one map over the vocabulary, so a count of source text would only be
+    // counting the map.
+    const roller = await mountAlpine(DiceRoller);
+    const ids = [...doc(roller).querySelectorAll('.dr-mark-sprite symbol')].map((s) => s.id);
+    expect(ids).toEqual(Object.values(ABILITY_LABELS).map((name) => `dr-mark-${name}`));
+  });
+
   it('draws the same glyph for every ability in both panels', async () => {
     // Read before the second mount, because the harness reuses one window and the
     // second mount replaces the tree the first one rendered into.

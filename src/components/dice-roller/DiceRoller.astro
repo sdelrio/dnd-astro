@@ -93,7 +93,7 @@ import { ABILITY_LABELS, ABILITY_MARKS, ABILITY_NAMES } from './dice-utils';
          be a list to keep in step. The icons are a `game-icons` family
          throughout, so the two panels read as one set of instruments rather than
          as six borrowed glyphs beside six others. -->
-    <svg class="dr-mark-sprite" aria-hidden="true" focusable="false" width="0" height="0">
+    <svg class="dr-mark-sprite" aria-hidden="true">
       {
         ABILITY_NAMES.map((code) => (
           <IconifyIcon icon={ABILITY_MARKS[code]} symbolId={`dr-mark-${ABILITY_LABELS[code]}`} />
@@ -666,10 +666,12 @@ import { ABILITY_LABELS, ABILITY_MARKS, ABILITY_NAMES } from './dice-utils';
   }
 
   /* The mark sprite. Nothing is drawn where it is declared - the rows below
-     reference it by id - so it occupies no space and takes no pointer events.
-     `display: none` rather than a zero box, because a `<use>` still resolves a
-     symbol inside a hidden tree and a zero-sized one is a box that can swallow a
-     press at the top of the panel. */
+     reference it by id - so it takes no space and no pointer events, and neither
+     the width nor the height attributes are declared: a zero-sized box would be
+     laid out and could swallow a press at the top of the panel, which is exactly
+     what `display: none` avoids. A `<use>` still resolves a symbol out of a hidden
+     tree - the symbol is never rendered in its own right anyway - so hiding the
+     library costs the rows nothing. */
   .dr-mark-sprite {
     display: none;
   }

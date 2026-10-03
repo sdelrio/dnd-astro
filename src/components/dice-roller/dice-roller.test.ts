@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 import { contrast } from '../../styles/contrast';
-import { ABILITY_LABELS } from './dice-utils';
 
 const source = readFileSync(new URL('./DiceRoller.astro', import.meta.url), 'utf8');
 /** The behaviour lives here now, so the guards read this rather than the markup. */
@@ -831,12 +830,20 @@ describe('DiceRoller stats window', () => {
  * so a mark bound to the name cannot end up beside the wrong ability.
  */
 describe('DiceRoller ability marks', () => {
-  /** The sprite, where the six marks are drawn once at build time. */
-  const sprite = (): string =>
-    source.slice(
-      source.indexOf('<svg class="dr-mark-sprite"'),
-      source.indexOf('</svg>', source.indexOf('<svg class="dr-mark-sprite"'))
-    );
+  /**
+   * The sprite, where the six marks are drawn once at build time.
+   *
+   * Bounded by the rows that follow rather than by the first `</svg>`, so an icon
+   * rendered inside the sprite one day cannot truncate the capture to nothing and
+   * leave every assertion here passing on an empty string.
+   */
+  const sprite = (): string => {
+    const open = source.indexOf('<svg class="dr-mark-sprite"');
+    expect(open, 'no mark sprite in the panel').toBeGreaterThan(-1);
+    const close = source.indexOf('<div class="js-only">', open);
+    expect(close, 'the sprite is not closed before the rows').toBeGreaterThan(-1);
+    return source.slice(open, close);
+  };
 
   /** The trade handle and everything inside it. */
   const handle = (): string => {
@@ -849,16 +856,15 @@ describe('DiceRoller ability marks', () => {
   it('draws one mark per ability into a sprite, from the shared table', () => {
     // The sprite is one map over the vocabulary's own six, and each symbol is
     // named for the ability it stands for rather than for its position, which is
-    // what lets a row find its mark by name. The count is asserted on the rendered
-    // sprite rather than here, because this is a single map in the source and six
-    // of anything would mean the map was unrolled.
+    // what lets a row find its mark by name. How many symbols that map produces
+    // is asserted on the rendered sprite in `ability-marks.test.ts`, because the
+    // count here would only be counting map expressions in the source.
     expect(source).toContain('icon={ABILITY_MARKS[code]}');
     expect(sprite()).toContain('ABILITY_NAMES.map');
     expect(sprite()).toContain('symbolId={`dr-mark-${ABILITY_LABELS[code]}`}');
-    for (const name of Object.values(ABILITY_LABELS)) {
-      expect(sprite(), `no symbol named for ${name}`).toContain('ABILITY_LABELS[code]');
-      expect(source, `the sprite is not named after ${name}`).toContain('dr-mark-');
-    }
+    // No icon literal anywhere in the roller: every mark it draws comes from the
+    // table, which is what makes the two panels' six marks the same six.
+    expect(source).not.toContain("'game-icons:");
   });
 
   it('binds each row to the mark for its own name, so a swap cannot move a mark', () => {
