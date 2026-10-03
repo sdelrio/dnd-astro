@@ -103,6 +103,28 @@ function propertyByWeapon(): Map<string, string> {
 	return byWeapon;
 }
 
+describe('the table reader the guards are built on', () => {
+	it('reads data rows and leaves headers, separators and fenced examples out', () => {
+		const rows = tableRows(
+			[
+				'| Weapon | Property |',
+				'|---|:---:|',
+				'| Club | Exploding |',
+				'',
+				'```mdx',
+				'| Example | Property |',
+				'|---|:---:|',
+				'| Example | ^ |',
+				'```',
+			].join('\n'),
+		);
+
+		// The fenced block is documentation showing what a table looks like, not a
+		// published table, so its rows must not reach the placeholder guard.
+		expect(rows).toEqual([['Club', 'Exploding']]);
+	});
+});
+
 describe('Weapon Properties page', () => {
 	it('lists a property for every weapon, never a placeholder', () => {
 		const byWeapon = propertyByWeapon();
