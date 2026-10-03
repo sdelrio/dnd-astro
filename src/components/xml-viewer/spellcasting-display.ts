@@ -23,18 +23,19 @@ export const CASTING_ABILITIES = ['wisdom', 'intelligence', 'charisma'] as const
 
 export type CastingAbility = (typeof CASTING_ABILITIES)[number];
 
-/** The three-letter form, which is what the Abilities tiles already print. */
-export const CASTING_ABBREVIATION: Record<CastingAbility, string> = {
-  wisdom: 'WIS',
-  intelligence: 'INT',
-  charisma: 'CHA',
-};
-
-/** The full name, for the accessible name of the plate. */
-export const CASTING_ABILITY_NAME: Record<CastingAbility, string> = {
-  wisdom: 'Wisdom',
-  intelligence: 'Intelligence',
-  charisma: 'Charisma',
+/**
+ * The two ways a card writes a casting ability: the three-letter form the
+ * Abilities tiles already print, and the full name for a hover title.
+ *
+ * One map rather than two, because they are keyed by the same three abilities and
+ * two maps are two things to keep in step - and a caller that passed an
+ * abbreviation and a full name as separate arguments could pair them wrongly
+ * without anything failing.
+ */
+export const CASTING_ABILITY_LABEL: Record<CastingAbility, { short: string; name: string }> = {
+  wisdom: { short: 'WIS', name: 'Wisdom' },
+  intelligence: { short: 'INT', name: 'Intelligence' },
+  charisma: { short: 'CHA', name: 'Charisma' },
 };
 
 /**

@@ -13,8 +13,6 @@ import {
 } from '@/components/xml-viewer/inventory-display';
 import { skillRank } from '@/components/xml-viewer/skill-display';
 import {
-  CASTING_ABILITY_NAME,
-  CASTING_ABBREVIATION,
   hasSpellcasting,
   isSpellGroup,
   resolveCastingAbility,
@@ -227,8 +225,6 @@ const carriedWeaponRows = toWeaponRows(weapons, abilities, profBonus, 'carried')
 // makes this the first place a derivation bug would be hardest to see: a wrong
 // Save DC renders as a plate with a plausible number in it, not as a failure.
 const casting = resolveCastingAbility(classes, abilities);
-const castingAbbreviation = CASTING_ABBREVIATION[casting.ability];
-const castingAbilityName = CASTING_ABILITY_NAME[casting.ability];
 const spellSave = spellSaveDc(profBonus, casting.modifier);
 const spellAttack = spellAttackBonus(profBonus, casting.modifier);
 const spellSlotRows = toSpellSlotRows(spellSlots);
@@ -639,8 +635,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
             nothing here claims to be a subsection of the section. */}
         {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Spellcasting</h3>}
         <SpellcastingPanel
-          ability={castingAbbreviation}
-          abilityName={castingAbilityName}
+          ability={casting.ability}
           modifier={casting.modifier}
           inferred={!casting.recorded}
           saveDc={spellSave}

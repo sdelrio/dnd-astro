@@ -17,11 +17,15 @@
 // neither.
 import { cardPlateClass } from '@/components/xml-viewer/card-plate';
 import { signed } from '@/utils/format';
-import type { SpellSlotRow } from '@/components/xml-viewer/spellcasting-display';
+import {
+  CASTING_ABILITY_LABEL,
+  type CastingAbility,
+  type SpellSlotRow,
+} from '@/components/xml-viewer/spellcasting-display';
 
 interface Props {
-  ability: string;
-  abilityName: string;
+  /** The resolved casting ability. Its label forms come from the shared map. */
+  ability: CastingAbility;
   modifier: number;
   /** True when the ability was the best of the three rather than a recorded one. */
   inferred: boolean;
@@ -30,11 +34,13 @@ interface Props {
   slots: SpellSlotRow[];
 }
 
-const { ability, abilityName, modifier, inferred, saveDc, attackBonus, slots } = Astro.props;
+const { ability, modifier, inferred, saveDc, attackBonus, slots } = Astro.props;
+
+const { short, name } = CASTING_ABILITY_LABEL[ability];
 
 // One string rather than two expressions side by side, so the rendered figure is
 // exactly what a reader reads and not what the template's own whitespace leaves.
-const abilityFigure = `${ability} ${signed(modifier)}`;
+const abilityFigure = `${short} ${signed(modifier)}`;
 ---
 
 <div class="space-y-2">
@@ -45,7 +51,7 @@ const abilityFigure = `${ability} ${signed(modifier)}`;
         choice rather than a result. */}
     <div class={cardPlateClass} data-plate="casting-ability">
       <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Casting Ability</div>
-      <div class="text-lg font-bold text-gray-900 dark:text-gray-100" title={`Casting ability: ${abilityName}`}>
+      <div class="text-lg font-bold text-gray-900 dark:text-gray-100" title={`Casting ability: ${name}`}>
         {abilityFigure}
       </div>
       {/* The sheets name no casting ability, so a character with no casting class
