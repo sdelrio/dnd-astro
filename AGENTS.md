@@ -172,14 +172,21 @@ the requested format, which would silently rename the files the design review
 contract depends on. That belongs to the wrapper capture command, not to this
 config.
 
-### Network-font caveat
+### The font gate, and what it is not
 
-The site's display face is fetched from a third-party font CDN at runtime with a
-`swap` display policy and a silent fallback to a self-hosted face. A screenshot
-taken after that fallback has the wrong heading metrics and the wrong line
-lengths, and **nothing errors and no console warning is emitted**. A capture
-therefore proves less than it appears to. Treat font readiness as an open
-question to resolve separately, not something a PNG settles on its own.
+The site's display face is self-hosted (ADR-0019), so a rendering no longer
+depends on a third party answering. That removes the caveat that used to sit
+here: a capture could previously be taken after a silent fallback to a
+self-hosted face, with the wrong heading metrics and the wrong line lengths, and
+**nothing errored and no console warning was emitted**.
+
+What replaced it is the gate below. It refuses rather than warns, which is a
+stronger property than the one it took the place of: a missing face produces no
+capture at all, not a wrong one.
+
+A green gate still says nothing about a *real* device, and `make capture` is
+still a photograph rather than a measurement. See the measuring section below
+for the questions a PNG cannot answer.
 
 ### The capture command, for contract artifacts
 
@@ -208,7 +215,9 @@ What it does that a `take_screenshot` call cannot:
   probe proving the face changes rendering. If any of those fail it exits
   non-zero, names the font, and writes **no** capture. That is the resolution of
   the network-font caveat above, and it is a refusal rather than a warning.
-  `--simulate-font-cdn-outage` blocks the CDN so the gate can be tested for real.
+  `--simulate-font-cdn-outage` blocks the CDN. The face is local now, so the
+  gate stays green through it, and that green is what demonstrates the capture
+  no longer depends on a third party answering.
 - **Owns the exact width**, then reads it back out of the PNG it wrote. A file
   that is absent, empty, under 1KB, unreadable, or the wrong width is reported
   as a failure rather than filed.
