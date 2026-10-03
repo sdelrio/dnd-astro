@@ -122,6 +122,8 @@ describe('ADR index coverage', () => {
 			expect.arrayContaining(['0019', '0020']),
 		);
 		expect(indexRows(adrRecords().index).get('0019')).toBe('accepted');
-		expect(indexRows(adrRecords().index).get('0020')).toBe('proposed');
+		// ADR-0020 was `proposed` until its spike ran; the index now carries the
+		// status the record itself carries, and this fails if either drifts back.
+		expect(indexRows(adrRecords().index).get('0020')).toBe('accepted');
 	});
 });

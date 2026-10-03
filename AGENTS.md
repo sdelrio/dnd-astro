@@ -277,6 +277,48 @@ is written down in
 [`docs/audits/2026-09-26-rendered-verification-report.md`](docs/audits/2026-09-26-rendered-verification-report.md).
 Read it before quoting a measurement as assurance about a real device.
 
+### Printing the handbook
+
+```
+make handbook
+node .opencode/lib/design-review/handbook.mjs --help
+```
+
+`make handbook` renders `/handbook/print/` into one A4 vector PDF at
+`tmp/handbook/handbook.pdf`, one fixed-size sheet per page, with the site's own
+fonts, colours and spacing and none of its chrome. It reuses the same browser
+stack, browser-resolution order, font gate and `--start-dev-server` boundary as
+`make capture`, and like every command here it adds nothing to the manifest.
+
+- The page geometry lives in `src/styles/handbook-print.css` and nowhere else.
+  `@page { size: A4; margin: 25mm 15mm 15mm 25mm }` is the page, and
+  `--handbook-sheet-width` / `--handbook-sheet-height` (643 x 972 CSS px) are the
+  sheet box. The command reads the sheet box out of the rendered page rather than
+  carrying a copy of it.
+- The print route ships no JavaScript of its own. The sheet assignment is injected
+  at document start by the command, so the committed route is inert HTML. What the
+  document carries besides that is what Astro attaches to every route here: the
+  Vite client and the dev toolbar in development, the `@astrojs/alpinejs` bootstrap
+  in a production build.
+- The run reads the written file back and refuses it if the PDF magic, the
+  `%%EOF` trailer, the A4 page box or the page-count bounds do not hold, and it
+  writes to a `.part` sibling and renames so a crash cannot leave half a PDF where
+  a reader looks for one.
+- Every source page is named in the output with its measured height and the pages
+  it takes. Source pages that do not fit one sheet are called out: this tracer
+  bullet does not split them, so they span the pages they need.
+
+The two-sheet fixture at `/handbook/spike-fixture/` is what ADR-0020's spike ran
+against and it stays as the regression:
+
+```
+make handbook ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tmp/spike.pdf'
+```
+
+Read [ADR-0020](docs/adr/0020-sheet-box-renderer.md) before changing any of this.
+It records what the spike measured, including the one clause of the mechanism it
+broke.
+
 ### Workflow Steps
 
 1. **Never push to master directly**: Always prepare a Pull Request for review

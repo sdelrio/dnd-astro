@@ -195,9 +195,14 @@ export function describeSource(source) {
  *   - `prefers-reduced-motion: reduce` so a site that honours it never starts
  *     motion a measurement then has to race.
  *   - `prefers-color-scheme` so a light run is light and a dark run is dark.
+ *   - `media` when a caller needs the media *type* pinned. The Handbook command
+ *     passes `screen` so that a print is laid out through the screen cascade
+ *     while the page still fragments into sheets, which is ADR-0020's decision.
+ *     Omitting it leaves the type alone, which is what the capture and
+ *     measurement commands want.
  *   - the cache off, so a run measures this run and not a stale stylesheet.
  */
-export async function openPageSession(client, { colorScheme = 'light' } = {}) {
+export async function openPageSession(client, { colorScheme = 'light', media } = {}) {
   const { targetId } = await client.send('Target.createTarget', { url: 'about:blank' });
   const { sessionId } = await client.send('Target.attachToTarget', { targetId, flatten: true });
 
@@ -208,6 +213,7 @@ export async function openPageSession(client, { colorScheme = 'light' } = {}) {
   await client.send(
     'Emulation.setEmulatedMedia',
     {
+      ...(media ? { media } : {}),
       features: [
         { name: 'prefers-reduced-motion', value: 'reduce' },
         { name: 'prefers-color-scheme', value: colorScheme },

@@ -1,0 +1,37 @@
+---
+/**
+ * The two-sheet fixture ADR-0020's spike is run against.
+ *
+ * The spike asks one question: do page-size and break rules still paginate when
+ * the page is emulated as screen media rather than print media? It matters
+ * because Starlight's print stylesheet re-declares the site's colour ramp to a
+ * cool blue at hue 224, and the warm bark ramp survives on the website only
+ * because the site's own stylesheet loads later in the cascade. If print media
+ * turned out to be required, that ordering would become load-bearing in a
+ * second place.
+ *
+ * Two source pages, no real content, and nothing else: a fixture whose job is
+ * to be counted. The result is recorded in ADR-0020, and this page stays as the
+ * regression that the mechanism still paginates.
+ */
+import PrintDocument from '../../layouts/PrintDocument.astro';
+
+const fixturePages = [
+  { slug: 'fixture/one', title: 'Fixture Sheet One' },
+  { slug: 'fixture/two', title: 'Fixture Sheet Two' },
+];
+---
+
+<PrintDocument title="Handbook spike fixture">
+  {
+    fixturePages.map(({ slug, title }) => (
+      <section class="sl-markdown-content" data-handbook-source={slug} data-handbook-title={title}>
+        <h1>{title}</h1>
+        <p>
+          Filler, so the sheet is measured as a sheet rather than as an empty box. The point of
+          the fixture is the page count and the page geometry, not the words.
+        </p>
+      </section>
+    ))
+  }
+</PrintDocument>

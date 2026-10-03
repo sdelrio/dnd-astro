@@ -79,9 +79,11 @@ it is holding a specific rendering of specific content.
 _Avoid_: PDF, book, printable, export, download
 
 **Sheet**:
-One fixed-size page of the Handbook, exactly the size of the print area, with a
-break after it. A source page becomes as many Sheets as it needs, and a Sheet is
-not a source page: the count differs and the two are numbered in different ways.
+One box of the Handbook, exactly the size of the print area, with a break after
+it. A Sheet whose content fits is one page; until source pages are split, one that
+does not is the pages its content spans, which is a state the split report ends.
+A source page becomes as many Sheets as it needs, and a Sheet is not a source
+page: the count differs and the two are numbered in different ways.
 _Avoid_: Page, leaf, folio, screenshot, PNG
 
 **Source page**:

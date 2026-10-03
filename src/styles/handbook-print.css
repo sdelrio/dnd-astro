@@ -1,0 +1,95 @@
+/* The Handbook's page geometry, and the sheet box it prints into.
+ *
+ * ADR-0020 chose a fixed-height sheet box over a print stylesheet, and this
+ * file is that choice made concrete. It is loaded only by the print routes, so
+ * nothing here is a second description of the site's screens: the colours,
+ * fonts and content styling come from the site's own stylesheet and Starlight's
+ * own, and this file adds the page geometry and the box.
+ *
+ * The geometry is stated once, in the two custom properties and the `@page`
+ * rule below, and every later ticket inherits those numbers. Nothing else in
+ * this file may hold a length: a second copy of the sheet size is two numbers
+ * that can disagree, and a capture of the wrong width looks exactly like a
+ * capture of the right one.
+ */
+
+:root {
+  /* A4, 210 x 297mm, less 25mm top and left and 15mm right and bottom, at the
+     CSS reference resolution of 96px to the inch. The printable area is
+     642.5 x 971.3px, rounded up to whole pixels: a sheet one pixel short of it
+     would clip the last line of a rule, which is the failure this mechanism
+     exists to prevent. */
+  --handbook-sheet-width: 643px;
+  --handbook-sheet-height: 972px;
+}
+
+/* The page is the paper. `size` is what the browser lays out to when
+   `Page.printToPDF` is asked to prefer the CSS page size, so the geometry
+   lives here rather than in the command that prints it. */
+@page {
+  size: A4 portrait;
+  margin: 25mm 15mm 15mm 25mm;
+}
+
+/* The print routes carry no site chrome: no sidebar, no table of contents, no
+   navigation and no header, so the sheet is the rule and nothing else. The
+   reset is narrow on purpose - the site's own stylesheet and Starlight's supply
+   the typography - and the body is pinned to the printable measure so the
+   screen layout the command measures is the print layout it asks for. */
+body {
+  width: var(--handbook-sheet-width);
+  margin: 0;
+  padding: 0;
+}
+
+/* A sheet is a box the size of the printable area with a break after it, which
+   is what makes a page boundary a property of the DOM rather than a hope about
+   the renderer. The class is applied by the command at document start, not by
+   the route, so the committed route is inert HTML.
+
+   `min-height`, not `height`, and that is a measured decision rather than a
+   preference. A fixed `height` does not paginate its own overflow: the content
+   past the box lands on the pages after the box, but the *next* sheet's box is
+   placed at the end of this one's border box, so the following sheet is printed
+   in the middle of this one's overflow and both end up out of order. A
+   two-sheet fixture measured exactly that - sheet two's heading printed between
+   sheet one's paragraph 43 and its paragraph 44. With `min-height` the box is
+   still a whole page when its content fits, and a source page that does not fit
+   spans the pages it needs instead of corrupting its successor. Splitting a
+   source page into named sheets is a later ticket's job. */
+[data-handbook-sheet] {
+  display: block;
+  width: var(--handbook-sheet-width);
+  min-height: var(--handbook-sheet-height);
+  break-after: page;
+}
+
+/* A forced break after the final sheet paginates to a blank page at the end of
+   the document. One column, because the two-column sheet is a later ticket. */
+[data-handbook-sheet]:last-of-type {
+  break-after: auto;
+}
+
+/* Astro's dev toolbar hides itself with `@media print`, and this document is
+   emulated as screen media precisely so the screen cascade is the one that
+   applies. So the rule that would have hidden it does not apply either, and a
+   toolbar would be printed onto the sheet. The element only exists on the dev
+   server, so this costs the production build nothing. */
+astro-dev-toolbar {
+  display: none !important;
+}
+
+/* A sheet is a page, so nothing inside it is a link a reader can follow and
+   nothing in it is a heading anchor they cannot see. Starlight's own
+   `anchor-links.css` hides those anchors until hover, and paper has no hover,
+   so they are hidden outright rather than styled for a medium that cannot
+   reach them. */
+[data-handbook-sheet] a,
+[data-handbook-sheet] .sl-anchor-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+[data-handbook-sheet] .sl-anchor-link {
+  display: none;
+}
