@@ -1,5 +1,5 @@
 ---
-status: draft
+status: archived
 title: "Medium carries Languages and Feats with Skills and drops Saving Throws"
 author: "opencode"
 date: "2026-10-03"
@@ -7,6 +7,7 @@ tags: [character-sheet, xml, xml-viewer, display-mode, languages, feats, saving-
 affects:
   - docs/specs/017-medium-card-languages-and-feats/SPEC.md
   - docs/specs/README.md
+  - src/components/xml-viewer/LanguagesFeats.astro
   - src/components/xml-viewer/XmlCard.astro
   - src/components/xml-viewer/xml-card-passives.test.ts
   - src/components/xml-viewer/xml-card-tabs-alpine.test.ts
@@ -14,7 +15,7 @@ affects:
   - src/components/xml-viewer/__snapshots__/xml-card-large-snapshot.test.ts.snap
   - src/content/docs/guides/xml-card-test.mdx
   - DESIGN.md
-adr_constraints: [0016, 0009]
+adr_constraints: [0016, 0017, 0009]
 ---
 
 # SPEC: Medium carries Languages and Feats with Skills and drops Saving Throws
@@ -145,9 +146,11 @@ plates as content.
 |-----|-------|------------|
 | 0009 | Phone-First Grids and Touch Targets in the Tool Layer | The card is its own container, so every width test inside it stays a container query. The card is 358px in the roster and 1230px on a character sheet at the same viewport, so nothing here can be a viewport breakpoint. |
 | 0016 | The Character Card's Sections Sit Behind a Menu, Not One Scrolling Column | Six sections behind one bar; medium is a `role="tablist"` and large is a `<nav>` of fragment links; no new tab is added; Overview stays the unconditional landing entry; a menu entry exists only for a section with content, which is why step 4 extends that rule rather than working around it. Its section-existence rule is replaced by ADR-0017 and is not to be re-implemented. |
+| 0017 | Medium Is a Glance, So It Carries Languages and Feats and Drops Saving Throws | The decision being implemented, and the binding one where it and this plan differ. The three ranks, the panel each section rides, `showSkills` counting the two pill plates, and the fixed `h3` at both modes are all settled there rather than left open here. |
 
-ADR-0017 governs this implementation directly. It is not listed here as a
-constraint because it is the decision being implemented.
+ADR-0017 replaced ADR-0016's section-existence rule, so it is listed as a
+constraint as well as being the decision this spec implements: where the two
+describe the same thing, ADR-0017's version is the one that applies.
 
 ## Testing
 
@@ -170,6 +173,6 @@ persisted state.
 ## Status
 
 - [x] ADR recorded (ADR-0017, `accepted`)
-- [ ] Implementation complete
-- [ ] Tests passing
-- [ ] DESIGN.md updated
+- [x] Implementation complete
+- [x] Tests passing
+- [x] DESIGN.md updated

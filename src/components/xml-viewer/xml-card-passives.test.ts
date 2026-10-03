@@ -102,6 +102,21 @@ function skillsSection(html: string): string {
   return panel(html, 'skills');
 }
 
+/**
+ * The Skills panel up to the pill sections that share it at medium.
+ *
+ * Languages and Feats ride this panel at medium (ADR-0017), so a count of the
+ * panel's plates would count two plates this helper is not about. Slicing at the
+ * first pill heading is what keeps the Skills table's own assertions about the
+ * Skills table.
+ */
+function skillsTablePlate(section: string): string {
+  const starts = ['>Languages</h3>', '>Feats</h3>']
+    .map((marker) => section.indexOf(marker))
+    .filter((at) => at > -1);
+  return starts.length > 0 ? section.slice(0, Math.min(...starts)) : section;
+}
+
 function skillRows(section: string): string[] {
   return section.split('<tr').slice(1);
 }
@@ -208,8 +223,15 @@ function powerPillNames(section: string): string[] {
   );
 }
 
+/**
+ * One pill section by its heading.
+ *
+ * Both sections are the same markup at both display modes and differ only in
+ * which panel holds them, so the heading is the stable marker and `panel()` is
+ * how a test asks which panel it landed in.
+ */
 function languagesSection(html: string): string {
-  const marker = html.indexOf('>Languages</div>');
+  const marker = html.indexOf('>Languages</h3>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -217,7 +239,7 @@ function languagesSection(html: string): string {
 }
 
 function featsSection(html: string): string {
-  const marker = html.indexOf('>Feats</div>');
+  const marker = html.indexOf('>Feats</h3>');
   if (marker === -1) return '';
   const start = html.lastIndexOf('<section', marker);
   const end = html.indexOf('</section>', marker);
@@ -341,7 +363,9 @@ describe('XmlCard All-skills section', () => {
     // Medium used to be a bare name/value grid with no plate, no ability column
     // and no dots, so the same section read as two different designs depending on
     // the display mode. It is now the large card with the untrained rows removed.
-    const medium = skillsSection(await renderCard('medium', { allSkills: fiveSkills }));
+    const medium = skillsSection(
+      await renderCard('medium', { allSkills: fiveSkills, languages: [], feats: [] })
+    );
     expect(medium).toContain('>Skill</th>');
     expect(medium).toContain('>Abil</th>');
     expect(medium).toContain('>Total</th>');
@@ -349,6 +373,18 @@ describe('XmlCard All-skills section', () => {
     expect(rowNames(medium)).toEqual(['Athletics', 'Perception', 'Stealth']);
     // One table, not the large display's two-column split.
     expect(medium.match(/<table/g)).toHaveLength(1);
+  });
+
+  it('shares the medium panel with the two pill sections without losing the table', async () => {
+    // The same panel, measured with the pill sections present: the Skills table
+    // still leads, still carries one plate of its own, and the two pill plates
+    // follow rather than replace it.
+    const medium = skillsSection(
+      await renderCard('medium', { allSkills: fiveSkills, languages: ['Common'] })
+    );
+    expect(medium.indexOf('>Skill</th>')).toBeLessThan(medium.indexOf('>Languages</h3>'));
+    expect(skillsTablePlate(medium).match(/rounded-\[7px\]/g)).toHaveLength(1);
+    expect(medium.match(/rounded-\[7px\]/g)).toHaveLength(2);
   });
 
   it('keeps the proficiency marks and the legend in medium mode', async () => {
@@ -369,11 +405,16 @@ describe('XmlCard All-skills section', () => {
   });
 
   it('omits the section in medium mode when no skill is proficient', async () => {
+    // Languages and Feats count as content in this panel at medium, so "no
+    // proficient skills" is not on its own enough to drop it. This character has
+    // neither, so the panel genuinely has nothing in it.
     const untrained = await renderCard('medium', {
       allSkills: [
         { name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' },
         { name: 'Insight', total: 2, prof: 0, stat: 'wisdom' },
       ],
+      languages: [],
+      feats: [],
     });
     expect(skillsSection(untrained)).toBe('');
     // Large still lists them, since the untrained rows are the point there.
@@ -734,11 +775,32 @@ describe('XmlCard Saving Throws section', () => {
     ])
   );
 
-  it('labels the saves section with a heading in large and medium mode', async () => {
+  it('labels the saves section with a heading at large, and renders it nowhere else', async () => {
+    // ADR-0017: display mode decides which sections exist, and medium is a
+    // glance rather than a sheet. A roster card spends its height on what a
+    // reader recognises, and the saving throws are figures they compute with -
+    // the character page and the large sheet print all six of them properly.
     const large = await renderCard('large');
     expect(large).toContain('>Saving Throws</h3>');
-    expect(await renderCard('medium')).toContain('>Saving Throws</h3>');
-    expect(await renderCard('small')).not.toContain('aria-label="Saving Throws"');
+    expect(await renderCard('medium')).not.toContain('>Saving Throws</h3>');
+    expect(await renderCard('small')).not.toContain('>Saving Throws</h3>');
+  });
+
+  it('renders no saves table at medium for any character', async () => {
+    // Not a row-set reduction: the section is absent, heading and plate both.
+    for (const abilities of [
+      baseCharacter.abilities,
+      Object.fromEntries(
+        Object.entries(baseCharacter.abilities).map(([key, ability]) => [
+          key,
+          { ...ability, saveprof: 1 },
+        ])
+      ),
+    ]) {
+      const medium = await renderCard('medium', { abilities });
+      expect(medium, 'medium still renders a saving-throws table').not.toContain('>Ability</th>');
+      expect(medium, 'medium still renders a saves plate').not.toContain('Saving Throws');
+    }
   });
 
   it('renders the all-saves card in large mode', async () => {
@@ -749,17 +811,6 @@ describe('XmlCard Saving Throws section', () => {
     expect(large).not.toContain('>Strength<');
 
     expect(savesSection(await renderCard('small'))).toBe('');
-  });
-
-  it('renders the same card in medium mode, listing only the proficient saves', async () => {
-    const medium = savesSection(await renderCard('medium'));
-    expect(medium).toContain('>Ability</th>');
-    expect(medium).toContain('>Save</th>');
-    expect(medium.match(/rounded-\[7px\]/g)).toHaveLength(1);
-    // One table, not the large display's 3+3 split, and only STR and CON of the
-    // four the base character is proficient in.
-    expect(medium.match(/<table/g)).toHaveLength(1);
-    expect(saveRowShorts(medium)).toEqual(['STR', 'CON']);
   });
 
   it('splits the six saves 3+3 in standard order inside one card', async () => {
@@ -812,20 +863,6 @@ describe('XmlCard Saving Throws section', () => {
 
     const medium = await renderCard('medium', { abilities: noProficiency });
     expect(medium).not.toContain('Saving Throws');
-  });
-
-  it('marks every medium save proficient and keeps the totals in mono', async () => {
-    // Every medium row is a proficient save by construction, so the dot is on
-    // all of them - the same mark the large card uses, not a plain name/value.
-    const medium = savesSection(await renderCard('medium'));
-    for (const short of ['STR', 'CON']) {
-      const row = saveRow(medium, short);
-      expect(row.match(/bg-\[#c68000\]/g)).toHaveLength(1);
-      expect(row).toContain('<span class="sr-only">Proficient</span>');
-    }
-    expect(medium).toContain('>+5</td>');
-    expect(medium).toContain('>+4</td>');
-    expect(medium).toContain('font-mono');
   });
 
   it('stays between Passive Skills and the Skills panel', async () => {
@@ -962,17 +999,36 @@ describe('XmlCard Overview group', () => {
     expect(html.split('grid grid-cols-1 @6xl:grid-cols-2 gap-4')).toHaveLength(2);
   });
 
-  it('keeps one full-width column when the right-hand stack is empty', async () => {
+  it('keeps the Overview panel a single column at medium, whatever it holds', async () => {
+    // At medium the right-hand stack is gone: Languages and Feats moved to the
+    // Skills panel and Saving Throws no longer renders at all, so there is
+    // nothing that could sit beside the character at any container width. This
+    // is true for the widest card medium is ever mounted in, not just the roster.
     const noProficiency = Object.fromEntries(
       Object.entries(baseCharacter.abilities).map(([key, ability]) => [
         key,
         { ...ability, saveprof: 0 },
       ])
     );
-    const emptyRight = await renderCard('medium', { abilities: noProficiency, languages: [] });
-    expect(emptyRight).not.toContain('Saving Throws');
-    expect(emptyRight).not.toContain('@6xl:grid-cols-2');
-    expect(await renderCard('small')).not.toContain('@6xl:grid-cols-2');
+    for (const overrides of [
+      {},
+      { languages: [], feats: [] },
+      { abilities: noProficiency, languages: [] },
+      { languages: ['Common', 'Elvish'], feats: ['Alert'] },
+    ]) {
+      expect(
+        pairingGridCount(await renderCard('medium', overrides)),
+        `medium paired the Overview panel for ${JSON.stringify(overrides)}`
+      ).toBe(0);
+    }
+    expect(pairingGridCount(await renderCard('small'))).toBe(0);
+  });
+
+  it('keeps the large Overview panel paired when there is something to pair', async () => {
+    // Large still renders Saving Throws beside the character, so the split earns
+    // its place there and is unchanged.
+    expect(pairingGridCount(await renderCard('large', { languages: [], feats: [] }))).toBe(1);
+    expect(pairingGridCount(await renderCard('large'))).toBe(1);
   });
 });
 
@@ -1013,10 +1069,12 @@ describe('XmlCard ultra-wide section pairing', () => {
   }
 
   it('stacks Languages and Feats under Saving Throws to the right of Overview', async () => {
+    // Large keeps them where they were: in the Overview panel, after Saving
+    // Throws and before the Skills panel. Same document order as today.
     const html = await renderPaired();
     const saves = html.indexOf('>Saving Throws</h3>');
-    const languages = html.indexOf('>Languages</div>');
-    const feats = html.indexOf('>Feats</div>');
+    const languages = html.indexOf('>Languages</h3>');
+    const feats = html.indexOf('>Feats</h3>');
     const skills = html.indexOf('data-panel="skills"');
     expect(saves).toBeGreaterThan(-1);
     expect(languages).toBeGreaterThan(saves);
@@ -1041,11 +1099,12 @@ describe('XmlCard ultra-wide section pairing', () => {
     expect(pairingGridCount(html)).toBe(1);
   });
 
-  it('drops the pairing grid at medium when nothing sits beside the overview', async () => {
+  it('drops the pairing grid at medium, where nothing sits beside the overview', async () => {
     // The only pairing left is inside the Overview panel, and its right-hand
-    // stack is Saving Throws, Languages and Feats. Medium can reach none of
-    // them for a character with no proficiency and no languages, so the panel
-    // falls to a single column rather than reserving half its width for nothing.
+    // stack is Saving Throws with Languages and Feats. Medium renders none of
+    // the three there any more - the saves are large-only and the two pill
+    // sections ride the Skills panel - so the panel falls to a single column
+    // rather than reserving half its width for nothing.
     const noRight = await renderCard('medium', {
       abilities: noProficiency,
       languages: [],
@@ -1095,11 +1154,27 @@ describe('XmlCard Saving Throws group split', () => {
     expect(html).not.toContain(splitClass);
   });
 
-  it('ignores Feats that the current display mode does not render when deciding to split', async () => {
-    const html = await renderCard('medium', {
-      feats: ['Alert', 'Sentinel', 'Lucky', 'Tough', 'Mobile'],
-    });
-    expect(html).toContain(splitClass);
+  it('never splits at medium, because medium renders no Saving Throws to split from', async () => {
+    // The split arranges Saving Throws beside the pill stack in the Overview
+    // panel. Medium puts the pills in the Skills panel and renders no saves, so
+    // the arrangement has no subject there - it is large-only by construction
+    // rather than by a mode check inside the split.
+    for (const overrides of [
+      { feats: ['Alert'] },
+      { feats: ['Alert', 'Sentinel', 'Lucky', 'Tough', 'Mobile'] },
+      { languages: ['Common', 'Elvish'], feats: ['Alert'] },
+    ]) {
+      const html = await renderCard('medium', overrides);
+      expect(html, `medium built the saves split for ${JSON.stringify(overrides)}`).not.toContain(
+        splitClass
+      );
+    }
+    // The same character at large still gets it, which is what proves the split
+    // is gated on the mode reaching Saving Throws rather than on the pill counts.
+    expect(
+      await renderCard('large', { feats: ['Alert', 'Sentinel', 'Lucky', 'Tough', 'Mobile'] })
+    ).not.toContain(splitClass);
+    expect(await renderCard('large', { feats: ['Alert'] })).toContain(splitClass);
   });
 
   it('keeps the group in one column when there are no Languages or Feats to place beside it', async () => {
@@ -1109,7 +1184,7 @@ describe('XmlCard Saving Throws group split', () => {
   });
 });
 
-describe('XmlCard Languages and Feats accent cards', () => {
+describe('XmlCard Languages and Feats sections', () => {
   const manyLanguages = [
     'Common',
     'Draconic',
@@ -1121,56 +1196,232 @@ describe('XmlCard Languages and Feats accent cards', () => {
   ];
   const someFeats = ['Alert', 'Sentinel'];
 
-  it('renders Languages as one accent card with an uppercase label and pills', async () => {
+  it('renders Languages as an h3 heading above one pill plate', async () => {
     const section = languagesSection(
       await renderCard('medium', { languages: manyLanguages })
     );
     expect(section).not.toContain('<h2');
+    expect(section).toContain('>Languages</h3>');
     expect(section).toContain('border-t-[3px]');
     expect(section).toContain('border-t-[#58180d]');
     expect(section).toContain('rounded-[7px]');
     expect(section).toContain('border border-gray-300');
-    expect(section).toContain('uppercase tracking-wide">Languages</div>');
     expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
     for (const lang of manyLanguages) {
       expect(section).toContain(`>${lang}</span>`);
     }
   });
 
-  it('renders Feats as one accent card with a Feats label', async () => {
+  it('renders Feats as an h3 heading above one pill plate', async () => {
     const section = featsSection(await renderCard('large', { feats: someFeats }));
     expect(section).not.toContain('<h2');
+    expect(section).toContain('>Feats</h3>');
     expect(section).toContain('border-t-[3px]');
     expect(section).toContain('rounded-[7px]');
-    expect(section).toContain('uppercase tracking-wide">Feats</div>');
     expect(section.match(/rounded-\[7px\]/g)).toHaveLength(1);
     for (const feat of someFeats) {
       expect(section).toContain(`>${feat}</span>`);
     }
   });
 
-  it('puts the label left and the wrapping pill list right, stacking on narrow containers', async () => {
+  it('drops the in-plate label, because the heading now carries the name', async () => {
+    // The label was a 600-weight uppercase micro-label sitting side by side with
+    // the pills at `@md`, so at 358px the section name was the part that wrapped
+    // before the first pill did. Moving the name onto the heading takes it off
+    // the plate's row and onto the gold rule, where every other section name is.
     for (const section of [
       languagesSection(await renderCard('medium', { languages: manyLanguages })),
       featsSection(await renderCard('large', { feats: someFeats })),
     ]) {
-      expect(section).toContain('flex flex-col');
-      expect(section).toContain('flex-wrap');
-      expect(section).toContain('@md:flex-row');
-      expect(section).toContain('@md:justify-between');
-      const labelIndex = section.indexOf('uppercase tracking-wide">');
-      const pillsIndex = section.indexOf('flex flex-wrap gap-2');
-      expect(labelIndex).toBeGreaterThan(-1);
-      expect(pillsIndex).toBeGreaterThan(labelIndex);
+      expect(section).not.toContain('uppercase tracking-wide">Languages</div>');
+      expect(section).not.toContain('uppercase tracking-wide">Feats</div>');
+      expect(section).not.toContain('@md:justify-between');
+      expect(section).not.toContain('@md:flex-row');
+      // One pill wrapper, and nothing between it and the plate to space.
+      expect(section.match(/flex flex-wrap gap-2/g)).toHaveLength(1);
+      expect(section.indexOf('</h3>')).toBeLessThan(section.indexOf('flex flex-wrap gap-2'));
     }
   });
 
-  it('omits Languages in small mode and Feats below large mode', async () => {
-    expect(await renderCard('small', { languages: manyLanguages })).not.toContain(
-      'uppercase tracking-wide">Languages</div>'
+  it('puts the two sections in the Skills panel at medium, Languages then Feats', async () => {
+    const html = await renderCard('medium', { languages: manyLanguages, feats: someFeats });
+    const skills = panel(html, 'skills');
+    expect(skills).toContain('>Languages</h3>');
+    expect(skills).toContain('>Feats</h3>');
+    expect(skills.indexOf('>Languages</h3>')).toBeLessThan(skills.indexOf('>Feats</h3>'));
+    // And they are gone from the Overview panel, which at medium is abilities
+    // and passives only: two pill plates in a panel named "Overview" are content
+    // the reader scrolls past to reach the character sheet.
+    const overview = panel(html, 'overview');
+    expect(overview).not.toContain('>Languages</h3>');
+    expect(overview).not.toContain('>Feats</h3>');
+    // The Skills table leads the panel and the two sections follow it.
+    expect(skills.indexOf('>Skill</th>')).toBeLessThan(skills.indexOf('>Languages</h3>'));
+  });
+
+  it('keeps both sections in the Overview panel at large, in the same order', async () => {
+    const html = await renderCard('large', { languages: manyLanguages, feats: someFeats });
+    const overview = panel(html, 'overview');
+    expect(overview).toContain('>Languages</h3>');
+    expect(overview).toContain('>Feats</h3>');
+    expect(overview.indexOf('>Languages</h3>')).toBeLessThan(overview.indexOf('>Feats</h3>'));
+    // The Skills panel at large is the table and the large-mode `Skills` heading,
+    // with neither pill section in it.
+    const skills = panel(html, 'skills');
+    expect(skills).not.toContain('>Languages</h3>');
+    expect(skills).not.toContain('>Feats</h3>');
+  });
+
+  it('renders the identical markup at both modes, differing only in the panel', async () => {
+    // One shared component, one heading level. A second copy of the markup would
+    // let the two drift, which is the failure ADR-0017 is written to prevent.
+    const medium = languagesSection(
+      await renderCard('medium', { languages: manyLanguages })
     );
-    const medium = await renderCard('medium', { feats: someFeats });
-    expect(medium).not.toContain('uppercase tracking-wide">Feats</div>');
+    const large = languagesSection(await renderCard('large', { languages: manyLanguages }));
+    expect(medium).not.toBe('');
+    expect(medium).toBe(large);
+  });
+
+  it('renders both at medium and large and neither at small', async () => {
+    for (const display of ['medium', 'large'] as const) {
+      const html = await renderCard(display, { languages: manyLanguages, feats: someFeats });
+      expect(html, `${display} dropped Languages`).toContain('>Languages</h3>');
+      expect(html, `${display} dropped Feats`).toContain('>Feats</h3>');
+    }
+    const small = await renderCard('small', { languages: manyLanguages, feats: someFeats });
+    expect(small).not.toContain('>Languages</h3>');
+    expect(small).not.toContain('>Feats</h3>');
+  });
+
+  it('renders neither section for a character with neither, at either mode', async () => {
+    for (const display of ['medium', 'large'] as const) {
+      const html = await renderCard(display, { languages: [], feats: [] });
+      expect(html).not.toContain('>Languages</h3>');
+      expect(html).not.toContain('>Feats</h3>');
+    }
+  });
+
+  it('keeps the Skills tab for a character with languages or feats and no proficiency', async () => {
+    // ADR-0016's rule is that a menu entry exists only for a section with
+    // content. Without this the two pill sections would ride a panel that does
+    // not exist, and the tidy rule would delete the content instead of hiding an
+    // empty sheet.
+    const untrained = {
+      allSkills: [
+        { name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' },
+        { name: 'Insight', total: 2, prof: 0, stat: 'wisdom' },
+      ],
+    };
+    for (const overrides of [
+      { ...untrained, feats: ['Alert'] },
+      { ...untrained, languages: ['Common', 'Elvish'] },
+    ]) {
+      const html = await renderCard('medium', overrides);
+      expect(html, `no Skills tab for ${JSON.stringify(overrides)}`).toContain('data-tab="skills"');
+      const skills = panel(html, 'skills');
+      expect(skills).not.toContain('>Skill</th>');
+      expect(
+        skills.includes('>Languages</h3>') || skills.includes('>Feats</h3>'),
+        'the Skills panel has neither pill section'
+      ).toBe(true);
+    }
+  });
+
+  it('offers the Skills tab at medium only when there is something in the panel', async () => {
+    const empty = await renderCard('medium', {
+      allSkills: [{ name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' }],
+      languages: [],
+      feats: [],
+    });
+    expect(empty).not.toContain('data-tab="skills"');
+    expect(empty).not.toContain('data-panel="skills"');
+  });
+
+  it('uses the same heading level at both modes, since neither panel has a heading', async () => {
+    const medium = languagesSection(await renderCard('medium', { languages: manyLanguages }));
+    const large = languagesSection(await renderCard('large', { languages: manyLanguages }));
+    for (const section of [medium, large]) {
+      expect(section).toMatch(/<h3[^>]*>Languages<\/h3>/);
+      expect(section).not.toMatch(/<h[245][^>]*>Languages<\/h/);
+    }
+  });
+});
+
+describe('XmlCard heading outline', () => {
+  const everySection = {
+    languages: ['Common', 'Elvish'],
+    feats: ['Alert'],
+    features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
+    powers: [{ level: 1, name: 'Bless', group: 'Spells', prepared: 0, preparedDomain: 0 }],
+    weapons: [
+      {
+        name: 'Longsword',
+        attackbonus: 0,
+        attackstat: '',
+        properties: '',
+        carried: 2,
+        type: 0,
+        damage: [{ bonus: 0, dice: 'd8', stat: 'base', statmult: 1, type: 'slashing' }],
+      },
+    ],
+    inventory: [{ name: 'Rope', count: 1, weight: 10, carried: 1 }],
+    coins: { pp: 0, gp: 5, ep: 0, sp: 0, cp: 0 },
+  };
+
+  /** The heading levels in document order, which is the outline a reader gets. */
+  function levels(html: string): number[] {
+    return [...html.matchAll(/<h([1-6])[\s>]/g)].map((match) => Number(match[1]));
+  }
+
+  it('starts at the card name and never skips a level, in either mode', async () => {
+    for (const display of ['medium', 'large'] as const) {
+      const outline = levels(await renderCard(display, everySection));
+      expect(outline[0], `${display} does not start at the card name`).toBe(2);
+      for (let i = 1; i < outline.length; i += 1) {
+        expect(
+          outline[i] - outline[i - 1],
+          `${display} skips a level in the outline ${outline.join(',')}`
+        ).toBeLessThanOrEqual(1);
+      }
+    }
+  });
+
+  it('keeps the card name above the two pill sections at both modes', async () => {
+    // These are the only two sections whose level is fixed rather than derived
+    // from the panel holding them, because neither panel has a heading at either
+    // mode. The outline is still `h2` name then `h3` section at both.
+    for (const display of ['medium', 'large'] as const) {
+      const html = await renderCard(display, everySection);
+      const outline = levels(html);
+      for (const label of ['Languages', 'Feats']) {
+        const at = html.indexOf(`>${label}</h3>`);
+        expect(at, `${display} has no h3 ${label}`).toBeGreaterThan(-1);
+        expect(html.slice(0, at)).toContain('<h2 class="char-name"');
+        expect(outline[outline.length - 1], `${display} put ${label} above h2`).toBeGreaterThan(1);
+      }
+    }
+  });
+
+  it('leaves no heading inside a medium tab panel repeating that tab name', async () => {
+    // At medium the visible tab names the open panel, so a heading repeating
+    // that word inside it is the same name twice. The two pill sections are the
+    // one pair that head themselves at medium, and neither is the tab's word.
+    const html = await renderCard('medium', everySection);
+    for (const [id, label] of [
+      ['overview', 'Overview'],
+      ['skills', 'Skills'],
+      ['inventory', 'Inventory'],
+      ['weapons', 'Weapons'],
+      ['features', 'Features'],
+      ['powers', 'Powers'],
+    ]) {
+      const markup = panel(html, id);
+      expect(markup, `${id} panel is missing from the markup`).not.toBe('');
+      expect(markup, `${id} panel repeats its own tab name`).not.toContain(`>${label}</h`);
+    }
+    expect(panel(html, 'skills')).toContain('>Languages</h3>');
+    expect(panel(html, 'skills')).toContain('>Feats</h3>');
   });
 });
 

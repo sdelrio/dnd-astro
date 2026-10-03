@@ -24,6 +24,7 @@ import {
   sectionLegendClass,
 } from '@/components/xml-viewer/section-heading';
 import CompactAbilityGrid from '@/components/xml-viewer/CompactAbilityGrid.astro';
+import LanguagesFeats from '@/components/xml-viewer/LanguagesFeats.astro';
 import { CARD_TABS, type CardTabId } from '@/components/xml-viewer/card-tabs';
 
 interface Props {
@@ -43,28 +44,39 @@ const RANKS: Record<string, number> = { small: 0, medium: 1, large: 2 };
 function rank(mode: string): number {
   return RANKS[mode] ?? 0;
 }
-// The menu's six sections are the display mode's whole content model, so every one
-// of them is reachable at medium and at large. What the display mode still decides
-// is *how much* a section holds, not whether the section exists: `allSaves`,
-// `allSkills`, `passives` and `feats` stay large-only, so a medium card shows the
-// proficient saves and the proficient skills while a large one shows all of them.
+// Display mode decides which sections exist and which panel holds them
+// (ADR-0017). Each entry below is the minimum display mode required for that
+// section to appear, read at three ranks: small renders identity, avatar and
+// tags and nothing that needs a panel to hold it; medium adds the recognition
+// material a roster card is for, which is Skills, Languages and Feats and not
+// Saving Throws; large adds Saving Throws back and adds nothing of its own.
+// `canShow()` is the single build-time source of truth for which sections render.
 //
-// The four sections promoted to medium here (`weapons`, `inventory`, `features`,
-// `powers`) were large-only before the menu existed. Promoting them is what makes
-// the roster card complete rather than a truncated large card, which is the whole
-// reason the menu is here: a bar over sections a mode cannot see would be a bar
-// with three dead entries. ADR-0016 carries the reasoning.
+// Two of these entries are row-set reductions rather than section-existence
+// decisions, and they are the ones a mode still *shortens* rather than drops.
+// `allSkills` is large-only, so a medium card lists the proficient skills where a
+// large one lists all of them. `allSaves` keeps the saves table on the same shape
+// as the skills one; no mode currently narrows it, because Saving Throws is
+// large-only and large lists all six, and it is here so that a mode which did
+// would not need a second mechanism.
+//
+// The four sections promoted to medium before the menu existed (`weapons`,
+// `inventory`, `features`, `powers`) were large-only then. Promoting them is what
+// makes the roster card complete rather than a truncated large card, which is
+// the whole reason the menu is there: a bar over sections a mode cannot see would
+// be a bar with three dead entries. ADR-0016 carries that reasoning; ADR-0017
+// replaces its rule that a display mode never decides whether a section exists.
 const sectionPolicy = {
   avatar: 'small' as const,
   tags: 'small' as const,
   profBonus: 'small' as const,
-  saves: 'medium' as const,
+  saves: 'large' as const,
   allSaves: 'large' as const,
   skills: 'medium' as const,
   allSkills: 'large' as const,
   passives: 'large' as const,
   languages: 'medium' as const,
-  feats: 'large' as const,
+  feats: 'medium' as const,
   weapons: 'medium' as const,
   inventory: 'medium' as const,
   features: 'medium' as const,
@@ -110,7 +122,10 @@ const subclassString = classes.filter((c) => c.subclass).map((c) => c.subclass).
 // Only the sections that live inside a panel carry one. The six panels
 // themselves are named by their tab, so an `h3` repeating that word twenty
 // pixels below the tab would be a second copy of it, and a screen reader would
-// read the same name twice.
+// read the same name twice. Languages and Feats are the one pair that names
+// itself at both modes, and for the reason given at their component: neither of
+// the panels holding them has a heading to be subordinate to, so there is no
+// level above them to derive from and `h3` is correct in both places.
 
 // Build-time avatar resolution happens in the shared helper: an explicit
 // image prop wins when the file exists (missing files fall back to
@@ -159,10 +174,10 @@ const featuresByLevel = groupBy(sortedFeatures, (f) => f.level).map((g) => ({
 }));
 
 const sortedAllSkills = [...allSkills].sort((a, b) => a.name.localeCompare(b.name));
-// Large lists every skill; medium lists only the ones the character is
-// proficient in. Derived from allSkills rather than the parser's prof-only
-// `skills` list, because the medium card is now the same table as the large one
-// and needs `prof` and `stat` to draw the dots and the ability column.
+// Large lists every skill; medium lists only the ones the character is proficient
+// in. Derived from allSkills rather than the parser's prof-only `skills` list,
+// because the medium card is now the same table as the large one and needs `prof`
+// and `stat` to draw the dots and the ability column.
 const proficientSkills = sortedAllSkills.filter((skill) => skillRank(skill.prof) !== 'none');
 
 const weaponRows = toWeaponRows(weapons, abilities, profBonus);
@@ -198,9 +213,22 @@ function powerMark(power: { group: string; prepared: number; preparedDomain: num
 const hasPowerMarks = sortedPowers.some((p) => powerMark(p) !== null);
 
 const showSaves = canShow('saves') && (proficientSaveRows.length > 0 || canShow('allSaves'));
-const showSkills = canShow('skills') && (canShow('allSkills') ? sortedAllSkills.length > 0 : proficientSkills.length > 0);
 const showLanguages = canShow('languages') && languages.length > 0;
 const showFeats = canShow('feats') && feats.length > 0;
+// The panel can be held open by the two pill sections alone, so the table is
+// gated separately: a header row over no rows is an empty sheet, which is the
+// thing ADR-0016's content rule exists to avoid.
+const showSkillsTable = canShow('allSkills')
+  ? sortedAllSkills.length > 0
+  : proficientSkills.length > 0;
+// The two pill sections ride the Skills panel at medium, so there they are content
+// in it. Without this a character with languages or feats and no proficient skills
+// would have no Skills panel at medium, and ADR-0016's rule that a menu entry
+// exists only for a section with content would delete the feats instead of hiding
+// an empty sheet - the one outcome worse than an empty panel. At large they sit in
+// the Overview panel instead, so they are not content here.
+const showSkills =
+  canShow('skills') && (showSkillsTable || (!canShow('allSkills') && (showLanguages || showFeats)));
 const showWeapons = canShow('weapons') && weaponRows.length > 0;
 const showInventory = canShow('inventory') && hasInventory;
 const showFeatures = canShow('features') && featuresByLevel.length > 0;
@@ -209,6 +237,10 @@ const showPowers = canShow('powers') && powersByLevel.length > 0;
 const SAVES_SPLIT_MAX_LANGUAGES = 6;
 const SAVES_SPLIT_MAX_FEATS = 4;
 
+// The `@7xl` split pairs Saving Throws with the pill stack inside the large
+// Overview panel. It is large-only by construction rather than by a mode test:
+// `showSaves` is false at every mode that does not render the section, and the
+// pill sections have left the Overview panel at medium anyway.
 const splitSavesGroup =
   showSaves &&
   (showLanguages || showFeats) &&
@@ -355,12 +387,13 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
 
   <div class="p-4 space-y-4">
     {/*
-      One panel per tab. The Overview panel holds Vitals, Abilities, Passive
-      Skills, Saving Throws, Languages and Feats: everything that describes the
-      character rather than listing what they can do or carry. The `x-show` is
-      the only thing hiding an inactive panel - the section's markup is
-      identical either way, so switching tabs cannot re-style a section, only
-      reveal it.
+      One panel per tab. Which panel holds which sections is the display mode's
+      call (ADR-0017), and the two modes differ: at large the Overview panel holds
+      Vitals, Abilities, Passive Skills, Saving Throws, Languages and Feats, while
+      at medium it holds Vitals, Abilities and Passive Skills and the Skills panel
+      picks up Languages and Feats. The `x-show` is the only thing hiding an
+      inactive panel - the section's markup is identical either way, so switching
+      tabs cannot re-style a section, only reveal it.
 
       No `x-cloak` on a panel, deliberately, and `data-no-cloak="no-js-reader-loses-the-card"` marks the opt-out
       for `tailwind.test.ts`. `[x-cloak]` is `display: none !important`, so a
@@ -371,8 +404,12 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
       order: the pre-menu layout, intact. The bar keeps its cloak because there
       the alternative is six labels that do nothing.
     */}
+    {/* Large only: Saving Throws is the one section in the right-hand stack, and
+        medium renders it nowhere. At medium there is nothing that could sit
+        beside the character at any container width, so the panel is one column
+        rather than a grid reserving half its width for nothing. */}
     <div
-      class={(showSaves || showLanguages || showFeats) ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}
+      class={jumping && showSaves ? 'grid grid-cols-1 @6xl:grid-cols-2 gap-4' : 'space-y-4'}
       role={tabbed ? 'tabpanel' : undefined}
       data-panel="overview"
       id={jumping ? sectionId('overview') : undefined}
@@ -381,8 +418,9 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
     >
       <section class="relative group/overview">
         {/* No `Overview` heading: the tab names this panel. The sections inside
-            it are Vitals, Abilities, Passive Skills, Saving Throws, Languages and
-            Feats, and each is its own h3 under the card's h2 name. */}
+            it are Vitals, Abilities and Passive Skills, and each is its own h3
+            under the card's h2 name. At large this panel also holds Saving
+            Throws, Languages and Feats below. */}
         <div class="space-y-2">
           <section class="relative group">
             <h3 class={`${sectionHeadingClass} mb-2`}>Vitals</h3>
@@ -453,7 +491,11 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
         </div>
       </section>
 
-      {(showSaves || showLanguages || showFeats) && (
+      {/* Large only. Saving Throws is the one section that has anything to sit
+          beside the character in this panel, and medium does not render it; at
+          medium the two pill sections have moved to the Skills panel below, so
+          there is no second grid cell left to fill. */}
+      {jumping && (
         <div class={`grid grid-cols-1 gap-2${splitSavesGroup ? ' @7xl:grid-cols-2 @7xl:gap-4' : ''}`}>
           {showSaves && (
             <section class="@container relative group">
@@ -466,33 +508,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
           )}
 
           {(showLanguages || showFeats) && (
-            <div class="space-y-2">
-              {showLanguages && (
-                <section>
-                  <div class={`${cardPlateClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
-                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
-                    <div class="flex flex-wrap gap-2">
-                      {languages.map((lang) => (
-                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
-                      ))}
-                    </div>
-                  </div>
-                </section>
-              )}
-
-              {showFeats && (
-                <section>
-                  <div class={`${cardPlateClass} flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2`}>
-                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
-                    <div class="flex flex-wrap gap-2">
-                      {feats.map((feat) => (
-                        <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
-                      ))}
-                    </div>
-                  </div>
-                </section>
-              )}
-            </div>
+            <LanguagesFeats languages={languages} feats={feats} />
           )}
         </div>
       )}
@@ -511,10 +527,23 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
         data-no-cloak="no-js-reader-loses-the-card"
       >
         {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Skills</h3>}
-        <SkillsTable
-          rows={canShow('allSkills') ? sortedAllSkills : proficientSkills}
-          columns={canShow('allSkills') ? 2 : 1}
-        />
+        {showSkillsTable && (
+          <SkillsTable
+            rows={canShow('allSkills') ? sortedAllSkills : proficientSkills}
+            columns={canShow('allSkills') ? 2 : 1}
+          />
+        )}
+        {/* The other half of ADR-0017's panel rule: at medium the two pill
+            sections ride this panel, because it is a panel of short lists and
+            the tab names the panel so their own headings are not a repeat of
+            anything. At large they stay in the Overview panel above, which is
+            where they have always been. The `mt-3` separates them from the
+            table; at large the grid cell supplies the separation instead. */}
+        {tabbed && (showLanguages || showFeats) && (
+          <div class="mt-3">
+            <LanguagesFeats languages={languages} feats={feats} />
+          </div>
+        )}
       </div>
     )}
 

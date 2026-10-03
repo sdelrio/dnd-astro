@@ -1,0 +1,67 @@
+---
+// The Languages and Feats pill sections, one component mounted in two panels.
+//
+// ADR-0017: display mode decides which sections exist and which panel holds them.
+// These two render at medium and at large and at neither small. At large they
+// sit in the Overview panel beside Saving Throws, which is where they have
+// always been and where the pairing grid already had room for them. At medium
+// they ride the Skills panel instead: that panel is a panel of short lists, while
+// the medium Overview panel is abilities and passives only, and two pill plates
+// inside a panel named "Overview" are content the reader scrolls past to reach
+// the character sheet.
+//
+// One component for both modes, deliberately. Two copies of this markup would be
+// two heading treatments to keep in step, and the heading is the one thing
+// ADR-0017 changes about them. Neither mode is described by restating the
+// sections here: the caller decides whether to mount this at all.
+import { cardPlateClass } from '@/components/xml-viewer/card-plate';
+import { sectionHeadingClass } from '@/components/xml-viewer/section-heading';
+
+interface Props {
+  languages: string[];
+  feats: string[];
+}
+
+const { languages, feats } = Astro.props;
+---
+
+{/* `h3` at both modes, and not derived from a panel heading level, because
+    neither panel carries a heading of its own at either mode: at large the menu
+    entry names Overview, and at medium the visible tab names the panel. There is
+    nothing for these two sections to sit beneath, which makes them the only two
+    sections on the card whose level is fixed rather than derived - and the
+    reason is written here rather than left to be inferred.
+
+    The label this heading replaced was a 600-weight uppercase micro-label
+    *inside* the plate, side by side with the pills at `@md`. At the 358px a
+    roster card measures, the section name was the thing that wrapped before the
+    first pill did. On the heading it is in the one position the card already
+    uses for a section name, and it is on the gold rule rather than inside the
+    plate - so the plate is a plain pill wrapper with nothing to space. */}
+<div class="space-y-2">
+  {languages.length > 0 && (
+    <section>
+      <h3 class={`${sectionHeadingClass} mb-2`}>Languages</h3>
+      <div class={cardPlateClass}>
+        <div class="flex flex-wrap gap-2">
+          {languages.map((lang) => (
+            <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{lang}</span>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  {feats.length > 0 && (
+    <section>
+      <h3 class={`${sectionHeadingClass} mb-2`}>Feats</h3>
+      <div class={cardPlateClass}>
+        <div class="flex flex-wrap gap-2">
+          {feats.map((feat) => (
+            <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">{feat}</span>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</div>

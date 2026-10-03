@@ -2,9 +2,11 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 // The Saving Throws and Skills tables moved into their own components when medium
-// gained the same card as large. These guards are about what the card renders, so
-// they read the card and the two tables it delegates to as one source.
-const source = ['XmlCard.astro', 'SavesTable.astro', 'SkillsTable.astro']
+// gained the same card as large, and the Languages and Feats pill sections moved
+// into a third when they began to ride different panels per display mode
+// (ADR-0017). These guards are about what the card renders, so they read the card
+// and the three components it delegates to as one source.
+const source = ['XmlCard.astro', 'SavesTable.astro', 'SkillsTable.astro', 'LanguagesFeats.astro']
   .map((file) => readFileSync(new URL(file, import.meta.url), 'utf8'))
   .join('\n');
 
@@ -24,7 +26,7 @@ describe('XmlCard section semantics', () => {
     expect(source, 'hoverLabelClass still exists').not.toContain('hoverLabelClass');
     // Overview is not here: the menu entry names its panel at both modes, and a
     // heading repeating that word below the bar would be the same name twice.
-    for (const label of ['Vitals', 'Passive Skills', 'Saving Throws']) {
+    for (const label of ['Vitals', 'Passive Skills', 'Saving Throws', 'Languages', 'Feats']) {
       expect(source, `${label} is not a heading`).toMatch(
         new RegExp(`<h3[^>]*>${label}</h3>`),
       );
@@ -54,6 +56,43 @@ describe('XmlCard section semantics', () => {
     expect(source, 'the medium branch still renders a section heading').not.toMatch(
       /\) : \([\s\S]{0,80}<h3 class=\{`\$\{sectionHeadingClass\} mb-2`\}>/,
     );
+  });
+
+  it('fixes Languages and Feats at h3, in one place, with no in-plate copy of the name', () => {
+    // ADR-0017: the two pill sections ride the Skills panel at medium and the
+    // Overview panel at large, from one component. Two copies would be two
+    // heading treatments to keep in step, and the heading is the thing this
+    // decision changes - so the markup is asserted to exist exactly once across
+    // the card and the three components it delegates to.
+    for (const label of ['Languages', 'Feats']) {
+      const headings = [...source.matchAll(new RegExp(`<h[2-6][^>]*>${label}</h`, 'g'))];
+      expect(headings.length, `${label} is headed in more than one place`).toBe(1);
+      // The in-plate uppercase label used to sit beside the pills at `@md`, so at
+      // the 358px a roster card measures the section name was the part that
+      // wrapped before the first pill did. The heading replaces it, so the copy is
+      // gone rather than hidden.
+      expect(source, `${label} still has an in-plate uppercase label`).not.toContain(
+        `uppercase tracking-wide">${label}</div>`
+      );
+    }
+    // The level is literal, not one of the mode-dependent bindings. Neither panel
+    // carrying these two has a heading at either mode, so there is nothing above
+    // them to derive a level from and the two modes agree - which is the point of
+    // the exception, so it is spelled out rather than left to be inferred.
+    for (const label of ['Languages', 'Feats']) {
+      expect(source, `${label} is not a literal h3 in sectionHeadingClass`).toContain(
+        '<h3 class={`${sectionHeadingClass} mb-2`}>' + label + '</h3>'
+      );
+    }
+  });
+
+  it('mounts the shared pill sections once per panel, not once per mode copy', () => {
+    // One mount in the Overview panel for large and one in the Skills panel for
+    // medium. A third, or a duplicated block inside either panel, is the second
+    // implementation ADR-0017 rules out.
+    const card = readFileSync(new URL('XmlCard.astro', import.meta.url), 'utf8');
+    expect([...card.matchAll(/<LanguagesFeats /g)]).toHaveLength(2);
+    expect([...card.matchAll(/import LanguagesFeats from/g)]).toHaveLength(1);
   });
 
   it('steps the heading levels down from the card name', () => {
