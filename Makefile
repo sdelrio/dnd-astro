@@ -21,8 +21,8 @@ IMPECCABLE_SKILLS_opencode := .opencode/skills
 IMPECCABLE_SKILLS_claude   := .claude/skills
 IMPECCABLE_SKILLS          := $(IMPECCABLE_SKILLS_$(IMPECCABLE_PROVIDER))
 
-.PHONY: help test lint typecheck build check capture measure handbook upgrade \
-        submodule-init submodule-update submodule-link
+.PHONY: help test lint typecheck build check capture measure handbook handbook-art \
+        upgrade submodule-init submodule-update submodule-link
 
 # The design review capture command. See ADR-0012.
 CAPTURE := node .opencode/lib/design-review/capture.mjs
@@ -34,6 +34,11 @@ MEASURE := node .opencode/lib/design-review/measure.mjs
 # The printed handbook: the eight house-rule pages as one A4 vector PDF, one
 # fixed-size sheet per page. See ADR-0020.
 HANDBOOK := node .opencode/lib/design-review/handbook.mjs
+
+# The Handbook's generated artwork: the parchment tile and the footer ornament,
+# generated once and committed at two single documented paths under
+# public/handbook/. Run with ARGS='--check' to fail when either is stale.
+HANDBOOK_ART := node .opencode/lib/design-review/handbook-art.mjs
 
 help:
 	@printf "\n"
@@ -49,6 +54,8 @@ help:
 	@printf "$(MAGENTA)Print$(RESET)\n"
 	@printf "  $(GREEN)make handbook$(RESET)  📕  Print the eight house-rule pages into one A4 PDF of fixed-size sheets\n"
 	@printf "$(DIM)                     ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tmp/spike.pdf'$(RESET)\n"
+	@printf "  $(GREEN)make handbook-art$(RESET)  🎨  Write the committed parchment tile and footer ornament\n"
+	@printf "$(DIM)                     ARGS='--check' fails when either is stale$(RESET)\n"
 	@printf "\n"
 	@printf "$(MAGENTA)Design review$(RESET)\n"
 	@printf "  $(GREEN)make capture$(RESET)    📸  Write desktop.png (1440) and mobile.png (390) for review\n"
@@ -102,6 +109,13 @@ measure:
 # start and stop the documented one.
 handbook:
 	$(HANDBOOK) $(ARGS)
+
+# Writes public/handbook/parchment.png and public/handbook/ornament.svg. The
+# parchment is a 256px sRGB tile that CSS tiles; the ornament is an 88x10 SVG
+# drawn in the site's gold rule colour. Both are committed, so this only has to be
+# run when one of them should change.
+handbook-art:
+	$(HANDBOOK_ART) $(ARGS)
 
 upgrade:
 	pnpm dlx @astrojs/upgrade

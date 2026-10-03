@@ -17,6 +17,15 @@ export interface HandbookSource {
   slug: string;
   /** The title from frontmatter, which is what a sheet is headed with. */
   title: string;
+  /**
+   * The page's own column count, when it opts out of the two-column sheet.
+   *
+   * Absent rather than defaulted. The two-column default is the print
+   * stylesheet's to apply, and a second copy of it here is two numbers that can
+   * disagree; carrying `undefined` lets the stylesheet be the only place the
+   * default is written down.
+   */
+  columns?: 1 | 2;
 }
 
 /** The docs collection directory the house rules live in. */
@@ -25,7 +34,7 @@ export const HANDBOOK_SOURCE_DIRECTORY = 'dnd';
 /** Anything this accepts, which is what `getCollection('docs')` hands back. */
 export interface HandbookCandidate {
   id: string;
-  data: { title: string; sidebar?: { order?: number; hidden?: boolean } };
+  data: { title: string; sidebar?: { order?: number; hidden?: boolean }; columns?: 1 | 2 };
 }
 
 /**
@@ -53,5 +62,10 @@ export function handbookSourcePages(entries: HandbookCandidate[]): HandbookSourc
         entry.id.startsWith(`${HANDBOOK_SOURCE_DIRECTORY}/`) && entry.data.sidebar?.hidden !== true
     )
     .sort((a, b) => orderOf(a) - orderOf(b) || collator.compare(a.id, b.id))
-    .map((entry) => ({ slug: entry.id, title: entry.data.title }));
+    .map((entry) =>
+      // `columns` is spread rather than named so a page that does not set it
+      // carries no key at all, which is what keeps the stylesheet the only place
+      // the two-column default is written down.
+      ({ slug: entry.id, title: entry.data.title, ...(entry.data.columns ? { columns: entry.data.columns } : {}) })
+    );
 }

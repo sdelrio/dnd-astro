@@ -84,6 +84,8 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 | `make check` | Run every gate: lint, typecheck, test, build |
 | `make capture` | Write `desktop.png` and `mobile.png` for design review |
 | `make measure` | Measure a rendered page: overflow, contrast, tap, pointer |
+| `make handbook` | Print the eight house-rule pages into one A4 PDF of sheets, plus one PNG per sheet |
+| `make handbook-art` | Write the committed parchment tile and footer ornament (`ARGS='--check'` fails when stale) |
 | `make submodule-init` | Check out the pinned Impeccable skill submodule |
 | `make submodule-update` | Bump Impeccable to upstream HEAD and relink |
 | `make submodule-link` | Relink the skill for `IMPECCABLE_PROVIDER=<harness>` |
@@ -105,6 +107,9 @@ public/                  Static assets served as-is
     avatar/              Character portrait images
     party.json           Current party roster
   fonts/                 Self-hosted webfont files
+  handbook/
+    ornament.svg         Generated footer rule, drawn in the gold rule colour
+    parchment.png        Generated 256px sRGB paper tile, tiled by the print stylesheet
 scripts/                 Content extraction and CI helper scripts
 src/
   components/
@@ -119,6 +124,8 @@ src/
     fantasy-grounds/
       characters/
         [slug].astro     Prerendered Character page route
+    handbook/
+      print.astro        Inert print route the handbook generator renders
   styles/                Tailwind v4 entry and theme CSS
   utils/                 XML parsing and build pipeline modules
 terraform/               Cloudflare infrastructure as code
