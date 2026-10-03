@@ -1,5 +1,6 @@
 ---
 import IconifyIcon from '@/components/IconifyIcon.astro';
+import { ABILITY_LABELS, ABILITY_MARKS, ABILITY_NAMES } from './dice-utils';
 ---
 
 <div
@@ -73,6 +74,33 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
       </button>
     </div>
 
+    <!-- The six marks, drawn once and drawn by reference.
+         A row below is cloned by an `x-for`, so the template cannot know which
+         ability it is being cloned for: an icon rendered inline in the template
+         would be the same icon six times, once per row. So each mark is emitted
+         here as a `<symbol>` named for its ability, and each row draws its own
+         with a `<use>` whose href is that name.
+
+         The mark travels with the name because the href is the name and nothing
+         else. A swap exchanges two rows' dice and leaves every name where it was,
+         so a mark bound to the row rather than to the ability would end up beside
+         the wrong name the moment a swap was confirmed.
+
+         The names come from `ABILITY_LABELS` and the icons from `ABILITY_MARKS`,
+         both of which are declared once beside the ability codes in the shared
+         data module and re-exported to Point Buy rather than redeclared there,
+         because both tools print the same six abilities and a second table would
+         be a list to keep in step. The icons are a `game-icons` family
+         throughout, so the two panels read as one set of instruments rather than
+         as six borrowed glyphs beside six others. -->
+    <svg class="dr-mark-sprite" aria-hidden="true" focusable="false" width="0" height="0">
+      {
+        ABILITY_NAMES.map((code) => (
+          <IconifyIcon icon={ABILITY_MARKS[code]} symbolId={`dr-mark-${ABILITY_LABELS[code]}`} />
+        ))
+      }
+    </svg>
+
     <div class="js-only">
       <template x-for="(ability, index) in abilities" :key="ability.name">
         <!-- `relative` is load-bearing, not decoration. The swap panel is out
@@ -101,7 +129,20 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
               :aria-label="'Select ' + ability.name + ' for swap'"
               class="dr-trade"
             >
-              <span class="dr-name" x-text="ability.name"></span>
+              <!-- The name, with its mark. One flex line rather than a name with a
+                   mark above it: the mark identifies the ability and the name says
+                   which, so they are read as one object, and six rows of two lines
+                   would read as twelve rows. `dr-mark-line` is baseline-aligned so
+                   a 1.125rem silhouette sits on the name's own baseline instead of
+                   floating above it, and the mark is `aria-hidden` because it is a
+                   picture of what the name already spells out - the button's own
+                   label carries the ability and the action, and is unchanged. -->
+              <span class="dr-mark-line">
+                <svg class="dr-ability-mark" aria-hidden="true" focusable="false">
+                  <use :href="'#dr-mark-' + ability.name"></use>
+                </svg>
+                <span class="dr-name" x-text="ability.name"></span>
+              </span>
               <!-- The arithmetic. It is the whole record of which three dice
                    counted, and it is here rather than in the score plate
                    because the plate is one figure and this is a sentence about
@@ -210,6 +251,36 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
           </template>
         </div>
       </template>
+    </div>
+
+    <!-- The sheet's own strength, as one figure. It is the question a player asks
+         of a roll - "is this a good sheet" - and until now the panel answered it
+         only by making the reader add six numbers up themselves, which is the one
+         piece of arithmetic a sheet should never ask for.
+
+         In the foot rather than the head, as the session figures below it are: a
+         governing number set in a title band reads as a headline instead of as the
+         state of the sheet. And above the Stats block rather than inside it: that
+         block is a window over the whole session and does not exist until a full
+         roll has happened, while this is a statement about the sheet on screen
+         and is true after a single roll. Gating it with the Stats block would
+         hide the one figure that is always answerable.
+
+         The label says which sheet it means. The number is identical either way -
+         a session's scores sum to a sheet's score - so the scope can only be
+         stated in words, and without it this reads as another sample beside one
+         that is explicitly a 50-roll sample.
+
+         A plain `0` before anything is rolled, the way a blank Point Buy sheet
+         states its own starting total: zero is a true statement about an unrolled
+         sheet rather than a result pretending to be one, and it is plain because
+         `+0` is not a thing a modifier does. -->
+    <div class="dr-foot">
+      <p class="dr-total-line">
+        <span class="dr-soft micro-label">Modifier total</span>
+        <span class="dr-total" x-text="modifierTotal()">0</span>
+        <span class="dr-soft micro-label dr-total-scope">this sheet</span>
+      </p>
     </div>
 
     <!-- The session figures, in the foot rather than in the head: a governing
@@ -324,6 +395,16 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
     --dr-die-edge: var(--color-bark-600);
     --dr-die-pip: var(--color-bark-black);
     --dr-die-size: 1.75rem;
+    /* The mark beside each name, and the gap between them. A token rather than a
+       literal on both sides, because the handle's floor is computed from them:
+       a mark widened without the floor following would push the longest name off
+       a 320px row while every other row stayed inside its number. */
+    --dr-mark-size: 1.125rem;
+    --dr-mark-gap: 0.375rem;
+    /* The floor the ability names themselves need: "Constitution" is the longest
+       of the six, at about 6.4rem in Cinzel at 1rem, so this is that measure with
+       a little slack rather than a second guess at it. */
+    --dr-name-floor: 6.5rem;
   }
 
   :global(:root[data-theme='dark']) .dr {
@@ -549,14 +630,19 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
     opacity: 0.7;
   }
 
-  /* The trade handle. `min-width` is 7rem and the longest name sets it: the
-     handle carries the full ability name, "Constitution" being the longest of
-     the six at about 6.4rem in Cinzel at 1rem. `min-width` is also what the 320px
-     row-floor assertion reads, so a floor below the real text would let that
-     assertion pass on a row wider than the number it checked. */
+  /* The trade handle. `min-width` is computed rather than written, and that is
+     the load-bearing part: the mark's size and the gap beside it are added to the
+     floor the names need, so widening the mark moves the floor with it. Written
+     out longhand it would be a number that has to be remembered, and the day the
+     mark grew, the floor would not - the row would push its longest name off a
+     320px viewport, and the narrowest-row assertion below would still be
+     checking the number in the stylesheet rather than the number on screen.
+
+     It is also what that assertion reads, so a floor below the real content would
+     let it pass on a row wider than the number it checked. */
   .dr-trade {
     display: flex;
-    min-width: 7rem;
+    min-width: calc(var(--dr-name-floor) + var(--dr-mark-size) + var(--dr-mark-gap));
     flex: 0 0 auto;
     flex-direction: column;
     gap: 2px;
@@ -577,6 +663,42 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
 
   .dr-trade:active {
     transform: translateY(1px);
+  }
+
+  /* The mark sprite. Nothing is drawn where it is declared - the rows below
+     reference it by id - so it occupies no space and takes no pointer events.
+     `display: none` rather than a zero box, because a `<use>` still resolves a
+     symbol inside a hidden tree and a zero-sized one is a box that can swallow a
+     press at the top of the panel. */
+  .dr-mark-sprite {
+    display: none;
+  }
+
+  /* The mark and the name on one line, which is what keeps six marked rows
+     reading as six rows. Baseline rather than centre, so a silhouette sits on the
+     name's own baseline; `dr-name` has no descenders to align to at 1rem in the
+     heading face, and centring it lifted the mark above the cap height. */
+  .dr-mark-line {
+    display: flex;
+    align-items: baseline;
+    gap: var(--dr-mark-gap);
+  }
+
+  /* The mark. A fixed box and `flex-shrink: 0` rather than a sized-by-content
+     box: the longest name has to fit beside it without the mark being the thing
+     that gives way, or the six rows stop lining up. Soft ink, a step down from
+     the name's own - six full-strength marks beside six names would be six times
+     the ink for one more reading of the same word, and the accent belongs on this
+     surface only where something is selectable.
+
+     Not `.dr-mark`, which is the die on the roll button: one rule that animated a
+     transform on the roll button's glyph and sized the row's silhouette at the
+     same time would be a coupling neither of the two asked for. */
+  .dr-ability-mark {
+    width: var(--dr-mark-size);
+    height: var(--dr-mark-size);
+    flex-shrink: 0;
+    color: var(--dr-ink-soft);
   }
 
   /* The name carries the row's identity, so it is set in the heading face at
@@ -903,6 +1025,35 @@ import IconifyIcon from '@/components/IconifyIcon.astro';
     justify-content: space-between;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
+  }
+
+  /* The label, the figure and the scope note on one baseline: the pairing Point
+     Buy's foot uses, so the two panels' feet read as the same object and the
+     reader has already learned how to parse this one. The scope note is pushed
+     to the far end rather than sitting beside the label, because it qualifies the
+     figure and a qualifier next to the label would read as a second label. */
+  .dr-total-line {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 0;
+  }
+
+  .dr-total-scope {
+    margin-inline-start: auto;
+  }
+
+  /* The figure itself. The Stats step rather than the row scores' Display step,
+     because it is one number and the six row scores are already the loudest
+     figures on the panel. Heading face, like every other figure on this surface
+     that is a number rather than a die. */
+  .dr-total {
+    font-family: var(--sl-font-heading);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--dr-ink);
+    font-variant-numeric: tabular-nums;
   }
 
   .dr-soft {

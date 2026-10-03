@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
+import { ABILITY_NAMES } from './point-buy-utils';
+
 const source = readFileSync(new URL('./PointBuy.astro', import.meta.url), 'utf8');
 const component = readFileSync(new URL('./point-buy-component.ts', import.meta.url), 'utf8');
 
@@ -20,7 +22,12 @@ const dark = (prop: string): string | undefined =>
   darkBlock().match(new RegExp(`--pb-${prop}:\\s*([^;]+);`))?.[1].trim();
 
 const utils = readFileSync(new URL('./point-buy-utils.ts', import.meta.url), 'utf8');
-/** The vocabulary module, which owns the six codes and the names they map to. */
+/**
+ * The vocabulary module, which owns the six codes and the names and marks they
+ * map to. The mark table has to be declared here for the same reason the names
+ * are: one sheet's six abilities are one list, and two copies of the pairing
+ * would drift apart while both tools kept printing all six.
+ */
 const diceUtils = readFileSync(new URL('../dice-roller/dice-utils.ts', import.meta.url), 'utf8');
 const registration = readFileSync(new URL('../../alpine.ts', import.meta.url), 'utf8');
 
@@ -56,16 +63,19 @@ describe('PointBuy Alpine wiring', () => {
 });
 
 describe('PointBuy ledger rows', () => {
-  it('renders one ruled line per ability, from a single row table', () => {
-    // The rows come from one local table rather than ABILITY_NAMES alone,
-    // because each line now also carries a name and a mark, and a second
-    // six-item list would drift from the first.
-    expect(source).toContain('ABILITY_ROWS.map');
-    expect(source).toContain("ability: 'STR'");
-    expect(source).toContain("ability: 'CHA'");
+  it('renders one ruled line per ability, from the vocabulary\'s own order', () => {
+    // The rows are mapped straight off `ABILITY_NAMES`, with no local row table.
+    // There used to be one here pairing each ability with its mark, which was
+    // right while the mark lived here - but the mark moved to the vocabulary
+    // beside the codes, so a local table is now a third six-item list keeping the
+    // same three tables in step, which is the drift this file exists to stop.
+    expect(source).toContain('ABILITY_NAMES.map');
+    expect(source).not.toMatch(/ABILITY_ROWS/);
     // Six, and no more: a seventh line would mean a seventh ability, which
-    // is a rules change and not a styling one.
-    expect([...source.matchAll(/ability: '(\w\w\w)'/g)].map((m) => m[1])).toEqual([
+    // is a rules change and not a styling one. The order is read from the
+    // vocabulary rather than written here, because a written copy is a fourth
+    // list to keep in step with the three that already exist.
+    expect([...diceUtils.matchAll(/"(\w{3})",/g)].map((m) => m[1])).toEqual([
       'STR',
       'DEX',
       'CON',
@@ -73,6 +83,23 @@ describe('PointBuy ledger rows', () => {
       'WIS',
       'CHA',
     ]);
+    expect(ABILITY_NAMES).toHaveLength(6);
+  });
+
+  it('puts the sheet\'s own mark beside each name, not a local copy of it', () => {
+    // The mark identifies the ability, so it is looked up by the ability rather
+    // than written beside it: a mark typed into the row would be free to drift
+    // from the one the dice roller prints for the same six abilities, and the
+    // two tools are meant to read as one set.
+    expect(source).toContain('icon={ABILITY_MARKS[ability]}');
+    expect(source).not.toMatch(/game-icons:/);
+    // And it sits inside the trade handle, before the name, so the mark and the
+    // name are one object to read and one thing to press.
+    const row = source.slice(source.indexOf('ABILITY_NAMES.map'));
+    expect(row.indexOf('ABILITY_MARKS[ability]')).toBeGreaterThan(-1);
+    expect(row.indexOf('ABILITY_MARKS[ability]')).toBeLessThan(
+      row.indexOf('class="pb-name"')
+    );
   });
 
   it('binds steppers to the bounds and pool helpers with per-ability labels', () => {
@@ -100,21 +127,38 @@ describe('PointBuy ledger rows', () => {
     expect(utils).toMatch(/export \{[^}]*ABILITY_LABELS/);
   });
 
-  it('keeps the six names beside the codes, so neither tool owns them', () => {
-    // One declaration site for the whole sheet. A second copy is the drift this
-    // exists to prevent, and the dependency direction matters as much as the
-    // count: the dice roller must not reach into a point-buy module for the
-    // vocabulary both of them speak.
-    const declarations = [
-      diceUtils,
-      utils,
-      source,
-      component,
-      readFileSync(new URL('../dice-roller/DiceRoller.astro', import.meta.url), 'utf8'),
-      readFileSync(new URL('../dice-roller/dice-roller-component.ts', import.meta.url), 'utf8'),
-    ].filter((file) => /ABILITY_LABELS[^\n=]*=[^\n]*\{/.test(file));
-    expect(declarations, 'ABILITY_LABELS is declared in more than one place').toHaveLength(1);
-  });
+  /**
+   * One declaration site per table for the whole sheet, for both the names and
+   * the marks.
+   *
+   * A second copy is the drift this exists to prevent, and the dependency
+   * direction matters as much as the count: the dice roller must not reach into
+   * a point-buy module for the vocabulary both of them speak. The marks are held
+   * to the same rule as the names because they are the same kind of thing - the
+   * sheet's six abilities, spelled once - and a mark table declared here would be
+   * a second pairing of ability to picture with nothing keeping it beside the
+   * roller's.
+   */
+  it.each(['ABILITY_LABELS', 'ABILITY_MARKS'])(
+    'keeps %s beside the codes, so neither tool owns it',
+    (table) => {
+      const declarations = [
+        diceUtils,
+        utils,
+        source,
+        component,
+        readFileSync(new URL('../dice-roller/DiceRoller.astro', import.meta.url), 'utf8'),
+        readFileSync(new URL('../dice-roller/dice-roller-component.ts', import.meta.url), 'utf8'),
+      ].filter((file) =>
+        // Anchored on `export const`, so a *reference* cannot be mistaken for a
+        // declaration: `icon={ABILITY_MARKS[ability]}` contains both an `=` and a
+        // `{` and would otherwise count as a second table, which is a false
+        // failure the day either tool uses the mark in an expression.
+        new RegExp(`export const ${table}[^\\n=]*=[^\\n]*\\{`).test(file)
+      );
+      expect(declarations, `${table} is declared in more than one place`).toHaveLength(1);
+    }
+  );
 
   it('shows the score, modifier and cost for every ability', () => {
     expect(source).toContain('formatModifier(calculateModifier(scores.${ability}))');
@@ -145,7 +189,7 @@ describe('PointBuy ledger rows', () => {
     expect(rule.slice(0, 200)).toContain('dotted');
     // And the leader is outside the trade handle, so it can run the full width
     // of the name column rather than being clipped to the button.
-    const row = source.slice(source.indexOf('ABILITY_ROWS.map'));
+    const row = source.slice(source.indexOf('ABILITY_NAMES.map'));
     expect(row.indexOf('pb-leader')).toBeGreaterThan(row.indexOf('</button>'));
   });
 

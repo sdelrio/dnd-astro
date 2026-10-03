@@ -1,8 +1,10 @@
 import {
   ABILITY_LABELS,
+  ABILITY_MARKS,
   ABILITY_NAMES,
   calculateModifier,
   formatModifier,
+  formatModifierTotal,
 } from '../dice-roller/dice-utils';
 
 export { calculateModifier, formatModifier };
@@ -13,7 +15,7 @@ export { calculateModifier, formatModifier };
 // own comment claimed all three tools shared it, which is what left the dice
 // roller printing three-letter codes - labelling its own rows would have meant
 // importing a sibling tool's utils, and nothing obliged it to.
-export { ABILITY_LABELS, ABILITY_NAMES };
+export { ABILITY_LABELS, ABILITY_MARKS, ABILITY_NAMES };
 
 export type AbilityName = (typeof ABILITY_NAMES)[number];
 
@@ -206,11 +208,11 @@ export function applyStartingSpread(scores: Scores, id: string): Scores {
  * which is what it is, and `-6` is the number a blank sheet actually starts
  * at and the one people forget. Zero is the one exception: `+0` is not a
  * thing a modifier does, so it is written plain.
+ *
+ * The signing rule is the vocabulary's, not a second copy of it: the dice roller
+ * prints the same figure on the same foot, and two copies of three branches is
+ * two chances for the two tools to disagree about what zero looks like.
  */
 export function formatTotalModifier(scores: Scores): string {
-  const total = totalModifier(scores);
-  if (total === 0) {
-    return '0';
-  }
-  return total > 0 ? `+${total}` : String(total);
+  return formatModifierTotal(totalModifier(scores));
 }

@@ -2,8 +2,9 @@
 import IconifyIcon from '@/components/IconifyIcon.astro';
 import {
   ABILITY_LABELS,
+  ABILITY_MARKS,
+  ABILITY_NAMES,
   STARTING_SPREADS,
-  type AbilityName,
   calculateModifier,
   createDefaultScores,
   formatCostLine,
@@ -12,26 +13,6 @@ import {
   pointsRemaining,
   pointsSpent,
 } from './point-buy-utils';
-
-/**
- * The six abilities, as the sheet writes them: the abbreviation, the name, and
- * the mark beside it.
- *
- * The name is not written here. It comes from `ABILITY_LABELS`, which is the
- * one place the six are spelled, because this is also what every announcement
- * and every trade handle's label says - and a visible name that could drift
- * from the announced one is the same defect in a different place. The mark is a
- * solid silhouette from `game-icons`, the same family throughout so the six
- * read as one set rather than six borrowed glyphs.
- */
-const ABILITY_ROWS: ReadonlyArray<{ ability: AbilityName; icon: string }> = [
-  { ability: 'STR', icon: 'game-icons:mailed-fist' },
-  { ability: 'DEX', icon: 'game-icons:boots' },
-  { ability: 'CON', icon: 'game-icons:round-shield' },
-  { ability: 'INT', icon: 'game-icons:brain' },
-  { ability: 'WIS', icon: 'game-icons:all-seeing-eye' },
-  { ability: 'CHA', icon: 'game-icons:crown' },
-];
 
 const initialScores = createDefaultScores();
 ---
@@ -138,7 +119,13 @@ const initialScores = createDefaultScores();
 
       <div>
         {
-          ABILITY_ROWS.map(({ ability, icon }) => (
+          /* The rows are the vocabulary's own six, in its order. Nothing is
+             declared here: the name comes from `ABILITY_LABELS` and the mark from
+             `ABILITY_MARKS`, both of which live beside the ability codes in the
+             shared data module, because the dice roller prints the same six
+             abilities and a second pairing here would be a list to keep in step
+             with the roller's. */
+          ABILITY_NAMES.map((ability) => (
             <div
               class="pb-rule grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-x-3 border-b border-[color:var(--pb-rule)] py-2 last:border-b-0 max-[46rem]:grid-cols-[auto_auto_minmax(0,1fr)_auto] max-[46rem]:gap-x-2.5 max-[46rem]:gap-y-2 max-[46rem]:py-2.5"
               data-ability={ability}
@@ -153,6 +140,11 @@ const initialScores = createDefaultScores();
                      leader inside a button can only be as long as the button
                      and the whole point of it is to run to the figure.
 
+                     The mark is decorative and is marked as such: the handle's
+                     own label names the ability in words, so a screen reader is
+                     told nothing about a picture that carries no information the
+                     label does not already carry.
+
                      `aria-pressed` carries the picked state rather than a
                      class, so the ring is never the only signal, and the
                      label changes with it so the action names itself. -->
@@ -164,7 +156,7 @@ const initialScores = createDefaultScores();
                   :aria-label={`tradeLabel('${ability}')`}
                 >
                   <IconifyIcon
-                    icon={icon}
+                    icon={ABILITY_MARKS[ability]}
                     width="1.125rem"
                     class="pb-mark shrink-0 translate-y-px"
                   />

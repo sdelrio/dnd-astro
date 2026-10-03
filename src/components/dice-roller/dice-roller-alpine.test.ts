@@ -101,6 +101,20 @@ function tile(name: string): HTMLElement {
   return el as HTMLElement;
 }
 
+/** The ability mark a row draws, read as the sprite symbol it points at. */
+function markIn(name: string): string | null {
+  const href = tile(name).querySelector("use")?.getAttribute("href");
+  if (!href) throw new Error(`${name} draws no mark`);
+  return doc().querySelector(href)?.getAttribute("id") ?? null;
+}
+
+/** The modifier total as the reader sees it: the figure in the foot. */
+function total(): string {
+  const el = doc().querySelector(".dr-total");
+  if (!el) throw new Error("no modifier total in the foot");
+  return (el.textContent ?? "").trim();
+}
+
 describe("DiceRoller at runtime", () => {
   it("registers the component, so no expression falls back to a global", () => {
     // Without `Alpine.data('diceRoller', ...)` the root is never initialised
@@ -190,8 +204,145 @@ describe("DiceRoller at runtime", () => {
     expect(body).toContain("Highest12 (x6)");
     expect(body).toContain(`${ABILITY_LABELS.STR} 12 (+1)`);
     expect(doc().querySelector('[aria-live="polite"]')?.textContent).toBe(
-      `All abilities rolled. ${ABILITY_LABELS.STR} 12 (+1), ${ABILITY_LABELS.DEX} 12 (+1), ${ABILITY_LABELS.CON} 12 (+1), ${ABILITY_LABELS.INT} 12 (+1), ${ABILITY_LABELS.WIS} 12 (+1), ${ABILITY_LABELS.CHA} 12 (+1).`,
+      `All abilities rolled. ${ABILITY_LABELS.STR} 12 (+1), ${ABILITY_LABELS.DEX} 12 (+1), ${ABILITY_LABELS.CON} 12 (+1), ${ABILITY_LABELS.INT} 12 (+1), ${ABILITY_LABELS.WIS} 12 (+1), ${ABILITY_LABELS.CHA} 12 (+1). Modifier total +6.`,
     );
+  });
+
+  describe("the mark beside each name", () => {
+    it("draws one mark per row before anything is rolled", async () => {
+      // The rows are clones of one template, so a mark rendered inline in the
+      // template would draw the same mark six times. This is the shape of that
+      // failure: six rows, six marks, one of them six times over.
+      for (const name of Object.values(ABILITY_LABELS)) {
+        expect(markIn(name), `${name} has no mark`).not.toBeNull();
+      }
+      expect(harness.messages).toEqual([]);
+    });
+
+    it("gives the six rows six different marks", async () => {
+      const marks = Object.values(ABILITY_LABELS).map(markIn);
+      expect(new Set(marks).size, `marks repeat: ${marks.join(', ')}`).toBe(6);
+    });
+
+    it("leaves each mark beside its own name after a confirmed swap", async () => {
+      // The whole reason the mark is bound to the name: a swap exchanges the
+      // dice between two rows, so a mark bound to the row's dice rather than to
+      // its name would show the wrong ability beside a correct score. The reader
+      // sees the name and the mark as one thing, so this asserts they are.
+      const before = Object.values(ABILITY_LABELS).map(markIn);
+      click('[aria-label="Roll all ability scores"]');
+      await advance(FULL_ROLL_MS);
+      vi.mocked(Math.random).mockReturnValue(0.99); // die 6
+      click(`[aria-label="Re-roll ${ABILITY_LABELS.STR}"]`);
+      await advance(INDIVIDUAL_ROLL_MS);
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
+      await harness.flush();
+      click(`button[aria-label="Select ${ABILITY_LABELS.DEX} for swap"]`);
+      await harness.flush();
+      click('[aria-label="Confirm swap"]');
+      await advance(60);
+
+      // The dice travelled: DEX's row now holds the 18. The marks did not.
+      expect(shown(tile(ABILITY_LABELS.DEX))).toContain("6 + 6 + 6");
+      expect(Object.values(ABILITY_LABELS).map(markIn)).toEqual(before);
+    });
+
+    it("says nothing about the mark, because the row label already names the ability", async () => {
+      const handle = tile(ABILITY_LABELS.STR).querySelector(
+        'button[aria-label^="Select "]'
+      )!;
+      expect(handle.getAttribute("aria-label")).toBe(
+        `Select ${ABILITY_LABELS.STR} for swap`
+      );
+      // Nothing in the button's subtree is exposed as an image or as a label.
+      for (const svg of handle.querySelectorAll("svg")) {
+        expect(svg.getAttribute("aria-hidden"), "the mark is exposed").toBe("true");
+      }
+    });
+  });
+
+  describe("the modifier total", () => {
+    it("reads a plain 0 on an unrolled sheet, and says so in the foot", async () => {
+      // Zero is a true statement about a sheet nobody has rolled, the way a blank
+      // Point Buy sheet states its own starting total. It is written plain
+      // because `+0` is not a thing a modifier does.
+      expect(total()).toBe("0");
+      expect(shown(doc().body)).toContain("Modifier total");
+    });
+
+    it("is visible before the Stats block exists", async () => {
+      // The Stats block is a window over the session and needs a full roll before
+      // it means anything; the total is about the sheet on screen and is true
+      // after a single roll. Gating it with the Stats block would hide the one
+      // figure that is always answerable.
+      expect(shown(doc().body)).toContain("No stats yet!");
+      expect(total()).toBe("0");
+    });
+
+    it("sums a mixed set of modifiers correctly", async () => {
+      // One row rolled on sixes (+4), one on ones (3 kept, so -4), four on fours
+      // (+1): +4 -4 +1 +1 +1 +1. A set that is neither all-positive nor
+      // all-negative, which is the only shape that catches a sum that assumes
+      // either.
+      click('[aria-label="Roll all ability scores"]');
+      await advance(FULL_ROLL_MS);
+      vi.mocked(Math.random).mockReturnValue(0.99); // die 6
+      click(`[aria-label="Re-roll ${ABILITY_LABELS.STR}"]`);
+      await advance(INDIVIDUAL_ROLL_MS);
+      vi.mocked(Math.random).mockReturnValue(0); // die 1
+      click(`[aria-label="Re-roll ${ABILITY_LABELS.DEX}"]`);
+      await advance(INDIVIDUAL_ROLL_MS);
+
+      expect(shown(tile(ABILITY_LABELS.STR))).toContain("+4");
+      expect(shown(tile(ABILITY_LABELS.DEX))).toContain("-4");
+      expect(total()).toBe("+4");
+    });
+
+    it("follows an individual re-roll, rather than being fixed at the first roll", async () => {
+      click('[aria-label="Roll all ability scores"]');
+      await advance(FULL_ROLL_MS);
+      expect(total()).toBe("+6");
+
+      vi.mocked(Math.random).mockReturnValue(0); // die 1: 3 kept, so -4
+      click(`[aria-label="Re-roll ${ABILITY_LABELS.STR}"]`);
+      await advance(INDIVIDUAL_ROLL_MS);
+
+      // Five rows at +1 and one at -4.
+      expect(total()).toBe("+1");
+    });
+
+    it("is unchanged by a swap, because a trade cannot change a sum", async () => {
+      click('[aria-label="Roll all ability scores"]');
+      await advance(FULL_ROLL_MS);
+      vi.mocked(Math.random).mockReturnValue(0.99); // die 6
+      click(`[aria-label="Re-roll ${ABILITY_LABELS.STR}"]`);
+      await advance(INDIVIDUAL_ROLL_MS);
+      const before = total();
+
+      click(`button[aria-label="Select ${ABILITY_LABELS.STR} for swap"]`);
+      await harness.flush();
+      click(`button[aria-label="Select ${ABILITY_LABELS.CON} for swap"]`);
+      await harness.flush();
+      click('[aria-label="Confirm swap"]');
+      await advance(60);
+
+      // The two rolls changed rows and the figure did not, which is the property
+      // that makes the figure usable for comparing two sheets.
+      expect(total()).toBe(before);
+      expect(before).toBe("+9");
+    });
+
+    it("is spoken in the roll-all announcement, in the same sentence", async () => {
+      // The announcement already reads all six scores and modifiers, so the total
+      // belongs to that sentence rather than in a second announcement: a screen
+      // reader user who hears the six figures should not have to be told the sum
+      // separately, or told it before they know the six.
+      click('[aria-label="Roll all ability scores"]');
+      await advance(FULL_ROLL_MS);
+      expect(doc().querySelector('[aria-live="polite"]')?.textContent).toMatch(
+        /Modifier total \+6\.$/
+      );
+    });
   });
 
   describe("the one swap a session allows", () => {

@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   ABILITY_LABELS,
+  ABILITY_MARKS,
   ABILITY_NAMES,
   MIN_SCORE,
   MAX_SCORE,
@@ -29,6 +31,7 @@ import {
   type Scores,
 } from './point-buy-utils';
 import {
+  ABILITY_MARKS as diceABILITY_MARKS,
   calculateModifier as diceCalculateModifier,
   formatModifier as diceFormatModifier,
 } from '../dice-roller/dice-utils';
@@ -358,6 +361,18 @@ describe('ability labels', () => {
   });
 });
 
+describe('ability marks', () => {
+  it('hands back the sheet\'s own table rather than a copy of it', () => {
+    // Re-exported, not redeclared: the two tools print the same six marks, and a
+    // second table is the drift `ABILITY_LABELS` was written to prevent.
+    expect(ABILITY_MARKS).toBe(diceABILITY_MARKS);
+  });
+
+  it('marks every ability the sheet has', () => {
+    expect(Object.keys(ABILITY_MARKS)).toEqual([...ABILITY_NAMES]);
+  });
+});
+
 describe('modifier reuse', () => {
   it('re-exports the Dice Roller modifier helpers', () => {
     expect(calculateModifier).toBe(diceCalculateModifier);
@@ -455,5 +470,12 @@ describe('modifier total', () => {
     // zero, so it is pinned rather than left to the sign helper.
     expect(totalModifier({ STR: 14, DEX: 12, CON: 10, INT: 10, WIS: 10, CHA: 10 })).toBe(3);
     expect(formatTotalModifier({ STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 })).toBe('0');
+  });
+
+  it('spells the sign through the shared rule rather than keeping a second copy', () => {
+    // Two copies of "carry the sign, except at zero" is two copies to keep in
+    // step, and the roller prints the same figure beside this one.
+    const utils = readFileSync(new URL('./point-buy-utils.ts', import.meta.url), 'utf8');
+    expect(utils).toMatch(/return formatModifierTotal\(totalModifier\(scores\)\)/);
   });
 });
