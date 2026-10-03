@@ -10,6 +10,7 @@
 // Now there is one table. Medium passes the proficient saves only, so every row
 // it shows is a dot by definition; large passes all six.
 import { cardPlateClass } from '@/components/xml-viewer/card-plate';
+import { proficiencyCoinClass, proficiencyMarkLabel } from '@/components/xml-viewer/proficiency-mark';
 import { signed } from '@/utils/format';
 import { chunk } from '@/utils/chunk';
 
@@ -48,8 +49,8 @@ const saveColumns = chunk(rows, columns);
                   <span>{row.short}</span>
                   {row.saveprof > 0 && (
                     <>
-                      <span class="w-1.5 h-1.5 rounded-full bg-[#c68000]" aria-hidden="true"></span>
-                      <span class="sr-only">Proficient</span>
+                      <span class={proficiencyCoinClass} aria-hidden="true"></span>
+                      <span class="sr-only">{proficiencyMarkLabel}</span>
                     </>
                   )}
                 </span>

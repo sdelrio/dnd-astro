@@ -166,6 +166,34 @@ function powersSection(html: string): string {
   return panel(html, 'powers');
 }
 
+function abilitiesSection(html: string): string {
+  const marker = html.indexOf('>Abilities</h3>');
+  if (marker === -1) return '';
+  const start = html.lastIndexOf('<section', marker);
+  const end = html.indexOf('</section>', marker);
+  return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
+}
+
+/**
+ * The six ability tiles, one markup slice each.
+ *
+ * The tile is the element that carries `border-t-[3px]`, so the marker is on the
+ * tile's own opening tag and the nearest preceding `<div` is the tile rather than
+ * a wrapper. Sliced rather than asserted through a helper's return value, because
+ * what a reader can see on a tile - the abbreviation, the save figure, the coin -
+ * is the whole of what this section has to get right.
+ */
+function abilityTiles(html: string): string[] {
+  const section = abilitiesSection(html);
+  const starts: number[] = [];
+  let marker = section.indexOf('border-t-[3px]');
+  while (marker !== -1) {
+    starts.push(section.lastIndexOf('<div', marker));
+    marker = section.indexOf('border-t-[3px]', marker + 1);
+  }
+  return starts.map((start, i) => section.slice(start, starts[i + 1] ?? section.length));
+}
+
 function savesSection(html: string): string {
   const marker = html.indexOf('>Saving Throws</h3>');
   if (marker === -1) return '';
@@ -246,6 +274,76 @@ function featsSection(html: string): string {
   return html.slice(start, end === -1 ? undefined : end + '</section>'.length);
 }
 
+describe('XmlCard Abilities save proficiency mark', () => {
+  // STR and CON are proficient in the fixture; the other four are not.
+  const PROFICIENT = ['STR', 'CON'];
+  const UNPROFICIENT = ['DEX', 'INT', 'WIS', 'CHA'];
+
+  function tileFor(html: string, short: string): string {
+    const tiles = abilityTiles(html);
+    const matches = tiles.filter((tile) => tile.includes(`>${short}<`));
+    expect(matches, `${short} tile`).toHaveLength(1);
+    return matches[0];
+  }
+
+  for (const display of ['medium', 'large'] as const) {
+    it(`marks a proficient save and leaves an untrained one unmarked at ${display}`, async () => {
+      const html = await renderCard(display);
+      for (const short of PROFICIENT) {
+        const tile = tileFor(html, short);
+        expect(tile, `${short} has no coin at ${display}`).toContain('rounded-full');
+        expect(tile, `${short} has no screen-reader text at ${display}`).toContain(
+          '>Proficient</span>'
+        );
+      }
+      for (const short of UNPROFICIENT) {
+        const tile = tileFor(html, short);
+        expect(tile, `${short} is marked at ${display}`).not.toContain('rounded-full');
+        expect(tile, `${short} has screen-reader text at ${display}`).not.toContain(
+          '>Proficient</span>'
+        );
+      }
+    });
+  }
+
+  it('keeps the mark beside the save figure, not beside the ability bonus', async () => {
+    // The figure the mark qualifies is the save, so it has to read as part of the
+    // save line. A coin above the bonus would claim the bonus is proficient.
+    const tile = tileFor(await renderCard('large'), 'STR');
+    expect(tile.indexOf('SAVE')).toBeLessThan(tile.indexOf('rounded-full'));
+  });
+
+  it('marks every proficient save the Saving Throws table marks, from one fixture', async () => {
+    // The two tables are two renderings of the same `saveprof` flag, so a
+    // character cannot look proficient on one and untrained on the other.
+    const html = await renderCard('large');
+    for (const short of PROFICIENT) {
+      expect(tileFor(html, short)).toContain('rounded-full');
+      expect(savesSection(html)).toContain(`>${short}</span>`);
+    }
+  });
+
+  it('draws the coin with the same colour and shape as the Saving Throws table', async () => {
+    // One legend covers both surfaces, so the class attribute on the two glyphs is
+    // compared rather than trusted: they are the same rule at two call sites, and
+    // a reader cannot learn a mark they see in two colours.
+    const html = await renderCard('large');
+    const coinClass = (markup: string) =>
+      /class="([^"]*rounded-full[^"]*)"[^>]*aria-hidden/.exec(markup)?.[1];
+    expect(coinClass(tileFor(html, 'STR'))).toBeDefined();
+    expect(coinClass(tileFor(html, 'STR'))).toBe(coinClass(saveRow(saveTables(savesSection(html))[0], 'STR')));
+  });
+
+  it('does not change the small card, whose tiles are a different component', async () => {
+    // The compact grid has no room for a mark and small is out of scope, so it
+    // keeps printing the abbreviation, the bonus and the save in one line.
+    const small = await renderCard('small');
+    expect(small).not.toContain('>Proficient</span>');
+    expect(small).toContain('+3 (+5)');
+    expect(abilityTiles(small)).toHaveLength(6);
+  });
+});
+
 describe('XmlCard Passive Skills section', () => {
   it('renders in large mode between Abilities and Saving Throws', async () => {
     const html = await renderCard('large');
@@ -276,9 +374,31 @@ describe('XmlCard Passive Skills section', () => {
     expect(section.match(/>10<\/div>/g)).toHaveLength(3);
   });
 
-  it('never renders in small or medium mode at build time', async () => {
+  it('never renders in small mode at build time', async () => {
     expect(await renderCard('small')).not.toContain('Passive Skills');
-    expect(await renderCard('medium')).not.toContain('Passive Skills');
+  });
+
+  it('renders the same three passive figures at medium as at large', async () => {
+    // The section already sits inside the Overview panel and already owns three
+    // plates, so promoting it through the section policy is a one-entry change
+    // (ADR-0017). The values are read from the same parsed data at both modes, so
+    // the two display modes cannot disagree about a character.
+    const medium = passiveSection(await renderCard('medium'));
+    expect(medium).toContain('Passive Perception');
+    expect(medium).toContain('Passive Investigation');
+    expect(medium).toContain('Passive Insight');
+    expect(medium).toContain('>14</div>');
+    expect(medium).toContain('>11</div>');
+    expect(medium).toContain('>10</div>');
+  });
+
+  it('names itself at medium too, inside the Overview panel', async () => {
+    // At medium the tab names the Overview panel, but Passive Skills is a section
+    // inside it rather than the panel, so it keeps its h3 at both modes - the same
+    // treatment Vitals and Abilities already get.
+    const overview = panel(await renderCard('medium'), 'overview');
+    expect(overview).toContain('>Passive Skills</h3>');
+    expect(overview.indexOf('>Abilities</h3>')).toBeLessThan(overview.indexOf('>Passive Skills</h3>'));
   });
 
   it('renders the section title as an always-visible heading', async () => {
@@ -523,7 +643,7 @@ describe('XmlCard All-skills section', () => {
   });
 });
 
-describe('XmlCard Equipped Weapons section', () => {
+describe('XmlCard Weapons section', () => {
   const greatsword = {
     name: 'Greatsword',
     attackbonus: 0,
@@ -542,6 +662,42 @@ describe('XmlCard Equipped Weapons section', () => {
     type: 2,
     damage: [{ bonus: 0, dice: 'd6', stat: 'base', statmult: 1, type: 'slashing' }],
   };
+  const longsword = {
+    name: 'Longsword',
+    attackbonus: 0,
+    attackstat: '',
+    properties: 'Versatile',
+    carried: 1,
+    type: 0,
+    damage: [{ bonus: 0, dice: 'd8', stat: 'base', statmult: 1, type: 'slashing' }],
+  };
+  const wand = { ...greatsword, name: 'Wand', carried: 0 };
+
+  /**
+   * The weapon name in each body row of a table.
+   *
+   * The name is the second cell, and the properties cell after it repeats those
+   * same words in a narrow card - so the cell is taken by position rather than by
+   * matching text, and only the text before the properties span is read.
+   */
+  function tableNames(table: string): string[] {
+    return weaponRows(table)
+      .filter((row) => row.includes('<td'))
+      .map((row) => {
+        const cells = [...row.matchAll(/<td[^>]*>([\s\S]*?)<\/td>/g)].map(([, cell]) => cell);
+        return cells[1]?.split('<span')[0].trim() ?? '';
+      });
+  }
+
+  function tablesFor(section: string, heading: string): string {
+    const marker = section.indexOf(`>${heading}</`);
+    expect(marker, `no ${heading} table in the panel`).toBeGreaterThan(-1);
+    // The table that belongs to a heading is the first one after it, not the last
+    // one before it: at large the equipped table sits between the two headings.
+    const start = section.indexOf('<table', marker);
+    const end = section.indexOf('</table>', start);
+    return section.slice(start, end + '</table>'.length);
+  }
 
   it('renders one equipped-weapons table with computed totals in large mode', async () => {
     const section = weaponsSection(await renderCard('large', { weapons: [greatsword, handaxe] }));
@@ -567,16 +723,152 @@ describe('XmlCard Equipped Weapons section', () => {
     // Weapons was large-only until the tab bar. It is a tab panel now, so the
     // display mode decides how many columns the table uses and not whether the
     // table exists: a reader on a phone can reach the same section.
-    expect(await renderCard('small', { weapons: [greatsword] })).not.toContain('Equipped Weapons');
+    expect(await renderCard('small', { weapons: [greatsword] })).not.toContain('>Weapons</h3>');
     expect(weaponsSection(await renderCard('medium', { weapons: [greatsword] }))).toContain(
       '>Greatsword<'
     );
   });
 
-  it('hides the section when no weapon is equipped', async () => {
-    const stowed = { ...greatsword, carried: 1 };
-    expect(await renderCard('large', { weapons: [stowed] })).not.toContain('Equipped Weapons');
-    expect(await renderCard('large', { weapons: [] })).not.toContain('Equipped Weapons');
+  it('shows the panel for carried-only, equipped-only and both', async () => {
+    // ADR-0016's rule is that a menu entry exists only for a section with
+    // something in it. A character holding nothing but carrying a longsword has
+    // something in it, so the Weapons tab has to be there.
+    for (const display of ['medium', 'large'] as const) {
+      const carriedOnly = weaponsSection(
+        await renderCard(display, { weapons: [longsword] })
+      );
+      expect(carriedOnly, `${display} carried-only`).toContain('data-panel="weapons"');
+      expect(carriedOnly).toContain('>Longsword<');
+
+      const equippedOnly = weaponsSection(
+        await renderCard(display, { weapons: [greatsword] })
+      );
+      expect(equippedOnly, `${display} equipped-only`).toContain('data-panel="weapons"');
+      expect(equippedOnly).toContain('>Greatsword<');
+
+      const both = weaponsSection(
+        await renderCard(display, { weapons: [greatsword, longsword] })
+      );
+      expect(both, `${display} both`).toContain('>Greatsword<');
+      expect(both).toContain('>Longsword<');
+    }
+  });
+
+  it('keeps the two sets in separate tables with no weapon in both', async () => {
+    const section = weaponsSection(
+      await renderCard('large', { weapons: [greatsword, handaxe, longsword, wand] })
+    );
+    expect(section.match(/<table/g)).toHaveLength(2);
+    expect(tableNames(tablesFor(section, 'Equipped Weapons'))).toEqual(['Greatsword', 'Handaxe']);
+    expect(tableNames(tablesFor(section, 'Carried Weapons'))).toEqual(['Longsword']);
+    // The table each name sits in is the assertion that matters: the same weapon in
+    // both tables is what "separate tables" rules out.
+    expect(tablesFor(section, 'Equipped Weapons')).not.toContain('Longsword');
+    expect(tablesFor(section, 'Carried Weapons')).not.toContain('Greatsword');
+  });
+
+  it('lists a stowed weapon in neither table', async () => {
+    // The third `carried` value is not part of this character's kit, so it is not
+    // in the pack either. The panel stays for the wand's owner only if they hold
+    // or carry something.
+    const section = weaponsSection(
+      await renderCard('large', { weapons: [greatsword, longsword, wand] })
+    );
+    expect(section).not.toContain('Wand');
+    expect(await renderCard('large', { weapons: [wand] })).not.toContain('data-panel="weapons"');
+  });
+
+  it('omits the carried table entirely when nothing is carried', async () => {
+    // A section must not open onto an empty second sheet.
+    const section = weaponsSection(await renderCard('large', { weapons: [greatsword, handaxe] }));
+    expect(section.match(/<table/g)).toHaveLength(1);
+    expect(section).not.toContain('Carried Weapons');
+    expect(section).toContain('>Equipped Weapons<');
+  });
+
+  it('gives both tables the same columns and the same responsive column rule', async () => {
+    // A stowed weapon is as usable as a held one, so the carried table is the same
+    // table. Asserted by comparing the two rather than by pinning a class string:
+    // ADR-0009's warning is that a test written against the markup you happened to
+    // produce passes on the wrong markup, so the invariant is "the two tables agree
+    // and Properties drops under the name", not "this literal class is present".
+    const section = weaponsSection(
+      await renderCard('large', { weapons: [greatsword, longsword] })
+    );
+    const equipped = tablesFor(section, 'Equipped Weapons');
+    const carried = tablesFor(section, 'Carried Weapons');
+
+    /** Each column's header cell class, keyed by its visible header. */
+    function columnRules(table: string): Record<string, string> {
+      return Object.fromEntries(
+        [...table.matchAll(/<th class="([^"]*)"[^>]*>([^<]*)<\/th>/g)].map(([, cls, label]) => [
+          label,
+          cls,
+        ])
+      );
+    }
+    const equippedColumns = columnRules(equipped);
+    expect(Object.keys(equippedColumns).sort()).toEqual(['ATK', 'Damage', 'Properties', 'Weapon']);
+    expect(columnRules(carried)).toEqual(equippedColumns);
+
+    // Properties is the column that gives: it leaves the row below `@lg` and rides
+    // under the weapon name instead of forcing the card sideways.
+    expect(equippedColumns.Properties).toContain('hidden');
+    expect(equippedColumns.Properties).toContain('@lg:table-cell');
+    // ATK and Damage keep their own columns at every width, because they are the
+    // two figures a player reaches for mid-session.
+    for (const kept of ['ATK', 'Damage']) {
+      expect(equippedColumns[kept], `${kept} is hidden on a narrow card`).not.toContain('hidden');
+    }
+    expect(equipped).toContain('block @lg:hidden');
+    expect(carried).toContain('block @lg:hidden');
+  });
+
+  it('names the section once and each table under it at large', async () => {
+    // Two sibling headings claiming to be one section is not an outline, so the
+    // section takes the h3 and each table an h4 beneath it.
+    const both = weaponsSection(
+      await renderCard('large', { weapons: [greatsword, longsword] })
+    );
+    expect(both.match(/<h3/g)).toHaveLength(1);
+    expect(both).toContain('>Weapons</h3>');
+    expect(both.match(/<h4/g)).toHaveLength(2);
+    expect(both.indexOf('>Weapons</h3>')).toBeLessThan(both.indexOf('>Equipped Weapons</h4>'));
+    expect(both.indexOf('>Equipped Weapons</h4>')).toBeLessThan(
+      both.indexOf('>Carried Weapons</h4>')
+    );
+
+    // One subheading per *rendered* table, so the equipped-only case is not left
+    // with a bare table under the section heading or a heading for a table that
+    // is not there.
+    const equippedOnly = weaponsSection(await renderCard('large', { weapons: [greatsword] }));
+    expect(equippedOnly.match(/<h3/g)).toHaveLength(1);
+    expect(equippedOnly.match(/<h4/g)).toHaveLength(1);
+    expect(equippedOnly).toContain('>Equipped Weapons</h4>');
+    expect(equippedOnly).not.toContain('Carried Weapons');
+  });
+
+  it('carries no heading at medium, where the tab names the panel', async () => {
+    // ADR-0016: at medium the visible tab names the open panel, so a heading
+    // inside it repeats a word the reader is already looking at. That is the rule
+    // every other medium section already follows.
+    const section = weaponsSection(
+      await renderCard('medium', { weapons: [greatsword, longsword] })
+    );
+    expect(section).not.toContain('<h3');
+    expect(section).not.toContain('<h4');
+    expect(section).toContain('data-panel="weapons"');
+  });
+
+  it('still names the two tables for a screen reader where no heading is drawn', async () => {
+    // The headings are large-only, so at medium the visible label is gone. The
+    // tables keep an accessible name, so "what is in my hand" and "what is in my
+    // bag" are never the same unlabelled grid twice.
+    const section = weaponsSection(
+      await renderCard('medium', { weapons: [greatsword, longsword] })
+    );
+    expect(section).toContain('aria-label="Equipped weapons"');
+    expect(section).toContain('aria-label="Carried weapons"');
   });
 
   it('places the panel after Overview and before Features in large mode', async () => {
