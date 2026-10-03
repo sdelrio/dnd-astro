@@ -13,7 +13,7 @@ import { handbookSourcePages } from './handbook';
 
 interface Entry {
   id: string;
-  data: { title: string; sidebar?: { order?: number; hidden?: boolean } };
+  data: { title: string; sidebar?: { order?: number; hidden?: boolean }; columns?: 1 | 2 };
 }
 
 /** The eight `dnd/` entries as the docs collection hands them over. */
@@ -80,6 +80,32 @@ describe('handbookSourcePages', () => {
     ];
 
     expect(handbookSourcePages(withHidden).map((source) => source.slug)).not.toContain('dnd/draft-rule');
+  });
+
+  describe('the column count each page opts into', () => {
+    // The key is declared through the schema's `extend` option rather than added
+    // as a bare frontmatter key, because Starlight's default schema is a Zod
+    // object in strip mode and would drop it silently. See
+    // `src/content/docs/handbook-columns-schema.test.ts` for the parsing side;
+    // this is the side that has to *use* what parsing kept.
+    it('carries a single-column opt-out through to the sheet', () => {
+      // Typed as the literal `1` rather than widened to `number`: the entry
+      // interface says the key is `1 | 2` because those are the two layouts the
+      // print stylesheet implements, and a test that widened it would let a
+      // `columns: 3` through the very type that is supposed to prevent one.
+      const single: Entry[] = entries.map((entry) =>
+        entry.id === 'dnd/skills' ? { ...entry, data: { ...entry.data, columns: 1 as const } } : entry
+      );
+
+      expect(handbookSourcePages(single).find((source) => source.slug === 'dnd/skills')?.columns).toBe(1);
+    });
+
+    it('carries nothing for a page that does not ask, so the stylesheet decides', () => {
+      // `undefined` rather than a default of 2: the two-column default belongs
+      // to the one stylesheet that lays sheets out, and a second copy of it in
+      // this function is two numbers that can disagree.
+      expect(handbookSourcePages(entries)[0]).not.toHaveProperty('columns');
+    });
   });
 
   // Starlight's rule: an explicit order wins, and an entry without one sorts

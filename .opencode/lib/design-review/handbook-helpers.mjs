@@ -1,3 +1,5 @@
+import { dirname, join } from 'node:path';
+
 /**
  * Pure helpers for the Handbook command.
  *
@@ -18,10 +20,59 @@ export const DEFAULTS = {
   out: 'tmp/handbook/handbook.pdf',
   font: 'Cinzel',
   fontUrl: '/fonts/Cinzel.woff2',
+  rasterScale: 2,
 };
+
+/**
+ * Where the per-sheet captures go when the run does not say.
+ *
+ * Derived from the PDF's own directory rather than stated as a second default,
+ * so moving the artifact moves its evidence with it. `sheets/` sits inside it so
+ * a directory listing of the output reads as the book and its pages rather than
+ * as two unrelated sets of files.
+ */
+export function defaultPngDir(out) {
+  const directory = dirname(String(out));
+  return join(directory, 'sheets');
+}
+
+/**
+ * A raster scale is how many pixels one CSS pixel becomes, and a capture finer
+ * than the pixel grid is a capture that has thrown information away rather than
+ * resolved more of it. The floor of 1 is therefore a real constraint and not a
+ * taste: below it the read-back check passes on an image that shows less than the
+ * page it is evidence about.
+ */
+export const MIN_RASTER_SCALE = 1;
+
+function parseRasterScale(raw) {
+  const scale = Number(raw);
+
+  if (!Number.isFinite(scale) || scale < MIN_RASTER_SCALE) {
+    throw new Error(
+      `--raster-scale ${raw} is not a raster scale of at least ${MIN_RASTER_SCALE}, so a capture taken at it ` +
+        'would be smaller than the page it is evidence about.'
+    );
+  }
+
+  return scale;
+}
 
 /** Below this a file is a header and nothing else. Not a Handbook. */
 export const MIN_PDF_BYTES = 1024;
+
+/** The same floor for a capture, which is smaller than a PDF and still not one. */
+export const MIN_PNG_BYTES = 1024;
+
+/**
+ * What a page number reads when the sheet count is not known.
+ *
+ * It exists so the footer can never print "12 of " - a page number with an
+ * unbound total looks like a page number, and a reader would believe it. The
+ * label is deliberately not a number, and a run that has not counted the sheets
+ * fails rather than printing it.
+ */
+export const PAGE_NUMBER_TOTAL = Object.freeze({ unknown: 'of an uncounted book' });
 
 /**
  * A4 in PostScript points, which is what a PDF page box is written in.
@@ -42,11 +93,15 @@ export const HELP = `
 Usage: node .opencode/lib/design-review/handbook.mjs [options]
 
 Renders the print route into one A4 vector PDF, one fixed-size sheet per page,
-and refuses to write a file it cannot read back.
+plus one capture per sheet page, and refuses to write a file it cannot read back.
 
 Options:
   --url <url>              page to print          (default ${DEFAULTS.url})
   --out <file>             PDF to write           (default ${DEFAULTS.out})
+  --png-dir <dir>          where the per-sheet captures go
+                           (default ${defaultPngDir(DEFAULTS.out)}, or a sheets/ beside --out)
+  --raster-scale <n>       device pixels per CSS pixel for the captures
+                           (default ${DEFAULTS.rasterScale}, which writes 1588 x 2246 per sheet)
   --font <family>          display face to gate on (default ${DEFAULTS.font})
   --font-url <url>         where that face comes from, named on failure
   --start-dev-server       opt in to running \`astro dev --background\` and stopping it
@@ -59,6 +114,7 @@ Options:
 export function parseArgs(argv) {
   const options = {
     ...DEFAULTS,
+    pngDir: defaultPngDir(DEFAULTS.out),
     startDevServer: false,
     simulateFontCdnOutage: false,
     help: false,
@@ -75,7 +131,12 @@ export function parseArgs(argv) {
 
     switch (arg) {
       case '--url': options.url = next(); break;
-      case '--out': options.out = next(); break;
+      case '--out':
+        options.out = next();
+        options.pngDir = defaultPngDir(options.out);
+        break;
+      case '--png-dir': options.pngDir = next(); break;
+      case '--raster-scale': options.rasterScale = parseRasterScale(next()); break;
       case '--font': options.font = next(); break;
       case '--font-url': options.fontUrl = next(); break;
       case '--start-dev-server': options.startDevServer = true; break;
@@ -257,4 +318,198 @@ export function formatPdfFontGateFailure({ family, url, detail }) {
 function toText(bytes) {
   if (!bytes || bytes.length === 0) return '';
   return Buffer.isBuffer(bytes) ? bytes.toString('latin1') : String(bytes);
+}
+
+/* -------------------------------------------------------------------------
+ * The per-sheet captures
+ * ---------------------------------------------------------------------- */
+
+/**
+ * The raster size a sheet is captured at.
+ *
+ * The page box rather than the sheet box: a capture of a sheet is a capture of
+ * the page it is printed on, margins and all, because that is the thing a reader
+ * holds. Both dimensions come from the same page box, so the vertical raster
+ * scale is the only knob and it scales the page uniformly - a capture that was
+ * scaled on one axis and not the other would be a capture of a stretched page.
+ *
+ * Rounded up, because Chrome writes whole pixels and 793.7 CSS px at 2x is 1588
+ * and not 1587: a capture a pixel short of the page is a capture with the last
+ * row of the margin missing, and nothing in the file says so.
+ */
+export function rasterSize({ page, rasterScale }) {
+  if (!(page?.width > 0) || !(page?.height > 0)) {
+    throw new Error(
+      `The page box ${JSON.stringify(page)} is not a length, so a capture has no raster size to be written at.`
+    );
+  }
+  if (!(rasterScale > 0) || !Number.isFinite(rasterScale)) {
+    throw new Error(`A vertical raster scale of ${rasterScale} is not a scale, so no capture can be taken at it.`);
+  }
+
+  return {
+    width: Math.ceil(page.width * rasterScale),
+    height: Math.ceil(page.height * rasterScale),
+  };
+}
+
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
+/**
+ * The raster size a PNG declares in its own header.
+ *
+ * The eight-byte signature, then the IHDR chunk length and type, then the
+ * width and height as big-endian 32-bit integers at offsets 16 and 20. Reading
+ * the bytes rather than believing the capture call is ADR-0012's lesson applied
+ * to a second file format: a capture at the wrong size and a capture at the
+ * right one are indistinguishable in a directory listing.
+ *
+ * `null` means "could not be read", which is a failure at the call site and
+ * never a zero. A truncated file has no dimensions to report, and reporting 0x0
+ * for it would let a broken capture pass as an empty one.
+ */
+export function readPngSize(bytes) {
+  if (!Buffer.isBuffer(bytes) || bytes.length < 24) return null;
+  if (!bytes.subarray(0, 8).equals(PNG_SIGNATURE)) return null;
+  if (bytes.subarray(12, 16).toString('latin1') !== 'IHDR') return null;
+
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+}
+
+/**
+ * Decide whether the written bytes are a believable capture of a sheet.
+ *
+ * The same shape as `validatePdf` and for the same reason: the checks a
+ * directory listing cannot make are the file's own bytes. Every problem is
+ * reported rather than the first, so one run tells the whole story about all the
+ * sheets rather than one sheet per run.
+ */
+export function validatePng({ label, bytes, expected }) {
+  const problems = [];
+  const size = bytes ? bytes.length : 0;
+
+  if (!bytes || size === 0) {
+    problems.push(`${label} was not written (the file is empty or absent).`);
+    return { ok: false, label, bytes: size, size: null, expected, problems };
+  }
+
+  if (size < MIN_PNG_BYTES) {
+    problems.push(`${label} is truncated: ${size} bytes, under the ${MIN_PNG_BYTES} byte floor.`);
+  }
+
+  if (!bytes.subarray(0, 8).equals(PNG_SIGNATURE)) {
+    problems.push(`${label} does not begin with the PNG signature; it is not a PNG.`);
+  }
+
+  const declared = readPngSize(bytes);
+  if (!declared) {
+    problems.push(`${label} declares no readable raster size, so its dimensions cannot be checked.`);
+  } else if (declared.width !== expected.width || declared.height !== expected.height) {
+    problems.push(
+      `${label} is ${declared.width}x${declared.height}px, not the ${expected.width}x${expected.height}px ` +
+        'this run asked for, so it is a capture of something other than a sheet at the raster scale in use.'
+    );
+  }
+
+  return { ok: problems.length === 0, label, bytes: size, size: declared, expected, problems };
+}
+
+/**
+ * The page number a sheet's footer prints.
+ *
+ * `12 of 48` rather than a bare `12`, because a reader holding forty pages of
+ * reference tables needs to know whether the book ends at twenty or at sixty.
+ * The total is the sheet count, which is known the moment every source page has
+ * been measured - the thing the footer needs is free once the run knows how many
+ * sheets it printed.
+ *
+ * Refuses rather than formatting a number it cannot vouch for. A footer that
+ * printed "12 of 0", or a page number past the end of the book, would be a
+ * confidently wrong artifact of the kind this whole feature exists to avoid.
+ */
+export function pageNumberLabel(page, total) {
+  if (!Number.isInteger(total) || total < 1) {
+    throw new Error(
+      `A page number needs a sheet count to be "n of m", and ${total} is not one, so nothing was printed.`
+    );
+  }
+  if (!Number.isInteger(page) || page < 1) {
+    throw new Error(`Page numbers start at 1 and ${page} is not a page number.`);
+  }
+  if (page > total) {
+    throw new Error(`Page ${page} is past the end of a book of ${total} pages, so the numbering is wrong.`);
+  }
+
+  return `${page} of ${total}`;
+}
+
+/**
+ * The file name a sheet is captured to.
+ *
+ * Numbered by the sheet's own number, so a directory listing of the captures is
+ * the book's page order and a diff over the captures reads as a diff over the
+ * book.
+ *
+ * One file per sheet, not one per printed page, because that is what can be
+ * captured faithfully. A capture is a clip of the rendered document, and the
+ * rendered document has no page margin between a sheet's first page and its
+ * second: in print the 25mm top margin is added by the page box on every page,
+ * and there is nowhere on screen for it to appear. So sheet one of two is a
+ * capture and sheet two is not, rather than a capture that shows the bottom of
+ * one page where the top of the next should be. Splitting a source page into
+ * sheets that are one page each is what makes every page capturable, and that is
+ * the next ticket's work.
+ */
+export function pngFileName(sheetNumber) {
+  if (!Number.isInteger(sheetNumber) || sheetNumber < 1) {
+    throw new Error(`Sheets are numbered from 1 and ${sheetNumber} is not a sheet number.`);
+  }
+
+  return `sheet-${String(sheetNumber).padStart(2, '0')}.png`;
+}
+
+/* -------------------------------------------------------------------------
+ * Columns
+ * ---------------------------------------------------------------------- */
+
+/**
+ * Sub-pixel slack before an element counts as too wide for its column.
+ *
+ * 643px of sheet less a 30px gutter does not divide into two whole columns, so
+ * Chrome hands back 306.5 rather than 306 and a paragraph can legitimately be
+ * 306.4 wide. Treating that as an overflow would span most paragraphs across
+ * both columns and destroy the two-column measure the span exists to protect.
+ */
+export const COLUMN_TOLERANCE_PX = 1;
+
+/**
+ * Which of the measured elements are too wide for their column.
+ *
+ * The answer is measured rather than declared, because the alternative is a
+ * stylesheet rule listing which kinds of element span, and the house-rule pages
+ * contain two shapes of wide thing this repository has never had to classify: a
+ * weapon-properties table with eight columns of reference text, and a scroll
+ * container whose own box fits while its table does not. Reading both `width` and
+ * `scrollWidth` is what catches the second one.
+ *
+ * Indices rather than elements, so the injected assignment - which is the only
+ * thing allowed to touch the page - applies the answer without this helper
+ * needing a DOM.
+ *
+ * A box that could not be measured counts as wide. The absence of a measurement
+ * is not evidence that the element fits, and assuming it does is exactly how a
+ * reference table ends up clipped on a sheet the run reported as correct.
+ */
+export function elementsWiderThanColumn({ columnWidth, boxes, tolerance = COLUMN_TOLERANCE_PX }) {
+  if (!(columnWidth > 0)) {
+    throw new Error(`A column width of ${columnWidth} is not a length, so nothing can be measured against it.`);
+  }
+
+  return boxes.reduce((wide, box, index) => {
+    const width = Number(box?.width);
+    const content = Number(box?.scrollWidth);
+    const measured = [width, content].filter(Number.isFinite);
+
+    return measured.length === 0 || Math.max(...measured) > columnWidth + tolerance ? [...wide, index] : wide;
+  }, []);
 }

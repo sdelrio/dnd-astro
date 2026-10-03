@@ -1,45 +1,125 @@
-/* The Handbook's page geometry, and the sheet box it prints into.
+/* The Handbook's page geometry, the two-column sheet it prints into, and the
+ * footer each page carries.
  *
- * ADR-0020 chose a fixed-height sheet box over a print stylesheet, and this
- * file is that choice made concrete. It is loaded only by the print routes, so
- * nothing here is a second description of the site's screens: the colours,
- * fonts and content styling come from the site's own stylesheet and Starlight's
- * own, and this file adds the page geometry and the box.
+ * ADR-0020 chose a sheet box over a print stylesheet, and this file is that
+ * choice made concrete. It is loaded only by the print routes, so nothing here
+ * is a second description of the site's screens: the colours, fonts and content
+ * styling come from the site's own stylesheet and Starlight's own, and this file
+ * adds the page geometry, the columns and the footer.
  *
- * The geometry is stated once, in the two custom properties and the `@page`
- * rule below, and every later ticket inherits those numbers. Nothing else in
- * this file may hold a length: a second copy of the sheet size is two numbers
- * that can disagree, and a capture of the wrong width looks exactly like a
- * capture of the right one.
+ * Two invariants hold here and are asserted in `handbook-print.test.ts`:
+ *
+ *   - **The geometry is stated once.** Every length is a custom property on the
+ *     root, and nothing outside `:root` holds a length at all. A second copy of
+ *     the sheet size is two numbers that can disagree, and a capture of the
+ *     wrong width looks exactly like a capture of the right one.
+ *   - **The PNG and the PDF are the same rendering.** There is one stylesheet
+ *     and one DOM for both, so a capture is a statement about the artifact
+ *     rather than a second opinion about it.
+ *
+ * The millimetres in the `@page` rule are the geometry's origin. Everything in
+ * pixels below is derived from them, and the test derives them the same way.
  */
 
 :root {
-  /* A4, 210 x 297mm, less 25mm top and left and 15mm right and bottom, at the
-     CSS reference resolution of 96px to the inch. The printable area is
-     642.5 x 971.3px, rounded up to whole pixels: a sheet one pixel short of it
-     would clip the last line of a rule, which is the failure this mechanism
-     exists to prevent. */
+  /* The paper itself, which is the printable area: A4, 210 x 297mm, less 25mm
+     top and left and 15mm right and bottom, at the CSS reference resolution of
+     96px to the inch. The printable area is 642.5 x 971.3px, rounded up to whole
+     pixels: a sheet one pixel short of it would clip the last line of a rule,
+     which is the failure this mechanism exists to prevent. */
   --handbook-sheet-width: 643px;
   --handbook-sheet-height: 972px;
+
+  /* The page box, which is the sheet box plus the margins the `@page` rule
+     declares. It is a separate pair of numbers because it is what a capture is
+     taken at: a reader holds a page, margins and all, and a capture of the
+     643px measure alone is a picture of the text rather than of the sheet. */
+  --handbook-page-width: 794px;
+  --handbook-page-height: 1123px;
+  --handbook-page-margin-top: 94.49px;
+  --handbook-page-margin-right: 56.69px;
+  --handbook-page-margin-bottom: 56.69px;
+  --handbook-page-margin-left: 94.49px;
+
+  /* Two columns with a 30px gutter, as ADR-0020 states: a single 643px measure
+     at 16px body text is a very long line for a page read at a table, and two
+     306px columns read like a printed rulebook. 306 x 2 + 30 is 642, one pixel
+     inside the sheet box; the spare pixel is why the column width is declared
+     rather than derived, because Chrome's own column arithmetic hands back
+     306.5 and the tolerance in the overflow check absorbs exactly that. */
+  --handbook-columns: 2;
+  --handbook-column-width: 306px;
+  --handbook-column-gap: 30px;
+
+  /* The footer. Absolute rather than in flow, so a sheet whose content fits
+     leaves it at the foot of the page instead of halfway up it. The reserve is
+     the space the footer occupies inside the measure, so the last rule of a page
+     is never printed underneath it. */
+  --handbook-footer-reserve: 34px;
+  --handbook-footer-gap: 12px;
+  --handbook-footer-size: 0.6875rem;
+  --handbook-footer-tracking: 0.04em;
+  --handbook-footer-rule: 1px;
+
+  /* The ornament in the centre of the footer, and the one committed file that
+     draws it. It is a separate file rather than a border or a glyph so that it
+     belongs to the site's rule vocabulary - it is generated from the same gold
+     rule token the website draws its rules in - and so it can be replaced
+     without touching this file. */
+  --handbook-ornament: url('/handbook/ornament.svg');
+  --handbook-ornament-width: 88px;
+  --handbook-ornament-height: 10px;
+
+  /* The paper. One committed file, tiled at its natural size, over a colour that
+     matches it: replacing the file changes the paper and nothing else, and the
+     colour behind it is what the measured contrast is against. Tiled on the root
+     element rather than the body so it covers the whole page box - on the body it
+     would stop at the 643px measure and leave white down both sides of every
+     page. */
+  --handbook-paper: #ece2cd;
+  --handbook-paper-image: url('/handbook/parchment.png');
+
+  /* The rule that means "start a new sheet", 2px because that is the weight of
+     every gold rule on the site. */
+  --handbook-rule-weight: 2px;
+  --handbook-rule-space: 18px;
 }
 
 /* The page is the paper. `size` is what the browser lays out to when
    `Page.printToPDF` is asked to prefer the CSS page size, so the geometry
-   lives here rather than in the command that prints it. */
+   lives here rather than in the command that prints it. It is also the origin
+   every pixel above is derived from. */
 @page {
   size: A4 portrait;
   margin: 25mm 15mm 15mm 25mm;
+}
+
+:root {
+  background-color: var(--handbook-paper);
+  background-image: var(--handbook-paper-image);
+  /* `auto`, so a replacement tile of any dimensions tiles at its own size and the
+     stylesheet needs no edit to go with it. */
+  background-size: auto;
+  background-repeat: repeat;
 }
 
 /* The print routes carry no site chrome: no sidebar, no table of contents, no
    navigation and no header, so the sheet is the rule and nothing else. The
    reset is narrow on purpose - the site's own stylesheet and Starlight's supply
    the typography - and the body is pinned to the printable measure so the
-   screen layout the command measures is the print layout it asks for. */
+   screen layout the command measures is the print layout it asks for.
+
+   `background-color: transparent` is not a preference. Starlight's reset paints
+   the documentation background behind the body, which on the website is what a
+   reader expects and on a sheet is a white rectangle in the middle of the paper:
+   measured, it covered the printable area exactly, from 94px to 737px across and
+   the full 972px of the sheet down, so the committed parchment underneath would
+   have been visible only as a border. */
 body {
   width: var(--handbook-sheet-width);
   margin: 0;
   padding: 0;
+  background-color: transparent;
 }
 
 /* A sheet is a box the size of the printable area with a break after it, which
@@ -56,18 +136,116 @@ body {
    sheet one's paragraph 43 and its paragraph 44. With `min-height` the box is
    still a whole page when its content fits, and a source page that does not fit
    spans the pages it needs instead of corrupting its successor. Splitting a
-   source page into named sheets is a later ticket's job. */
+   source page into named sheets is a later ticket's job.
+
+   `position: relative` is what the absolute footer is placed against. */
 [data-handbook-sheet] {
   display: block;
+  position: relative;
   width: var(--handbook-sheet-width);
   min-height: var(--handbook-sheet-height);
   break-after: page;
 }
 
 /* A forced break after the final sheet paginates to a blank page at the end of
-   the document. One column, because the two-column sheet is a later ticket. */
+   the document. */
 [data-handbook-sheet]:last-of-type {
   break-after: auto;
+}
+
+/* The measure the columns fill.
+   `column-fill: auto` because a sheet that spans pages has to fill the first
+   column to the bottom of the first page before the second column starts, which
+   is what a reader turning to a page expects to find. */
+[data-handbook-flow] {
+  column-count: var(--handbook-columns);
+  column-gap: var(--handbook-column-gap);
+  column-fill: auto;
+  padding-bottom: var(--handbook-footer-reserve);
+}
+
+/* The opt-out. A page whose content reads worse in a 306px measure than in a
+   643px one - a table of prose, a sequence of short cross-references - sets
+   `columns: 1` in its frontmatter and lands here. The default is not repeated
+   as a fallback: this selector is the only place a page leaves two columns, and
+   a page that says nothing gets the stylesheet's own value. */
+[data-handbook-columns="1"] [data-handbook-flow] {
+  column-count: 1;
+}
+
+/* An element wider than its column, spanning both.
+   Marked by the command from what it measured rather than by a rule that guesses
+   which kinds of element need it. The house-rule pages contain two shapes of
+   wide thing and this repository had never had to classify either: a
+   weapon-properties table with eight columns of reference text, and a scroll
+   container whose own box fits its column while the table inside it does not.
+   Wide tables are the expected case here, not the exception - one source page is
+   almost entirely a table and another is thirty kilobytes of them. */
+[data-handbook-wide] {
+  column-span: all;
+}
+
+/* The footer. Three tracks: the source page and the section it is in on the
+   left, the ornament on the centre line, the page number on the right. Equal
+   outer tracks are what put the ornament in the centre rather than wherever the
+   left text happens to end. */
+[data-handbook-footer] {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--handbook-footer-gap);
+  font-family: var(--sl-font-table);
+  font-size: var(--handbook-footer-size);
+  letter-spacing: var(--handbook-footer-tracking);
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+/* The left pair: the source page above the section it is in, because a reader
+   turning to page twenty-two wants both which chapter and which part of it. */
+[data-handbook-footer-left] {
+  display: flex;
+  flex-direction: column;
+  gap: var(--handbook-footer-gap);
+}
+
+[data-handbook-footer-source] {
+  font-weight: 600;
+}
+
+/* The ornament is decorative and says nothing a reader needs, so it is an image
+   with no alternative text rather than a glyph pretending to be one. */
+[data-handbook-footer-ornament] {
+  width: var(--handbook-ornament-width);
+  height: var(--handbook-ornament-height);
+}
+
+[data-handbook-footer-page] {
+  text-align: right;
+  /* Tabular figures so a column of page numbers lines up on the page edge
+     instead of stepping by a digit's width. */
+  font-variant-numeric: tabular-nums;
+}
+
+/* A horizontal rule in a house-rule page means "start a new sheet", which is the
+   same meaning it has on the website - where `tailwind.css` draws it in the same
+   gold - and here it is also what it says: a break after the rule, so everything
+   after it starts on a fresh page.
+
+   It needs a blank line above it in the markdown, and that is a parser
+   constraint rather than a style one. In CommonMark a rule on the line
+   immediately after paragraph text is a setext heading, and the
+   weapon-properties table reader treats a lone `---` after a table's last row as
+   a separator and silently deletes that row. AGENTS.md documents the blank line. */
+[data-handbook-sheet] hr {
+  border: 0;
+  border-top: var(--handbook-rule-weight) solid var(--color-gold-rule);
+  margin-block: var(--handbook-rule-space);
+  break-after: page;
 }
 
 /* Astro's dev toolbar hides itself with `@media print`, and this document is
