@@ -1,0 +1,106 @@
+---
+// The Spellcasting section's contents: the three casting figures, then the slot
+// plates.
+//
+// It is its own component for the same reason `WeaponsTable.astro` and
+// `LanguagesFeats.astro` are: XmlCard.astro is the file that decides which
+// sections exist, and this is a block of markup that does not make that decision.
+// The section heading stays in the card, because it is the card's rule that a
+// section names itself at `large` and not at `medium`, and a heading that appeared
+// or vanished on a prop of this component would be a second copy of that rule.
+//
+// The three-plate row is the Vitals row verbatim - same grid, same plate, same
+// label-over-figure. Not because the three figures are the same kind of fact as AC
+// and Initiative, which they are not, but because a reader who has just read the
+// Vitals plates should not have to learn a second plate: the difference between a
+// familiar figure and a new one is size and alignment, and reusing the row spends
+// neither.
+import { cardPlateClass } from '@/components/xml-viewer/card-plate';
+import { signed } from '@/utils/format';
+import {
+  CASTING_ABILITY_LABEL,
+  type CastingAbility,
+  type SpellSlotRow,
+} from '@/components/xml-viewer/spellcasting-display';
+
+interface Props {
+  /** The resolved casting ability. Its label forms come from the shared map. */
+  ability: CastingAbility;
+  modifier: number;
+  /** True when the ability was the best of the three rather than a recorded one. */
+  inferred: boolean;
+  saveDc: number;
+  attackBonus: number;
+  slots: SpellSlotRow[];
+}
+
+const { ability, modifier, inferred, saveDc, attackBonus, slots } = Astro.props;
+
+const { short, name } = CASTING_ABILITY_LABEL[ability];
+
+// One string rather than two expressions side by side, so the rendered figure is
+// exactly what a reader reads and not what the template's own whitespace leaves.
+const abilityFigure = `${short} ${signed(modifier)}`;
+---
+
+<div class="space-y-2">
+  <div class="grid grid-cols-3 gap-2 text-center">
+    {/* The casting ability first, because it is the modifier the other two are
+        built from. A reader who wants to check the Save DC needs to know which
+        ability fed it, and the ability is the only one of the three that is a
+        choice rather than a result. */}
+    <div class={cardPlateClass} data-plate="casting-ability">
+      <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Casting Ability</div>
+      <div class="text-lg font-bold text-gray-900 dark:text-gray-100" title={`Casting ability: ${name}`}>
+        {abilityFigure}
+      </div>
+      {/* The sheets name no casting ability, so a character with no casting class
+          or subclass has had one picked for it. The guess and the record look
+          identical in the plate above - a Fighter's Wisdom +2 and a Cleric's
+          Wisdom +2 are the same two glyphs - so the guess says so in text rather
+          than in a colour or a title. */}
+      {inferred && (
+        <div class="text-[0.625rem] uppercase tracking-[0.06em] text-gray-500 dark:text-gray-400">
+          Inferred
+          <span class="sr-only">
+            {` - no casting class or subclass on the sheet, so this is the best of Wisdom, Intelligence and Charisma`}
+          </span>
+        </div>
+      )}
+    </div>
+
+    <div class={cardPlateClass} data-plate="save-dc">
+      <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Save DC</div>
+      {/* Unsigned, deliberately: a DC is a number an enemy rolls against, not a
+          bonus, and a "+13" would read as one. */}
+      <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{saveDc}</div>
+    </div>
+
+    <div class={cardPlateClass} data-plate="attack-bonus">
+      <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Attack Bonus</div>
+      <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{signed(attackBonus)}</div>
+    </div>
+  </div>
+
+  {/* One plate per level with slots, so the row is as long as the character can
+      actually cast and no longer. Nine populated levels is a level 20 caster's
+      worst case: three across on the ~358px roster card, five across once the
+      card has room for five, nine on the full character sheet where the levels
+      read as one strip. Every breakpoint is a container query, because the same
+      card is 358px in a roster and 1230px on a character page at one viewport. */}
+  {slots.length > 0 && (
+    <div class="grid grid-cols-3 @md:grid-cols-5 @6xl:grid-cols-9 gap-2 text-center">
+      {slots.map((slot) => (
+        <div class={cardPlateClass} data-slot={slot.level}>
+          <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+            {slot.label}
+          </div>
+          {/* Used out of total, so a spent level and a full one do not look alike.
+              `4/4` and `0/4` are different turns and a bare total cannot tell them
+              apart. */}
+          <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{slot.spent}</div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>

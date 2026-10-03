@@ -12,6 +12,14 @@ import {
   hasInventoryContents,
 } from '@/components/xml-viewer/inventory-display';
 import { skillRank } from '@/components/xml-viewer/skill-display';
+import {
+  hasSpellcasting,
+  isSpellGroup,
+  resolveCastingAbility,
+  spellAttackBonus,
+  spellSaveDc,
+  toSpellSlotRows,
+} from '@/components/xml-viewer/spellcasting-display';
 import { cardPlateClass } from '@/components/xml-viewer/card-plate';
 import {
   proficiencyCoinClass,
@@ -28,6 +36,7 @@ import {
   sectionLegendClass,
 } from '@/components/xml-viewer/section-heading';
 import WeaponsTable from '@/components/xml-viewer/WeaponsTable.astro';
+import SpellcastingPanel from '@/components/xml-viewer/SpellcastingPanel.astro';
 import CompactAbilityGrid from '@/components/xml-viewer/CompactAbilityGrid.astro';
 import LanguagesFeats from '@/components/xml-viewer/LanguagesFeats.astro';
 import { CARD_TABS, type CardTabId } from '@/components/xml-viewer/card-tabs';
@@ -78,6 +87,12 @@ function rank(mode: string): number {
 // nothing that is not already on the page. The passive scores are a recognition
 // fact about a character - whether the party notices things - rather than a number
 // the reader computes with, which is what medium is for.
+//
+// `spellcasting` is `medium` for the same reason, and for one more: the three
+// figures it carries are the numbers a caster looks up mid-turn rather than
+// anything a roster reader could work out from the ability grid above. A caster's
+// Save DC is not on the card anywhere else, so a reader who wants it from the
+// roster would otherwise have to leave the roster.
 const sectionPolicy = {
   avatar: 'small' as const,
   tags: 'small' as const,
@@ -87,6 +102,7 @@ const sectionPolicy = {
   skills: 'medium' as const,
   allSkills: 'large' as const,
   passives: 'medium' as const,
+  spellcasting: 'medium' as const,
   languages: 'medium' as const,
   feats: 'medium' as const,
   weapons: 'medium' as const,
@@ -118,6 +134,7 @@ const {
   languages,
   feats,
   weapons,
+  spellSlots,
   features,
   powers,
   inventory,
@@ -200,6 +217,18 @@ const proficientSkills = sortedAllSkills.filter((skill) => skillRank(skill.prof)
 const equippedWeaponRows = toWeaponRows(weapons, abilities, profBonus, 'equipped');
 const carriedWeaponRows = toWeaponRows(weapons, abilities, profBonus, 'carried');
 
+// Spellcasting. The sheets record no casting ability, no Save DC and no spell
+// attack bonus, so all three are derived - and they are derived here, from the
+// pure resolver and the two formulae in `spellcasting-display`, rather than
+// inline in the markup. Everything else this card shows is either read straight
+// from the sheet or an attack total the weapon builder computes, which is what
+// makes this the first place a derivation bug would be hardest to see: a wrong
+// Save DC renders as a plate with a plausible number in it, not as a failure.
+const casting = resolveCastingAbility(classes, abilities);
+const spellSave = spellSaveDc(profBonus, casting.modifier);
+const spellAttack = spellAttackBonus(profBonus, casting.modifier);
+const spellSlotRows = toSpellSlotRows(spellSlots);
+
 const inventoryRows = toInventoryRows(inventory);
 const inventoryWeight = carriedWeight(inventory);
 const inventoryCapacity = carryCapacity(lookupAbility('Strength').score);
@@ -218,9 +247,6 @@ const powersByLevel = groupBy(sortedPowers, (p) => p.level).map((lg) => ({
   })),
 }));
 
-function isSpellGroup(group: string): boolean {
-  return /spell|cantrip/i.test(group);
-}
 type PowerMark = 'always' | 'prepared' | null;
 function powerMark(power: { group: string; prepared: number; preparedDomain: number }): PowerMark {
   if (!isSpellGroup(power.group)) return null;
@@ -249,6 +275,13 @@ const showSkills =
   canShow('skills') && (showSkillsTable || (!canShow('allSkills') && (showLanguages || showFeats)));
 const showWeapons =
   canShow('weapons') && (equippedWeaponRows.length > 0 || carriedWeaponRows.length > 0);
+// The gate is ADR-0016's "a menu entry exists only for a section with something to
+// put in it", asked in the only question that fits a caster: does the sheet show
+// this character can cast? Either a spell power or a class or subclass the casting
+// table recognises is enough, and the two halves rule out opposite failures - a
+// pure martial character has neither and gets no entry, while a half-caster with
+// one Eldritch Knight spell gets one even though no class of theirs is a caster.
+const showSpellcasting = canShow('spellcasting') && hasSpellcasting(classes, powers);
 const showInventory = canShow('inventory') && hasInventory;
 const showFeatures = canShow('features') && featuresByLevel.length > 0;
 const showPowers = canShow('powers') && powersByLevel.length > 0;
@@ -317,6 +350,7 @@ const sectionId = (id: CardTabId) => `${cardId}-${id}`;
 const tabAvailability: Record<CardTabId, boolean> = {
   overview: true,
   skills: showSkills,
+  spellcasting: showSpellcasting,
   inventory: showInventory,
   weapons: showWeapons,
   features: showFeatures,
@@ -583,6 +617,31 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
             <LanguagesFeats languages={languages} feats={feats} />
           </div>
         )}
+      </div>
+    )}
+
+    {showSpellcasting && (
+      <div
+        role={tabbed ? 'tabpanel' : undefined}
+        data-panel="spellcasting"
+        id={jumping ? sectionId('spellcasting') : undefined}
+        x-show={tabbed ? "active === 'spellcasting'" : undefined}
+        data-no-cloak="no-js-reader-loses-the-card"
+      >
+        {/* One heading naming the section, large only, like every other
+            single-section panel: at medium the visible tab names the open panel,
+            so a heading inside it repeats a word the reader is already looking at.
+            The slot plates carry their own level labels rather than an `h4`, so
+            nothing here claims to be a subsection of the section. */}
+        {jumping && <h3 class={`${sectionHeadingClass} mb-2`}>Spellcasting</h3>}
+        <SpellcastingPanel
+          ability={casting.ability}
+          modifier={casting.modifier}
+          inferred={!casting.recorded}
+          saveDc={spellSave}
+          attackBonus={spellAttack}
+          slots={spellSlotRows}
+        />
       </div>
     )}
 

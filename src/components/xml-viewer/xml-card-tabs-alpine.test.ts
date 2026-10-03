@@ -24,7 +24,11 @@ const character: CharacterData = {
   alignment: 'Neutral',
   background: 'Soldier',
   deity: '',
-  classes: [{ name: 'Fighter', level: 3 }],
+  // Eldritch Knight rather than a plain Fighter, because the bar is seven entries
+  // long in this fixture and it can only be seven if the Spellcasting entry is
+  // one of them. A half-caster is the interesting case for that gate: no class of
+  // theirs is a caster, and the subclass alone has to be enough.
+  classes: [{ name: 'Fighter', level: 3, subclass: 'Eldritch Knight' }],
   abilities: {
     strength: { score: 16, bonus: 3, save: 5, saveprof: 1 },
     dexterity: { score: 12, bonus: 1, save: 1, saveprof: 0 },
@@ -50,6 +54,7 @@ const character: CharacterData = {
   features: [{ level: 1, name: 'Second Wind', source: 'Fighter' }],
   powers: [
     { level: 1, name: 'Rage', group: 'Barbarian Actions', prepared: 0, preparedDomain: 0 },
+    { level: 3, name: 'Fire Bolt', group: 'Spells', prepared: 1, preparedDomain: 0 },
   ],
   weapons: [
     {
@@ -61,6 +66,17 @@ const character: CharacterData = {
       type: 0,
       damage: [{ bonus: 0, dice: '2d6', stat: 'base', statmult: 1, type: 'slashing' }],
     },
+  ],
+  spellSlots: [
+    { level: 1, max: 2, used: 1 },
+    { level: 2, max: 0, used: 0 },
+    { level: 3, max: 0, used: 0 },
+    { level: 4, max: 0, used: 0 },
+    { level: 5, max: 0, used: 0 },
+    { level: 6, max: 0, used: 0 },
+    { level: 7, max: 0, used: 0 },
+    { level: 8, max: 0, used: 0 },
+    { level: 9, max: 0, used: 0 },
   ],
   inventory: [{ name: 'Rope', count: 1, weight: 10, carried: 1 }],
   coins: { pp: 0, gp: 5, ep: 0, sp: 0, cp: 0 },
@@ -131,19 +147,35 @@ describe('XmlCard tab bar at runtime', () => {
   it('opens on Overview with only that panel showing', () => {
     expect(selected()).toEqual(['overview']);
     expect(visible('overview')).toBe(true);
-    for (const id of ['skills', 'inventory', 'weapons', 'features', 'powers']) {
+    for (const id of ['skills', 'spellcasting', 'inventory', 'weapons', 'features', 'powers']) {
       expect(visible(id)).toBe(false);
     }
   });
 
   it('keeps every panel in the DOM, so a switch reveals rather than fetches', () => {
-    for (const id of ['overview', 'skills', 'inventory', 'weapons', 'features', 'powers']) {
+    for (const id of [
+      'overview',
+      'skills',
+      'spellcasting',
+      'inventory',
+      'weapons',
+      'features',
+      'powers',
+    ]) {
       expect(panel(id), `${id} is missing from the DOM`).toBeTruthy();
     }
   });
 
   it('wires each tab to its panel with a resolved id pair', () => {
-    for (const id of ['overview', 'skills', 'inventory', 'weapons', 'features', 'powers']) {
+    for (const id of [
+      'overview',
+      'skills',
+      'spellcasting',
+      'inventory',
+      'weapons',
+      'features',
+      'powers',
+    ]) {
       const controls = tab(id).getAttribute('aria-controls');
       const labelledby = panel(id).getAttribute('aria-labelledby');
       expect(controls, `${id} has no aria-controls`).toBeTruthy();
@@ -174,6 +206,20 @@ describe('XmlCard tab bar at runtime', () => {
     expect(visible('skills')).toBe(true);
   });
 
+  it('reaches the Spellcasting entry on the second arrow press, where it now sits', async () => {
+    // The seventh entry is not an edge case in the tablist, it is the middle of it:
+    // it sits between Skills and Inventory, so a reader walking the bar with the
+    // arrows passes through it. Asserted through `aria-selected` because that is
+    // what the tab pattern actually communicates.
+    tab('overview').dispatchEvent(key('ArrowRight'));
+    await harness.settle();
+    tab('skills').dispatchEvent(key('ArrowRight'));
+    await harness.settle();
+    expect(selected()).toEqual(['spellcasting']);
+    expect(visible('spellcasting')).toBe(true);
+    expect(visible('skills')).toBe(false);
+  });
+
   it('wraps at both ends rather than stopping dead', async () => {
     tab('overview').dispatchEvent(key('ArrowLeft'));
     await harness.settle();
@@ -182,6 +228,20 @@ describe('XmlCard tab bar at runtime', () => {
 
   it('jumps to the ends on Home and End', async () => {
     tab('overview').dispatchEvent(key('End'));
+    await harness.settle();
+    expect(selected()).toEqual(['powers']);
+    tab('powers').dispatchEvent(key('Home'));
+    await harness.settle();
+    expect(selected()).toEqual(['overview']);
+  });
+
+  it('keeps both ends the same with the Spellcasting entry inside them', async () => {
+    // The bar grew by one and the ends did not move, because Spellcasting sits in
+    // the middle rather than at either edge. If a future entry were appended, Home
+    // and End would stop agreeing and this is where it would show.
+    press('spellcasting');
+    await harness.settle();
+    tab('spellcasting').dispatchEvent(key('End'));
     await harness.settle();
     expect(selected()).toEqual(['powers']);
     tab('powers').dispatchEvent(key('Home'));
@@ -260,10 +320,29 @@ describe('XmlCard tab bar at runtime', () => {
     const stops = [...doc().querySelectorAll('[role="tab"]')].map(
       (el) => el.getAttribute('tabindex') ?? ''
     );
-    expect(stops).toEqual(['0', '-1', '-1', '-1', '-1', '-1']);
+    expect(stops).toEqual(['0', '-1', '-1', '-1', '-1', '-1', '-1']);
     press('weapons');
     await harness.settle();
     expect(tab('weapons').getAttribute('tabindex')).toBe('0');
     expect(tab('overview').getAttribute('tabindex')).toBe('-1');
+  });
+
+  it('offers no Spellcasting entry for a martial character with nothing to cast', async () => {
+    // The gate is the same rule every other entry follows, asked in the question
+    // that fits a caster. A Fighter whose sheet lists no spell and whose subclass
+    // does not cast gets no entry, or the bar promises a section it cannot use.
+    harness = await mountAlpine(XmlCard, {
+      character: {
+        ...character,
+        classes: [{ name: 'Fighter', level: 3, subclass: 'Champion' }],
+        powers: [{ level: 1, name: 'Second Wind', group: 'Fighter Actions', prepared: 0, preparedDomain: 0 }],
+        spellSlots: character.spellSlots?.map((slot) => ({ ...slot, max: 0, used: 0 })),
+      },
+      display: 'medium',
+    });
+    expect([...doc().querySelectorAll('[role="tab"]')].map((el) => el.getAttribute('data-tab'))).not.toContain(
+      'spellcasting'
+    );
+    expect(doc().querySelector('[data-panel="spellcasting"]')).toBeNull();
   });
 });
