@@ -32,6 +32,17 @@ export interface DiceRollerComponent {
   formatModifier: typeof dice.formatModifier;
   announce(message: string): void;
   pushLog(entry: string): void;
+  /**
+   * The sheet's modifier total, as the figure in the foot reads it.
+   *
+   * A method rather than a stored number so it cannot go stale: it is read from
+   * `abilities` at every evaluation, so a re-roll, a swap and the arrival state
+   * all land on it without anything having to remember to update it. The sum and
+   * the signing rule are the shared helpers, the same ones Point Buy's own total
+   * is spelled through - two copies of either is a copy that will one day
+   * disagree with the other panel's.
+   */
+  modifierTotal(): string;
   rollAll(): void;
   rollIndividual(index: number): void;
   selectAbility(index: number): void;
@@ -96,6 +107,9 @@ export function diceRollerComponent(): DiceRollerComponent {
      */
     rollEpoch: 0,
     formatModifier: dice.formatModifier,
+    modifierTotal() {
+      return dice.formatModifierTotal(dice.totalModifier(this.abilities));
+    },
     /**
      * Writes to the polite live region. Clearing first and restoring on the
      * next tick means an identical repeat (re-rolling the same total) is still
@@ -134,7 +148,12 @@ export function diceRollerComponent(): DiceRollerComponent {
           const scores = this.abilities
             .map((a) => `${a.name} ${a.sum} (${this.formatModifier(a.modifier)})`)
             .join(', ');
-          this.announce(`All abilities rolled. ${scores}.`);
+          // The total belongs in this sentence rather than in a second one: the
+          // six scores and their modifiers have just been read out, so their sum
+          // is the one thing the reader still has to do by hand. Announced after
+          // them rather than before, because "modifier total +6" means nothing
+          // until the six figures it is a total of have been heard.
+          this.announce(`All abilities rolled. ${scores}. Modifier total ${this.modifierTotal()}.`);
           return;
         }
         this.currentRollingIndex = index;
