@@ -237,6 +237,18 @@ Two things the panel did not have when it shipped, both about the six rows readi
 
 Reason both are here rather than nowhere: the panel asked the reader to add six modifiers up themselves on the one page whose whole job is producing them, and the two tools were the only two in the site that printed the same six abilities and did not look like it.
 
+### 9. The button's die turns over on hover and turns while rolling (#412)
+
+Two pieces of motion on the roll button, neither of which this spec asked for; recorded here so a future reviewer does not read them as scope creep against a plan that never mentioned them.
+
+**A turn over on hover.** The hover used to be a 14-degree tilt, and it is now one full revolution and back to the resting pose. It has to be a one-shot keyframe animation rather than a transform transition, and the reason is arithmetic rather than taste: 360 degrees lands on the angle it started from, so a transition to `rotate(360deg)` interpolates between two identical poses and animates nothing. A scale bump at 45% makes the change legible in the frames nearest the press, since that is what a visitor sees first. It replaces the tilt rather than adding to it, and it sits inside `@media (hover: hover)` so a tap on a touchscreen cannot strand it.
+
+**A loop while the roll runs.** Driven by a `:class` binding on the same `isRolling` that already disables the button, which is what bounds it: the state that starts the loop is the state that ends it, so there is no timer to cancel and nothing that can outlive the roll. Linear, and deliberately without a fill mode, so it stops dead - a die still easing round after the score lands reads as a result that is not finished yet. Continuous rather than a single nudge because the roll outlasts one revolution.
+
+Both are decorative loops and both are suppressed under `prefers-reduced-motion`, by name rather than by a blanket `animation: none` on the surface, which would also have stopped the row indicator that carries the same state. Press feedback is deliberately not suppressed: it is not a decorative loop, and gating it on `hover` excludes touch, which is ADR-0009 decision 4's asymmetry.
+
+**The hover turn carries no fill mode.** The first version had `both`, which a source read looked harmless and which a browser showed to be a regression: an animation in a filling state keeps applying its final value, and an animation outranks a normal declaration in the cascade, so a filled turn silently overrode `.dr-roll:active`'s tilt and left the die with no press feedback at all whenever the pointer was already on the control. The button still moved, which is why it looked fine. The turn's last keyframe is the resting pose, so a fill has nothing to hold here anyway.
+
 ## Status
 
 - [x] Implementation complete

@@ -1315,3 +1315,314 @@ describe('DiceRoller dice are dice', () => {
     expect(source).toContain(":aria-label=\"'Die ' + die + (ability.topThreeIndices.includes(i) ? '' : ', dropped')\"");
   });
 });
+
+describe('DiceRoller button die motion', () => {
+  /**
+   * The body of the block that opens at `open`, found by counting braces.
+   *
+   * Brace counting rather than a pattern, because this stylesheet nests:
+   * `@keyframes` bodies and `@media` bodies both contain `{`, so a
+   * `([^{}]*)\{([^}]*)\}` walk desynchronises at the first nested block and then
+   * silently stops reading the rest of the file. That failure is invisible -
+   * it returns fewer rules, never wrong ones - so every guard below it would
+   * pass on a declaration it never saw.
+   */
+  function blockAt(text: string, open: number): { body: string; end: number } {
+    const brace = text.indexOf('{', open);
+    expect(brace, 'no block opened here').toBeGreaterThan(-1);
+    let depth = 0;
+    for (let i = brace; i < text.length; i += 1) {
+      if (text[i] === '{') depth += 1;
+      else if (text[i] === '}') {
+        depth -= 1;
+        if (depth === 0) return { body: text.slice(brace + 1, i), end: i + 1 };
+      }
+    }
+    throw new Error(`unterminated block at offset ${open}`);
+  }
+
+  /**
+   * The body of an `@media` at-rule.
+   *
+   * Gating is the whole subject of this block, and a non-nesting regex reads a
+   * nested block inside the one it thinks it ended: the hover turn would then
+   * appear to sit at the top level, and the guard asserting it is *not* at the
+   * top level would pass on a stylesheet that had moved it out.
+   */
+  function mediaBlock(query: string): string {
+    const open = styleText.indexOf(`@media ${query}`);
+    expect(open, `no @media ${query} block`).toBeGreaterThan(-1);
+    return blockAt(styleText, open).body;
+  }
+
+  /**
+   * Every `@media` body in the stylesheet, as `{ body, start, end }` ranges over
+   * the original text.
+   *
+   * The offsets are the point. Stripping the bodies out by value would leave the
+   * at-rule preludes (`@media (hover: hover) {`) behind as if they were
+   * top-level rules, and a guard asking "is this selector outside every media
+   * query?" would then be reading a selector whose owning prelude is still there.
+   */
+  const allMediaBlocks = (): { body: string; start: number; end: number }[] => {
+    const blocks: { body: string; start: number; end: number }[] = [];
+    for (let at = styleText.indexOf('@media'); at !== -1; ) {
+      const { body, end } = blockAt(styleText, at);
+      blocks.push({ body, start: at, end });
+      at = styleText.indexOf('@media', end);
+    }
+    return blocks;
+  };
+
+  /**
+   * The stylesheet with every `@media` block cut out whole, prelude included,
+   * which is what "outside the media query" has to be checked against. Testing
+   * the *absence* of a selector from `styleText` would prove nothing, since the
+   * gated copy is in there too.
+   */
+  const outsideEveryMedia = (): string =>
+    allMediaBlocks()
+      .sort((a, b) => b.start - a.start)
+      .reduce((text, block) => text.slice(0, block.start) + text.slice(block.end), styleText);
+
+  /** The keyframes of one named animation, or a failure rather than a null. */
+  function keyframes(name: string): string {
+    const open = styleText.search(new RegExp(`@keyframes ${name}\\b`));
+    expect(open, `no @keyframes ${name}`).toBeGreaterThan(-1);
+    return blockAt(styleText, open).body;
+  }
+
+  /**
+   * Every rule that names this selector, as `{ selector, body }`.
+   *
+   * Whole rules rather than a flat list of `animation` shorthands, because a
+   * selector can appear in more than one rule for good reasons - the hover turn
+   * is declared under `(hover: hover)` and neutralised again under
+   * `prefers-reduced-motion` - and flattening those into one string makes a rule
+   * that *cancels* the animation indistinguishable from the one that sets it.
+   * That is not hypothetical: it is why an assertion about the hover turn's fill
+   * mode has to be able to tell the two apart.
+   *
+   * Read through `blockAt`, so nested blocks are stepped over rather than
+   * truncating the walk, and matched on collapsed whitespace, because a selector
+   * list here wraps across lines.
+   */
+  function rulesNaming(selector: string): { selector: string; body: string; context: string }[] {
+    const want = selector.replace(/\s+/g, ' ');
+    const rules: { selector: string; body: string; context: string }[] = [];
+
+    // Recurse, because the interesting rules are conditional. Every motion rule
+    // added for #412 is either inside `@media (hover: hover)` or inside
+    // `@media (prefers-reduced-motion: reduce)`, so a walk that skipped
+    // at-rule preludes would read a stylesheet in which none of this change
+    // exists - and it would do so by returning nothing rather than by failing.
+    const walk = (text: string, inside: string) => {
+      for (let at = 0; at < text.length; ) {
+        const brace = text.indexOf('{', at);
+        if (brace === -1) return;
+        const head = text.slice(at, brace).trim();
+        const { body, end } = blockAt(text, at);
+        if (head.startsWith('@keyframes')) {
+          // Its inner `0% { ... }` steps are declarations, not rules, and a
+          // percentage selector would otherwise read as a rule that names things.
+          at = end;
+          continue;
+        }
+        if (head.startsWith('@')) {
+          walk(body, `${inside}${head} { `);
+        } else if (head.replace(/\s+/g, ' ').includes(want)) {
+          rules.push({ selector: head, body, context: inside.trim() });
+        }
+        at = end;
+      }
+    };
+
+    walk(styleText, '');
+    return rules;
+  }
+
+  /** The `animation` shorthands a selector's own rules declare, ignoring the rest of each selector list. */
+  const animationsOn = (selector: string): string[] =>
+    rulesNaming(selector)
+      .flatMap((rule) => rule.body.split(';'))
+      .map((d) => d.trim())
+      .filter((d) => d.startsWith('animation:'))
+      .map((d) => d.replace(/^animation:\s*/, ''));
+
+  const TURN = 'dr-mark-turn';
+  const SPIN = 'dr-mark-spin';
+
+  it('turns the die one revolution on hover, as a one-shot animation', () => {
+    // A plain `transition: transform` cannot express this at all. 360 degrees
+    // lands on the angle it started from, so a transition to `rotate(360deg)`
+    // animates nothing at rest and the hover reads as no hover. The one-shot
+    // animation is the only shape that carries the whole turn.
+    const hover = mediaBlock('(hover: hover)');
+    expect(hover).toMatch(new RegExp(`\\.dr-roll:hover[^\\n]*\\.dr-mark`));
+    expect(animationsOn('.dr-roll:hover:not(:disabled) .dr-mark').join()).toContain(TURN);
+    // Not infinite. The hover turn is one revolution and then nothing.
+    expect(animationsOn('.dr-roll:hover:not(:disabled) .dr-mark').join()).not.toContain('infinite');
+  });
+
+  it('makes the hover turn a turn and not a scale change alone', () => {
+    // The AC is that the resting pose and the end pose cannot be identical. In
+    // angle terms that is the same as saying the die *sweeps*: a turn that only
+    // rotates at its first and last keyframes and holds one angle in between is a
+    // pose change, and a pose change that differs only in size is a scale change
+    // wearing a turn's clothes.
+    //
+    // So the assertion is on the *interior* keyframe specifically, not on the
+    // whole block. Reading the block as a set of angles passes on an animation
+    // whose middle frame is `scale(1.14)` alone, because the 0% and 100% frames
+    // still carry `rotate(0deg)` and `rotate(360deg)` - and that animation is
+    // precisely the one the AC rules out. Mutation-checked: dropping the
+    // rotation from the middle keyframe fails here.
+    const frames = keyframes(TURN);
+    const angles = [...frames.matchAll(/rotate\((-?[\d.]+)deg\)/g)].map((m) => Number(m[1]));
+    expect(angles.length, 'the turn rotates nothing').toBeGreaterThan(0);
+
+    const steps = [...frames.matchAll(/([\d.]+)%\s*\{([^}]*)\}/g)].map((m) => ({
+      at: Number(m[1]),
+      transform: m[2],
+    }));
+    expect(steps.length, 'no keyframe steps found').toBeGreaterThan(2);
+
+    // An interior step, which is what makes it a sweep rather than a jump.
+    const interior = steps.filter((s) => s.at > 0 && s.at < 100);
+    expect(interior.length, 'the turn has no interior keyframe to carry the middle of the turn').toBeGreaterThan(0);
+    for (const step of interior) {
+      expect(
+        step.transform,
+        `the ${step.at}% keyframe does not rotate, so the die holds one angle mid-turn`
+      ).toMatch(/rotate\(-?[\d.]+deg\)/);
+      // And it is off the endpoints, or the "interior" step is just the start pose.
+      const angle = Number(step.transform.match(/rotate\((-?[\d.]+)deg\)/)![1]);
+      expect(angle).toBeGreaterThan(0);
+      expect(angle).toBeLessThan(360);
+    }
+
+    // A full revolution, so it settles back into the resting pose rather than
+    // leaving the die standing on edge.
+    expect(Math.max(...angles) - Math.min(...angles)).toBeGreaterThanOrEqual(360);
+    const scales = [...frames.matchAll(/scale\((-?[\d.]+)\)/g)].map((m) => Number(m[1]));
+    expect(scales.some((s) => s !== 1), 'nothing marks the turn as a change').toBe(true);
+  });
+
+  it('keeps every hover-only declaration inside the hover media query', () => {
+    // ADR-0009: `:hover` sticks after a tap on iOS, so an ungated hover leaves a
+    // stranded transform behind on the one device that never asked for it. This
+    // asserts the *absence* of the selector outside every media block, which is
+    // the form that fails when someone lifts it out.
+    expect(outsideEveryMedia()).not.toMatch(/dr-roll:hover/);
+    // The press is the deliberate exception and must stay at the top level, so
+    // a blanket "no :hover" ban would be the wrong guard here.
+    expect(outsideEveryMedia()).toMatch(/\.dr-roll:active:not\(:disabled\)/);
+  });
+
+  it('leaves the press feedback on the roll button unchanged and ungated', () => {
+    const press = outsideEveryMedia().match(/\.dr-roll:active:not\(:disabled\) \.dr-mark\s*\{[^}]*\}/);
+    expect(press, 'the press feedback is no longer declared').not.toBeNull();
+    expect(press![0]).toMatch(/transform:\s*rotate\(-32deg\) scale\(0\.88\)/);
+    // A transition, so it eases back out. The press is not a decorative loop and
+    // must not be rewritten as one.
+    expect(decl('.dr-mark', 'transition')).toContain('transform');
+  });
+
+  /**
+   * The press feedback has to survive being pressed *through* a hover, which is
+   * the only way anyone ever presses this button.
+   *
+   * Found in a browser, and a source read would not have found it: the hover turn
+   * carried `both` as its fill mode, and an animation in a filling state keeps
+   * applying its final value while an animation outranks a normal declaration in
+   * the cascade. So the finished turn's resting pose silently beat `:active`'s
+   * tilt, and the die had no press feedback at all while the pointer was on the
+   * control - measured as `transform: matrix(1, 0, 0, 1, 0, 0)` under a held
+   * press with `:active` matching. The button itself still moved, which is
+   * probably why it looked fine.
+   *
+   * So the ban is on the fill mode rather than on the press rule, because the
+   * press rule is right and the fill was the thing breaking it. The turn's last
+   * keyframe is the resting pose, so a fill has nothing to hold here anyway.
+   */
+  it('lets the press tilt win over a hover turn that has already finished', () => {
+    // Read the rule that *declares* the turn, not every rule naming the selector:
+    // the reduced-motion rule names it too, and folding its `animation: none` in
+    // with the declaration would make this assertion pass on a filled turn by
+    // diluting the string it inspects. `context` is what tells the two apart.
+    const declaring = rulesNaming('.dr-roll:hover:not(:disabled) .dr-mark').filter(
+      (rule) => rule.context.includes('(hover: hover)')
+    );
+    expect(declaring.length, 'the hover turn is not declared under (hover: hover)').toBe(1);
+    const shorthand = declaring[0].body
+      .split(';')
+      .map((d) => d.trim())
+      .filter((d) => d.startsWith('animation:'))
+      .join(' ');
+    expect(shorthand).toContain(TURN);
+
+    for (const fill of ['forwards', 'both', 'backwards']) {
+      expect(
+        shorthand,
+        `a \`${fill}\` fill on the hover turn outranks :active and kills the press feedback`
+      ).not.toMatch(new RegExp(`(^|\\s|:)${fill}(\\s|$)`));
+    }
+  });
+
+  it('drives the rolling turn from the rolling state, not from hover', () => {
+    // The button is disabled for the whole roll, so hover cannot be the signal:
+    // it cannot even match. The loop is bound to the state that ends it, which
+    // is what bounds it - no separate timer, nothing left to cancel.
+    expect(source).toContain(":class=\"{ 'is-rolling': isRolling }\"");
+    const loop = animationsOn('.dr-roll.is-rolling .dr-mark');
+    expect(loop.join()).toContain(SPIN);
+    expect(loop.join()).toContain('infinite');
+    // Continuous rather than a single nudge: the roll outlasts one revolution.
+    const duration = loop.join().match(/(\d+)ms/);
+    expect(duration, 'the loop declares no duration').not.toBeNull();
+    expect(Number(duration![1])).toBeLessThan(6 * (300 + 150));
+  });
+
+  it('stops dead at the end of the roll, with no spin-down', () => {
+    // No `forwards` fill, and no easing on a transform that outlives the roll:
+    // either would leave the die still moving, or settling, once the result is
+    // on screen. The class is removed with the state, so the animation simply
+    // stops - there is nothing to unwind.
+    const loop = animationsOn('.dr-roll.is-rolling .dr-mark').join();
+    expect(loop).not.toMatch(/forwards|both/);
+    expect(loop).not.toMatch(/ease-in|cubic-bezier/);
+    // Bounded by the roll: the same binding that stops it also disables the
+    // button, so there is no path where the loop outlives the disabled state.
+    expect(source).toContain(':disabled="isRolling"');
+  });
+
+  it('neutralises both animations under reduced motion', () => {
+    // Both are decorative loops, and the panel's own rolling indicator already
+    // follows this rule, so a later edit that leaves either ungated is caught
+    // here rather than shipped.
+    const reduced = mediaBlock('(prefers-reduced-motion: reduce)');
+    const neutralised = [
+      ...reduced.matchAll(/([^{}]+)\{([^}]*)\}/g),
+    ].filter((m) => /animation:\s*none/.test(m[2]));
+    const selectors = neutralised.map((m) => m[1].replace(/[\s,]+$/, '').trim());
+    expect(
+      selectors.some((s) => s.includes('.dr-mark') && s.includes(':hover')),
+      'the hover turn is not neutralised under reduced motion'
+    ).toBe(true);
+    expect(
+      selectors.some((s) => s.includes('.dr-mark') && s.includes('is-rolling')),
+      'the rolling loop is not neutralised under reduced motion'
+    ).toBe(true);
+  });
+
+  it('leaves the state readable without any motion at all', () => {
+    // Reduced motion removes both animations, so the label and the row's own
+    // indicator are what carry the state. Neither may be gated on motion.
+    expect(source).toContain("x-text=\"isRolling ? 'Rolling...' : 'Roll All Abilities'\"");
+    expect(source).toContain('<div x-show="ability.rolling" class="dr-pulse"></div>');
+    // The accessible name and the disabled state are the button's contract and
+    // are unchanged by any of this.
+    expect(source).toContain('aria-label="Roll all ability scores"');
+    expect(source).toContain(':disabled="isRolling"');
+  });
+});
