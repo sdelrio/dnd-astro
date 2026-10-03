@@ -29,6 +29,9 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 <a class="char-tab" href="#xmlcard-snapshot-hero-skills" data-tab="skills">
 <span class="char-tab-label">Skills</span>
 </a>
+<a class="char-tab" href="#xmlcard-snapshot-hero-spellcasting" data-tab="spellcasting">
+<span class="char-tab-label">Spellcasting</span>
+</a>
 <a class="char-tab" href="#xmlcard-snapshot-hero-inventory" data-tab="inventory">
 <span class="char-tab-label">Inventory</span>
 </a>
@@ -383,6 +386,37 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </div>
 </div>
+<div data-panel="spellcasting" id="xmlcard-snapshot-hero-spellcasting" data-no-cloak="no-js-reader-loses-the-card">
+<h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Spellcasting</h3>
+<div class="space-y-2">
+<div class="grid grid-cols-3 gap-2 text-center">
+<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]" data-plate="casting-ability">
+<div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Casting Ability</div>
+<div class="text-lg font-bold text-gray-900 dark:text-gray-100" title="Casting ability: Wisdom">WIS +1</div>
+<div class="text-[0.625rem] uppercase tracking-[0.06em] text-gray-500 dark:text-gray-400">Inferred<span class="sr-only"> - no casting class or subclass on the sheet, so this is the best of Wisdom, Intelligence and Charisma</span>
+</div>
+</div>
+<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]" data-plate="save-dc">
+<div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Save DC</div>
+<div class="text-lg font-bold text-gray-900 dark:text-gray-100">11</div>
+</div>
+<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]" data-plate="attack-bonus">
+<div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Attack Bonus</div>
+<div class="text-lg font-bold text-gray-900 dark:text-gray-100">+3</div>
+</div>
+</div>
+<div class="grid grid-cols-3 @md:grid-cols-5 @6xl:grid-cols-9 gap-2 text-center">
+<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]" data-slot="1">
+<div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Level 1</div>
+<div class="text-lg font-bold text-gray-900 dark:text-gray-100">2/4</div>
+</div>
+<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]" data-slot="2">
+<div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Level 2</div>
+<div class="text-lg font-bold text-gray-900 dark:text-gray-100">1/3</div>
+</div>
+</div>
+</div>
+</div>
 <div data-panel="inventory" id="xmlcard-snapshot-hero-inventory" data-no-cloak="no-js-reader-loses-the-card">
 <div class="flex flex-col gap-1 mb-2 @md:flex-row @md:items-baseline @md:justify-between @md:gap-2">
 <h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high)">Inventory</h3>
@@ -483,6 +517,28 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </td>
 <td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">-</td>
 <td class="py-1 text-right text-gray-700 dark:text-gray-300">d6+4 Slashing</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 class="text-[0.625rem] font-semibold uppercase tracking-[0.06em] text-gray-500 dark:text-gray-400 mt-3 mb-1">Carried Weapons</h4>
+<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
+<table class="w-full text-sm" aria-label="Carried weapons">
+<thead>
+<tr class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+<th class="text-left font-medium pb-1">ATK</th>
+<th class="text-left font-medium pb-1">Weapon</th>
+<th class="hidden @lg:table-cell text-left font-medium pb-1">Properties</th>
+<th class="text-right font-medium pb-1">Damage</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-t border-gray-200 dark:border-gray-700">
+<td class="py-1 font-mono font-semibold text-gray-900 dark:text-gray-100">+6</td>
+<td class="py-1 text-gray-700 dark:text-gray-300">Longsword<span class="block @lg:hidden text-xs text-gray-500 dark:text-gray-400">Versatile</span>
+</td>
+<td class="hidden @lg:table-cell py-1 text-gray-500 dark:text-gray-400">Versatile</td>
+<td class="py-1 text-right text-gray-700 dark:text-gray-300">d8+4 Slashing</td>
 </tr>
 </tbody>
 </table>

@@ -349,6 +349,27 @@ describe('build-xml-characters', () => {
       const antonidas = characters.find((c) => c.filename === 'antonidas');
       expect(antonidas).toBeDefined();
       expect(antonidas?.avatarPath).toBe('/fg/avatar/antonidas.png');
+      // A Wizard 5, so the generated artifact carries the slot data the
+      // Spellcasting section reads. Checked here because this is the only place a
+      // real sheet reaches the artifact: a parser test proves the node was read,
+      // and this proves the nine levels survived the build.
+      expect(antonidas?.spellSlots).toHaveLength(9);
+      expect(antonidas?.spellSlots.slice(0, 3)).toEqual([
+        { level: 1, max: 4, used: 2 },
+        { level: 2, max: 3, used: 2 },
+        { level: 3, max: 2, used: 2 },
+      ]);
+      expect(antonidas?.spellSlots.slice(3)).toEqual(
+        Array.from({ length: 6 }, (_, i) => ({ level: i + 4, max: 0, used: 0 }))
+      );
+
+      // The nine blocks are always emitted, so a sheet with no spellcasting at all
+      // carries nine zeroed levels rather than an absent list. A character whose
+      // levels are missing would otherwise be indistinguishable from one whose
+      // levels are empty, which is the same fact.
+      const draknorSlots = draknor?.spellSlots ?? [];
+      expect(draknorSlots).toHaveLength(9);
+      expect(draknorSlots.every((slot) => slot.max === 0 && slot.used === 0)).toBe(true);
 
       const milo = characters.find((c) => c.filename === 'milo');
       expect(milo).toBeDefined();

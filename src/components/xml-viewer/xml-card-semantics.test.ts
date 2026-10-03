@@ -2,11 +2,18 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 // The Saving Throws and Skills tables moved into their own components when medium
-// gained the same card as large, and the Languages and Feats pill sections moved
-// into a third when they began to ride different panels per display mode
-// (ADR-0017). These guards are about what the card renders, so they read the card
-// and the three components it delegates to as one source.
-const source = ['XmlCard.astro', 'SavesTable.astro', 'SkillsTable.astro', 'LanguagesFeats.astro']
+// gained the same card as large, the Languages and Feats pill sections moved into
+// a third when they began to ride different panels per display mode (ADR-0017),
+// and the Spellcasting plates moved into a fourth when the section arrived. These
+// guards are about what the card renders, so they read the card and the four
+// components it delegates to as one source.
+const source = [
+  'XmlCard.astro',
+  'SavesTable.astro',
+  'SkillsTable.astro',
+  'LanguagesFeats.astro',
+  'SpellcastingPanel.astro',
+]
   .map((file) => readFileSync(new URL(file, import.meta.url), 'utf8'))
   .join('\n');
 
@@ -41,7 +48,7 @@ describe('XmlCard section semantics', () => {
     // `jumping &&` in front of it would repeat the tab at medium, which is the
     // regression this rule exists to prevent. The rendered per-mode behaviour is
     // asserted in `xml-card-passives.test.ts`.
-    for (const label of ['Skills', 'Weapons', 'Features', 'Powers']) {
+    for (const label of ['Skills', 'Spellcasting', 'Weapons', 'Features', 'Powers']) {
       expect(source, `${label} has a heading that is not gated on large`).toMatch(
         new RegExp(`\\{jumping && <h3[^>]*>${label}</h3`),
       );
@@ -58,6 +65,13 @@ describe('XmlCard section semantics', () => {
     }
     expect(source, 'a weapon table names itself at the section level').not.toMatch(
       /<h3[^>]*>(Equipped|Carried) Weapons</,
+    );
+    // Spellcasting's slot plates label themselves with their level, so the section
+    // takes no subheading. An `h4` per slot would claim the panel has as many
+    // subsections as it has figures, which is the outline mistake the Weapons
+    // restructure was made to fix rather than repeat.
+    expect(source, 'a spell slot plate carries a heading of its own').not.toMatch(
+      /<h[45][^>]*>Level \d/,
     );
     // Inventory's is inside a flex row rather than a bare h3, because it carries
     // the carried-weight total on its baseline.

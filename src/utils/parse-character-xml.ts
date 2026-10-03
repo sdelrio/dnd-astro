@@ -41,6 +41,22 @@ export interface Coins {
   cp: number;
 }
 
+/**
+ * One spell level's slot pool, as the sheet records it.
+ *
+ * `max` is the level's total and `used` is how many of them are spent, which is
+ * the pair a caster reads mid-turn: "2 of 4" and "4 of 4" are different turns.
+ * `used > max` is representable and is not corrected here - a sheet that says so
+ * is reporting its own state, and clamping it would silently disagree with the
+ * printed character sheet.
+ */
+export interface SpellSlotData {
+  /** 1 through 9, the spell level this block describes. */
+  level: number;
+  max: number;
+  used: number;
+}
+
 export interface CharacterData {
   name: string;
   race: string;
@@ -67,6 +83,7 @@ export interface CharacterData {
   features: Array<{ level: number; name: string; source: string }>;
   powers: Array<{ level: number; name: string; group: string; prepared: number; preparedDomain: number }>;
   weapons: WeaponData[];
+  spellSlots: SpellSlotData[];
   inventory: InventoryItem[];
   coins: Coins;
 }
@@ -78,6 +95,11 @@ const COIN_DENOMINATIONS: Record<string, keyof Coins> = {
   SP: 'sp',
   CP: 'cp',
 };
+
+// The spell levels a sheet can carry slots for. Nine, because that is how many the
+// node names, and a fixed list rather than "whichever blocks were found" so that a
+// missing block reads as zero slots rather than as an absent level.
+const SPELL_SLOT_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 
 // Subclass naming patterns per class, used only for the level-1 feature-entry
 // fallback (a granted feature whose name IS the subclass, e.g.
@@ -261,6 +283,26 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
       type: getText(d, 'type'),
     })),
   }));
+  // Spell slots: the nine per-level blocks a sheet carries under <powermeta>, each
+  // a `max` and a `used`. Fantasy Grounds writes all nine on every sheet, zeroed
+  // where the character has none, and a hand-written sheet may carry the node
+  // nowhere near it - so every level is emitted whether or not the block is there.
+  // A level the sheet does not describe and a level it describes as empty are the
+  // same fact to a reader ("no slots here"), and giving them two shapes is how the
+  // card ends up filtering one and rendering the other.
+  //
+  // Only `spellslots1`..`spellslots9` is read. The `pactmagicslots` blocks sit
+  // beside them with the same shape and belong to a Warlock's pact magic rather
+  // than to the spell slot table the card renders.
+  const powerMeta = (root.powermeta ?? {}) as Record<string, XmlField>;
+  const spellSlots: SpellSlotData[] = SPELL_SLOT_LEVELS.map((level) => {
+    const block = powerMeta[`spellslots${level}`];
+    return {
+      level,
+      max: Number(getText(block, 'max') || 0),
+      used: Number(getText(block, 'used') || 0),
+    };
+  });
   const inventory = getCollection(root.inventorylist).map((item) => ({
     name: getText(item, 'name'),
     count: Number(getText(item, 'count') || 0),
@@ -298,6 +340,7 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
     features,
     powers,
     weapons,
+    spellSlots,
     inventory,
     coins,
   };
