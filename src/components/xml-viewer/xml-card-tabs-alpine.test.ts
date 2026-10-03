@@ -212,6 +212,50 @@ describe('XmlCard tab bar at runtime', () => {
     expect(event.defaultPrevented).toBe(true);
   });
 
+  it('offers the Skills tab for a character with feats and no proficient skills', async () => {
+    // ADR-0017 put Languages and Feats in the Skills panel at medium, so the
+    // panel has content even with nothing to put in the skills table. ADR-0016's
+    // rule is that a menu entry exists only for a section with content; applying
+    // it to the table alone would leave the feats with nowhere to render at all.
+    harness = await mountAlpine(XmlCard, {
+      character: {
+        ...character,
+        allSkills: [
+          { name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' },
+          { name: 'Insight', total: 2, prof: 0, stat: 'wisdom' },
+        ],
+        feats: ['Alert'],
+      },
+      display: 'medium',
+    });
+    expect([...doc().querySelectorAll('[role="tab"]')].map((el) => el.getAttribute('data-tab'))).toContain(
+      'skills'
+    );
+    // And the panel is reachable and is not an empty sheet: no table, one heading.
+    press('skills');
+    await harness.settle();
+    expect(visible('skills')).toBe(true);
+    expect(panel('skills').querySelector('table')).toBeNull();
+    expect(panel('skills').textContent).toContain('Feats');
+    expect(panel('skills').textContent).toContain('Alert');
+  });
+
+  it('drops the Skills tab when the panel would be empty', async () => {
+    harness = await mountAlpine(XmlCard, {
+      character: {
+        ...character,
+        allSkills: [{ name: 'Arcana', total: -1, prof: 0, stat: 'intelligence' }],
+        languages: [],
+        feats: [],
+      },
+      display: 'medium',
+    });
+    expect([...doc().querySelectorAll('[role="tab"]')].map((el) => el.getAttribute('data-tab'))).not.toContain(
+      'skills'
+    );
+    expect(doc().querySelector('[data-panel="skills"]')).toBeNull();
+  });
+
   it('holds a tab stop on the selected tab only, so Tab leaves the bar in one press', async () => {
     const stops = [...doc().querySelectorAll('[role="tab"]')].map(
       (el) => el.getAttribute('tabindex') ?? ''

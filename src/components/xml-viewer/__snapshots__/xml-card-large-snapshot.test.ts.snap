@@ -211,8 +211,8 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </section>
 <div class="space-y-2">
 <section>
-<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px] flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2">
-<div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Languages</div>
+<h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Languages</h3>
+<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div class="flex flex-wrap gap-2">
 <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">Common</span>
 <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">Dwarvish</span>
@@ -220,8 +220,8 @@ exports[`XmlCard large-mode HTML snapshot > matches the golden large-mode markup
 </div>
 </section>
 <section>
-<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px] flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-2">
-<div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">Feats</div>
+<h3 class="mt-0 font-semibold text-[0.7rem] uppercase tracking-[0.08em] text-(color:--sl-color-accent-high) mb-2">Feats</h3>
+<div class="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 border-t-[3px] border-t-[#58180d] dark:border-t-[#c68000] rounded-[7px]">
 <div class="flex flex-wrap gap-2">
 <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">Alert</span>
 <span class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-sm text-gray-700 dark:text-gray-300">Great Weapon Master</span>

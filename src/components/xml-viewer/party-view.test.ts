@@ -55,9 +55,11 @@ describe('PartyView', () => {
       // own footer rather than a sibling caption.
       expect(cell).toContain('party-cell-meta');
       expect(cell.indexOf('party-cell-meta')).toBeGreaterThan(cell.indexOf('char-name'));
-      // Medium shows saving throws and languages; small shows neither.
-      expect(cell).toContain('Saving Throws');
-      expect(cell).toContain('Languages');
+      // Medium carries Skills, Languages and Feats and drops Saving Throws
+      // (ADR-0017); small shows none of the four.
+      expect(cell).toContain('>Languages</h3>');
+      expect(cell).not.toContain('Saving Throws');
+      expect(cell.indexOf('>Languages</h3>')).toBeGreaterThan(cell.indexOf('data-panel="skills"'));
     }
   });
 
