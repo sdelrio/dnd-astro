@@ -69,3 +69,46 @@ can spend all 27 points and still be a worse character than one that spends 25 -
 and both the Point Buy ledger and the Dice Roller panel print it. A trade never
 changes it.
 _Avoid_: Total bonus, score total, power level
+
+## The printed handbook
+
+**Handbook**:
+The single committed PDF of the eight house-rule pages, generated at dev time and
+downloadable from the site. One file, one edition, one version: a reader holding
+it is holding a specific rendering of specific content.
+_Avoid_: PDF, book, printable, export, download
+
+**Sheet**:
+One fixed-size page of the Handbook, exactly the size of the print area, with a
+break after it. A source page becomes as many Sheets as it needs, and a Sheet is
+not a source page: the count differs and the two are numbered in different ways.
+_Avoid_: Page, leaf, folio, screenshot, PNG
+
+**Source page**:
+One of the eight `dnd/` documents the Handbook is rendered from. It is a web page
+first and prints second, and it is the unit the contents lists and the unit an
+author breaks between.
+_Avoid_: Web page, doc, article, chapter, entry
+
+**Split**:
+A point where the generator broke one source page across two Sheets because the
+content did not fit. Every split is named in the output and recorded, and an
+authored horizontal rule replaces it in the end.
+_Avoid_: Page break, overflow, truncation, pagination, clip
+
+**Manifest**:
+The small committed record of the Handbook: a content hash of the eight sources,
+the sheet count, and each sheet's page number and text hash. It is the gate that
+makes a stale artifact fail rather than ship. The hash is content-based, never a
+timestamp.
+_Avoid_: Lockfile, checksum, report, index, log
+
+## Vocabulary notes
+
+**folio** on the index page is a contents-entry number, not a print folio. It is
+the address a player quotes across the table ("look up nine"), which is what
+DESIGN.md means when it calls folio the bindery's word and declines to use it for
+a feature count. The number printed in a Sheet's footer is the **page number**.
+The existing index usage is deliberately left alone: renaming a tested content
+model would touch `rulebook-parts.ts`, its tests and DESIGN.md for no functional
+gain, and the collision is harmless as long as both senses are named.
