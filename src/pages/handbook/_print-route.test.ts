@@ -30,6 +30,28 @@ describe('the handbook print route', () => {
     expect(route).toContain('data-handbook-title={title}');
   });
 
+  // The opt-out is carried onto the element rather than left in frontmatter,
+  // because the stylesheet is the only thing that can lay the page out in one
+  // column and it reads the DOM, not the collection.
+  it('carries the page opt-out onto the element the stylesheet lays out', () => {
+    expect(route).toContain('data-handbook-columns={columns}');
+  });
+
+  // The two-column measure applies to the flow of the page's own content. The
+  // title above it and the footer below it are page furniture and are outside
+  // the measure, which is why they are not inside it.
+  it('puts the content in its own flow box so the columns have something to fill', () => {
+    expect(route).toContain('data-handbook-flow');
+  });
+
+  // The footer is not authored here. It carries a page number, and a page
+  // number is arithmetic about the whole book, which the route cannot know: it
+  // renders content, and the command injects what it measured at document start.
+  it('authors no footer, because a page number is not the route to decide', () => {
+    expect(route).not.toContain('data-handbook-footer');
+    expect(route).not.toMatch(/of \{\{?\s*(total|count)/);
+  });
+
   // The sheet number is the command's to assign, from what it measured. A route
   // that marked its own sheets would be asserting a page boundary it never laid
   // out.

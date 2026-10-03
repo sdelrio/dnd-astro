@@ -88,6 +88,12 @@ Single-context. ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
 
 - Never use the em dash "—". Use plain dash "-" instead.
 - Starlight markdown admonitions: only `:::note`, `:::tip`, `:::caution`, and `:::danger` are supported. Do not use `:::info` or `:::warning`.
+- In a house-rule page, a horizontal rule means "start a new sheet" in the printed
+  Handbook, and it needs a **blank line above it**. That is a parser constraint
+  rather than a style one: in CommonMark a rule on the line immediately after
+  paragraph text is a setext heading level two rather than a rule, and the
+  weapon-properties table reader treats a lone `---` after a table's last data row
+  as a table separator, which silently deletes that row and fails four assertions.
 
 The em dash rule is enforced by a test, not by good intentions. See
 [the guard](src/content/prose-style.test.ts) and the covered surfaces below.
@@ -255,7 +261,9 @@ node .opencode/lib/design-review/measure.mjs --help
   0009's widths: 320, 360, 390, 640.
 - `contrast` returns a WCAG ratio per selector, sampled from rendered computed
   colours, with the effective background resolved by walking ancestors and
-  compositing alpha, in both themes.
+  compositing alpha, in both themes. `--theme light` or `--theme dark` measures
+  one, for a document that declares exactly one - a ratio against a background
+  that document cannot have is not a finding about it.
 - `tap` dispatches a real touch tap through `Input.dispatchTouchEvent` and
   reports the resulting display, visibility, `aria-expanded` and class change.
 - `pointer` measures whether the hover, press and spacing rules branch the way
@@ -285,16 +293,37 @@ node .opencode/lib/design-review/handbook.mjs --help
 ```
 
 `make handbook` renders `/handbook/print/` into one A4 vector PDF at
-`tmp/handbook/handbook.pdf`, one fixed-size sheet per page, with the site's own
-fonts, colours and spacing and none of its chrome. It reuses the same browser
-stack, browser-resolution order, font gate and `--start-dev-server` boundary as
-`make capture`, and like every command here it adds nothing to the manifest.
+`tmp/handbook/handbook.pdf` plus one PNG per sheet in `tmp/handbook/sheets/`, with
+the site's own fonts, colours and spacing and none of its chrome. It reuses the
+same browser stack, browser-resolution order, font gate and `--start-dev-server`
+boundary as `make capture`, and like every command here it adds nothing to the
+manifest.
 
-- The page geometry lives in `src/styles/handbook-print.css` and nowhere else.
-  `@page { size: A4; margin: 25mm 15mm 15mm 25mm }` is the page, and
-  `--handbook-sheet-width` / `--handbook-sheet-height` (643 x 972 CSS px) are the
-  sheet box. The command reads the sheet box out of the rendered page rather than
-  carrying a copy of it.
+- The page geometry lives in `src/styles/handbook-print.css` and nowhere else, and
+  **every length in that file is a custom property on `:root`** - a test fails on a
+  `px`, `em` or `rem` anywhere outside it. `@page { size: A4; margin: 25mm 15mm 15mm
+  25mm }` is the page; `--handbook-sheet-width` / `--handbook-sheet-height`
+  (643 x 972 CSS px) are the sheet box; `--handbook-page-width` /
+  `--handbook-page-height` (794 x 1123) are the page box, which is what a capture
+  is taken at. The command reads all of it out of the rendered page rather than
+  carrying a copy.
+- A sheet is **two 306px columns with a 30px gutter** by default. Anything wider
+  than its column spans both columns, decided by measurement rather than by a rule
+  that guesses which elements need it: the house-rule pages contain both a wide
+  table and a scroll container whose own box fits while its table does not. A page
+  that reads worse in 306px sets `columns: 1` in its frontmatter, and reading that
+  key requires `docsSchema({ extend: ... })` in `src/content.config.ts` - the
+  default schema is a Zod object in strip mode and would drop it silently.
+- Each sheet's footer carries the source page and the section it starts in on the
+  left, a decorative rule in the centre and the page number on the right, reading
+  `12 of 48` rather than a bare number.
+- Each sheet's PNG is **exactly 1588 x 2246**, which is the 794 x 1123 page box at
+  the vertical raster scale. The scale is `--raster-scale` and defaults to 2. The
+  size is read back out of the PNG's own header, and a capture at the wrong size is
+  a failure rather than a file.
+- The PNG and the PDF come from one DOM and one stylesheet, and that is checked:
+  the captures move the page, and the command compares the layout either side of it
+  and refuses if it differs.
 - The print route ships no JavaScript of its own. The sheet assignment is injected
   at document start by the command, so the committed route is inert HTML. What the
   document carries besides that is what Astro attaches to every route here: the
@@ -302,11 +331,45 @@ stack, browser-resolution order, font gate and `--start-dev-server` boundary as
   in a production build.
 - The run reads the written file back and refuses it if the PDF magic, the
   `%%EOF` trailer, the A4 page box or the page-count bounds do not hold, and it
-  writes to a `.part` sibling and renames so a crash cannot leave half a PDF where
+  writes to a `.part` sibling and renames so a crash cannot leave half a file where
   a reader looks for one.
 - Every source page is named in the output with its measured height and the pages
   it takes. Source pages that do not fit one sheet are called out: this tracer
-  bullet does not split them, so they span the pages they need.
+  bullet does not split them, so they span the pages they need. A sheet that spans
+  pages is captured at its **first** page only - the page boxes of pages two and
+  three exist only in the print fragmentainer - and the run says so by name.
+
+### The Handbook's generated artwork
+
+Two files, generated once and committed, at two single documented paths. Replacing
+one file changes the paper without touching code, which is the entire point of
+having them as files:
+
+```
+make handbook-art              # rewrite both
+make handbook-art ARGS='--check'   # fail when either is stale
+```
+
+| Path | What | Properties |
+|------|------|------------|
+| `public/handbook/parchment.png` | the paper | 256 x 256 px tile, sRGB with the profile embedded, tiled by CSS at its natural size |
+| `public/handbook/ornament.svg` | the footer's decorative rule | 88 x 10, drawn in `--color-gold-rule` read out of `tailwind.css` |
+
+Contrast on that paper is **measured, not assumed**. `handbook-art.test.mjs` reads
+the committed PNG's own pixels - its own small decoder, not the library that wrote
+it - and checks the **worst** pixel of the tile against every step body text is set
+in, because a decorative background behind body text is exactly where contrast
+quietly goes and a texture's average is not its darkest pixel. The runtime check is
+the existing command:
+
+```
+make measure ARGS='contrast --theme light --url http://localhost:4321/handbook/print/ --width 643 --selectors ".sl-markdown-content p,.sl-markdown-content td,.sl-markdown-content th,.sl-markdown-content h2"'
+```
+
+`--theme light` is there because the print route declares exactly one theme: paper
+has no theme switch. Measuring it in the other one reports ratios against a
+background that document cannot have, which is not a finding about it. Measured:
+**10.52:1 at worst, AAA**, against the parchment.
 
 The two-sheet fixture at `/handbook/spike-fixture/` is what ADR-0020's spike ran
 against and it stays as the regression:

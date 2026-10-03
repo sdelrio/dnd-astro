@@ -4,13 +4,21 @@ import {
   A4_POINTS,
   DEFAULTS,
   MIN_PDF_BYTES,
+  MIN_PNG_BYTES,
+  PAGE_NUMBER_TOTAL,
   describeSheets,
+  elementsWiderThanColumn,
   formatPdfFontGateFailure,
   pageCountBounds,
+  pageNumberLabel,
   parseArgs,
+  pngFileName,
+  rasterSize,
   readPdfMediaBox,
   readPdfPageCount,
+  readPngSize,
   validatePdf,
+  validatePng,
 } from './handbook-helpers.mjs';
 
 /**
@@ -61,6 +69,39 @@ describe('parseArgs', () => {
 
   it('does not start a dev server unless asked', () => {
     expect(parseArgs([]).startDevServer).toBe(false);
+  });
+
+  it('takes the vertical raster scale at two, which is the size the book states', () => {
+    // Two is what makes a sheet 1588 x 2246. It is a flag rather than a
+    // constant because a run that wants a smaller capture for review should not
+    // have to edit the file that says what a capture is.
+    expect(parseArgs([]).rasterScale).toBe(2);
+  });
+
+  it('reads an explicit vertical raster scale', () => {
+    expect(parseArgs(['--raster-scale', '3']).rasterScale).toBe(3);
+  });
+
+  it('refuses a raster scale it cannot capture at', () => {
+    expect(() => parseArgs(['--raster-scale', '0'])).toThrow(/raster scale/i);
+    expect(() => parseArgs(['--raster-scale', 'wide'])).toThrow(/raster scale/i);
+  });
+
+  it('refuses a raster scale finer than the pixel it would print on', () => {
+    // Below 1 a capture is smaller than the page it is evidence about, and the
+    // read-back would pass while showing less than the artifact contains.
+    expect(() => parseArgs(['--raster-scale', '0.5'])).toThrow(/raster scale/i);
+  });
+
+  it('writes the per-sheet captures beside the PDF unless told otherwise', () => {
+    // Derived rather than restated, so moving the PDF moves its evidence with
+    // it instead of leaving one run's captures beside another's artifact.
+    expect(parseArgs([]).pngDir).toBe('tmp/handbook/sheets');
+    expect(parseArgs(['--out', 'tmp/spike.pdf']).pngDir).toBe('tmp/sheets');
+  });
+
+  it('takes an explicit capture directory', () => {
+    expect(parseArgs(['--png-dir', 'tmp/review']).pngDir).toBe('tmp/review');
   });
 
   it('starts the documented server only behind the explicit opt-in', () => {
@@ -291,5 +332,230 @@ describe('the font gate message', () => {
     expect(message).toMatch(/\/fonts\/Cinzel\.woff2/);
     expect(message).toMatch(/no loaded FontFace/);
     expect(message).toMatch(/no PDF was written/);
+  });
+});
+
+/**
+ * The per-sheet PNGs, and the raster contract they are checked against.
+ *
+ * A sheet is captured at an exact raster size because a capture at whatever
+ * size the browser happened to produce is evidence about nothing: it cannot be
+ * compared, and it cannot be told apart from a capture of the wrong page. The
+ * size is therefore arithmetic from the page box the stylesheet declares and
+ * the scale the run was asked for, and it is read back out of the PNG's own
+ * header rather than trusted from the write.
+ */
+
+/**
+ * A PNG that declares the given size in its header.
+ *
+ * The IHDR chunk is the first thing in the file after the signature and carries
+ * the dimensions as two big-endian 32-bit integers, which is the only part of a
+ * PNG the reader below depends on.
+ */
+function pngBytes({ width = 1588, height = 2246, bytes = 4096 } = {}) {
+  const header = Buffer.alloc(24);
+  Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(header, 0);
+  header.writeUInt32BE(13, 8); // IHDR length
+  header.write('IHDR', 12, 'latin1');
+  header.writeUInt32BE(width, 16);
+  header.writeUInt32BE(height, 20);
+
+  return Buffer.concat([header, Buffer.alloc(bytes, 0)]);
+}
+
+describe('the raster size a sheet is captured at', () => {
+  // The page box, not the sheet box: a capture of a sheet is a capture of the
+  // page it sits on, margins and all, which is what a reader holds.
+  const page = { width: 794, height: 1123 };
+
+  it('is the page box at twice the scale by default', () => {
+    // 794 x 1123 CSS px is A4 at the CSS reference resolution, rounded up, and at
+    // a vertical raster scale of 2 that is 1588 x 2246. The command asserts
+    // this against the bytes it wrote rather than against this sentence.
+    expect(rasterSize({ page, rasterScale: 2 })).toEqual({ width: 1588, height: 2246 });
+  });
+
+  it('takes the vertical raster scale as a flag rather than a constant', () => {
+    expect(rasterSize({ page, rasterScale: 1 })).toEqual({ width: 794, height: 1123 });
+    expect(rasterSize({ page, rasterScale: 3 })).toEqual({ width: 2382, height: 3369 });
+  });
+
+  it('rounds a fractional capture up, because a clipped pixel row is a defect', () => {
+    // Chrome returns whole pixels, so 793.7 CSS px at 2x is 1588 and not 1587.
+    expect(rasterSize({ page: { width: 793.7, height: 1122.52 }, rasterScale: 2 })).toEqual({
+      width: 1588,
+      height: 2246,
+    });
+  });
+
+  it('refuses a scale that is not a positive number', () => {
+    expect(() => rasterSize({ page, rasterScale: 0 })).toThrow(/raster scale/i);
+    expect(() => rasterSize({ page, rasterScale: Number.NaN })).toThrow(/raster scale/i);
+  });
+
+  it('refuses a page box that is not a length', () => {
+    expect(() => rasterSize({ page: { width: 0, height: 1123 }, rasterScale: 2 })).toThrow(/page box/i);
+  });
+});
+
+describe('reading a written PNG back', () => {
+  it('reads the raster size out of the header', () => {
+    expect(readPngSize(pngBytes())).toEqual({ width: 1588, height: 2246 });
+  });
+
+  it('reads nothing out of bytes that are not a PNG', () => {
+    expect(readPngSize(Buffer.from('<html><body>Not a PNG</body></html>'))).toBeNull();
+  });
+
+  // A file cut short inside its first chunk is a file whose dimensions are not
+  // there to read, and a reader that returned zeros here would validate a
+  // truncated capture as a 0x0 one and pass it.
+  it('reads nothing out of a truncated header', () => {
+    expect(readPngSize(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))).toBeNull();
+  });
+});
+
+describe('validatePng', () => {
+  const expected = { width: 1588, height: 2246 };
+  const validate = (bytes) => validatePng({ label: 'sheet-01.png', bytes, expected });
+
+  it('accepts a capture whose header is the size the run asked for', () => {
+    expect(validate(pngBytes())).toMatchObject({ ok: true, size: expected });
+  });
+
+  it('refuses a capture at the wrong size rather than filing it', () => {
+    // The capture command's own lesson (ADR-0012): a screenshot at the wrong
+    // width and a screenshot at the right one look identical in a directory
+    // listing, so the width is read back out of the file.
+    const verdict = validate(pngBytes({ width: 1440, height: 2246 }));
+
+    expect(verdict.ok).toBe(false);
+    expect(verdict.problems.join(' ')).toMatch(/1440x2246/);
+  });
+
+  it('refuses a file that is not a PNG', () => {
+    const verdict = validate(Buffer.from('%PDF-1.7 not a png'));
+
+    expect(verdict.ok).toBe(false);
+    expect(verdict.problems.join(' ')).toMatch(/not a PNG/);
+  });
+
+  it('refuses an empty or absent file', () => {
+    expect(validate(undefined).problems.join(' ')).toMatch(/not written/);
+  });
+
+  it('refuses a truncated file', () => {
+    const verdict = validate(pngBytes({ bytes: 32 }));
+
+    expect(verdict.ok).toBe(false);
+    expect(verdict.problems.join(' ')).toMatch(/truncated/);
+  });
+});
+
+describe('the page number in a sheet footer', () => {
+  it('reads as a number of the whole book rather than a bare number', () => {
+    expect(pageNumberLabel(12, 48)).toBe('12 of 48');
+  });
+
+  it('says one page of one on the first sheet', () => {
+    expect(pageNumberLabel(1, 1)).toBe('1 of 1');
+  });
+
+  it('has an unbound total that reads as unbound rather than as a number', () => {
+    // The alternative - printing nothing after the "of" - looks like a page
+    // number, and a reader would believe it.
+    expect(PAGE_NUMBER_TOTAL.unknown).toMatch(/uncounted/);
+  });
+
+  it('numbers from one, because a book does not have a page zero', () => {
+    expect(() => pageNumberLabel(0, 48)).toThrow(/start at 1/);
+  });
+
+  // An unbound total would print "of ?" on every sheet of the book, which is
+  // worse than printing nothing: it looks like a page number.
+  it('refuses to label a page number against a total it does not have', () => {
+    expect(() => pageNumberLabel(3, 0)).toThrow(/sheet count/i);
+    expect(() => pageNumberLabel(3, undefined)).toThrow(/sheet count/i);
+  });
+
+  it('refuses to label a page number past the end of the book', () => {
+    expect(() => pageNumberLabel(49, 48)).toThrow(/past the end/i);
+  });
+});
+
+describe('the per-sheet capture file names', () => {
+  it('numbers each sheet by its own number so a diff can be read', () => {
+    expect(pngFileName(1)).toBe('sheet-01.png');
+    expect(pngFileName(12)).toBe('sheet-12.png');
+    expect(pngFileName(48)).toBe('sheet-48.png');
+  });
+
+  it('pads to two digits so a listing sorts into page order', () => {
+    expect(pngFileName(8)).toBe('sheet-08.png');
+  });
+
+  it('refuses a sheet number it could not have been written under', () => {
+    expect(() => pngFileName(0)).toThrow(/numbered from 1/);
+  });
+});
+
+describe('which elements span both columns', () => {
+  // The house-rule pages are mostly reference tables, and one of them is thirty
+  // kilobytes of them. A table wider than its column is the expected case rather
+  // than the exception, so the question is never "which elements need spanning"
+  // but "which elements can be trusted not to", and the answer is measured.
+  const columnWidth = 306;
+
+  it('spans an element that is wider than its column', () => {
+    expect(elementsWiderThanColumn({ columnWidth, boxes: [{ width: 288, scrollWidth: 700 }] })).toEqual([0]);
+  });
+
+  it('leaves an element that fits its column alone', () => {
+    expect(elementsWiderThanColumn({ columnWidth, boxes: [{ width: 306, scrollWidth: 306 }] })).toEqual([]);
+  });
+
+  it('leaves an element a fraction over the column alone, because the column is fractional', () => {
+    // 643px of sheet less a 30px gutter does not divide into two whole columns,
+    // so Chrome hands back 306.5 and a paragraph can be 306.4 wide without
+    // anything being wrong with it.
+    expect(elementsWiderThanColumn({ columnWidth, boxes: [{ width: 306.5, scrollWidth: 306.5 }] })).toEqual([]);
+  });
+
+  // A wide table inside a scroll container is the shape Starlight renders
+  // markdown tables in, and reading only the container's own box would find a
+  // 306px element and call it fitted.
+  it('spans an element whose content overflows it', () => {
+    expect(
+      elementsWiderThanColumn({
+        columnWidth,
+        boxes: [
+          { width: 306, scrollWidth: 306 },
+          { width: 306, scrollWidth: 812 },
+        ],
+      })
+    ).toEqual([1]);
+  });
+
+  it('reports every wide element rather than the first', () => {
+    // The command marks them all in one pass and then re-measures, so an
+    // element left behind would be clipped on a sheet the run reported as
+    // correct.
+    expect(
+      elementsWiderThanColumn({
+        columnWidth,
+        boxes: [{ width: 400 }, { width: 288 }, { width: 900 }],
+      })
+    ).toEqual([0, 2]);
+  });
+
+  it('treats an element it could not measure as wide rather than as fitted', () => {
+    // A missing measurement is not evidence that the element fits. Assuming it
+    // does is how a table gets clipped with nothing in the report.
+    expect(elementsWiderThanColumn({ columnWidth, boxes: [{}] })).toEqual([0]);
+  });
+
+  it('refuses to measure against a column that is not a length', () => {
+    expect(() => elementsWiderThanColumn({ columnWidth: 0, boxes: [{ width: 10 }] })).toThrow(/column width/i);
   });
 });

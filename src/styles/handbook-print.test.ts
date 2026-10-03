@@ -34,12 +34,241 @@ function printablePx(millimetres: number): number {
 }
 
 function declaration(property: string): string {
-  return declarations.match(new RegExp(`${property}:\\s*([^;]+);`))?.[1].trim() ?? '';
+  // The boundary matters: an unanchored `size` also matches `background-size`,
+  // and `height` also matches `--handbook-page-height`.
+  return declarations.match(new RegExp(`(?<![-\\w])${property}:\\s*([^;]+);`))?.[1].trim() ?? '';
 }
 
 function millimetres(value: string): number {
   return Number(/^([\d.]+)mm$/.exec(value)?.[1]);
 }
+
+/** A declared length in pixels, as a number. */
+function pixels(property: string): number {
+  return Number(/^([\d.]+)px$/.exec(declaration(property))?.[1]);
+}
+
+/**
+ * Every rule the stylesheet gives a selector, joined.
+ *
+ * Joined rather than first-match because two rules for the same selector are a
+ * normal thing to write - the root carries the geometry in one block and the
+ * paper in another - and a helper that read only the first would be asserting
+ * against half the stylesheet.
+ */
+function rule(selector: string): string {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const quoted = escaped.replace(/'/g, '["\']');
+
+  return [...declarations.matchAll(new RegExp(`(?:${quoted})\\s*\\{([^}]*)\\}`, 'g'))]
+    .map(([, body]) => body)
+    .join('\n');
+}
+
+describe('the page box a sheet is captured at', () => {
+  // A sheet is printed on a page, and the thing a reader holds is the page: its
+  // margins are part of it. So the capture is the page box, not the sheet box,
+  // and the two are different numbers - 794 x 1123 against 643 x 972 - which is
+  // exactly why both have to be stated.
+  it('is A4 at the CSS reference resolution, rounded up', () => {
+    expect({
+      width: declaration('--handbook-page-width'),
+      height: declaration('--handbook-page-height'),
+    }).toEqual({ width: `${printablePx(210)}px`, height: `${printablePx(297)}px` });
+  });
+
+  it('carries the same margins the @page rule declares', () => {
+    // Derived from the millimetres rather than restated, because the @page rule
+    // is what the printer actually honours and a second copy of the margins in
+    // pixels is two numbers that can disagree.
+    const [top, right, bottom, left] = declaration('margin').split(/\s+/).map(millimetres);
+
+    expect({
+      top: declaration('--handbook-page-margin-top'),
+      right: declaration('--handbook-page-margin-right'),
+      bottom: declaration('--handbook-page-margin-bottom'),
+      left: declaration('--handbook-page-margin-left'),
+    }).toEqual({
+      top: `${(top * PX_PER_MM).toFixed(2)}px`,
+      right: `${(right * PX_PER_MM).toFixed(2)}px`,
+      bottom: `${(bottom * PX_PER_MM).toFixed(2)}px`,
+      left: `${(left * PX_PER_MM).toFixed(2)}px`,
+    });
+  });
+
+  // The one relationship that ties the two boxes together: the printable area
+  // is the page box less the margins, and it is the sheet box.
+  it('is the sheet box plus exactly those margins', () => {
+    // The relationship is asserted through the same rounding the boxes are
+    // declared with: the margins are stated to two decimals of a pixel and the
+    // sheet box is the printable area rounded up, so the page box less the
+    // margins has to land inside the sheet box rather than exactly on it.
+    const pageWidth =
+      pixels('--handbook-page-width') -
+      pixels('--handbook-page-margin-left') -
+      pixels('--handbook-page-margin-right');
+    const pageHeight =
+      pixels('--handbook-page-height') -
+      pixels('--handbook-page-margin-top') -
+      pixels('--handbook-page-margin-bottom');
+
+    expect(Math.ceil(pageWidth)).toBe(pixels('--handbook-sheet-width'));
+    expect(Math.ceil(pageHeight)).toBe(pixels('--handbook-sheet-height'));
+  });
+});
+
+describe('the two-column sheet', () => {
+  // Two 306px columns and a 30px gutter, stated by ADR-0020 and inherited here.
+  it('is two 306px columns with a 30px gutter, as ADR-0020 states', () => {
+    expect({
+      columns: declaration('--handbook-columns'),
+      width: declaration('--handbook-column-width'),
+      gap: declaration('--handbook-column-gap'),
+    }).toEqual({ columns: '2', width: '306px', gap: '30px' });
+  });
+
+  // 306 x 2 + 30 is 642, one pixel inside the 643px sheet box. That spare pixel
+  // is why the columns are declared as a width rather than derived: Chrome's
+  // own column arithmetic hands back 306.5, and the tolerance the overflow check
+  // allows exists to absorb exactly that.
+  it('fills the sheet box without exceeding it', () => {
+    const columns = Number(declaration('--handbook-columns'));
+    const filled = pixels('--handbook-column-width') * columns + pixels('--handbook-column-gap');
+
+    expect(filled).toBeLessThanOrEqual(pixels('--handbook-sheet-width'));
+    expect(pixels('--handbook-sheet-width') - filled).toBeLessThanOrEqual(2);
+  });
+
+  it('fills the flow box with the declared columns', () => {
+    expect(rule('[data-handbook-flow]')).toContain('column-count: var(--handbook-columns);');
+    expect(rule('[data-handbook-flow]')).toContain('column-gap: var(--handbook-column-gap);');
+  });
+
+  // A single 643px measure at 16px body text is a very long line for a page read
+  // at a table, which is the whole reason for the columns. The opt-out exists for
+  // the page where the long line is the lesser problem.
+  it('lets a page opt out to a single column', () => {
+    expect(rule('[data-handbook-columns="1"] [data-handbook-flow]')).toContain('column-count: 1;');
+  });
+
+  it('spans an element that is wider than its column across both columns', () => {
+    // Marked by the command from what it measured, not by a rule that guesses
+    // which kinds of element need it: the house-rule pages contain two shapes of
+    // wide thing, a wide table and a scroll container holding one.
+    expect(rule('[data-handbook-wide]')).toContain('column-span: all;');
+  });
+});
+
+describe('the sheet footer', () => {
+  it('is pinned to the foot of the sheet rather than flowing after the content', () => {
+    // Absolute, so a sheet whose content fits leaves the footer at the bottom of
+    // the page instead of halfway up it, and a sheet that overflows still ends
+    // with its own footer rather than with the last rule it printed.
+    expect(rule('[data-handbook-sheet]')).toContain('position: relative;');
+    expect(rule('[data-handbook-footer]')).toContain('position: absolute;');
+    expect(rule('[data-handbook-footer]')).toContain('bottom: 0;');
+  });
+
+  it('puts the source page and section on the left and the page number on the right', () => {
+    // Three tracks: the left pair, the ornament in the centre, the number on the
+    // right. Equal outer tracks are what put the ornament on the centre line
+    // rather than wherever the left text happens to end.
+    expect(rule('[data-handbook-footer]')).toContain('grid-template-columns: 1fr auto 1fr;');
+    expect(rule('[data-handbook-footer-page]')).toContain('text-align: right;');
+  });
+
+  it('sets the page number in tabular figures so a column of them lines up', () => {
+    expect(rule('[data-handbook-footer-page]')).toContain('font-variant-numeric: tabular-nums;');
+  });
+
+  it('leaves room for the footer, so the last rule of a page is not under it', () => {
+    expect(rule('[data-handbook-flow]')).toContain(
+      `padding-bottom: var(--handbook-footer-reserve);`
+    );
+  });
+
+  it('takes its ornament from the one committed file, not from a second drawing', () => {
+    expect(declaration('--handbook-ornament')).toBe("url('/handbook/ornament.svg')");
+  });
+});
+
+describe('the parchment the sheet is printed on', () => {
+  it('paints one committed file, tiled, rather than a gradient or a colour', () => {
+    // Swappable by replacing that one file. A gradient painted in CSS would put
+    // the paper's design in the stylesheet, which is the thing the file exists
+    // to keep out of it.
+    expect(declaration('--handbook-paper-image')).toBe("url('/handbook/parchment.png')");
+    expect(rule(':root')).toContain('background-repeat: repeat;');
+  });
+
+  it('paints the paper behind the whole page rather than behind the measure', () => {
+    // The root element's background covers the page box, margins included, which
+    // is what a sheet of paper is. On the body it would stop at the 643px
+    // measure and leave white down both sides of every page.
+    expect(rule(':root')).toContain('background-image: var(--handbook-paper-image);');
+  });
+
+  it('leaves the sheet itself unpainted, so the paper is what a sheet is printed on', () => {
+    // Starlight's reset paints the documentation background behind the body.
+    // On the website that is right; on a sheet it is a white rectangle in the
+    // middle of the paper, and it covers the printable area exactly, so the
+    // committed parchment underneath would show only as a border. Measured: the
+    // white ran from 94px to 737px across and the full 972px of the sheet down.
+    expect(rule('body')).toContain('background-color: transparent;');
+  });
+
+
+  it('names the paper colour beside the image, so the file can be any size', () => {
+    // Tiled at its natural size: `auto` rather than a declared length, because a
+    // replacement file of different dimensions has to work without a code change.
+    expect(rule(':root')).toContain('background-size: auto;');
+
+    // The palette's parchment step *lifted*, the same move `--color-gray-400`
+    // records: at #d4c4a8 the muted text step #605552 measures 4.20:1, so paper
+    // is a surface and needs a surface's contrast, not a text colour's.
+    //
+    // Asserted as a literal here rather than imported from the generator, so the
+    // stylesheet test does not depend on the artwork tooling. The other direction
+    // is asserted where it belongs, in `handbook-art.test.mjs`, which reads this
+    // value out of this file and compares it with the generator's own.
+    expect(declaration('--handbook-paper')).toBe('#ece2cd');
+  });
+});
+
+describe('the rule that means "start a new sheet"', () => {
+  // In CommonMark a rule on the line immediately after paragraph text is a
+  // setext heading, and the weapon-properties table reader treats a lone `---`
+  // after a table's last row as a separator and deletes that row. So the rule
+  // needs a blank line above it, which is what AGENTS.md documents.
+  it('breaks the page after a rule inside a sheet', () => {
+    expect(rule('[data-handbook-sheet] hr')).toContain('break-after: page;');
+  });
+
+  it('draws the rule in the gold the site draws its rules in', () => {
+    // The website styles the same element the same way (tailwind.css), so a
+    // divider never means something in one medium and nothing in the other.
+    expect(rule('[data-handbook-sheet] hr')).toContain('border-top: var(--handbook-rule-weight) solid var(--color-gold-rule);');
+  });
+});
+
+describe('the geometry is stated once', () => {
+  // The millimetres are the geometry's origin: the @page rule is what the
+  // printer actually honours, and every pixel below is derived from it rather than chosen.
+  it('states the page geometry in millimetres only once', () => {
+    expect([...declarations.matchAll(/(\d+)mm/g)].map(([, value]) => value)).toEqual(['25', '15', '15', '25']);
+  });
+
+  // The stronger form of the guard the sheet box first needed. It covered only
+  // the box, because the box was the only length there was; columns, a footer, a
+  // page box and an ornament add several more, and the invariant that actually
+  // holds is that nothing outside `:root` holds a length at all. Every value the
+  // geometry is made of is then one declaration a diff can review.
+  it('declares every length once, as a custom property on the root', () => {
+    const outsideTheRoot = declarations.replace(/:root\s*\{[^}]*\}/g, '');
+
+    expect([...outsideTheRoot.matchAll(/(\d+(?:\.\d+)?(?:px|em|rem))/g)].map(([, value]) => value)).toEqual([]);
+  });
+});
 
 describe('handbook print stylesheet', () => {
   it('prints A4 portrait', () => {
@@ -115,32 +344,12 @@ describe('handbook print stylesheet', () => {
     expect(declarations).toMatch(/\.sl-anchor-link\s*\{[^}]*display:\s*none;/);
   });
 
-  it('lays the sheets out in one column at the sheet width', () => {
+  it('gives the body the printable width, so the screen layout is the print layout', () => {
     // The sheet box is the measure. A body wider than the printable area would
     // paginate at a width the page does not have.
     const body = declarations.match(/\bbody\s*\{([^}]*)\}/)?.[1] ?? '';
 
     expect(body).toContain('width: var(--handbook-sheet-width);');
-  });
-});
-
-describe('the geometry is stated once', () => {
-  it('declares the sheet box only as the two custom properties', () => {
-    // A second copy of the sheet size anywhere else in the stylesheet is two
-    // numbers that can disagree, which is the same class of lie as a capture at
-    // the wrong width.
-    const withoutTheBox = declarations.replace(
-      /--handbook-sheet-(width|height):\s*[^;]+;/g,
-      'declared-elsewhere'
-    );
-
-    expect([...withoutTheBox.matchAll(/(\d+(?:\.\d+)?(?:px|em|rem))/g)].map(([, value]) => value)).toEqual(
-      []
-    );
-  });
-
-  it('states the page geometry in millimetres only once', () => {
-    expect([...declarations.matchAll(/(\d+)mm/g)].map(([, value]) => value)).toEqual(['25', '15', '15', '25']);
   });
 });
 

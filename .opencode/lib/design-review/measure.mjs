@@ -137,6 +137,9 @@ contrast options:
                        (default the documented role chip, HP label, and the tool
                         layer's interactive affordances)
   --font <family>      display face          (default Cinzel)
+  --theme <name>       light, dark or both   (default both). Use the one theme
+                       a single-theme document declares, such as the printed
+                       Handbook's print route.
 
 tap options:
   --selector <css>     the control to tap
@@ -169,11 +172,23 @@ const KNOWN_FLAGS = new Set([
   '--font',
   '--font-url',
   '--height',
+  '--theme',
   '--help',
   '-h',
 ]);
 
 export const COMMANDS = ['overflow', 'contrast', 'tap', 'pointer'];
+
+/**
+ * The themes a contrast run measures.
+ *
+ * `both` is the default because most pages have both. A document that declares
+ * exactly one - the printed Handbook's print route is light-only, because paper
+ * has no theme switch - is measured in the theme it declares rather than in a
+ * theme nothing ever renders it in, because a ratio against a background that
+ * document cannot have is not a finding about that document.
+ */
+export const THEMES = ['light', 'dark', 'both'];
 
 export function parseArgs(argv) {
   const [command, ...rest] = argv;
@@ -191,6 +206,7 @@ export function parseArgs(argv) {
     url: 'http://localhost:4321/',
     width: 390,
     height: DEFAULT_HEIGHT,
+    theme: 'both',
     widths: DEFAULT_WIDTHS,
     tolerance: 1,
     font: 'Cinzel',
@@ -237,6 +253,9 @@ export function parseArgs(argv) {
   if (options.command === 'overflow') parseWidthList(options.widths);
   if (options.command === 'contrast') {
     parseSelectorList(options.selectors ?? DEFAULT_CONTRAST_SELECTORS.join(','));
+    if (!THEMES.includes(options.theme)) {
+      throw new Error(`--theme needs one of ${THEMES.join(', ')}; got ${options.theme}.`);
+    }
   }
   if (options.command === 'tap' && !options.selector) {
     throw new Error('tap needs --selector: the control to tap.');
@@ -567,7 +586,7 @@ async function measureOverflow(client, options) {
 
 async function measureContrast(client, options) {
   const selectors = parseSelectorList(options.selectors ?? DEFAULT_CONTRAST_SELECTORS.join(','));
-  const themes = ['light', 'dark'];
+  const themes = options.theme === 'both' ? ['light', 'dark'] : [options.theme];
   const findings = [];
 
   for (const theme of themes) {

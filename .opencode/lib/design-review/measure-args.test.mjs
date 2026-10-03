@@ -29,6 +29,23 @@ describe('parseArgs', () => {
     expect(DEFAULT_CONTRAST_SELECTORS).toContain('.char-hp-label');
   });
 
+  // A document that declares exactly one theme - the printed Handbook's print
+  // route is light-only, because paper has no theme switch - has to be measurable
+  // in the theme it declares. Measuring it in a theme nothing renders it in
+  // reports ratios against a background the document cannot have, which is not a
+  // finding about that document.
+  it('measures both themes by default, because most pages have both', () => {
+    expect(parseArgs(['contrast']).theme).toBe('both');
+  });
+
+  it('measures one theme when asked, for a document that declares one', () => {
+    expect(parseArgs(['contrast', '--theme', 'light']).theme).toBe('light');
+  });
+
+  it('refuses a theme it cannot set rather than silently measuring one', () => {
+    expect(() => parseArgs(['contrast', '--theme', 'sepia'])).toThrow(/--theme needs one of/);
+  });
+
   it('defaults to a phone width, because the site is read at the table', () => {
     expect(parseArgs(['overflow']).width).toBe(390);
   });
