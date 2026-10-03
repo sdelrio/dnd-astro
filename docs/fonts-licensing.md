@@ -4,12 +4,45 @@ This project uses custom D&D-themed fonts to replicate the look of official
 Dungeons & Dragons 5th Edition books. Below is the licensing context for each
 font family in use.
 
+Every font listed as **vendored** is committed to this repository as bytes under
+`public/fonts/`. Vendoring is what turns a license note into an obligation: the
+redistributed copy has to carry its license and its attribution with it, so each
+vendored family ships its license text alongside the `.woff2` files.
+
 ## Fonts in Use
 
-| Font Name         | Role in This Project | Source                  | License        |
-| ----------------- | -------------------- | ----------------------- | -------------- |
-| **Bookinsanity**  | Body text            | `solbera-dnd-fonts`     | CC-BY-SA 4.0   |
-| **Cinzel**        | Headings (h2, h3)    | Google Fonts            | OFL 1.1        |
+| Font Name         | Role in This Project | Source                                 | License      | Vendored |
+| ----------------- | -------------------- | -------------------------------------- | ------------ | -------- |
+| **Bookinsanity**  | Body text            | `solbera-dnd-fonts`                    | CC-BY-SA 4.0 | yes      |
+| **Cinzel**        | Headings (h2, h3)    | Google Fonts, committed to the repo     | OFL 1.1      | yes      |
+
+## What vendoring commits the project to
+
+### Cinzel (OFL 1.1)
+
+The woff2 files in `public/fonts/Cinzel.woff2` and `public/fonts/Cinzel Ext.woff2`
+were obtained from Google Fonts and are committed here, which means this project
+now redistributes the font rather than linking to someone else's copy of it. Under
+the [SIL Open Font License 1.1](https://openfontlicense.org/) that is permitted
+without condition, and it carries obligations that the previous CDN arrangement
+did not:
+
+- **The license travels with the font.** `public/fonts/Cinzel OFL.txt` is the
+  unmodified OFL 1.1 text for the family and must be redistributed alongside the
+  font files. Removing it would break the terms the vendoring relies on.
+- **Copyright and attribution are retained.** The notice is
+  `Copyright 2020 The Cinzel Project Authors
+  (https://github.com/NDISCOVER/Cinzel)`. It must stay with the redistributed
+  font.
+- **The fonts themselves may not be sold on their own**, and a modified version
+  may not use the reserved font name. This project vendors Cinzel unmodified, so
+  neither restriction is engaged.
+- **The family must stay under OFL 1.1** if it is redistributed further.
+
+If Cinzel is ever replaced, this record has to be updated in the same change. A
+vendored face can rot silently: the CDN copy moved upstream on its own and this
+copy will not, so a Cinzel revision that fixes a glyph will not arrive unless
+someone brings it here deliberately.
 
 ## Solbera's D&D 5e Fonts
 
@@ -49,9 +82,10 @@ Under the following terms:
 - **Bookinsanity** (from `solbera-dnd-fonts` npm package): CC-BY-SA 4.0
   licensed, legally safe for free distribution. Provides the authentic D&D 5e
   body text aesthetic.
-- **Cinzel** (from Google Fonts): Open Font License 1.1, completely free for
-  any use. Chosen as the legal alternative to MrEavesRemake for heading text,
-  with a similar classic/monumental serif feel.
+- **Cinzel** (from Google Fonts, vendored into `public/fonts/`): Open Font
+  License 1.1, completely free for any use. Chosen as the legal alternative to
+  MrEavesRemake for heading text, with a similar classic/monumental serif feel.
+  Self-hosted since ADR-0019 so heading metrics do not depend on a third party.
 
 ## Background: D&D Community Fonts
 
@@ -90,6 +124,8 @@ alternatives from a platform like [Google Fonts](https://fonts.google.com/).
 
 - [Solbera's D&D 5e Fonts](https://github.com/jonathonf/solbera-dnd-fonts)
 - [CC-BY-SA 4.0 License](https://creativecommons.org/licenses/by-sa/4.0/)
+- [SIL Open Font License 1.1](https://openfontlicense.org/)
+- [Cinzel](https://github.com/NDISCOVER/Cinzel)
 - [The Homebrewery](https://homebrewery.naturalcrit.com/new/)
 - [Homebrewery's Included Fonts](https://www.reddit.com/r/homebrewery/comments/mlmcbe/homebrewerys_included_fonts/)
 - [Font Licensing for Commercial Use](https://www.reddit.com/r/selfpublishing/comments/qsl8kv/font_licensing_for_use_in_novel_please/)
