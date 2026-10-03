@@ -8,6 +8,17 @@ tags: [components, accessibility, layout, characters]
 
 # ADR-0016: The Character Card's Sections Sit Behind a Menu, Not One Scrolling Column
 
+> **The section-existence rule is replaced by [ADR-0017](0017-medium-card-drops-saving-throws.md).**
+> The claim below that the display mode decides how much a section holds and never
+> whether the section exists no longer holds: medium drops Saving Throws and gains
+> Feats, so a section can now be absent at one mode and present at another. The
+> replacement rule is that the display mode decides which sections exist and which
+> panel holds them, and the heading treatment of Languages and Feats is fixed at
+> `h3` at both modes because neither panel carries a heading of its own. Everything
+> else in this decision is unchanged and remains binding: the six sections, the
+> menu bar, medium as a tablist and large as a table of contents, and Overview as
+> the unconditional landing entry.
+
 ## Context and Problem Statement
 
 `XmlCard` renders six sections - Overview, Skills, Inventory, Weapons, Features,
