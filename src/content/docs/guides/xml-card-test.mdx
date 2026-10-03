@@ -105,18 +105,28 @@ Wrap them in a centered container.
 
 ## Display: Medium
 
-Everything from small mode, plus the full ability grid, languages, and proficiency
-bonus. Saving Throws and Skills are the same table card the large display uses,
-holding only the proficient saves and the proficient skills. This is the default
-size.
+Everything from small mode, plus the full ability grid, languages, feats and
+proficiency bonus. Skills are the same table card the large display uses, holding
+only the proficient ones, and Languages and Feats ride that same panel below it -
+each an `h3` heading above one pill plate. This is the default size.
 
-Medium and large carry the **same six sections** - Overview, Skills, Inventory,
+Medium does **not** show Saving Throws. A roster card is a glance, and the saving
+throws are figures a reader computes with rather than recognises; the character
+page and the large sheet print all six of them properly. Feats, the most
+identifying thing on a D&D character, do show here.
+
+Medium and large carry the same six **tabs** - Overview, Skills, Inventory,
 Weapons, Features, Powers - and an entry appears only when the card has something
 to put in it, so a character with no inventory has no Inventory entry. They differ
-in what the bar does, not in what it holds. At medium it is a tab bar: clicking an
-entry opens that section and closes the others. Switching changes nothing about a
-section's design - every panel is rendered on the server and hidden with `x-show`,
-so a switch reveals rather than reloads.
+in which sections exist and which panel holds them, not only in what the bar does.
+At medium it is a tab bar: clicking an entry opens that section and closes the
+others. Switching changes nothing about a section's design - every panel is
+rendered on the server and hidden with `x-show`, so a switch reveals rather than
+reloads.
+
+The Skills entry appears whenever the panel has anything in it, and at medium the
+two pill sections count: a character with feats but no proficient skills still gets
+a Skills tab, or the feats would have nowhere to render.
 
 Keyboard: one Tab press enters the bar, the arrow keys and Home/End move between
 tabs, and the selected tab is the bar's only tab stop.
@@ -145,11 +155,13 @@ Verify two medium cards display side by side on PC workstation screens.
 
 ## Display: Large
 
-The complete card: the same six sections as medium, with more in each. Subclass and
-deity join the header, feats and passive skills join the Overview panel, the
-all-skills table lists every skill rather than the proficient ones, and all six
-saving throws are shown. The display mode is fixed at build time by the `display`
-prop the mounting page passes; there is no in-card display-mode toggle.
+The complete card: the same six tabs as medium, with more in each. Subclass and
+deity join the header, passive skills join the Overview panel, the all-skills table
+lists every skill rather than the proficient ones, and all six saving throws are
+shown beside the character. Languages and Feats stay in the Overview panel at
+this size, after Saving Throws and in the same order as before. The display mode
+is fixed at build time by the `display` prop the mounting page passes; there is no
+in-card display-mode toggle.
 
 At large the bar **jumps rather than hides**. Every section is rendered visible
 and each entry is an anchor link to it, so the bar is a table of contents for a
@@ -157,11 +169,13 @@ page you are already scrolling, and it works with JavaScript disabled - no
 `x-data`, no `x-show`. Nothing is marked selected, because nothing is hidden.
 
 Each section also carries its own heading here - Skills, Inventory, Equipped
-Weapons, Features, Powers - in the same micro-label style as Vitals and Saving
-Throws. There is no tab naming the open section at this size, so the heading is
-what tells you where you are on a long scroll, and it is what a jump link lands
-on. Medium does not show them: the tab is the name there. Inventory's heading
-carries its carried-weight total on the baseline.
+Weapons, Features, Powers - in the same micro-label style as Vitals, Saving
+Throws, Languages and Feats. There is no tab naming the open section at this size,
+so the heading is what tells you where you are on a long scroll, and it is what a
+jump link lands on. Medium does not show those five: the tab is the name there.
+Languages and Feats are the one pair that carries its heading at both sizes, at
+`h3` either way, because neither panel holding them has a heading to sit beneath.
+Inventory's heading carries its carried-weight total on the baseline.
 
 The complete card uses Akinori below; four terse edge-case cards follow for
 what Akinori cannot show.
@@ -230,12 +244,15 @@ find. Each entry's 44px minimum height holds at every width, and the 8px
 horizontal padding is there to keep the labels reading as one band, not to make
 the target small.
 
-**The Overview panel** is the only one that splits: on card containers at least
-72rem wide (`@6xl`) the character sits in the left half and Saving Throws,
-Languages and Feats take the right. On containers at least 80rem wide (`@7xl`),
-that right half splits again - Saving Throws left, Languages and Feats stacked
-right - and only when they hold few enough pills to fit. Every other panel holds
-one section, so there is nothing to put beside it and each is full width.
+**The Overview panel** splits only at `large`, and it is the only panel that
+does: on card containers at least 72rem wide (`@6xl`) the character sits in the
+left half and Saving Throws, Languages and Feats take the right. On containers at
+least 80rem wide (`@7xl`), that right half splits again - Saving Throws left,
+Languages and Feats stacked right - and only when they hold few enough pills to
+fit. At medium the panel is a single column, because there is nothing that could
+sit beside the character: Saving Throws is not rendered there and the pill
+sections have moved to the Skills panel. Every other panel holds one section, so
+there is nothing to put beside it and each is full width.
 
 **The inventory and weapons tables** drop a column on a narrow card. Below `@lg`,
 inventory folds Weight and State into a second line under the item name, and
