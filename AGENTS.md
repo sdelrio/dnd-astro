@@ -118,6 +118,8 @@ every em dash in `AGENTS.md` and nothing else, so it cannot quietly widen.
 
 Every temporary file (PR bodies, issue bodies, scratch files, notes, etc.) goes to `tmp/` at the repo root - write there first, e.g. `tmp/pr-<slug>.md`. That directory is gitignored; do not use `/tmp` or other system paths.
 
+Nothing there is kept forever. `make clean-tmp` deletes files under `tmp/` that have not been touched in more than three days, then the directories those files emptied; `make clean-tmp ARGS='-n'` lists what it would remove without deleting anything, and `make clean-tmp TMP_RETENTION_DAYS=1` sets a different age. Nothing is recorded in the repository when a file goes, so anything a later session needs has to live in a commit rather than in `tmp/`.
+
 ## Browser evidence (dev-time only)
 
 An agent can open a page in a real headless browser and read a screenshot back. The
