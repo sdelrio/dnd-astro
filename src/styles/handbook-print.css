@@ -154,13 +154,23 @@ body {
 }
 
 /* The measure the columns fill.
-   `column-fill: auto` because a sheet that spans pages has to fill the first
-   column to the bottom of the first page before the second column starts, which
-   is what a reader turning to a page expects to find. */
+   `column-fill: balance` - the initial value, stated rather than left to chance -
+   because a sheet is now one page, and balance is what puts content in both
+   columns of it. `auto` was the right choice while a source page that did not fit
+   spanned the pages it needed: it filled the first column to the bottom of the
+   page before starting the second, which is what a reader turning to a page
+   expects of a page that is half full of nothing. With every sheet one page long
+   it is the wrong choice, and measurably so: a sheet's flow held its content in
+   the first column and left the second empty, so the book came out 67 sheets
+   where the content accounts for 37, and every sheet had a 306px measure of text
+   down one side and half a page of blank paper down the other.
+
+   Splitting is the command's decision and is measured after every pass, so the
+   balance is not taken on trust: a sheet that still overflows is split again. */
 [data-handbook-flow] {
   column-count: var(--handbook-columns);
   column-gap: var(--handbook-column-gap);
-  column-fill: auto;
+  column-fill: balance;
   padding-bottom: var(--handbook-footer-reserve);
 }
 

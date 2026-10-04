@@ -53,7 +53,8 @@ help:
 	@printf "\n"
 	@printf "$(MAGENTA)Print$(RESET)\n"
 	@printf "  $(GREEN)make handbook$(RESET)  📕  Print the eight house-rule pages into one A4 PDF of fixed-size sheets\n"
-	@printf "$(DIM)                     ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tmp/spike.pdf'$(RESET)\n"
+	@printf "$(DIM)                     writes the committed manifest and prints every split it made\n"
+	@printf "$(DIM)                     ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tmp/spike.pdf --no-manifest'$(RESET)\n"
 	@printf "  $(GREEN)make handbook-art$(RESET)  🎨  Write the committed parchment tile and footer ornament\n"
 	@printf "$(DIM)                     ARGS='--check' fails when either is stale$(RESET)\n"
 	@printf "\n"
@@ -104,8 +105,12 @@ measure:
 	$(MEASURE) $(ARGS)
 
 # Writes one A4 vector PDF of the eight dnd/ house-rule pages, one sheet per
-# page, and refuses to write a file that does not read back as the document the
-# layout produced. Needs the dev server; pass ARGS='--start-dev-server' to let it
+# page, one capture per sheet, and the committed manifest beside them, and refuses
+# to write a file that does not read back as the document the layout produced.
+# Content that does not fit a sheet is split at the nearest block boundary and
+# every break is printed by name; ARGS='--no-manifest' records nothing, and
+# ARGS='--baseline <dir>' or ARGS='--compare <dir>' do the local, non-gating
+# image comparison. Needs the dev server; pass ARGS='--start-dev-server' to let it
 # start and stop the documented one.
 handbook:
 	$(HANDBOOK) $(ARGS)
