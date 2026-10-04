@@ -331,6 +331,20 @@ describe('the written manifest read back', () => {
   });
 });
 
+/**
+ * The most automatic splits the committed book may carry.
+ *
+ * The book measured **17** when the first column was made to fill before the
+ * second, the blocks were pinned inside their columns, and the vestigial print
+ * rules were removed (ADR-0024): twenty-seven sheets, a cover and a contents plus
+ * twenty-five content sheets. The bound is
+ * deliberately looser than the measurement - a normal content edit may move a
+ * boundary or add one - but far enough under a multiplied page count that an edit
+ * which doubles the book trips it. It is a bound and not zero because a moved
+ * boundary is now the generator's decision rather than an author's.
+ */
+const MAX_AUTOMATIC_SPLITS = 30;
+
 describe('the manifest committed in this repository', () => {
   const ROOT = new URL('../../..', import.meta.url).pathname;
   const committed = () => readFileSync(join(ROOT, MANIFEST_PATH), 'utf8');
@@ -363,12 +377,23 @@ describe('the manifest committed in this repository', () => {
     }
   });
 
-  // Deliberately red while the book's content still needs automatic breaks, and
-  // that is the design: the report names every one of them, an authored horizontal
-  // rule replaces it, and the artifact converges on breaks a person chose.
-  it('has no automatic splits left in it', () => {
+  // The generator owns every page break now (ADR-0024), so a boundary it moved is
+  // not a regression the way an authored break disappearing was. The gate is a
+  // bound instead of zero: a normal edit may move or add a boundary, but an edit
+  // that multiplies the page count has to fail.
+  it('records no more automatic splits than the bound allows', () => {
     const verdict = read();
 
-    expect(verdict.manifest.splits.map((split) => `${split.source} sheet ${split.sheet}: ${split.label}`)).toEqual([]);
+    expect(verdict.manifest.splits.length).toBeLessThanOrEqual(MAX_AUTOMATIC_SPLITS);
+  });
+
+  // A bound of zero would read the same as "no splits" and pass on a regression
+  // that removed the report entirely, so the number is asserted to be a real
+  // allowance rather than a restatement of the old gate.
+  it('has a bound that the measured book sits under', () => {
+    const verdict = read();
+
+    expect(verdict.manifest.splits.length).toBeGreaterThan(0);
+    expect(verdict.manifest.splits.length).toBeLessThan(MAX_AUTOMATIC_SPLITS);
   });
 });

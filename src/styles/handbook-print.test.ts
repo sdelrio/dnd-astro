@@ -123,15 +123,16 @@ describe('the page box, which is the sheet', () => {
       bottom: declaration('--handbook-page-margin-bottom'),
       left: declaration('--handbook-page-margin-left'),
     }).toEqual({
-      top: `${insetPx(25)}px`,
+      top: `${insetPx(15)}px`,
       right: `${insetPx(15)}px`,
       bottom: `${insetPx(15)}px`,
-      left: `${insetPx(25)}px`,
+      left: `${insetPx(15)}px`,
     });
 
-    // The content box is the page box less the four margins, exactly.
-    expect(contentWidth()).toBe(round2(pageBoxPx(210) - insetPx(25) - insetPx(15)));
-    expect(contentHeight()).toBe(round2(pageBoxPx(297) - insetPx(25) - insetPx(15)));
+    // The content box is the page box less the four margins, exactly. All four are
+    // 15mm, so the text block is symmetric.
+    expect(contentWidth()).toBe(round2(pageBoxPx(210) - insetPx(15) - insetPx(15)));
+    expect(contentHeight()).toBe(round2(pageBoxPx(297) - insetPx(15) - insetPx(15)));
 
     // And the sheet is padded by exactly those margins, so its content box is
     // that text block.
@@ -152,16 +153,73 @@ describe('the two-column sheet', () => {
     }).toEqual({ columns: '2', width: '306px', gap: '30px' });
   });
 
-  // 306 x 2 + 30 is 642, half a pixel inside the 642.52px text block. That spare
-  // half pixel is why the columns are declared as a width rather than derived:
-  // Chrome's own column arithmetic hands back 306.5, and the tolerance the
-  // overflow check allows exists to absorb exactly that.
-  it('fills the text block without exceeding it', () => {
+  // 306 x 2 + 30 is 642, and at a 15mm inset the text block is 680.32px. The
+  // columns are deliberately not widened to fill it: the flow is pinned to 642 and
+  // centred, so the 38.32px of slack is equal either side rather than a 325px
+  // column. That is also why the columns are declared as a width: Chrome's own
+  // column arithmetic on the full text block hands back 325.16 and the wide-element
+  // threshold the assignment reads is 306.
+  it('holds the flow to the declared columns rather than widening them to fill', () => {
     const columns = Number(declaration('--handbook-columns'));
     const filled = pixels('--handbook-column-width') * columns + pixels('--handbook-column-gap');
 
-    expect(filled).toBeLessThanOrEqual(contentWidth());
-    expect(contentWidth() - filled).toBeLessThanOrEqual(2);
+    expect(filled).toBeLessThan(contentWidth());
+    // The flow's width is the columns' own total, from the same declarations.
+    expect(rule('[data-handbook-flow]')).toContain(
+      'width: calc(var(--handbook-column-width) * var(--handbook-columns) + var(--handbook-column-gap));'
+    );
+    expect(rule('[data-handbook-flow]')).toContain('margin-inline: auto;');
+  });
+
+  it('lets a single-column page use the whole text block', () => {
+    // The opt-out goes back to the full text block, because a page that chose one
+    // column chose it to get the wider measure.
+    expect(rule('[data-handbook-columns="1"] [data-handbook-flow]')).toContain('width: auto;');
+  });
+
+  it('keeps every block whole inside a column', () => {
+    const blocks = css.slice(css.indexOf('[data-handbook-flow] p,'), css.indexOf('[data-handbook-columns="1"]'));
+
+    expect(blocks).toContain('break-inside: avoid;');
+    expect(blocks).toContain('-webkit-column-break-inside: avoid;');
+
+    // Paragraphs, list items, whole lists and headings, which is the ticket's floor.
+    for (const selector of ['p', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4']) {
+      expect(blocks).toContain(`[data-handbook-flow] ${selector}`);
+    }
+  });
+
+  // The heading's flow child is its wrapper, not the `h3` inside it, so the rule
+  // that keeps a heading with the block it introduces has to name the wrapper too.
+  it('keeps a heading with the block it introduces', () => {
+    const blocks = css.slice(css.indexOf('[data-handbook-flow] p,'), css.indexOf('[data-handbook-columns="1"]'));
+
+    expect(blocks).toContain('break-after: avoid;');
+    expect(blocks).toContain('[data-handbook-flow] .sl-heading-wrapper');
+    expect(blocks).toContain('[data-handbook-flow] h3');
+  });
+
+  // An aside or a table straddling the gutter is the same defect as a paragraph
+  // straddling it: half the box at the foot of one column and half at the head of
+  // the next. They are blocks too, so they move whole rather than split.
+  it('keeps an aside and a table whole inside a column', () => {
+    const blocks = css.slice(css.indexOf('[data-handbook-flow] p,'), css.indexOf('[data-handbook-columns="1"]'));
+
+    for (const selector of ['.starlight-aside', 'table', 'tr', 'td', 'th']) {
+      expect(blocks).toContain(`[data-handbook-flow] ${selector}`);
+    }
+  });
+
+  // Chrome balances the content of a row that ends at a `column-span: all`
+  // element, which dealt a heading and the rule before it one per column and put
+  // the heading on the right of a full-width table. The avoid is scoped to a
+  // heading that introduces a spanning block, so a heading introducing an
+  // ordinary column-width table is still free to start column two.
+  it('keeps a heading that introduces a full-width table with the block before it', () => {
+    const blocks = css.slice(css.indexOf('[data-handbook-flow] p,'), css.indexOf('[data-handbook-columns="1"]'));
+
+    expect(blocks).toContain('[data-handbook-flow] .sl-heading-wrapper:has(+ [data-handbook-wide])');
+    expect(blocks).toContain('break-before: avoid;');
   });
 
   it('fills the flow box with the declared columns', () => {
@@ -169,7 +227,15 @@ describe('the two-column sheet', () => {
     expect(rule('[data-handbook-flow]')).toContain('column-gap: var(--handbook-column-gap);');
   });
 
-  // A single 642.52px measure at 16px body text is a very long line for a page
+  // The owner's reading order: the first column fills to the foot of the sheet
+  // before the second begins, which is what the planner already models and what
+  // `balance` used to spread into two half-empty columns.
+  it('fills the first column before it starts the second', () => {
+    expect(rule('[data-handbook-flow]')).toContain('column-fill: auto;');
+    expect(rule('[data-handbook-flow]')).not.toContain('column-fill: balance;');
+  });
+
+  // A single 680.32px measure at 13px body text is a very long line for a page
   // read at a table, which is the whole reason for the columns. The opt-out
   // exists for the page where the long line is the lesser problem.
   it('lets a page opt out to a single column', () => {
@@ -266,19 +332,122 @@ describe('the parchment the sheet is printed on', () => {
   });
 });
 
-describe('the rule that means "start a new sheet"', () => {
-  // In CommonMark a rule on the line immediately after paragraph text is a
-  // setext heading, and the weapon-properties table reader treats a lone `---`
-  // after a table's last row as a separator and deletes that row. So the rule
-  // needs a blank line above it, which is what AGENTS.md documents.
-  it('breaks the page after a rule inside a sheet', () => {
-    expect(rule('[data-handbook-sheet] hr')).toContain('break-after: page;');
+describe('the horizontal rule in a house-rule page', () => {
+  // The rule used to mean "start a new sheet", and fifty-six of them turned a
+  // book that fits twenty-four content sheets into sixty-six. The generator owns
+  // the breaks now (ADR-0024), so the rule is a divider and nothing else.
+  it('no longer forces a new sheet', () => {
+    expect(rule('[data-handbook-sheet] hr')).not.toContain('break-after');
   });
 
   it('draws the rule in the gold the site draws its rules in', () => {
     // The website styles the same element the same way (tailwind.css), so a
     // divider never means something in one medium and nothing in the other.
     expect(rule('[data-handbook-sheet] hr')).toContain('border-top: var(--handbook-rule-weight) solid var(--color-gold-rule);');
+  });
+});
+
+describe('the print type scale', () => {
+  // The site's typography is rem-based under a 16px browser default. The print
+  // route moves its root to 13px so every rem step follows it, and body text
+  // lands on the 22.75px leading a printed rulebook reads at.
+  it('sets the root the whole document measures its type from to 13px', () => {
+    expect(declaration('--handbook-root-size')).toBe('13px');
+    expect(rule(':root')).toContain('font-size: var(--handbook-root-size);');
+  });
+
+  it('sets body text at 1rem on a 1.75 leading, which is 13px on 22.75px', () => {
+    expect(declaration('--handbook-body-size')).toBe('1rem');
+    expect(declaration('--handbook-body-leading')).toBe('1.75');
+    expect(rule('body')).toContain('font-size: var(--handbook-body-size);');
+    expect(rule('body')).toContain('line-height: var(--handbook-body-leading);');
+
+    // At 13px root, 1rem is 13px and 1.75 x 13 is 22.75.
+    expect(13 * Number(declaration('--handbook-body-leading'))).toBe(22.75);
+  });
+
+  it('restates the three heading pixels as rem at the site root, so they follow the print root', () => {
+    // The site states 28px, 24px and 20px on a 16px design root. As 1.75, 1.5
+    // and 1.25rem they are those sizes at 16px and follow the print root down to
+    // 22.75px, 19.5px and 16.25px at 13px.
+    const site = (name: string) => Number.parseFloat(declaration(name)) * 16;
+    const print = (name: string) => Number.parseFloat(declaration(name)) * 13;
+
+    expect(site('--handbook-heading-2')).toBeCloseTo(28, 2);
+    expect(site('--handbook-heading-3')).toBeCloseTo(24, 2);
+    expect(site('--handbook-heading-4')).toBeCloseTo(20, 2);
+
+    expect(print('--handbook-heading-2')).toBeCloseTo(22.75, 2);
+    expect(print('--handbook-heading-3')).toBeCloseTo(19.5, 2);
+    expect(print('--handbook-heading-4')).toBeCloseTo(16.25, 2);
+  });
+
+  it('applies each heading step to the site headings on a sheet', () => {
+    expect(rule(':root .sl-markdown-content h2:not(:where(.not-content *))')).toContain(
+      'font-size: var(--handbook-heading-2);'
+    );
+    expect(rule(':root .sl-markdown-content h3:not(:where(.not-content *))')).toContain(
+      'font-size: var(--handbook-heading-3);'
+    );
+    expect(rule(':root .sl-markdown-content h4:not(:where(.not-content *))')).toContain(
+      'font-size: var(--handbook-heading-4);'
+    );
+  });
+
+  // A cover and a contents title must read from across a table, so they stay in
+  // pixels while rem means "the print body scale".
+  it('declares the cover and contents titles in px, larger than the body type', () => {
+    const cover = pixels('--handbook-cover-title');
+    const contents = pixels('--handbook-contents-title');
+
+    expect(cover).toBeGreaterThan(pixels('--handbook-root-size'));
+    expect(contents).toBeGreaterThan(pixels('--handbook-root-size'));
+    expect(rule("[data-handbook-front='contents'] h1")).toContain(
+      'font-size: var(--handbook-contents-title);'
+    );
+  });
+});
+
+describe('the aside on a sheet', () => {
+  // The screen lifts an aside with a drop shadow, which is ink that says nothing
+  // on paper. The print routes suppress it and the screen value is untouched.
+  it('prints with no drop shadow', () => {
+    expect(rule('[data-handbook-source] .starlight-aside')).toContain('box-shadow: none;');
+  });
+});
+
+describe('the interactive tools, which the book does not carry', () => {
+  const components = {
+    pointBuy: readFileSync(new URL('../components/point-buy/PointBuy.astro', import.meta.url), 'utf8'),
+    diceRoller: readFileSync(new URL('../components/dice-roller/DiceRoller.astro', import.meta.url), 'utf8'),
+  };
+  const website = readFileSync(new URL('./tailwind.css', import.meta.url), 'utf8');
+
+  it('hides the Point Buy and Dice Roller roots from the flow', () => {
+    // The two roots share one rule, so the selector and its declaration are
+    // asserted over the stylesheet text rather than through the exact-selector
+    // helper, which needs the `{` to follow the selector directly.
+    expect(declarations).toMatch(/\[data-handbook-flow\]\s+\.point-buy-needs-js[\s\S]*?display:\s*none;/);
+    expect(declarations).toMatch(/\[data-handbook-flow\]\s+\.dice-roller-needs-js[\s\S]*?display:\s*none;/);
+  });
+
+  it('scopes the hiding to the flow, so it is print-only', () => {
+    // A bare `.point-buy-needs-js { display: none }` would hide the tool on the
+    // website too; the hidden rule must carry the print marker.
+    expect(declarations).not.toMatch(/(?<!\[data-handbook-flow\] )\.point-buy-needs-js\s*\{[^}]*display:\s*none/);
+    expect(declarations).not.toMatch(/(?<!\[data-handbook-flow\] )\.dice-roller-needs-js\s*\{[^}]*display:\s*none/);
+    expect(website).not.toMatch(/\.point-buy-needs-js\s*\{[^}]*display:\s*none/);
+    expect(website).not.toMatch(/\.dice-roller-needs-js\s*\{[^}]*display:\s*none/);
+  });
+
+  it('leaves the components and their own styling untouched', () => {
+    // The removal is a print-stylesheet rule and nothing else: the roots still
+    // carry their classes and the components still style themselves, so the screen
+    // is exactly what it was.
+    expect(components.pointBuy).toContain('class="point-buy-needs-js pb not-content"');
+    expect(components.diceRoller).toContain('class="dice-roller-needs-js dr not-content"');
+    expect(components.pointBuy).toContain('--pb-rule:');
+    expect(components.diceRoller).toContain('--dr-rule:');
   });
 });
 
@@ -363,19 +532,19 @@ describe('handbook print stylesheet', () => {
 });
 
 describe('the text block really is what the millimetres say', () => {
-  it('is 642.52 by 971.33 CSS px at the CSS reference resolution', () => {
+  it('is 680.32 by 1009.13 CSS px at the CSS reference resolution', () => {
     // Written out longhand rather than through the declarations above, so the
     // helper that reads the stylesheet is not what proves the arithmetic.
     expect([
-      round2(pageBoxPx(210) - insetPx(25) - insetPx(15)),
-      round2(pageBoxPx(297) - insetPx(25) - insetPx(15)),
-    ]).toEqual([642.52, 971.33]);
+      round2(pageBoxPx(210) - insetPx(15) - insetPx(15)),
+      round2(pageBoxPx(297) - insetPx(15) - insetPx(15)),
+    ]).toEqual([680.32, 1009.13]);
   });
 
   it('agrees with the margin declarations the stylesheet actually carries', () => {
     expect({ width: contentWidth(), height: contentHeight() }).toEqual({
-      width: round2(pageBoxPx(210) - insetPx(25) - insetPx(15)),
-      height: round2(pageBoxPx(297) - insetPx(25) - insetPx(15)),
+      width: round2(pageBoxPx(210) - insetPx(15) - insetPx(15)),
+      height: round2(pageBoxPx(297) - insetPx(15) - insetPx(15)),
     });
   });
 });

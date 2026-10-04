@@ -70,10 +70,10 @@ function windowWithSources(sources, front = {}) {
 
   document.documentElement.style.setProperty('--handbook-page-width', '793.7px');
   document.documentElement.style.setProperty('--handbook-page-height', '1122.51px');
-  document.documentElement.style.setProperty('--handbook-page-margin-top', '94.49px');
+  document.documentElement.style.setProperty('--handbook-page-margin-top', '56.69px');
   document.documentElement.style.setProperty('--handbook-page-margin-right', '56.69px');
   document.documentElement.style.setProperty('--handbook-page-margin-bottom', '56.69px');
-  document.documentElement.style.setProperty('--handbook-page-margin-left', '94.49px');
+  document.documentElement.style.setProperty('--handbook-page-margin-left', '56.69px');
   document.documentElement.style.setProperty('--handbook-column-width', '306px');
   document.documentElement.style.setProperty('--handbook-ornament', 'url("/handbook/ornament.svg")');
 
@@ -231,7 +231,7 @@ describe('the injected sheet assignment', () => {
     const window = await run([{ slug: 'dnd/magic', height: 900 }]);
 
     expect(window.__handbookLayout).toMatchObject({
-      page: { width: 793.7, height: 1122.51, marginLeft: 94.49, marginTop: 94.49, marginRight: 56.69 },
+      page: { width: 793.7, height: 1122.51, marginLeft: 56.69, marginTop: 56.69, marginRight: 56.69 },
     });
   });
 
@@ -242,8 +242,8 @@ describe('the injected sheet assignment', () => {
   it('publishes the text block the pages are packed into', async () => {
     const window = await run([{ slug: 'dnd/magic', height: 900 }]);
 
-    expect(window.__handbookLayout.text.width).toBeCloseTo(642.52, 2);
-    expect(window.__handbookLayout.text.height).toBeCloseTo(971.33, 2);
+    expect(window.__handbookLayout.text.width).toBeCloseTo(680.32, 2);
+    expect(window.__handbookLayout.text.height).toBeCloseTo(1009.13, 2);
   });
 
   it('publishes each source page by name with the height it measured', async () => {

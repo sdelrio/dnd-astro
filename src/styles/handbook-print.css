@@ -24,6 +24,28 @@
  */
 
 :root {
+  /* The print type scale. The print routes set their own root font size, and
+     every rem step in the site's own typography and spacing then follows it.
+     Starlight's text sizes are rem multiples of a 16px design root, so at 13px
+     they are the same steps at 81.25%: 13px on a 1.75 leading is 22.75px, which
+     is 54 characters to a 306px column - a printed rulebook's measure - where
+     16px gave 44. The three heading steps the site states in pixels are
+     restated below in rem against this root, so they move with it; a cover title
+     is the one thing that stays in pixels, because rem now means "the print body
+     scale" and a cover still has to read from across a table. See ADR-0024. */
+  --handbook-root-size: 13px;
+  --handbook-body-size: 1rem;
+  --handbook-body-leading: 1.75;
+
+  /* 28px, 24px and 20px at the site's 16px design root, so they follow the
+     print root down to 22.75px, 19.5px and 16.25px. */
+  --handbook-heading-2: 1.75rem;
+  --handbook-heading-3: 1.5rem;
+  --handbook-heading-4: 1.25rem;
+
+  /* The contents title, in pixels for the same reason as the cover's. */
+  --handbook-contents-title: 40px;
+
   /* The page box, which is the sheet: A4, 210 x 297mm, at the CSS reference
      resolution of 96px to the inch. Declared a hair under A4 rather than rounded
      up, which reverses the rule this file used to carry: a sheet a fraction over
@@ -34,23 +56,26 @@
   --handbook-page-width: 793.7px;
   --handbook-page-height: 1122.51px;
 
-  /* The text block: the page box less 25mm top and left and 15mm right and
-     bottom, which are the sheet's own padding rather than a `@page` margin.
-     With no page margin there is no box outside the sheet to leave white, so the
-     paper reaches every edge and these insets are the only thing holding the
-     text off it. */
-  --handbook-page-margin-top: 94.49px;
+  /* The text block: the page box less a 15mm inset on all four sides, which are
+     the sheet's own padding rather than a `@page` margin. With no page margin
+     there is no box outside the sheet to leave white, so the paper reaches every
+     edge and these insets are the only thing holding the text off it. */
+  --handbook-page-margin-top: 56.69px;
   --handbook-page-margin-right: 56.69px;
   --handbook-page-margin-bottom: 56.69px;
-  --handbook-page-margin-left: 94.49px;
+  --handbook-page-margin-left: 56.69px;
 
-  /* Two columns with a 30px gutter, as ADR-0020 states: a single 642.52px
-     measure at 16px body text is a very long line for a page read at a table,
-     and two 306px columns read like a printed rulebook. 306 x 2 + 30 is 642,
-     half a pixel inside the text measure; the spare half pixel is why the
-     column width is declared rather than derived, because Chrome's own column
-     arithmetic hands back 306.5 and the tolerance in the overflow check absorbs
-     exactly that. */
+  /* Two columns with a 30px gutter, the measure ADR-0020 chose: a single long
+     line is hard to read at a table and two 306px columns read like a printed
+     rulebook. 306 x 2 + 30 is 642. At a 15mm inset the text block is wider than
+     that (680.32px), and the columns are deliberately not widened to fill it: a
+     325px column is a longer measure than a printed rulebook uses, and Chrome's
+     own `column-count` arithmetic hands back exactly that. The flow is instead
+     pinned to the column geometry and centred, so the slack is equal either side
+     and the planner's 306px wide-element threshold is the measure Chrome lays
+     out. The columns are declared rather than derived because Chrome's own
+     column arithmetic hands back 306.5 on a 642px field and the tolerance in the
+     overflow check absorbs exactly that. */
   --handbook-columns: 2;
   --handbook-column-width: 306px;
   --handbook-column-gap: 30px;
@@ -83,10 +108,12 @@
   --handbook-paper-image: url('/handbook/parchment.png');
 
   /* The cover. A display step well past anything else on a sheet, because the
-     one thing a cover has to do is be read from across a table. */
-  --handbook-cover-title: 3rem;
+     one thing a cover has to do is be read from across a table. Stated in
+     pixels rather than rem: rem is the print body scale now, and a cover title
+     must not shrink with the body text it is meant to dominate. */
+  --handbook-cover-title: 48px;
   --handbook-cover-title-tracking: 0.01em;
-  --handbook-cover-edition: 1rem;
+  --handbook-cover-edition: 16px;
   --handbook-cover-edition-tracking: 0.08em;
   /* The contents. A row is a two-track line: the chapter, and its page number on
      the page edge, with a dotted leader between them the way a printed contents
@@ -95,16 +122,17 @@
   --handbook-contents-row-gap: 0.5rem;
   --handbook-contents-leader: 1px;
 
-  /* The Point Buy panel's cost column, restated here because this file holds
-     every length the Handbook uses and nothing outside the root holds one. It
-     is the width the panel's own stylesheet gives that column at its wide
-     layout; see the panel rules at the foot of this file. */
-  --handbook-panel-cost: 7.5rem;
-
-  /* The rule that means "start a new sheet", 2px because that is the weight of
-     every gold rule on the site. */
+  /* The gold divider a house-rule `hr` draws, 2px because that is the weight of
+     every gold rule on the site. It is a divider and no longer a sheet break.
+     The space is in rem so it follows the print body scale too. */
   --handbook-rule-weight: 2px;
-  --handbook-rule-space: 18px;
+  --handbook-rule-space: 1rem;
+
+  /* The one root the whole print document measures its type from. Everything
+     else in this file is a length in pixels, so this is the only declaration
+     that moves the typography, and the heading and body steps above are stated
+     against it rather than against the browser's 16px default. */
+  font-size: var(--handbook-root-size);
 }
 
 /* The page is the paper. `size` is what the browser lays out to when
@@ -142,6 +170,11 @@ body {
   margin: 0;
   padding: 0;
   background-color: transparent;
+  /* The body text the whole book sets in: 13px on a 1.75 leading, so 22.75px.
+     Starlight leaves the body font size to inherit from the root, so this
+     states the scale rather than leaving it to the browser's default. */
+  font-size: var(--handbook-body-size);
+  line-height: var(--handbook-body-leading);
 }
 
 /* A sheet is the page box - A4 to its edge - with a break after it, which is
@@ -190,31 +223,114 @@ body {
 }
 
 /* The measure the columns fill.
-   `column-fill: balance` - the initial value, stated rather than left to chance -
-   because a sheet is now one page, and balance is what puts content in both
-   columns of it. `auto` was the right choice while a source page that did not fit
-   spanned the pages it needed: it filled the first column to the bottom of the
-   page before starting the second, which is what a reader turning to a page
-   expects of a page that is half full of nothing. With every sheet one page long
-   it is the wrong choice, and measurably so: a sheet's flow held its content in
-   the first column and left the second empty, so the book came out 67 sheets
-   where the content accounts for 37, and every sheet had a 306px measure of text
-   down one side and half a page of blank paper down the other.
+   The flow is pinned to the columns' own total width - 306 x 2 + 30 - rather than
+   the wider text block, because at a 15mm inset the text block is 680.32px and
+   `column-count: 2` would silently widen each column to 325px to fill it. A 325px
+   column is a longer measure than the 306px one this book was set to, and it is
+   past the width at which the planner marks a full-width element as wide, so the
+   two-column layout would collapse. Centring the flow splits the 38.32px of slack
+   evenly rather than leaving it all on the right.
+
+   `column-fill: auto` - the first column fills to the bottom of the flow before
+   the second begins. That is the reading order the owner asked for, and it is the
+   order the planner already packs: it treats a sheet as two columns of a known
+   capacity, fills the first, then starts the second. `balance` was the value this
+   file carried after the sheets became one page each, and it was the wrong one:
+   it spread a sheet's content across both columns at half height, so a page read
+   as two half-empty columns rather than one full one and a remainder. The value
+   needs the flow to have a definite height to fill to; the assignment sets that
+   height once every sheet is assigned, because the split before that has to
+   measure blocks as they fall rather than as an overflowing column lays them out.
+   A flow with no height under `auto` would run everything down one column, which
+   is the other half of the same wrong page.
 
    Splitting is the command's decision and is measured after every pass, so the
-   balance is not taken on trust: a sheet that still overflows is split again. */
+   fill is not taken on trust: a sheet that still overflows is split again. */
 [data-handbook-flow] {
+  width: calc(var(--handbook-column-width) * var(--handbook-columns) + var(--handbook-column-gap));
+  margin-inline: auto;
   column-count: var(--handbook-columns);
   column-gap: var(--handbook-column-gap);
-  column-fill: balance;
+  column-fill: auto;
+}
+
+/* A block stays whole inside a column.
+   Chrome breaks a paragraph at a line boundary across the gutter by default, so a
+   paragraph would print its first half at the foot of one column and its second at
+   the head of the next. The planner does not model that: it places each top-level
+   block in a single column, so the browser's layout and the plan disagreed about
+   what a block is. `break-inside: avoid` makes them agree - a block that does not
+   fit the space left in a column moves whole to the next column instead of
+   splitting. Scoped to the flow, so a block on the cover, in the contents or in a
+   footer is untouched; a block taller than an entire column still breaks, because
+   there is nowhere else for it to go and the planner reports it.
+
+   A list is a block too. Without this the items of a list could be split across
+   the gutter item by item, and a heading could be left at the foot of one column
+   while the block it introduces began in the next. The heading's own wrapper is
+   the flow child, not the `h3` inside it, so break-after is declared on the
+   wrapper as well. A list taller than a column still breaks: the browser ignores
+   break-inside: avoid when there is nowhere else for the block to go. */
+[data-handbook-flow] p,
+[data-handbook-flow] ul,
+[data-handbook-flow] ol,
+[data-handbook-flow] li,
+[data-handbook-flow] h1,
+[data-handbook-flow] h2,
+[data-handbook-flow] h3,
+[data-handbook-flow] h4,
+[data-handbook-flow] h5,
+[data-handbook-flow] h6,
+[data-handbook-flow] .starlight-aside,
+[data-handbook-flow] table,
+[data-handbook-flow] tr,
+[data-handbook-flow] td,
+[data-handbook-flow] th {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+
+[data-handbook-flow] .sl-heading-wrapper,
+[data-handbook-flow] h1,
+[data-handbook-flow] h2,
+[data-handbook-flow] h3,
+[data-handbook-flow] h4,
+[data-handbook-flow] h5,
+[data-handbook-flow] h6 {
+  break-after: avoid;
+}
+
+/* A heading that introduces a full-width table is kept with the block above it,
+   so it cannot be balanced into the second column.
+   Chrome balances the content of a row that ends at a `column-span: all`
+   element: a heading and the `hr` before it are dealt one per column, and the
+   heading lands on the right of the band instead of at the head of column one.
+   `break-before: avoid` on the heading stops that split, which keeps the
+   heading in column one below the band. It is scoped to a heading whose next
+   sibling spans, because a heading whose next block is an ordinary column-width
+   table must still be free to start column two - which is how the "Injury
+   Severity Table" heading moves with its table into the second column instead
+   of taking a sheet of its own. A block that does not fit still breaks: the
+   browser ignores the avoid when there is nowhere else for it to go. */
+[data-handbook-flow] .sl-heading-wrapper:has(+ [data-handbook-wide]),
+[data-handbook-flow] h1:has(+ [data-handbook-wide]),
+[data-handbook-flow] h2:has(+ [data-handbook-wide]),
+[data-handbook-flow] h3:has(+ [data-handbook-wide]),
+[data-handbook-flow] h4:has(+ [data-handbook-wide]),
+[data-handbook-flow] h5:has(+ [data-handbook-wide]),
+[data-handbook-flow] h6:has(+ [data-handbook-wide]) {
+  break-before: avoid;
 }
 
 /* The opt-out. A page whose content reads worse in a 306px measure than in the
-   full 642.52px one - a table of prose, a sequence of short cross-references - sets
-   `columns: 1` in its frontmatter and lands here. The default is not repeated
-   as a fallback: this selector is the only place a page leaves two columns, and
-   a page that says nothing gets the stylesheet's own value. */
+   full text block - a table of prose, a sequence of short cross-references - sets
+   `columns: 1` in its frontmatter and lands here. The width goes back to auto so a
+   single column uses the whole text block rather than the two-column geometry. The
+   default is not repeated as a fallback: this selector is the only place a page
+   leaves two columns, and a page that says nothing gets the stylesheet's own
+   value. */
 [data-handbook-columns="1"] [data-handbook-flow] {
+  width: auto;
   column-count: 1;
 }
 
@@ -228,6 +344,24 @@ body {
    almost entirely a table and another is thirty kilobytes of them. */
 [data-handbook-wide] {
   column-span: all;
+}
+
+/* The three heading steps the website states in pixels, restated against the
+   print root. `:root` rather than a bare selector so the rule outranks the
+   site's own `h2`/`h3`/`h4` rules, which are the same specificity and cannot be
+   relied on to lose by source order alone. Without this the headings would keep
+   their 16px-root pixels while the body text around them moved to the 13px
+   scale, and a heading would grow relative to the text it introduces. */
+:root .sl-markdown-content h2:not(:where(.not-content *)) {
+  font-size: var(--handbook-heading-2);
+}
+
+:root .sl-markdown-content h3:not(:where(.not-content *)) {
+  font-size: var(--handbook-heading-3);
+}
+
+:root .sl-markdown-content h4:not(:where(.not-content *)) {
+  font-size: var(--handbook-heading-4);
 }
 
 /* The cover: the book's own title, centred on the page, with the edition under
@@ -254,6 +388,12 @@ body {
   font-size: var(--handbook-cover-edition);
   letter-spacing: var(--handbook-cover-edition-tracking);
   text-transform: uppercase;
+}
+
+/* The contents heading, in pixels for the same reason as the cover title: it is
+   a title a reader finds from across a table, not body text. */
+[data-handbook-front='contents'] h1 {
+  font-size: var(--handbook-contents-title);
 }
 
 /* The contents. No list markers: an entry numbered "7." above a page number "23"
@@ -332,21 +472,51 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* A horizontal rule in a house-rule page means "start a new sheet", which is the
-   same meaning it has on the website - where `tailwind.css` draws it in the same
-   gold - and here it is also what it says: a break after the rule, so everything
-   after it starts on a fresh page.
+/* A horizontal rule in a house-rule page is a divider, and that is all it is:
+   the same gold the website draws it in, with no break after it. It used to
+   mean "start a new sheet", and fifty-six of them across eight pages turned a
+   book that fits thirty content sheets into sixty-six; the page boundaries are
+   the generator's to choose now, and it reports every one it chooses. See
+   ADR-0024.
 
-   It needs a blank line above it in the markdown, and that is a parser
+   It still needs a blank line above it in the markdown, and that is a parser
    constraint rather than a style one. In CommonMark a rule on the line
    immediately after paragraph text is a setext heading, and the
    weapon-properties table reader treats a lone `---` after a table's last row as
    a separator and silently deletes that row. AGENTS.md documents the blank line. */
+[data-handbook-source] hr,
 [data-handbook-sheet] hr {
   border: 0;
   border-top: var(--handbook-rule-weight) solid var(--color-gold-rule);
   margin-block: var(--handbook-rule-space);
-  break-after: page;
+}
+
+/* The two interactive tools are removed from the book, and only from the book.
+   Point Buy and the Dice Roller are widgets a reader operates on a website and
+   ink that does nothing on paper: steppers, buttons and a stack of controls are
+   noise in a rulebook, and Point Buy's stacked phone layout was taller than a
+   sheet's text block. Both roots carry a `not-content` marker and their own
+   class, and both are hidden here rather than in the component or the website's
+   own stylesheet, so the screen keeps them exactly as they are.
+
+   Scoped to the flow rather than to a sheet because the flow is in the committed
+   route and the sheet attribute is added by the command at document start: a rule
+   that only matched once the sheets were assigned would not apply to the layout
+   the sheets were assigned from, and the tools would still be measured as
+   content. */
+[data-handbook-flow] .point-buy-needs-js,
+[data-handbook-flow] .dice-roller-needs-js {
+  display: none;
+}
+
+/* An aside prints flat. The website lifts one off the page with a drop shadow,
+   which is right for a screen and is ink that says nothing on paper, so it is
+   suppressed here and only here. The screen value is untouched: this file is
+   loaded only by the print routes. */
+[data-handbook-sheet] .starlight-aside,
+[data-handbook-front] .starlight-aside,
+[data-handbook-source] .starlight-aside {
+  box-shadow: none;
 }
 
 /* Astro's dev toolbar hides itself with `@media print`, and this document is
@@ -354,37 +524,6 @@ body {
    applies. So the rule that would have hidden it does not apply either, and a
    toolbar would be printed onto the sheet. The element only exists on the dev
    server, so this costs the production build nothing. */
-/* The Point Buy panel is a screen widget, and the text block is 642.52px - just
-   over 40rem - which is inside the 46rem at which the panel switches to its
-   stacked phone layout. Printed, that stacked layout is 1093px tall: taller than
-   a sheet's text block, so the panel was broken across two sheets at a boundary
-   inside the component, where no authored horizontal rule in a markdown page can
-   reach.
-
-   These three rules give the panel back the wide layout it was designed for, in
-   which six ability scores are a ledger rather than a stack, and the whole
-   panel then measures about 640px. `!important` because the component's own
-   stylesheet states the phone layout as a media query of the same specificity
-   and this file loads after it; the component itself is unchanged, because the
-   phone layout is right on a phone.
-
-   Scoped to the flow rather than to a sheet because the flow is in the
-   committed route and the sheet attribute is added by the command at document
-   start: a rule that only matched once the sheets were assigned would not apply
-   to the layout the sheets were assigned from. */
-[data-handbook-flow] .pb-rule {
-  grid-template-columns: minmax(0, 1fr) auto auto auto auto !important;
-}
-
-[data-handbook-flow] .pb-rule > :first-child {
-  grid-column: auto !important;
-}
-
-[data-handbook-flow] .pb-cost {
-  width: var(--handbook-panel-cost) !important;
-  text-align: right !important;
-}
-
 astro-dev-toolbar {
   display: none !important;
 }
@@ -393,13 +532,23 @@ astro-dev-toolbar {
    nothing in it is a heading anchor they cannot see. Starlight's own
    `anchor-links.css` hides those anchors until hover, and paper has no hover,
    so they are hidden outright rather than styled for a medium that cannot
-   reach them. */
+   reach them. Keyed on the route's own source and front markers as well as the
+   sheet attribute the command assigns, because the assignment measures the
+   document before it numbers the sheets: a rule that only matched the numbered
+   sheets would hide an anchor after the layout it changed had already been
+   measured, and the measured sheet would not be the printed one. */
+[data-handbook-source] a,
+[data-handbook-front] a,
 [data-handbook-sheet] a,
+[data-handbook-source] .sl-anchor-link,
+[data-handbook-front] .sl-anchor-link,
 [data-handbook-sheet] .sl-anchor-link {
   color: inherit;
   text-decoration: none;
 }
 
+[data-handbook-source] .sl-anchor-link,
+[data-handbook-front] .sl-anchor-link,
 [data-handbook-sheet] .sl-anchor-link {
   display: none;
 }

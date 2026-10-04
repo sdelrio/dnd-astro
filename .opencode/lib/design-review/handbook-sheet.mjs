@@ -13,7 +13,7 @@
  * goes for the column width and the ornament: this string names properties, and
  * every value behind them lives in `src/styles/handbook-print.css`.
  *
- * Four decisions the assignment makes, all from measurements rather than from
+ * Five decisions the assignment makes, all from measurements rather than from
  * what the markup looks like:
  *
  *   - **What spans both columns.** A table wider than its column is the expected
@@ -21,6 +21,11 @@
  *     table itself, and a scroll container whose own box fits while the table
  *     inside it does not. Reading both `width` and `scrollWidth` is what catches
  *     the second one; guessing from a tag name catches neither reliably.
+ *   - **What is welded to what.** A heading is marked so the planner packs it
+ *     with the block it introduces as one unit: `break-after: avoid` is only a
+ *     hint, and it cannot cross a sheet boundary this assignment chose. A heading
+ *     stranded at the foot of a sheet while its table takes the next is the
+ *     defect that mark exists to prevent.
  *   - **Where a source page that does not fit is broken.** At the nearest block
  *     boundary, never inside a block and never clipped: content is moved into
  *     sheets of its own rather than cut. Every break is recorded and reported by
@@ -218,6 +223,72 @@ export function sheetAssignmentScript() {
       return Math.ceil(element.clientHeight + borders + margins);
     };
 
+    /**
+     * The height a sheet's flow gets, which is the height its columns fill.
+     *
+     * A flow that fills its first column before its second needs a definite
+     * height to fill it to. That is what column-fill: auto does, and it can only
+     * do it when the flow's height is known: with an auto height it lays every
+     * block down one column and grows, and a page is left with one full column
+     * and one empty. The budget is the sheet's text block less the title, because
+     * the title is page furniture above the measure: a first sheet carries it and
+     * a continuation does not, and the planner packs against the same number.
+     *
+     * The title's cost is the distance from the sheet's content-box top to the
+     * flow's own top, read from the laid-out boxes rather than assembled from the
+     * heading's height and margins. Margin collapsing between the heading and the
+     * flow is real, and a budget that ignored it made every first sheet 13px
+     * taller than its page and printed a blank page after each of them.
+     *
+     * This is set after the split, never before it. The split loop measures block
+     * heights to decide where a page ends, and a flow whose content overflows a
+     * definite height lays those blocks out in columns the measurement was never
+     * meant to see: measured that way, a block reports the column's height rather
+     * than its own, the plan believes a sheet that does not fit fits, and the book
+     * grows sheets instead of denser. So the loop measures the document as it
+     * falls, and only when every sheet is assigned does the flow get the height
+     * that makes the browser fill its first column first.
+     */
+    const flowBudget = (section) => {
+      const flow = section.querySelector('[data-handbook-flow]');
+      if (flow === null) return Math.floor(measure.height);
+
+      const contentTop =
+        section.getBoundingClientRect().top + (parseFloat(getComputedStyle(section).paddingTop) || 0);
+      const titleSpace = Math.max(0, Math.round(flow.getBoundingClientRect().top - contentTop));
+
+      return Math.max(0, Math.floor(measure.height - titleSpace));
+    };
+
+    const setFlowHeights = (sections) => {
+      for (const section of sections) {
+        if (!section.hasAttribute('data-handbook-source')) continue;
+
+        const flow = section.querySelector('[data-handbook-flow]');
+        if (flow === null) continue;
+
+        flow.style.height = flowBudget(section) + 'px';
+        flow.style.columnFill = 'auto';
+      }
+    };
+
+    /**
+     * How the flow lays its content out while the split is still deciding.
+     *
+     * The split reads block heights, and balance lays every block out at its own
+     * height in the column that holds it. The filled-first-column layout that the
+     * artifact is finally printed in does not: with no height yet set it would run
+     * one column past the page. So the loop measures under balance and the final
+     * render switches the flow to auto once every sheet is assigned.
+     */
+    const setFlowFill = (sections, fill) => {
+      for (const section of sections) {
+        if (!section.hasAttribute('data-handbook-source')) continue;
+        const flow = section.querySelector('[data-handbook-flow]');
+        if (flow !== null) flow.style.columnFill = fill;
+      }
+    };
+
     /** What a block is called in the split report. */
     const labelOf = (element) =>
       splitName({
@@ -225,6 +296,21 @@ export function sheetAssignmentScript() {
         heading: element.querySelector('h2, h3, h4')?.textContent ?? '',
         text: element.textContent ?? '',
       });
+
+    /**
+     * Whether a block is a heading, so it must travel with the block it
+     * introduces.
+     *
+     * The flow child is Starlight's sl-heading-wrapper div rather than the h2
+     * or h3 inside it, and a page whose markdown has no wrapper (a bare
+     * heading rendered by something else) is caught by the tag. A break-after
+     * avoid in the stylesheet is only a hint: it cannot cross a sheet boundary
+     * this assignment chose, so the planner has to know which blocks are welded
+     * to their successor.
+     */
+    const isHeading = (element) =>
+      /^h[1-6]$/.test(element.tagName.toLowerCase()) ||
+      (element.classList && element.classList.contains('sl-heading-wrapper'));
 
     /** An empty copy of an element: the same attributes and classes, no children. */
     const shellOf = (element) => {
@@ -293,7 +379,7 @@ export function sheetAssignmentScript() {
       if (group.length > 0) groups.push(group);
 
       if (groups.length <= 1) {
-        return [{ wrap, nodes: [table], height: occupied(table), columns, tag: 'table', label }];
+        return [{ wrap, nodes: [table], height: occupied(table), columns, tag: 'table', label, heading: false }];
       }
 
       return groups.map((rowsInGroup) => {
@@ -311,6 +397,7 @@ export function sheetAssignmentScript() {
           columns,
           tag: 'table',
           label,
+          heading: false,
         };
       });
     };
@@ -330,7 +417,9 @@ export function sheetAssignmentScript() {
       const columns = widthIn(node);
       const label = labelOf(node);
 
-      if (height <= budget) return [{ wrap, nodes: [node], height, columns, tag, label }];
+      if (height <= budget) {
+        return [{ wrap, nodes: [node], height, columns, tag, label, heading: isHeading(node) }];
+      }
 
       if (tag === 'table') return fragmentTable(node, budget, wrap);
 
@@ -345,7 +434,7 @@ export function sheetAssignmentScript() {
       // and one longer than the sheet spans its pages. Neither is clipping, and
       // the report says which happened rather than the artifact deciding quietly.
       if (kids.length === 0) {
-        return [{ wrap, nodes: [node], height, columns, tag, label }];
+        return [{ wrap, nodes: [node], height, columns, tag, label, heading: isHeading(node) }];
       }
 
       const shell = shellOf(node);
@@ -408,8 +497,14 @@ export function sheetAssignmentScript() {
       }
 
       const contentHeight = Math.ceil(bottom - top);
+      // The fractional extent, compared with a half-pixel of grace: a sheet whose
+      // flow is a fraction of a pixel under the page box must not round up to a
+      // second page, while a block that genuinely overflows still does.
+      const pages = bottom - top <= measure.height + 0.5
+        ? 1
+        : Math.max(1, Math.ceil(contentHeight / measure.height));
 
-      return { contentHeight, pages: Math.max(1, Math.ceil(contentHeight / measure.height)) };
+      return { contentHeight, pages };
     };
 
     /** Build a flow's contents out of the pieces assigned to it. */
@@ -463,12 +558,13 @@ export function sheetAssignmentScript() {
       const flow = section.querySelector('[data-handbook-flow]');
       if (flow === null) return 0;
 
-      const heading = section.querySelector('h1');
       // The title is page furniture above the measure, so the first sheet of a
       // source page has that much less room in it than a continuation does. There
       // is no footer reserve: the footer prints in the bottom margin band, so the
-      // whole text block is available to content.
-      const budget = measure.height - (heading === null ? 0 : occupied(heading));
+      // whole text block is available to content. This is the same budget the flow
+      // is given for the final render, so the packed plan and the browser's two
+      // columns are one geometry rather than two.
+      const budget = flowBudget(section);
       const columns = columnsOf(section);
 
       const pieces = [...flow.children].flatMap((child) => fragmentNode(child, budget, []));
@@ -477,10 +573,9 @@ export function sheetAssignmentScript() {
         columns: piece.columns,
         name: piece.label,
         kind: piece.tag,
-        // The author's own horizontal rule, which is the break an automatic one
-        // converges on. Honoured here and not reported, so that authoring it makes
-        // the split disappear rather than merely move.
-        authored: piece.tag === 'hr',
+        // A heading is welded to the block that follows it, so the planner packs
+        // them as one unit and a sheet boundary cannot fall between them.
+        keepWithNext: piece.heading === true,
       }));
 
       const planned = planSheets({ blocks, blockCapacity: budget, columns });
@@ -536,6 +631,10 @@ export function sheetAssignmentScript() {
 
     let sheets = bookSheets();
 
+    // The split measures under balance, because the artifact is not in its final
+    // filled-first-column layout until every sheet is assigned. See setFlowFill.
+    setFlowFill(sheets, 'balance');
+
     // Measure, split, measure again. Every pass reads what the last one laid out,
     // so a plan that turned out to be wrong costs a pass rather than a page, and
     // the loop ends when a pass finds nothing left to break - which is either
@@ -545,13 +644,10 @@ export function sheetAssignmentScript() {
       markWide(sheets);
       await relayout();
 
-      // A sheet needs work when it does not fit, and also when it carries a break
-      // the author wrote: a horizontal rule means "start a new sheet" whether or not the
-      // content would have fitted without it, and honouring it only on the sheets
-      // that overflow would print a book where the same rule means two things.
-      const work = sourceSheets().filter(
-        (section) => measureSheet(section).pages > 1 || section.querySelector('[data-handbook-flow] hr') !== null
-      );
+      // A sheet needs work exactly when it does not fit. A horizontal rule in the
+      // flow is a divider and no longer a break (ADR-0024), so it is not a reason
+      // to split a sheet that would otherwise fit.
+      const work = sourceSheets().filter((section) => measureSheet(section).pages > 1);
       if (work.length === 0) break;
 
       const added = work.reduce((total, section) => total + splitSheet(section), 0);
@@ -563,6 +659,10 @@ export function sheetAssignmentScript() {
     sheets = bookSheets();
     sheets.forEach((section, index) => section.setAttribute('${SHEET_ATTRIBUTE}', String(index + 1)));
     markWide(sheets);
+    // The page each sheet is. Set last, after the split has finished deciding what
+    // is on each sheet, because it turns the flow into the filled-first-column
+    // layout whose blocks must not be re-measured.
+    setFlowHeights(sheets);
     await relayout();
 
     // The number of sheets each source page became, which is what "part 2 of 5"

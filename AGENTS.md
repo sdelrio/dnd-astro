@@ -92,14 +92,17 @@ Single-context. ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
 
 - Never use the em dash "—". Use plain dash "-" instead.
 - Starlight markdown admonitions: only `:::note`, `:::tip`, `:::caution`, and `:::danger` are supported. Do not use `:::info` or `:::warning`.
-- In a house-rule page, a horizontal rule means "start a new sheet" in the printed
-  Handbook, and it needs a **blank line above it**. That is a parser constraint
+- In a house-rule page, a horizontal rule is a gold divider, and it needs a
+  **blank line above it**. That is a parser constraint
   rather than a style one: in CommonMark a rule on the line immediately after
   paragraph text is a setext heading level two rather than a rule, and the
   weapon-properties table reader treats a lone `---` after a table's last data row
   as a table separator, which silently deletes that row and fails four assertions.
   [The guard](src/content/handbook-sheet-breaks.test.ts) walks every
-  `src/content/docs/dnd/` page and fails on a rule that does not have one.
+  `src/content/docs/dnd/` page and fails on a rule that does not have one. The
+  eight pages currently author no horizontal rules - ADR-0024 removed the sheet
+  break a rule forced and the vestigial print rules were deleted - so the guard is
+  forward-looking: it catches a rule authored again without the blank line above it.
 
 The em dash rule is enforced by a test, not by good intentions. See
 [the guard](src/content/prose-style.test.ts) and the covered surfaces below.
@@ -317,17 +320,51 @@ manifest.
   `--handbook-page-width` / `--handbook-page-height` (793.7 x 1122.51 CSS px, A4
   at two decimals, each truncated a hair under rather than rounded up) are the page
   box, and the
-  25mm top and left and 15mm right and bottom insets are the sheet's own padding
+  15mm inset on all four sides is the sheet's own padding
   (`--handbook-page-margin-*`) rather than a page margin, so the paper reaches
-  every edge. The command reads all of it out of the rendered page rather than
-  carrying a copy.
-- A sheet is **two 306px columns with a 30px gutter** by default. Anything wider
-  than its column spans both columns, decided by measurement rather than by a rule
-  that guesses which elements need it: the house-rule pages contain both a wide
-  table and a scroll container whose own box fits while its table does not. A page
-  that reads worse in 306px sets `columns: 1` in its frontmatter, and reading that
-  key requires `docsSchema({ extend: ... })` in `src/content.config.ts` - the
-  default schema is a Zod object in strip mode and would drop it silently.
+  every edge. The text block is therefore 680.32 x 1009.13 CSS px. The command
+  reads all of it out of the rendered page rather than carrying a copy.
+- A sheet is **two 306px columns with a 30px gutter** by default. The text block is
+  wider than those columns at a 15mm inset, so the flow is pinned to
+  `calc(306px * 2 + 30px)` and centred rather than letting `column-count: 2` widen
+  each column to 325px to fill it; a single-column page uses the whole text block.
+  Anything wider than its column spans both columns, decided by measurement rather
+  than by a rule that guesses which elements need it: the house-rule pages contain
+  both a wide table and a scroll container whose own box fits while its table does
+  not. A page that reads worse in 306px sets `columns: 1` in its frontmatter, and
+  reading that key requires `docsSchema({ extend: ... })` in `src/content.config.ts`
+  - the default schema is a Zod object in strip mode and would drop it silently.
+  The planner charges a spanning band **below the taller of the columns filled so
+  far**, not below the column it happens to fall in: Chrome balances the content in
+  a row that ends at a `column-span: all` element, so a narrow block in column two
+  after an 800px block in column one puts the band at 800, not at 200. A heading
+  that introduces a full-width table is kept with the block above it by a scoped
+  `break-before: avoid`, so it cannot be balanced into column two; a heading that
+  introduces an ordinary column-width table is left free to start column two.
+- **A block stays whole inside its column.** `break-inside: avoid` (with the
+  `-webkit-column-break-inside` prefix) is declared for `p`, `li`, `ul`, `ol`, the
+  heading levels, `.starlight-aside` and `table`/`tr`/`td`/`th`, scoped to the
+  print flow, so a paragraph, list, aside or table that does not fit the space left
+  in a column moves whole to the next instead of straddling the gutter. That makes
+  Chrome's layout the atomic-block model the planner already uses. A block taller
+  than a whole column still breaks, because it has nowhere else to go.
+- **A heading travels with the block it introduces.** The assignment marks a
+  heading wrapper (`sl-heading-wrapper`, or a bare `h1`-`h6`) `keepWithNext`, and
+  the planner packs it and the block after it as one unit, so a sheet boundary
+  cannot fall between them. `break-after: avoid` alone cannot cross a boundary the
+  planner chose - on `dnd/injuries` the "Injury Severity Table" heading was
+  stranded at the foot of one sheet while its table took the next - so the fix is
+  in the planner, and the unit is reported as one split named for the heading.
+- The print route sets **its own root font size, 13px** (`--handbook-root-size`),
+  and every rem step in the site's typography and spacing follows it. Body text is
+  `1rem` on a `1.75` leading - 13px on 22.75px, which is 54 characters to a 306px
+  column where the 16px default gave 44. The three heading sizes the website states
+  in pixels (28px, 24px, 20px) are restated in the print stylesheet as `1.75rem`,
+  `1.5rem` and `1.25rem` - their sizes on the site's 16px design root - so they
+  follow the print root down to 22.75px, 19.5px and 16.25px. The cover title and
+  the contents heading stay in pixels, because rem now means "the print body scale"
+  and a cover must still read from across a table. See
+  [ADR-0024](docs/adr/0024-print-type-scale-and-generator-breaks.md).
 - Each sheet's footer carries the source page and the section it starts in on the
   left, a decorative rule in the centre and the page number on the right, reading
   `12 of 48` rather than a bare number.
@@ -356,13 +393,12 @@ manifest.
   laid out inside a multicolumn - measured in this book as a 56px paragraph
   reporting a 1557px box - and a run that believed it broke sheets that had room
   for them and reported boundaries nobody wrote.
-- **The Point Buy panel prints in its wide layout.** The text block is 642.52px,
-  which is inside the 46rem at which that panel switches to its stacked phone
-  layout, and printed that way it is 1093px tall: taller than a sheet, and broken
-  at a boundary inside the component where no authored rule in a markdown page can
-  reach. Three rules at the foot of `handbook-print.css` give it back the ledger it
-  was designed as; the component itself is unchanged, because the phone layout is
-  right on a phone.
+- **The two interactive tools do not print.** Point Buy and the Dice Roller are
+  hidden from the print flow by a rule in the print stylesheet scoped to
+  `[data-handbook-flow]`; the components and the website's own styling are
+  untouched, so the screen keeps both exactly as they were. This replaces the wide
+  layout the print stylesheet used to force on the Point Buy panel: a tool that
+  does not print has no layout to correct.
 
 ### The split report and the manifest
 
@@ -378,16 +414,22 @@ its pages with nothing cut. The run prints every boundary it chose, by name:
   7/38  dnd/skills  sheet 17  begins at p at "Rare Finds: If the final check..."
 ```
 
-An authored horizontal rule at that point removes the split, which is how the book
-converges on breaks a person chose. The assignment honours a rule wherever it finds
-one - a sheet carrying an `hr` is split even when its content would have fitted
-without it - so the same rule means the same thing in every sheet.
+The generator owns every break. The eight house-rule pages no longer author a
+horizontal rule at all: the fifty-six that the print-route commit added to force
+page breaks became inert when a rule stopped starting a sheet, and they were
+removed so the book carries no stray divider. Every boundary the generator chooses
+is still a block boundary - nothing is split inside a block and nothing is clipped
+- and every one is named in the report, so a boundary that moves cannot move
+unseen.
 
 The plan is a plan. It applies, re-measures every sheet, and splits whatever is
 still too tall until a pass finds nothing left to break. That is why
-`column-fill` is `balance` rather than `auto`: with every sheet one page long,
-`auto` fills the first column to the bottom of the page and leaves the second empty,
-which measured 67 sheets where the content accounts for 48.
+`column-fill` is `auto`: the first column fills to the foot of the sheet before
+the second begins, which is the order the planner packs and the order the owner
+asked for. The flow only fills a definite height, so the assignment measures the
+document under `balance` while it decides where pages end, then gives each sheet
+its flow height and switches to `auto` for the final render. `balance` was the
+wrong value: it spread a sheet's content across two half-empty columns.
 
 **The manifest is the gate.** `public/handbook/manifest.json` is committed and is a
 few kilobytes:
@@ -403,18 +445,20 @@ Two tests read it back off disk, and both are gates rather than reports:
 
 - The source hash is recomputed from `src/content/docs/dnd/` and compared. Edit a
   house rule without regenerating and the suite fails.
-- **The suite fails while any split remains recorded.** That is deliberate: a
-  generator that invents a page boundary can change which page a rule lands on
-  with nothing to show for it, and the gate is how that gets fixed rather than
-  forgotten. Clearing it means authoring `hr`s at the named points, which is
-  editorial work and not a code change. Do not delete the assertion to get a green
-  suite.
-- **It is green.** Every break in the book is one an author wrote, which means the
-  eight pages now carry forty-odd authored `hr`s and that two of them needed more
-  than prose: `dnd/weapon-mastery` prints in one column (`columns: 1`) because its
-  eight-row reference table is 918px tall in a 306px column, and the Point Buy
-  panel needed the print-stylesheet rules above. An `hr` fixes a boundary a page
-  can reach and nothing else.
+- **The suite fails when the split count exceeds its bound.** The gate is a
+  `MAX_AUTOMATIC_SPLITS` constant in `handbook-manifest.test.mjs`, not a demand for
+  zero: a boundary is the generator's choice now, so an edit that moves one is not a
+  regression, but an edit that multiplies the page count is. The book measured **17
+  automatic splits** at 27 sheets - a cover, a contents and twenty-five content
+  sheets - after the two interactive tools were dropped, the blocks were pinned
+  inside their columns, the first column was made to fill before the second, and the
+  vestigial print rules were removed, and the bound allows 30. A doubled book would
+  run well past it. Clearing a split by authoring an `hr` no longer does anything;
+  the constant is the gate.
+- One page needed more than prose: `dnd/weapon-mastery` prints in one column
+  (`columns: 1`) because its eight-row reference table is 918px tall in a 306px
+  column. The two interactive tools used to need print-stylesheet rules of their
+  own; they are hidden from the book now, so they need none.
 
 It is **version 2**: version 1 recorded only sheets printed from a source page,
 which left the cover and the contents unaccounted for, and a record that does not
@@ -475,7 +519,7 @@ quietly goes and a texture's average is not its darkest pixel. The runtime check
 the existing command:
 
 ```
-make measure ARGS='contrast --theme light --url http://localhost:4321/handbook/print/ --width 643 --selectors ".sl-markdown-content p,.sl-markdown-content td,.sl-markdown-content th,.sl-markdown-content h2"'
+make measure ARGS='contrast --theme light --url http://localhost:4321/handbook/print/ --width 680 --selectors ".sl-markdown-content p,.sl-markdown-content td,.sl-markdown-content th,.sl-markdown-content h2"'
 ```
 
 `--theme light` is there because the print route declares exactly one theme: paper

@@ -61,7 +61,17 @@ export function splitName({ tag, heading, text }) {
  *     the author has nothing to do about.
  *   - **An element that spans both columns is a band across the sheet**, so both
  *     columns start again below it. A 200px block does not go beside a
- *     full-width table that has already used 800 of the sheet's 900.
+ *     full-width table that has already used 800 of the sheet's 900. The band
+ *     starts below the **taller** of the columns filled in this row, not below
+ *     the column the band happens to fall in: a table that spans after the first
+ *     column is already 800px deep begins 800px down whether the next narrow
+ *     block would have gone in column one or column two.
+ *   - **A heading travels with the block it introduces.** A block carrying
+ *     `keepWithNext` (a heading wrapper, measured by the assignment) and the
+ *     block after it are packed as one unit, so a heading cannot be stranded at
+ *     the foot of a column - or at the foot of a sheet - while the thing it
+ *     introduces starts the next one. The unit is reported as a single split,
+ *     named for the heading, when it has to move.
  *   - **A block taller than a column gets a sheet of its own, and is reported if
  *     it is taller than the sheet.** It is never clipped and never split. A
  *     paragraph too long for one column prints down both of them, which is what
@@ -75,10 +85,11 @@ export function splitName({ tag, heading, text }) {
  * measures every sheet again, and splits whatever is still too tall. So an
  * estimate that is wrong costs a pass rather than a wrong page.
  *
- * `blocks` are measured: `{ height, columns, name, kind, authored }`, where
- * `columns` is how many of the sheet's columns the block spans. `authored` marks
- * a horizontal rule the author wrote, which is a break this function honours and
- * does not report - it is the destination the automatic breaks converge on.
+ * `blocks` are measured: `{ height, columns, name, kind, keepWithNext }`, where
+ * `columns` is how many of the sheet's columns the block spans and `keepWithNext`
+ * marks a block that must not be separated from the one that follows it. A
+ * horizontal rule the author wrote is an ordinary block here: the generator owns
+ * every break, and every one it chooses is reported. See ADR-0024.
  */
 export function planSheets({ blocks, blockCapacity, columns }) {
   if (!(blockCapacity > 0)) {
@@ -88,17 +99,33 @@ export function planSheets({ blocks, blockCapacity, columns }) {
     throw new Error(`A sheet of ${columns} columns is not a sheet, so nothing can be packed into it.`);
   }
 
+  // A unit is one block, or a run of blocks welded together by `keepWithNext`:
+  // a heading and the block it introduces are one thing to place, because the
+  // browser's `break-after: avoid` cannot cross a boundary this function chose.
+  // The run is greedy and transitive: a heading that introduces another heading
+  // that introduces a table is one unit of three, which is what a document with
+  // an `h2` above an `h3` above its first paragraph actually is.
+  const units = [];
+  for (let index = 0; index < blocks.length; index += 1) {
+    const members = [index];
+    while (blocks[index]?.keepWithNext && index + 1 < blocks.length) {
+      index += 1;
+      members.push(index);
+    }
+    units.push(members);
+  }
+
   const sheets = [];
   const splits = [];
   const oversized = [];
 
-  // The bottom of the last full-width band, the column being filled, and how far
-  // down that column the sheet has been used.
+  // The bottom of the last full-width band, how far down each column of the
+  // current row has been used, and the column being filled.
   let sheet = [];
   let floor = 0;
   let column = 0;
-  let used = 0;
-  // Set when the sheet that just closed was closed by a block that needed its own
+  let used = Array.from({ length: columns }, () => 0);
+  // Set when the sheet that just closed was closed by a unit that needed its own
   // width, so the boundary after it is recorded as well as the one before it.
   let afterTall = false;
 
@@ -107,23 +134,29 @@ export function planSheets({ blocks, blockCapacity, columns }) {
     sheet = [];
     floor = 0;
     column = 0;
-    used = 0;
+    used = Array.from({ length: columns }, () => 0);
   };
 
-  blocks.forEach((entry, index) => {
-    const height = Number(entry?.height) || 0;
-    const spans = (entry?.columns ?? 1) >= columns;
+  units.forEach((members) => {
+    const height = members.reduce((total, index) => total + (Number(blocks[index]?.height) || 0), 0);
+    const spans = members.some((index) => (blocks[index]?.columns ?? 1) >= columns);
 
     // The label travels with the report, so it is resolved here rather than at
-    // every call site that reads a split.
-    const label = { block: index, name: entry?.name ?? '', kind: entry?.kind ?? '' };
+    // every call site that reads a split. A unit is named for the block it
+    // starts with, which is the heading a reader would look for.
+    const first = members[0];
+    const label = {
+      block: first,
+      name: blocks[first]?.name ?? '',
+      kind: blocks[first]?.kind ?? '',
+    };
 
-    // A block taller than one column needs the whole width of the sheet, because
+    // A unit taller than one column needs the whole width of the sheet, because
     // the only way past a column is into the next one and nothing can go beside
     // it there. Measured, not assumed: a 1501px paragraph in a 938px column is
     // not clipped and is not clipped *at* - it prints down both columns.
     if (height > blockCapacity) {
-      // The limit is the sheet, not the column: a block that spans both columns
+      // The limit is the sheet, not the column: a unit that spans both columns
       // gets one column's worth of sheet, and one that does not gets both. Past
       // that there is nowhere for it to go at all, and the report says so - as
       // this one entry rather than as a split as well, because the boundary it
@@ -134,13 +167,13 @@ export function planSheets({ blocks, blockCapacity, columns }) {
       else if (sheet.length > 0) splits.push(label);
       if (sheet.length > 0) close();
 
-      sheet.push(index);
+      sheet.push(...members);
       close();
       afterTall = true;
       return;
     }
 
-    // The break on the far side of a block that took a sheet to itself is as much
+    // The break on the far side of a unit that took a sheet to itself is as much
     // a decision as the one on the near side, and an author who puts a rule there
     // removes it in the same way.
     if (sheet.length === 0 && afterTall) {
@@ -148,43 +181,35 @@ export function planSheets({ blocks, blockCapacity, columns }) {
       afterTall = false;
     }
 
-    // An authored rule is a break the author asked for, so it is honoured whatever
-    // the sheet looks like - and it is not a split, which is what makes an
-    // authored break and an automatic one the same thing in the artifact and
-    // different things in the report.
-    if (entry?.authored) {
-      sheet.push(index);
-      close();
-      return;
-    }
-
-    // The two places a block can go on this sheet: where this column has got to,
+    // The two places a unit can go on this sheet: where this column has got to,
     // or at the top of the next one. The second is a continuation rather than a
-    // break, which is why a block that takes it is not reported.
-    const fits = (inColumn, at) => floor + at + height <= blockCapacity;
+    // break, which is why a unit that takes it is not reported.
+    const fits = (at) => floor + at + height <= blockCapacity;
 
-    if (!fits(column, used)) {
-      if (column + 1 < columns && fits(column + 1, 0)) {
+    if (!fits(used[column])) {
+      if (column + 1 < columns && fits(0)) {
         column += 1;
-        used = 0;
+        used[column] = 0;
       } else {
         splits.push(label);
         close();
       }
     }
 
-    sheet.push(index);
+    sheet.push(...members);
 
     // A band across both columns takes the row it is in, and both columns resume
-    // below it rather than the next block continuing beside it.
+    // below it rather than the next block continuing beside it. It starts below
+    // the taller of the columns filled so far, which is the space it actually
+    // occupies when Chrome spans it.
     if (spans) {
-      floor += used + height;
+      floor += Math.max(...used) + height;
       column = 0;
-      used = 0;
+      used = Array.from({ length: columns }, () => 0);
       return;
     }
 
-    used += height;
+    used[column] += height;
   });
 
   close();
