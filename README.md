@@ -84,7 +84,7 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 | `make check` | Run every gate: lint, typecheck, test, build |
 | `make capture` | Write `desktop.png` and `mobile.png` for design review |
 | `make measure` | Measure a rendered page: overflow, contrast, tap, pointer |
-| `make handbook` | Print the eight house-rule pages into one A4 PDF of sheets, plus one PNG per sheet |
+| `make handbook` | Print the eight house-rule pages into one A4 PDF of sheets, plus one PNG per sheet and the committed manifest |
 | `make handbook-art` | Write the committed parchment tile and footer ornament (`ARGS='--check'` fails when stale) |
 | `make submodule-init` | Check out the pinned Impeccable skill submodule |
 | `make submodule-update` | Bump Impeccable to upstream HEAD and relink |
@@ -108,6 +108,7 @@ public/                  Static assets served as-is
     party.json           Current party roster
   fonts/                 Self-hosted webfont files
   handbook/
+    manifest.json        Committed record of the last handbook run; the staleness gate
     ornament.svg         Generated footer rule, drawn in the gold rule colour
     parchment.png        Generated 256px sRGB paper tile, tiled by the print stylesheet
 scripts/                 Content extraction and CI helper scripts

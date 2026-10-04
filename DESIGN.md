@@ -351,6 +351,8 @@ Anything wider than its column spans both columns, and that is decided by measur
 
 Each sheet carries a footer: the source page and the section it starts in on the left, a decorative rule on the centre line, the page number on the right. The rule is an ornament drawn in **Gold Rule** - the same token the h2 underline uses - because it is the same thing, and the paper is a **committed tile** rather than a CSS gradient so that replacing one file changes the paper without touching code. A horizontal rule in a house-rule page means "start a new sheet" in print and is drawn on the website in the same gold, because a divider that means something in one medium and nothing in the other is worse than no divider.
 
+Content that does not fit a sheet is broken at the nearest block boundary rather than clipped, and every break the generator chose is printed by name and recorded in the committed **manifest** - a content hash of the eight sources, the sheet count, and each sheet's page number and text hash. A generator that quietly decides where a page ends is a generator that can quietly change which page a rule appears on, so the breaks it invents are visible, and a test fails while any of them remains: an authored horizontal rule at that point removes it, and the book converges on breaks a person chose.
+
 See `src/styles/handbook-print.css` and [ADR-0020](docs/adr/0020-sheet-box-renderer.md).
 
 ## Elevation & Depth

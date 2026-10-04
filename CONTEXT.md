@@ -110,8 +110,10 @@ One Sheet's page, as a PNG at an exact raster size, taken from the same DOM and
 the same stylesheet the PDF is printed from. A Capture is evidence about the
 Handbook rather than a second opinion about it, which is why its size is read back
 out of the file rather than trusted from the write. It is not a screenshot: a
-screenshot is whatever the viewport happened to be.
-_Avoid_: Screenshot, thumbnail, preview, image
+screenshot is whatever the viewport happened to be. Captures are not in version
+control, so a **golden capture** is a local one compared against a **baseline** the
+repository does not track, which corroborates the Manifest and never replaces it.
+_Avoid_: Screenshot, thumbnail, preview, image, golden
 
 **Column**:
 One of the Sheet's two 306px measures. An element too wide for its Column spans
