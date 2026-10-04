@@ -94,6 +94,8 @@ Single-context. ADRs live in `docs/adr/`. See `docs/agents/domain.md`.
   paragraph text is a setext heading level two rather than a rule, and the
   weapon-properties table reader treats a lone `---` after a table's last data row
   as a table separator, which silently deletes that row and fails four assertions.
+  [The guard](src/content/handbook-sheet-breaks.test.ts) walks every
+  `src/content/docs/dnd/` page and fails on a rule that does not have one.
 
 The em dash rule is enforced by a test, not by good intentions. See
 [the guard](src/content/prose-style.test.ts) and the covered surfaces below.
@@ -337,6 +339,18 @@ manifest.
   part of, the section it starts in and the height it measured. Content that does
   not fit is split rather than clipped, and every break the generator invented is
   printed by name and recorded in the manifest; see below.
+- **A block's height is read from its client height, not from its bounding rect.**
+  Chrome reports the *column's* height rather than a block's own for some blocks
+  laid out inside a multicolumn - measured in this book as a 56px paragraph
+  reporting a 1557px box - and a run that believed it broke sheets that had room
+  for them and reported boundaries nobody wrote.
+- **The Point Buy panel prints in its wide layout.** The sheet box is 643px, which
+  is inside the 46rem at which that panel switches to its stacked phone layout, and
+  printed that way it is 1093px tall: taller than a sheet, and broken at a boundary
+  inside the component where no authored rule in a markdown page can reach. Three
+  rules at the foot of `handbook-print.css` give it back the ledger it was designed
+  as; the component itself is unchanged, because the phone layout is right on a
+  phone.
 
 ### The split report and the manifest
 
@@ -377,11 +391,24 @@ Two tests read it back off disk, and both are gates rather than reports:
 
 - The source hash is recomputed from `src/content/docs/dnd/` and compared. Edit a
   house rule without regenerating and the suite fails.
-- **The suite fails while any split remains recorded.** That is deliberate and it is
-  red today: the book's content still needs automatic breaks, and the gate is how
-  that gets fixed rather than forgotten. Clearing it means authoring `hr`s at the
-  named points, which is editorial work and not a code change. Do not delete the
-  assertion to get a green suite.
+- **The suite fails while any split remains recorded.** That is deliberate: a
+  generator that invents a page boundary can change which page a rule lands on
+  with nothing to show for it, and the gate is how that gets fixed rather than
+  forgotten. Clearing it means authoring `hr`s at the named points, which is
+  editorial work and not a code change. Do not delete the assertion to get a green
+  suite.
+- **It is green.** Every break in the book is one an author wrote, which means the
+  eight pages now carry forty-odd authored `hr`s and that two of them needed more
+  than prose: `dnd/weapon-mastery` prints in one column (`columns: 1`) because its
+  eight-row reference table is 918px tall in a 306px column, and the Point Buy
+  panel needed the print-stylesheet rules above. An `hr` fixes a boundary a page
+  can reach and nothing else.
+
+It is **version 2**: version 1 recorded only sheets printed from a source page,
+which left the cover and the contents unaccounted for, and a record that does not
+account for the first two pages of a book is not a record of it. Each sheet now
+carries a `kind`, and the two cases are checked against each other rather than both
+being asked to name a source page.
 
 The hash is content-based and never a timestamp, so it survives a clone, a rebase
 and a fresh checkout on another machine; the validator refuses a `generatedAt`, a
@@ -397,7 +424,7 @@ make handbook ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tm
 
 ### Golden captures are not committed
 
-At the raster scale of 2 a sheet is several hundred kilobytes and the book is 48 of
+At the raster scale of 2 a sheet is several hundred kilobytes and the book is 66 of
 them, so the PNGs live under `tmp/` and the comparison is a local mode with a
 baseline the repository does not track:
 

@@ -51,13 +51,29 @@ function layoutEngine(window, declared) {
     const top = topOf(element);
     const width = declared.get(`${element}:width`) ?? (element.hasAttribute('data-handbook-wide') ? 643 : 306);
 
-    return { top, bottom: top + height, height, width, left: 0, right: width };
+    // A declared `rectHeight` is the browser misreporting a block's height as
+    // the column's, which is the defect the measurement tests are about.
+    const rectHeight = declared.get(`${element}:rectHeight`) ?? height;
+
+    return { top, bottom: top + rectHeight, height: rectHeight, width, left: 0, right: width };
   };
 
   for (const element of window.document.querySelectorAll('*')) {
     Object.defineProperty(element, 'getBoundingClientRect', { value: () => box(element), configurable: true });
     Object.defineProperty(element, 'scrollWidth', {
       get: () => declared.get(`${element}:scrollWidth`) ?? box(element).width,
+      configurable: true,
+    });
+    // The browser's own content height, which is what a block's height is read
+    // from: Chrome reports the column's height rather than the block's own for
+    // some blocks laid out inside a multicolumn, and the client height does not,
+    // so it is modelled separately and a test can declare the two disagreeing.
+    Object.defineProperty(element, 'clientHeight', {
+      get: () => declared.get(`${element}:clientHeight`) ?? box(element).height,
+      configurable: true,
+    });
+    Object.defineProperty(element, 'clientWidth', {
+      get: () => declared.get(`${element}:clientWidth`) ?? box(element).width,
       configurable: true,
     });
   }
@@ -91,6 +107,8 @@ async function run(pages) {
     element.textContent = block.text ?? '';
     declared.set(element, block.h);
     if (block.wide) declared.set(`${element}:width`, 640);
+    if (block.rectHeight !== undefined) declared.set(`${element}:rectHeight`, block.rectHeight);
+    if (block.clientHeight !== undefined) declared.set(`${element}:clientHeight`, block.clientHeight);
 
     for (const child of block.kids ?? []) element.appendChild(build(child));
 
@@ -363,6 +381,49 @@ describe('a break the author wrote', () => {
     ]);
 
     expect(layoutOf(window).splits).toEqual([]);
+  });
+});
+
+describe('measuring a block inside a two-column sheet', () => {
+  // Chrome reports a block's border-box rect as the height of the column it is
+  // laid out in for some in-column blocks, not the block's own height. Measured
+  // in the book: a 56px paragraph in `dnd/skills` measured 1557px, which is
+  // taller than a sheet, so the run broke a sheet that had room for it and
+  // reported a boundary no author had written and no reader could find.
+  //
+  // `clientHeight` is the block's own padding box and stays the block's own
+  // height in that position, so it is what the assignment reads.
+  const columns = (rectHeight, clientHeight, blocks) => [
+    {
+      slug: 'dnd/skills',
+      blocks: blocks.map((block) => ({ ...block, rectHeight, clientHeight })),
+    },
+  ];
+
+  it('measures a block by its own height, not by the column it sits in', async () => {
+    const window = await run(columns(1557, 56, [{ tag: 'p', text: 'short' }]));
+
+    expect(sheetsOf(window).map((sheet) => sheet.pages)).toEqual([1]);
+    expect(layoutOf(window).splits).toEqual([]);
+  });
+
+  // The same page measured honestly: two 400px paragraphs and a rule fit one
+  // sheet, so a measurement that reports the column height splits it.
+  it('keeps content on one sheet when the column is taller than the content', async () => {
+    const window = await run(columns(1557, 400, [{ tag: 'p', text: 'a' }, { tag: 'p', text: 'b' }]));
+
+    expect(sheetsOf(window)).toHaveLength(1);
+    expect(layoutOf(window).splits).toEqual([]);
+  });
+
+  // And a block that really is taller than a sheet is still reported, so the fix
+  // is not a way to stop hearing about the content that does not fit.
+  it('still reports a block taller than a sheet when its own height says so', async () => {
+    const window = await run(columns(1557, 1400, [{ tag: 'p', text: 'long' }]));
+
+    expect(layoutOf(window).splits).toEqual([
+      { source: 'dnd/skills', sheet: 1, kind: 'p', label: 'p at "long"', oversized: true, height: 1400 },
+    ]);
   });
 });
 

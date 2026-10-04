@@ -22,6 +22,11 @@ import {
   validatePng,
 } from './handbook-helpers.mjs';
 
+// The publisher page links a path and the command writes one. They are the same
+// string in two places, and this is what holds the two together: a link that
+// resolves to nothing is the one failure the publisher page cannot have.
+import { HANDBOOK_FILE } from '../../../src/utils/handbook';
+
 /**
  * The parts of the Handbook command that decide whether the artifact is
  * believable, tested without a browser.
@@ -59,11 +64,11 @@ function pdfBytes({ pages = 1, mediaBox = '0 0 595.28 841.89', trailer = true, p
 }
 
 describe('parseArgs', () => {
-  it('defaults to the print route, a dev-time output path and the local display face', () => {
+  it('defaults to the print route, the published artifact and the local display face', () => {
     const options = parseArgs([]);
 
     expect(options.url).toBe('http://localhost:4321/handbook/print/');
-    expect(options.out).toBe('tmp/handbook/handbook.pdf');
+    expect(options.out).toBe('public/handbook/handbook.pdf');
     expect(options.font).toBe('Cinzel');
     expect(options.fontUrl).toBe('/fonts/Cinzel.woff2');
   });
@@ -94,11 +99,15 @@ describe('parseArgs', () => {
     expect(() => parseArgs(['--raster-scale', '0.5'])).toThrow(/raster scale/i);
   });
 
-  it('writes the per-sheet captures beside the PDF unless told otherwise', () => {
-    // Derived rather than restated, so moving the PDF moves its evidence with
-    // it instead of leaving one run's captures beside another's artifact.
+  // The artifact is published, so its path is `public/handbook/handbook.pdf` and
+  // the publisher page links exactly that. The captures are several hundred
+  // kilobytes a sheet and the book is dozens of sheets, so they stay under `tmp/`
+  // whatever the artifact is told to write: a run that moved them beside the PDF
+  // would publish tens of megabytes of PNG beside the one file the site serves.
+  it('publishes the artifact at the path the publisher page links to', () => {
+    expect(parseArgs([]).out).toBe(`public${HANDBOOK_FILE}`);
     expect(parseArgs([]).pngDir).toBe('tmp/handbook/sheets');
-    expect(parseArgs(['--out', 'tmp/spike.pdf']).pngDir).toBe('tmp/sheets');
+    expect(parseArgs(['--out', 'tmp/spike.pdf']).pngDir).toBe('tmp/handbook/sheets');
   });
 
   it('takes an explicit capture directory', () => {
@@ -162,7 +171,7 @@ describe('parseArgs', () => {
 
     expect(options.url).toBe('http://localhost:4322/handbook/spike-fixture/');
     expect(options.out).toBe('tmp/spike.pdf');
-    expect(DEFAULTS.out).toBe('tmp/handbook/handbook.pdf');
+    expect(DEFAULTS.out).toBe('public/handbook/handbook.pdf');
   });
 });
 
