@@ -71,6 +71,26 @@ describe('the handbook print route', () => {
   it('renders the content the way a documentation page renders it', () => {
     expect(route).toContain('class="sl-markdown-content"');
   });
+
+  // Front matter, authored here because it is known at build time: a book that
+  // opens on a rule instead of on its own title is a set of pages.
+  it('opens the book with a cover carrying its title, version and edition date', () => {
+    expect(route).toContain('data-handbook-front="cover"');
+    expect(route).toContain('data-handbook-front="contents"');
+    expect(route).toContain('HANDBOOK_TITLE');
+    expect(route).toContain('HANDBOOK_EDITION');
+  });
+
+  // The contents needs page numbers, and a page number does not exist until
+  // layout has run. So the route authors the list and the command fills it, in
+  // the same pass that assigns the sheets: a second render would be a second build
+  // of the site and two chances for the two to disagree.
+  it('authors the contents list but no page numbers, because it cannot know them', () => {
+    expect(route).toContain('data-handbook-contents-list');
+    expect(route).toMatch(/<ol data-handbook-contents-list><\/ol>/);
+    expect(route).not.toMatch(/data-handbook-contents-page/);
+    expect(route).not.toMatch(/\{\{?\s*(page|number)/i);
+  });
 });
 
 describe('the spike fixture', () => {

@@ -30,8 +30,36 @@ function box(element, { top = 0, width = 306, height = 20, scrollWidth = width }
   return element;
 }
 
+/**
+ * The front matter of the book: a cover and a contents, before the source pages.
+ *
+ * A cover with nothing on it and a contents with no rows in it, because those are
+ * what the route can author: the title, the version and the edition date are
+ * known at build time and the page numbers are not.
+ */
+function appendFrontMatter(document, { withContents = true } = {}) {
+  const cover = document.createElement('section');
+  cover.setAttribute('data-handbook-front', 'cover');
+  cover.setAttribute('data-handbook-title', 'Cover');
+  cover.appendChild(box(document.createElement('h1'), { width: 643, height: 60 }));
+  box(cover, { width: 643, height: 400 });
+  document.body.appendChild(cover);
+
+  if (!withContents) return;
+
+  const contents = document.createElement('section');
+  contents.setAttribute('data-handbook-front', 'contents');
+  contents.setAttribute('data-handbook-title', 'Contents');
+  contents.appendChild(box(document.createElement('h1'), { width: 643, height: 40 }));
+  const list = document.createElement('ol');
+  list.setAttribute('data-handbook-contents-list', '');
+  contents.appendChild(list);
+  box(contents, { width: 643, height: 400 });
+  document.body.appendChild(contents);
+}
+
 /** A window with the print stylesheet's custom properties set, and no layout. */
-function windowWithSources(sources) {
+function windowWithSources(sources, front = {}) {
   const window = new Window({ url: 'http://localhost:4321/handbook/print/' });
   const { document } = window;
 
@@ -45,6 +73,8 @@ function windowWithSources(sources) {
   document.documentElement.style.setProperty('--handbook-page-margin-left', '94.49px');
   document.documentElement.style.setProperty('--handbook-column-width', '306px');
   document.documentElement.style.setProperty('--handbook-ornament', 'url("/handbook/ornament.svg")');
+
+  appendFrontMatter(document, front);
 
   for (const source of sources) {
     const sheet = document.createElement('section');
@@ -74,8 +104,19 @@ function windowWithSources(sources) {
   return window;
 }
 
-async function run(sources) {
-  const window = windowWithSources(sources);
+/** The sheets printed from a source page, which is not every sheet of the book. */
+const sourceSheetsOf = (window) => [
+  ...window.document.querySelectorAll(`[${SHEET_ATTRIBUTE}][data-handbook-source]`),
+];
+
+/** The footer of each source sheet, in page order. */
+const sourceFootersOf = (window) =>
+  sourceSheetsOf(window)
+    .map((sheet) => sheet.querySelector('[data-handbook-footer]'))
+    .filter((footer) => footer !== null);
+
+async function run(sources, front) {
+  const window = windowWithSources(sources, front);
   await window.eval(sheetAssignmentScript());
   return window;
 }
@@ -84,7 +125,7 @@ describe('the injected sheet assignment', () => {
   it('marks every source page as a sheet, numbered in document order', async () => {
     const window = await run([
       { slug: 'dnd/character-creation', height: 700 },
-      { slug: 'dnd/skills', height: 2400 },
+      { slug: 'dnd/magic', height: 700 },
     ]);
 
     const marked = [...window.document.querySelectorAll(`[${SHEET_ATTRIBUTE}]`)].map((element) =>
@@ -92,8 +133,86 @@ describe('the injected sheet assignment', () => {
     );
 
     // The number in the DOM is the answer to "where does this page end", and a
-    // diff can review it.
-    expect(marked).toEqual(['1', '2']);
+    // diff can review it. The two front sheets are sheets of the book too, so the
+    // first source page is page 3 rather than page 1 - which is what lets the
+    // contents quote 3 and be right.
+    expect(marked).toEqual(['1', '2', '3', '4']);
+  });
+
+  // The cover and the contents are sheets of the book: they are numbered with the
+  // rest, they count towards the page numbers in every footer, and the contents
+  // can therefore quote a page number that is true rather than one it guessed.
+  it('numbers the front matter with the rest of the book', async () => {
+    const window = await run([{ slug: 'dnd/magic', height: 700 }]);
+
+    const numbers = [...window.document.querySelectorAll(`[${SHEET_ATTRIBUTE}]`)].map((element) => ({
+      number: element.getAttribute(SHEET_ATTRIBUTE),
+      front: element.getAttribute('data-handbook-front'),
+      source: element.getAttribute('data-handbook-source'),
+    }));
+
+    expect(numbers).toEqual([
+      { number: '1', front: 'cover', source: null },
+      { number: '2', front: 'contents', source: null },
+      { number: '3', front: null, source: 'dnd/magic' },
+    ]);
+  });
+
+  // Page numbers do not exist until layout has run, so the same pass that assigns
+  // sheets fills the contents. A second render would be a second build of the
+  // site, and two builds is two chances for the two to disagree.
+  it('fills the contents with a row per source page and the page it starts on', async () => {
+    const window = await run([
+      { slug: 'dnd/character-creation', height: 700 },
+      { slug: 'dnd/skills', height: 2400, blocks: [{ tag: 'p', text: 'a', width: 306 }, { tag: 'p', text: 'b', width: 306 }] },
+    ]);
+
+    const rows = [...window.document.querySelectorAll('[data-handbook-contents-list] li')].map((row) => [
+      row.querySelector('span')?.textContent,
+      row.querySelector('[data-handbook-contents-page]')?.textContent,
+    ]);
+
+    // Skills is two sheets, so it is one row at the page it starts on, and
+    // 'Title of dnd/character-creation' is page 3 because two front sheets come
+    // before it.
+    expect(rows).toEqual([
+      ['Title of dnd/character-creation', '3'],
+      ['Title of dnd/skills', '4'],
+    ]);
+  });
+
+  it('publishes the contents rows, so the command can report what the book lists', async () => {
+    const window = await run([{ slug: 'dnd/magic', height: 700 }]);
+
+    expect(window[LAYOUT_GLOBAL].contents).toEqual([
+      { slug: 'dnd/magic', title: 'Title of dnd/magic', page: 3, parts: 1 },
+    ]);
+  });
+
+  // A cover with a page number on it is a page of the book that has nothing to
+  // point back to; every other sheet carries its chapter, its section and its
+  // number so a reader can say where they are.
+  it('gives the cover no footer, and the contents one', async () => {
+    const window = await run([{ slug: 'dnd/magic', height: 700 }]);
+
+    const footers = [...window.document.querySelectorAll(`[${SHEET_ATTRIBUTE}]`)].map(
+      (element) => element.querySelectorAll('[data-handbook-footer]').length
+    );
+
+    expect(footers).toEqual([0, 1, 1]);
+  });
+
+  // The contents is a list of the book, not a chapter of it: an entry that named
+  // itself would be a book that cannot be opened.
+  it('does not list the cover or the contents in the contents', async () => {
+    const window = await run([{ slug: 'dnd/magic', height: 700 }]);
+
+    const titles = [...window.document.querySelectorAll('[data-handbook-contents-list] li span')].map(
+      (element) => element.textContent
+    );
+
+    expect(titles).not.toContain('Cover');
+    expect(titles).not.toContain('Contents');
   });
 
   it('publishes the sheet geometry it read from the print stylesheet', async () => {
@@ -120,12 +239,12 @@ describe('the injected sheet assignment', () => {
       { slug: 'dnd/skills', height: 2400 },
     ]);
 
-    expect(window.__handbookLayout).toMatchObject({
-      sheets: [
-        { slug: 'dnd/character-creation', title: 'Title of dnd/character-creation', contentHeight: 700, pages: 1 },
-        { slug: 'dnd/skills', title: 'Title of dnd/skills', contentHeight: 2400, pages: 3 },
-      ],
-    });
+    expect(
+      window.__handbookLayout.sheets.filter((sheet) => sheet.kind === 'source')
+    ).toMatchObject([
+      { slug: 'dnd/character-creation', title: 'Title of dnd/character-creation', contentHeight: 700, pages: 1 },
+      { slug: 'dnd/skills', title: 'Title of dnd/skills', contentHeight: 2400, pages: 3 },
+    ]);
   });
 
   it('publishes under one global the command reads back', async () => {
@@ -219,16 +338,18 @@ describe('what spans both columns', () => {
 });
 
 describe('the sheet footer', () => {
-  const footerOf = (window, index = 0) =>
-    window.document.querySelectorAll('[data-handbook-footer]')[index];
+  // The cover is the outside of the book rather than a page of it, so the sheets
+  // this file is about are the ones printed from a source page.
+  const footerOf = (window, index = 0) => sourceFootersOf(window)[index];
 
-  it('gives every sheet one', async () => {
+  it('gives every sheet printed from a source page one', async () => {
     const window = await run([
       { slug: 'dnd/magic', height: 900 },
       { slug: 'dnd/skills', height: 2400 },
     ]);
 
-    expect(window.document.querySelectorAll('[data-handbook-footer]')).toHaveLength(2);
+    expect(sourceFootersOf(window)).toHaveLength(sourceSheetsOf(window).length);
+    expect(sourceFootersOf(window).length).toBe(2);
   });
 
   it('names the source page on the left', async () => {
@@ -270,14 +391,17 @@ describe('the sheet footer', () => {
       { slug: 'dnd/skills', height: 2400 },
     ]);
 
-    const numbers = [...window.document.querySelectorAll('[data-handbook-footer-page]')].map(
-      (element) => element.textContent
+    const numbers = sourceFootersOf(window).map((footer) =>
+      footer.querySelector('[data-handbook-footer-page]').textContent
     );
+    const total = window[LAYOUT_GLOBAL].sheets.length;
 
-    // The total is the sheet count, which is known the moment every source page
-    // has been counted - the thing the format needs is free once the run knows
-    // how many sheets it printed.
-    expect(numbers).toEqual(['1 of 2', '2 of 2']);
+    // The total is the sheet count of the whole book, front matter included,
+    // because the page number on a sheet of Skills has to agree with the page
+    // number the contents quotes for it - and the contents quotes a page of the
+    // book, not a page of the chapters.
+    expect(numbers).toEqual(['3 of 4', '4 of 4']);
+    expect(total).toBe(4);
   });
 
   // The footer is printed content, so its layout has to come from the stylesheet

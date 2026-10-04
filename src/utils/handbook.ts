@@ -12,6 +12,52 @@
  * browser. See ADR-0020.
  */
 
+/**
+ * The Handbook's title, as the cover sheet prints it and as the publisher page
+ * names it.
+ *
+ * One string for both, because a cover and a page that disagree about what the
+ * thing is called are two names for one book and a reader holding either of them
+ * would not know they are holding the same one.
+ */
+export const HANDBOOK_TITLE = 'D&D House Rules Handbook';
+
+/**
+ * The edition the artifact is, stated on the cover and on the publisher page.
+ *
+ * A PDF of house rules has to say what version it is before it can be trusted at
+ * a table, and a manifest hash is not that: it tells a maintainer whether the
+ * file is stale, and tells a reader nothing. Bumped by hand, because an edition
+ * is a decision somebody makes rather than a number a build derives.
+ */
+export const HANDBOOK_VERSION = '1.0';
+
+/**
+ * The day this edition was cut, in ISO form so it sorts and compares as a date
+ * rather than as prose.
+ *
+ * Both surfaces again: a reader who wants to know whether the copy on the table
+ * is the one this site is serving should not have to infer it from a file name.
+ */
+export const HANDBOOK_EDITION_DATE = '2026-10-04';
+
+/**
+ * Where the artifact is published, which is what the publisher page links to.
+ *
+ * The path the command writes, so a link on the site and a file on disk are the
+ * same path rather than two that agree today.
+ */
+export const HANDBOOK_FILE = '/handbook/handbook.pdf';
+
+/**
+ * The download as one line, for the cover and the publisher page to share.
+ *
+ * "Version 1.0, edition 2026-10-04" rather than two labelled fields, because a
+ * book states its edition on one line and a reader reads a cover rather than a
+ * form.
+ */
+export const HANDBOOK_EDITION = `Version ${HANDBOOK_VERSION}, edition ${HANDBOOK_EDITION_DATE}`;
+
 export interface HandbookSource {
   /** The docs collection id, which is also the route the page lives at. */
   slug: string;

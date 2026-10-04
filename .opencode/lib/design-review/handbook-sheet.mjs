@@ -42,6 +42,7 @@
  */
 
 import { COLUMN_TOLERANCE_PX, elementsWiderThanColumn, pageNumberLabel } from './handbook-helpers.mjs';
+import { contentsEntries } from './handbook-contents.mjs';
 import { SPLIT_NAME_TEXT_LIMIT, planSheets, splitName } from './handbook-split.mjs';
 
 /**
@@ -96,6 +97,7 @@ export function sheetAssignmentScript() {
   return `(() => {
   ${embed(pageNumberLabel)}
   ${embed(elementsWiderThanColumn)}
+  ${embed(contentsEntries)}
   ${embed(planSheets)}
   ${embed(splitName)}
   const ${COLUMN_TOLERANCE_PX_NAME} = ${COLUMN_TOLERANCE_PX};
@@ -186,14 +188,24 @@ export function sheetAssignmentScript() {
      *
      * Margins included because that is the space it takes up: a paragraph with a
      * 24px margin below it stops the next one 24px lower, and adding heights
-     * alone would fill a sheet the plan says is half empty. Read from the computed
-     * style rather than guessed, because the house-rule pages set their own.
+     * alone would fill a sheet the plan says is half empty.
+     *
+     * The client height rather than the bounding rect, and that is a measured
+     * decision rather than a preference. Chrome reports the *column's* height
+     * rather than a block's own for some blocks laid out inside a multicolumn:
+     * in this book a 56px paragraph in dnd/skills measured 1557px, which is
+     * taller than a sheet, so the run broke a sheet that had room for it and
+     * reported a boundary no author wrote and no reader could find.
+     * The client height is the box the browser laid out for the block itself
+     * and stays the block's own height in that position. The border widths are
+     * added because the client height excludes them.
      */
     const occupied = (element) => {
       const style = getComputedStyle(element);
       const margins = (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
+      const borders = (parseFloat(style.borderTopWidth) || 0) + (parseFloat(style.borderBottomWidth) || 0);
 
-      return Math.ceil(element.getBoundingClientRect().height + margins);
+      return Math.ceil(element.clientHeight + borders + margins);
     };
 
     /** What a block is called in the split report. */
@@ -354,6 +366,12 @@ export function sheetAssignmentScript() {
     /**
      * How tall a sheet painted, and therefore how many printed pages it takes.
      *
+     * The flow's own box rather than the lowest descendant inside it, for the
+     * same reason occupied reads the client height: the flow is a block outside
+     * the multicolumn it contains, so its box is the height the columns were
+     * laid out in, while a descendant's rect is not that. The footer reserve is
+     * padding on the flow and is not painted, so it comes off.
+     *
      * The painted extent rather than the box: the sheet box is a min-height box,
      * so a sheet whose content fits has a box a whole page tall whatever it holds,
      * and reading the box would report every sheet as exactly one page.
@@ -363,7 +381,14 @@ export function sheetAssignmentScript() {
       let bottom = rect.bottom;
 
       for (const descendant of section.querySelectorAll('*')) {
-        bottom = Math.max(bottom, descendant.getBoundingClientRect().bottom);
+        const box = descendant.getBoundingClientRect();
+        // The rect for where the block is, its own height for how far it reaches.
+        // Chrome reports the *column's* height rather than a block's own for some
+        // blocks laid out inside a multicolumn - measured in this book as a 56px
+        // paragraph reporting a 1557px box - and a sheet that inherited that
+        // number was reported as spanning two printed pages when it spans one,
+        // which costs the run a capture of its second page.
+        bottom = Math.max(bottom, Math.min(box.bottom, box.top + occupied(descendant)));
       }
 
       const contentHeight = Math.ceil(bottom - rect.top);
@@ -483,7 +508,16 @@ export function sheetAssignmentScript() {
       return groups.length - 1;
     };
 
-    let sheets = [...document.querySelectorAll('[data-handbook-source]')];
+    // The front matter is part of the book and is numbered with the rest of it,
+    // which is what lets the contents quote a page number rather than guess one.
+    const bookSheets = () =>
+      [...document.querySelectorAll('[data-handbook-source], [data-handbook-front]')];
+
+    /** The sheets this run may break: the source pages, and only those. */
+    const sourceSheets = () =>
+      bookSheets().filter((section) => section.hasAttribute('data-handbook-source'));
+
+    let sheets = bookSheets();
 
     // Measure, split, measure again. Every pass reads what the last one laid out,
     // so a plan that turned out to be wrong costs a pass rather than a page, and
@@ -498,7 +532,7 @@ export function sheetAssignmentScript() {
       // the author wrote: a horizontal rule means "start a new sheet" whether or not the
       // content would have fitted without it, and honouring it only on the sheets
       // that overflow would print a book where the same rule means two things.
-      const work = sheets.filter(
+      const work = sourceSheets().filter(
         (section) => measureSheet(section).pages > 1 || section.querySelector('[data-handbook-flow] hr') !== null
       );
       if (work.length === 0) break;
@@ -506,10 +540,10 @@ export function sheetAssignmentScript() {
       const added = work.reduce((total, section) => total + splitSheet(section), 0);
       if (added === 0) break;
 
-      sheets = [...document.querySelectorAll('[data-handbook-source]')];
+      sheets = bookSheets();
     }
 
-    sheets = [...document.querySelectorAll('[data-handbook-source]')];
+    sheets = bookSheets();
     sheets.forEach((section, index) => section.setAttribute('${SHEET_ATTRIBUTE}', String(index + 1)));
     markWide(sheets);
     await relayout();
@@ -518,7 +552,7 @@ export function sheetAssignmentScript() {
     // in the manifest is about. Counted here rather than during the split because
     // a source page can be split again by a later pass.
     const totalParts = new Map();
-    for (const section of sheets) {
+    for (const section of sourceSheets()) {
       const slug = section.getAttribute('data-handbook-source');
       totalParts.set(slug, (totalParts.get(slug) ?? 0) + 1);
     }
@@ -526,6 +560,7 @@ export function sheetAssignmentScript() {
 
     const published = sheets.map((section, index) => {
       const flow = section.querySelector('[data-handbook-flow]');
+      const front = section.getAttribute('data-handbook-front');
       const headings = flow === null ? [] : [...flow.querySelectorAll('h2, h3')];
       // The section a sheet *starts* in, because that is the one a reader turning
       // to this page needs: most of the eight source pages are several sections
@@ -534,15 +569,19 @@ export function sheetAssignmentScript() {
       const sectionName = (headings[0] ?? headings[headings.length - 1])?.textContent?.trim() ?? '';
       const slug = section.getAttribute('data-handbook-source');
       const title = section.getAttribute('data-handbook-title') || '';
-      const part = (partOf.get(slug) ?? 0) + 1;
-      partOf.set(slug, part);
+      const part = front === null ? (partOf.get(slug) ?? 0) + 1 : 1;
+      if (front === null) partOf.set(slug, part);
 
-      addFooter(section, {
-        title,
-        section: sectionName,
-        ornament,
-        page: pageNumberLabel(index + 1, sheets.length),
-      });
+      // No footer on the cover: it is the outside of the book rather than a page
+      // of it, and a page number on the front cover is a number nothing refers to.
+      if (front !== 'cover') {
+        addFooter(section, {
+          title,
+          section: sectionName,
+          ornament,
+          page: pageNumberLabel(index + 1, sheets.length),
+        });
+      }
 
       const measured = measureSheet(section);
       const rect = section.getBoundingClientRect();
@@ -550,11 +589,15 @@ export function sheetAssignmentScript() {
       return {
         number: index + 1,
         page: index + 1,
-        slug,
-        source: slug,
+        // What this sheet is: front matter or a sheet of a source page. The
+        // manifest records it so a cover sheet in the book is not read as a
+        // sheet printed from a source page that does not exist.
+        kind: front === null ? 'source' : 'front',
+        slug: slug ?? '',
+        source: slug ?? '',
         title,
         part,
-        parts: totalParts.get(slug),
+        parts: totalParts.get(slug) ?? 1,
         section: sectionName,
         columns: columnsOf(section),
         // Where the sheet sits in the document and how big its box turned out to
@@ -601,9 +644,33 @@ export function sheetAssignmentScript() {
       })
       .filter((split) => split !== null);
 
+    // The contents, filled by the same pass that numbered the sheets: the page
+    // numbers exist only now, so there is no earlier moment at which they could
+    // have been written, and no second render to keep them in step.
+    const contents = contentsEntries(published);
+    const contentsList = document.querySelector('[data-handbook-contents-list]');
+
+    if (contentsList !== null) {
+      contentsList.replaceChildren();
+
+      for (const row of contents) {
+        const item = document.createElement('li');
+
+        const title = document.createElement('span');
+        title.textContent = row.title;
+        const page = document.createElement('span');
+        page.setAttribute('data-handbook-contents-page', '');
+        page.textContent = String(row.page);
+
+        item.append(title, page);
+        contentsList.appendChild(item);
+      }
+    }
+
     await settle();
 
     window.${LAYOUT_GLOBAL} = {
+      contents,
       sheet,
       page,
       columnWidth,
