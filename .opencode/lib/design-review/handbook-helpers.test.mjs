@@ -7,6 +7,7 @@ import {
   MIN_PNG_BYTES,
   PAGE_NUMBER_TOTAL,
   describeSheets,
+  describeSplits,
   elementsWiderThanColumn,
   formatPdfFontGateFailure,
   pageCountBounds,
@@ -120,6 +121,35 @@ describe('parseArgs', () => {
 
   it('rejects an option with no value instead of printing nothing', () => {
     expect(() => parseArgs(['--out'])).toThrow(/--out needs a value/);
+  });
+
+  it('writes the manifest to the one committed path', () => {
+    // Beside the artwork and, once the publisher page exists, beside the artifact
+    // itself: the record of the book belongs with the book.
+    expect(parseArgs([]).manifest).toBe('public/handbook/manifest.json');
+  });
+
+  // The spike fixture is two made-up sheets, and a run that printed it would
+  // otherwise overwrite the record of the real book with a record of the fixture.
+  it('writes no manifest at all when the run says not to', () => {
+    expect(parseArgs(['--no-manifest']).manifest).toBeNull();
+  });
+
+  it('compares no captures and writes no baseline unless asked', () => {
+    // Golden PNGs are out of version control, so a run that neither compares nor
+    // updates a baseline does nothing with them.
+    const options = parseArgs([]);
+
+    expect(options.compare).toBeNull();
+    expect(options.baseline).toBeNull();
+  });
+
+  it('reads the baseline directory to compare a run against', () => {
+    expect(parseArgs(['--compare', 'tmp/other']).compare).toBe('tmp/other');
+  });
+
+  it('reads the baseline directory to record this run as', () => {
+    expect(parseArgs(['--baseline', 'tmp/other']).baseline).toBe('tmp/other');
   });
 
   it('keeps both the route and the output path overridable', () => {
@@ -296,27 +326,85 @@ describe('validatePdf', () => {
 
 describe('the run report', () => {
   const sheets = [
-    { slug: 'dnd/character-creation', title: 'Character Creation', contentHeight: 700, pages: 1 },
-    { slug: 'dnd/skills', title: 'Skills', contentHeight: 2400, pages: 3 },
+    { number: 1, source: 'dnd/character-creation', title: 'Character Creation', section: '', part: 1, parts: 1, contentHeight: 700, pages: 1 },
+    { number: 2, source: 'dnd/skills', title: 'Skills', section: 'Dash', part: 1, parts: 3, contentHeight: 940, pages: 1 },
+    { number: 3, source: 'dnd/skills', title: 'Skills', section: 'Long Rest', part: 2, parts: 3, contentHeight: 620, pages: 1 },
   ];
 
-  it('names every source page and the pages it took', () => {
+  it('names every sheet, its page number and the height it measured', () => {
     const report = describeSheets(sheets).join('\n');
 
-    expect(report).toMatch(/dnd\/character-creation.*700px.*1 page/);
-    expect(report).toMatch(/dnd\/skills.*2400px.*3 pages/);
+    expect(report).toMatch(/1\s+dnd\/character-creation.*Character Creation.*700px.*1 page/);
+    expect(report).toMatch(/3\s+dnd\/skills.*Long Rest.*620px/);
   });
 
-  it('says which source pages did not fit one sheet', () => {
-    // The tracer bullet does not split a source page, so the overflow is a fact
-    // the run has to state rather than a detail to discover in the artifact.
-    expect(describeSheets(sheets).join('\n')).toMatch(/dnd\/skills.*more than one sheet/);
+  // A sheet is not a source page: one source page is three sheets and the reader
+  // of this report has to be able to tell the two apart.
+  it('says which part of its source page a sheet is', () => {
+    const report = describeSheets(sheets).join('\n');
+
+    expect(report).toMatch(/2\s+dnd\/skills \(1 of 3\)/);
+    expect(report).toMatch(/3\s+dnd\/skills \(2 of 3\)/);
+    // A sheet that is the whole of its source page needs no part marker: the
+    // split report is where that is said, and here it would be eight lines of
+    // "(1 of 1)" a reader has to look past.
+    expect(report).toMatch(/1\s+dnd\/character-creation - Character Creation/);
   });
 
-  it('says nothing is overlong when every source page fits', () => {
-    expect(describeSheets([{ slug: 'dnd/magic', title: 'Magic', contentHeight: 900, pages: 1 }]).join('\n')).not.toMatch(
-      /more than one sheet/
-    );
+  it('says nothing is overlong when every sheet fits one page', () => {
+    expect(describeSheets(sheets).join('\n')).not.toMatch(/more than one page/);
+  });
+
+  // A sheet that still spans two pages is a page the captures cannot reach, so it
+  // is stated rather than left to be discovered in a directory listing.
+  it('names the sheet that still spans more than one page', () => {
+    const overlong = [{ ...sheets[0], pages: 2 }];
+
+    expect(describeSheets(overlong).join('\n')).toMatch(/dnd\/character-creation.*more than one page/);
+  });
+});
+
+describe('the split report', () => {
+  const splits = [
+    { source: 'dnd/skills', sheet: 2, kind: 'h2', label: 'h2 at h2 "Dash"' },
+    { source: 'dnd/skills', sheet: 5, kind: 'table', label: 'table at "Weapon Group"' },
+  ];
+
+  // The whole point of the report: a run that decides where a page ends says so,
+  // by name, or the decision could change with nothing to show for it.
+  it('names every split it made and where it fell', () => {
+    const report = describeSplits(splits).join('\n');
+
+    expect(report).toMatch(/dnd\/skills.*sheet 2.*h2 at h2 "Dash"/);
+    expect(report).toMatch(/dnd\/skills.*sheet 5.*table at "Weapon Group"/);
+  });
+
+  it('counts them, so a report of thirty is thirty lines rather than a surprise', () => {
+    expect(describeSplits(splits)[0]).toMatch(/2/);
+  });
+
+  // The destination: an authored horizontal rule at the point the generator would
+  // have broken makes the split disappear, and this is what says so while it lasts.
+  it('says what a split becomes when the author breaks there instead', () => {
+    expect(describeSplits(splits).join('\n')).toMatch(/horizontal rule|hr/);
+  });
+
+  // Not a split, and it is not hidden either: nothing was broken, so it is
+  // reported as the thing it is - the one thing in the book a sheet cannot hold.
+  it('says a block too tall for a sheet spans pages and was not cut', () => {
+    const report = describeSplits([
+      { source: 'dnd/skills', sheet: 4, kind: 'p', label: 'p at "long"', oversized: true, height: 1453 },
+    ]).join('\n');
+
+    expect(report).toMatch(/1453px/);
+    expect(report).toMatch(/not cut|spans/i);
+  });
+
+  it('says there is nothing to report when every break was authored', () => {
+    const report = describeSplits([]).join('\n');
+
+    expect(report).toMatch(/no automatic splits|0/);
+    expect(report).not.toMatch(/\d+\/\d+/);
   });
 });
 

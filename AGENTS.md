@@ -333,11 +333,84 @@ manifest.
   `%%EOF` trailer, the A4 page box or the page-count bounds do not hold, and it
   writes to a `.part` sibling and renames so a crash cannot leave half a file where
   a reader looks for one.
-- Every source page is named in the output with its measured height and the pages
-  it takes. Source pages that do not fit one sheet are called out: this tracer
-  bullet does not split them, so they span the pages they need. A sheet that spans
-  pages is captured at its **first** page only - the page boxes of pages two and
-  three exist only in the print fragmentainer - and the run says so by name.
+- Every sheet is named in the output with its page number, the source page it is
+  part of, the section it starts in and the height it measured. Content that does
+  not fit is split rather than clipped, and every break the generator invented is
+  printed by name and recorded in the manifest; see below.
+
+### The split report and the manifest
+
+Two mechanisms, one for layout and one for content.
+
+**Every break is named.** A source page that does not fit a sheet is broken at the
+nearest block boundary and its pieces become sheets of their own. The break is
+never inside a block and never a clip: a block with no boundary inside it goes to a
+sheet whole and prints down both columns, and one longer than the whole sheet spans
+its pages with nothing cut. The run prints every boundary it chose, by name:
+
+```
+  7/38  dnd/skills  sheet 17  begins at p at "Rare Finds: If the final check..."
+```
+
+An authored horizontal rule at that point removes the split, which is how the book
+converges on breaks a person chose. The assignment honours a rule wherever it finds
+one - a sheet carrying an `hr` is split even when its content would have fitted
+without it - so the same rule means the same thing in every sheet.
+
+The plan is a plan. It applies, re-measures every sheet, and splits whatever is
+still too tall until a pass finds nothing left to break. That is why
+`column-fill` is `balance` rather than `auto`: with every sheet one page long,
+`auto` fills the first column to the bottom of the page and leaves the second empty,
+which measured 67 sheets where the content accounts for 48.
+
+**The manifest is the gate.** `public/handbook/manifest.json` is committed and is a
+few kilobytes:
+
+| Field | What it is |
+|-------|------------|
+| `sourceHash` | one sha256 over the eight source files' own bytes, in slug order |
+| `sources` | each source page's slug, path and content hash |
+| `sheetCount`, `sheets` | each sheet's page number, source page, part of parts and **text hash** |
+| `splits` | every boundary the generator chose, by sheet and by block |
+
+Two tests read it back off disk, and both are gates rather than reports:
+
+- The source hash is recomputed from `src/content/docs/dnd/` and compared. Edit a
+  house rule without regenerating and the suite fails.
+- **The suite fails while any split remains recorded.** That is deliberate and it is
+  red today: the book's content still needs automatic breaks, and the gate is how
+  that gets fixed rather than forgotten. Clearing it means authoring `hr`s at the
+  named points, which is editorial work and not a code change. Do not delete the
+  assertion to get a green suite.
+
+The hash is content-based and never a timestamp, so it survives a clone, a rebase
+and a fresh checkout on another machine; the validator refuses a `generatedAt`, a
+`timestamp` or a `date` by name, because a record that changes when nothing does
+cannot be a staleness gate. The file is written to a `.part` sibling, renamed, and
+read back: a truncated manifest is a failure, not a record of a book with no sheets.
+
+Run it against something that is not the book, and it records nothing:
+
+```
+make handbook ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tmp/spike.pdf --no-manifest'
+```
+
+### Golden captures are not committed
+
+At the raster scale of 2 a sheet is several hundred kilobytes and the book is 48 of
+them, so the PNGs live under `tmp/` and the comparison is a local mode with a
+baseline the repository does not track:
+
+```
+make handbook ARGS='--baseline tmp/handbook/baseline'   # record this run as the baseline
+make handbook ARGS='--compare tmp/handbook/baseline'    # which sheets differ from it
+```
+
+It reports which sheets changed, which are new and which are gone. It is
+**corroboration, not ground truth**, and the command says so in its own output: two
+runs of the same content on two machines can differ in one pixel of anti-aliasing,
+and two runs on one machine can match while the browser changed underneath both.
+Neither mode can fail a run, and the manifest is the gate.
 
 ### The Handbook's generated artwork
 
@@ -375,7 +448,7 @@ The two-sheet fixture at `/handbook/spike-fixture/` is what ADR-0020's spike ran
 against and it stays as the regression:
 
 ```
-make handbook ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tmp/spike.pdf'
+make handbook ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tmp/spike.pdf --no-manifest'
 ```
 
 Read [ADR-0020](docs/adr/0020-sheet-box-renderer.md) before changing any of this.
