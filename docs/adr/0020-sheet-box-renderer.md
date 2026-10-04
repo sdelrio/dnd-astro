@@ -206,6 +206,32 @@ accepted ADRs intact:
   than a second opinion. The later per-sheet PNGs are a corollary of this and
   nothing else.
 
+### Amended once the sheets were one page each
+
+Splitting a source page into sheets that are one page each changed one clause of
+this decision, and the clause is load-bearing, so it is amended here rather than in
+a comment on the stylesheet.
+
+The print stylesheet declared `column-fill: auto`, and the reason it was there is
+the reason it is now wrong. `auto` fills the first column to the bottom of the page
+before starting the second, which is what a reader turning to a half-full page
+expects of a source page that spans three of them. Every sheet being one page
+removes the case it was chosen for and inverts it: a sheet's content fits inside its
+own page, so `auto` fills column one, never reaches the bottom, and leaves column
+two empty.
+
+Measured, on this book's content: 48 sheets with `balance` against 67 with `auto`,
+with the same content, the same sheet box and the same 643px measure. A sheet with
+`auto` carried a 306px column of text down one side of a 643px sheet and half a page
+of blank paper down the other. `column-fill: balance` is the initial value, so the
+stylesheet states it rather than leaving it to chance, and the split loop does not
+take it on trust: it measures every sheet after every pass and splits whatever is
+still too tall.
+
+Nothing else here moves. The sheet box is still a `min-height` box with a break
+after it, the page count is still a floor and a ceiling for a sheet that could not
+be split at all, and the screen cascade still paginates.
+
 ### What the spike result settled
 
 Recorded above: the route is emitted as screen media, not print media, and the
@@ -248,8 +274,17 @@ count is checked as bounds, not as an exact total.
   features and this decision uses them in a way none of them was designed for.
 - Bad, because a fixed sheet box is a rigid layout primitive. A wide table has to
   span both columns or it is clipped, and a source page that does not fit is split
-  at the nearest block boundary. Neither is free, and both are answered in later
-  tickets rather than here.
+  at the nearest block boundary. The split is answered (#422) and it works, but the
+  planner that places the blocks is deliberately a *plan*: it is re-measured and
+  re-split until nothing is left that does not fit, and it is conservative rather
+  than optimal, so some sheets carry a column of white at the foot. Filling a sheet
+  completely is the author's to decide, with a horizontal rule at the point they
+  want the break.
+- Bad, because an automatic split is a page boundary nobody chose. #422 answers that
+  with the split report and the manifest rather than by removing the splits: every
+  break is named, recorded, and asserted to go away, so the book converges on breaks
+  a person chose over time and nobody is blocked from producing the artifact on day
+  one.
 - Neutral, because ADR-0012's client gains a sibling command rather than a mode.
   The stack is shared; the geometry model is not, and conflating them would have
   damaged the capture path that already works.

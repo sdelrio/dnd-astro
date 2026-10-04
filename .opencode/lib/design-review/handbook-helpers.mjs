@@ -1,5 +1,7 @@
 import { dirname, join } from 'node:path';
 
+import { MANIFEST_PATH } from './handbook-manifest.mjs';
+
 /**
  * Pure helpers for the Handbook command.
  *
@@ -22,6 +24,18 @@ export const DEFAULTS = {
   fontUrl: '/fonts/Cinzel.woff2',
   rasterScale: 2,
 };
+
+/**
+ * Where the committed manifest goes, re-exported so the command's defaults and
+ * its help text name one value rather than two.
+ *
+ * The manifest is a few kilobytes and is committed, because it is the gate that
+ * makes a stale artifact fail. A capture baseline is the opposite: hundreds of
+ * kilobytes a sheet across dozens of sheets, held under `tmp/` and out of version
+ * control, because a picture a reviewer cannot read in a diff is not review
+ * evidence. See `handbook-captures.mjs`.
+ */
+export { MANIFEST_PATH };
 
 /**
  * Where the per-sheet captures go when the run does not say.
@@ -102,6 +116,12 @@ Options:
                            (default ${defaultPngDir(DEFAULTS.out)}, or a sheets/ beside --out)
   --raster-scale <n>       device pixels per CSS pixel for the captures
                            (default ${DEFAULTS.rasterScale}, which writes 1588 x 2246 per sheet)
+  --manifest <path>        the committed record of the run  (default ${MANIFEST_PATH})
+  --no-manifest            write no record, for a run that is not the book
+                           (the spike fixture, say)
+  --compare <dir>          compare this run's captures against a baseline at <dir>
+  --baseline <dir>         record this run's captures as the baseline at <dir>
+                           (both are off by default, and neither directory is in version control)
   --font <family>          display face to gate on (default ${DEFAULTS.font})
   --font-url <url>         where that face comes from, named on failure
   --start-dev-server       opt in to running \`astro dev --background\` and stopping it
@@ -115,6 +135,9 @@ export function parseArgs(argv) {
   const options = {
     ...DEFAULTS,
     pngDir: defaultPngDir(DEFAULTS.out),
+    manifest: MANIFEST_PATH,
+    baseline: null,
+    compare: null,
     startDevServer: false,
     simulateFontCdnOutage: false,
     help: false,
@@ -137,6 +160,10 @@ export function parseArgs(argv) {
         break;
       case '--png-dir': options.pngDir = next(); break;
       case '--raster-scale': options.rasterScale = parseRasterScale(next()); break;
+      case '--manifest': options.manifest = next(); break;
+      case '--no-manifest': options.manifest = null; break;
+      case '--compare': options.compare = next(); break;
+      case '--baseline': options.baseline = next(); break;
       case '--font': options.font = next(); break;
       case '--font-url': options.fontUrl = next(); break;
       case '--start-dev-server': options.startDevServer = true; break;
@@ -275,20 +302,65 @@ function round(value) {
 }
 
 /**
- * The run report: every source page by name, its measured height, and the pages
- * it took.
+ * The run report: every sheet by name, the height it measured and the page number
+ * it prints.
  *
- * The tracer bullet does not split a source page that does not fit, so the
- * overflow is a fact the run states rather than a detail to find in the
- * artifact. Step 4 replaces the arithmetic with splits that are named.
+ * A sheet is not a source page. One source page of this book is several sheets,
+ * so the report names the part as well as the page: "dnd/skills (3 of 9)" is a
+ * thing a reader can find, and "dnd/skills" nine times over is not.
  */
 export function describeSheets(sheets) {
-  const lines = sheets.map(
-    (sheet) =>
-      `  ${sheet.slug} - ${sheet.title} - ${sheet.contentHeight}px - ${sheet.pages} ` +
-      `${sheet.pages === 1 ? 'page' : 'pages'}` +
-      (sheet.pages > 1 ? ' (more than one sheet)' : '')
-  );
+  return sheets.map((sheet) => {
+    const parts = sheet.parts > 1 ? ` (${sheet.part} of ${sheet.parts})` : '';
+
+    return [
+      `  ${sheet.number}`,
+      `${sheet.source}${parts}`,
+      `- ${sheet.title}`,
+      sheet.section ? `- ${sheet.section}` : '',
+      `- ${sheet.contentHeight}px`,
+      `- ${sheet.pages} ${sheet.pages === 1 ? 'page' : 'pages'}`,
+      sheet.pages > 1 ? '(more than one page)' : '',
+    ]
+      .filter((part) => part !== '')
+      .join(' ');
+  });
+}
+
+/**
+ * The split report: every place the generator decided where a source page ends.
+ *
+ * This is the report the whole ticket is for. A generator that quietly decides
+ * where a page ends is a generator that can quietly change which page a rule
+ * appears on, and nothing would say so - so every break is printed here by name,
+ * recorded in the manifest beside it, and replaced by an authored horizontal rule
+ * as the content converges on breaks a person chose.
+ *
+ * Two kinds of line, and the difference matters: a **split** is a boundary this
+ * run invented, and an **oversized block** is content that was not broken at all
+ * because there was no block boundary inside it to break at. The second is not a
+ * split and is not hidden as one; it is a paragraph that will span two pages until
+ * the author gives it somewhere else to break.
+ */
+export function describeSplits(splits) {
+  if (splits.length === 0) {
+    return ['  no automatic splits: every break in the book is one the author wrote.'];
+  }
+
+  const lines = [
+    `  ${splits.length} automatic split${splits.length === 1 ? '' : 's'}, none of them authored. Each one is`,
+    '  a page boundary this run chose; an authored horizontal rule at that point replaces it.',
+  ];
+
+  splits.forEach((split, index) => {
+    const position = `${split.source}  sheet ${split.sheet}`;
+    lines.push(
+      split.oversized
+        ? `  ${index + 1}/${splits.length}  ${position}  ${split.label} is ${split.height}px and no sheet ` +
+            'holds it, so it spans its pages. It was not cut: there is no block boundary inside it to cut at.'
+        : `  ${index + 1}/${splits.length}  ${position}  begins at ${split.label}`
+    );
+  });
 
   return lines;
 }

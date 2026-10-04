@@ -36,7 +36,7 @@
  * pnpm-workspace.yaml`, which must come back empty (ADR-0007, ADR-0011).
  */
 
-import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -46,6 +46,7 @@ import {
   FONT_CDN_PATTERNS,
   HELP,
   describeSheets,
+  describeSplits,
   formatPdfFontGateFailure,
   pageCountBounds,
   parseArgs,
@@ -54,6 +55,8 @@ import {
   validatePdf,
   validatePng,
 } from './handbook-helpers.mjs';
+import { compareCaptures, describeComparison } from './handbook-captures.mjs';
+import { buildManifest, manifestText, sourceEntries, validateManifest } from './handbook-manifest.mjs';
 import { LAYOUT_GLOBAL, sheetAssignmentScript } from './handbook-sheet.mjs';
 import {
   REPO_ROOT,
@@ -196,6 +199,7 @@ export async function run(argv) {
           formatPdfFontGateFailure({ family: options.font, url: options.fontUrl, detail: gate.detail })
         );
         clearStaleArtifact(outPath, label);
+        clearStaleManifest(options);
         log.error(`Nothing was written to ${options.out}.`);
         return 1;
       }
@@ -217,17 +221,27 @@ export async function run(argv) {
         );
       }
 
+      const sources = new Set(layout.sheets.map((sheet) => sheet.source)).size;
+
       log.info(
-        `Source pages: ${layout.sheets.length}, sheets: ${layout.sheets.length}, ` +
+        `Source pages: ${sources}, sheets: ${layout.sheets.length}, ` +
           `pages: ${pageBounds.min} to ${pageBounds.max}`
       );
       for (const line of describeSheets(layout.sheets)) log.info(line);
 
-      const overlong = layout.sheets.filter((sheet) => sheet.pages > 1);
-      if (overlong.length > 0) {
+      // The split report, in full and by name. A boundary this run chose and did
+      // not say so is a boundary that can change with nothing to show for it, so
+      // every one of them is printed here and recorded in the manifest beside it.
+      const splitLines = describeSplits(layout.splits);
+      if (layout.splits.length > 0) log.warn(`${layout.splits.length} automatic splits:`);
+      for (const line of splitLines) log.info(line);
+
+      const spanning = layout.sheets.filter((sheet) => sheet.pages > 1);
+      if (spanning.length > 0) {
         log.warn(
-          `${overlong.length} of ${layout.sheets.length} source pages do not fit one sheet and are not` +
-            ' split yet, so their overflow lands on the pages after it.'
+          `${spanning.length} of ${layout.sheets.length} sheets still span more than one printed page: ` +
+            `${spanning.map((sheet) => `sheet ${sheet.number}`).join(', ')}. Nothing was clipped, but a ` +
+            'sheet that spans pages has no capture of its later pages.'
         );
       }
 
@@ -248,6 +262,7 @@ export async function run(argv) {
         log.error(`${label} was not written because it did not read back as the document it should be:`);
         for (const problem of verdict.problems) log.error(`  ${problem}`);
         clearStaleArtifact(outPath, label);
+        clearStaleManifest(options);
         return 1;
       }
 
@@ -258,6 +273,7 @@ export async function run(argv) {
         for (const problem of captures.problems) log.error(`  ${problem}`);
         for (const name of captures.expected) clearStaleArtifact(join(captures.dir, name), name);
         clearStaleArtifact(outPath, label);
+        clearStaleManifest(options);
         return 1;
       }
 
@@ -281,9 +297,25 @@ export async function run(argv) {
         log.error(`${label} was written but does not read back as the document it should be:`);
         for (const problem of readBack.problems) log.error(`  ${problem}`);
         rmSync(outPath, { force: true });
+        clearStaleManifest(options);
         log.error(`Removed ${label}; nothing was left behind.`);
         return 1;
       }
+
+      // Written last, because the manifest is a record of the artifact rather than
+      // a step towards it: a run whose PDF did not land has no book to record, and
+      // a record of a book that does not exist is worse than no record.
+      const manifest = writeManifest({ layout, options });
+
+      if (!manifest.ok) {
+        log.error(`${options.manifest} was not written because it did not read back as the record it is:`);
+        for (const problem of manifest.problems) log.error(`  ${problem}`);
+        clearStaleArtifact(manifestPath(options), options.manifest);
+        rmSync(outPath, { force: true });
+        return 1;
+      }
+
+      reportCaptures({ captures, options });
 
       log.info('');
       log.info(
@@ -291,6 +323,11 @@ export async function run(argv) {
           `${pageBounds.max}), A4, ${readBack.bytes} bytes, ${layout.sheets.length} sheets, ` +
           'selectable text with embedded fonts'
       );
+      if (manifest.skipped) {
+        log.info('  --   no manifest: this run printed something other than the book, so it recorded nothing');
+      } else {
+        log.info(`  ok   ${options.manifest} - ${manifest.bytes} bytes, ${layout.sheets.length} sheets, ${layout.splits.length} splits`);
+      }
 
       return 0;
     } finally {
@@ -300,6 +337,103 @@ export async function run(argv) {
     client?.close();
     await launched.cleanup();
     if (typeof server === 'function') server();
+  }
+}
+
+/**
+ * Where the committed manifest for this run goes.
+ *
+ * `null` when the run was told to record nothing, which is what a spike-fixture
+ * run wants: it is two made-up sheets, and a record of them would be a record of
+ * the book that says the book is two pages long.
+ */
+function manifestPath(options) {
+  return options.manifest === null ? null : resolve(REPO_ROOT, options.manifest);
+}
+
+/**
+ * Remove a manifest an earlier run left at the path this one is about to write.
+ *
+ * The same reasoning as the PDF: a refusal that leaves the previous run's record
+ * in place is a record of a book nobody has, and the next thing a reader does with
+ * it is believe it.
+ */
+function clearStaleManifest(options) {
+  const target = manifestPath(options);
+  if (target === null) return false;
+
+  return clearStaleArtifact(target, options.manifest);
+}
+
+/**
+ * Write the manifest, and read it back before believing it.
+ *
+ * Staged and renamed like the PDF, so a crash mid-write cannot leave half a
+ * record where the gate looks for one - and validated twice, because the thing a
+ * test reads is the file on disk rather than the string this process assembled.
+ * A record that does not say what it is, or whose combined hash disagrees with
+ * the sources beside it, is a failure rather than a file.
+ */
+function writeManifest({ layout, options }) {
+  const target = manifestPath(options);
+  if (target === null) return { ok: true, skipped: true, problems: [], bytes: 0 };
+
+  const manifest = buildManifest({
+    sources: sourceEntries(REPO_ROOT),
+    sheets: layout.sheets,
+    splits: layout.splits,
+  });
+  const text = manifestText(manifest);
+
+  const verdict = validateManifest({ label: options.manifest, text });
+  if (!verdict.ok) return { ok: false, skipped: false, problems: verdict.problems, bytes: 0 };
+
+  mkdirSync(dirname(target), { recursive: true });
+  const staging = `${target}.part`;
+  writeFileSync(staging, text);
+  renameSync(staging, target);
+
+  const readBack = validateManifest({ label: options.manifest, text: readFileSync(target, 'utf8') });
+
+  return { ok: readBack.ok, skipped: false, problems: readBack.problems, bytes: Buffer.byteLength(text, 'utf8') };
+}
+
+/**
+ * The optional local image comparison.
+ *
+ * Two modes and both are off by default, because the captures are hundreds of
+ * kilobytes a sheet and are not in version control: `--baseline` records this
+ * run's, `--compare` reports which sheets differ from a recorded set. Neither one
+ * can fail the run. A changed sheet is a reason to look at that page; the gate is
+ * the manifest, and a gate that fires on a font hinting change teaches people to
+ * ignore it.
+ */
+function reportCaptures({ captures, options }) {
+  if (options.baseline !== null) {
+    const dir = resolve(REPO_ROOT, options.baseline);
+    mkdirSync(dir, { recursive: true });
+
+    for (const name of readdirSync(dir)) {
+      if (/^sheet-\d+\.png$/.test(name)) rmSync(join(dir, name), { force: true });
+    }
+    for (const name of captures.written) copyFileSync(join(captures.dir, name), join(dir, name));
+
+    log.info(`Baseline: ${captures.written.length} captures recorded at ${options.baseline} (outside version control)`);
+  }
+
+  if (options.compare !== null) {
+    const comparison = compareCaptures({
+      runDir: captures.dir,
+      baselineDir: resolve(REPO_ROOT, options.compare),
+      // The path as the run was asked for it, which is what the output quotes.
+      label: options.compare,
+    });
+
+    // A baseline nobody has made is a mistake worth a warning; a difference is a
+    // fact worth a line. Neither fails the run, which is the whole point of it.
+    const report = describeComparison(comparison);
+    if (comparison.hasBaseline) log.info(report);
+    else log.warn(report);
   }
 }
 
@@ -501,13 +635,18 @@ async function captureSheets({ client, sessionId, layout, options }) {
     );
   }
 
+  // Every sheet is one page unless a block in it was too tall for any sheet to
+  // hold, and the split report above names those by name. What is left here is the
+  // consequence: the top margin of a second page exists only in the page box, so a
+  // sheet that spans two pages has a capture of its first page and none of the
+  // other. Said here rather than left to be found by counting files.
   const spanning = layout.sheets.filter((sheet) => sheet.pages > 1);
   if (spanning.length > 0) {
     log.warn(
       `${spanning.length} of ${layout.sheets.length} sheets span more than one printed page and are ` +
-        'captured at their first page only: the top margin of a second page exists only in the page box, ' +
-        'and there is nowhere on screen to capture it from. Splitting source pages into sheets that are ' +
-        'one page each is what closes that gap.'
+        `captured at their first page only: ${spanning.map((sheet) => `sheet ${sheet.number}`).join(', ')}. ` +
+        'The blocks that no sheet could hold are named in the split report above; shortening or breaking ' +
+        'them is what closes that gap.'
     );
   }
 
