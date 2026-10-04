@@ -50,6 +50,79 @@ export function splitName({ tag, heading, text }) {
 }
 
 /**
+ * Whether a block is a reference block: a table, an aside or a list.
+ *
+ * The planner welds a heading through its lead-in to the reference block the
+ * heading promised, and this is what "reference block" means. It is read from
+ * the element rather than guessed from a split label, because Starlight draws an
+ * aside as `div.starlight-aside` rather than as an `aside`, and a tag alone would
+ * miss it. Pure and embeddable for the same reason as everything else here: the
+ * classification a run makes and a test asserts is one implementation.
+ */
+export function isReferenceBlock({ tag, className }) {
+  const name = String(tag ?? '').toLowerCase();
+  if (name === 'table' || name === 'aside' || name === 'ul' || name === 'ol') return true;
+
+  return String(className ?? '')
+    .split(/\s+/)
+    .includes('starlight-aside');
+}
+
+/**
+ * Mark each block that must travel with the one after it.
+ *
+ * A heading is welded forward to the reference block it introduces, not just to
+ * the block immediately after it. `dnd/skills` shapes every craft section as a
+ * heading, a one-line lead-in ("Utilize: ...") and then a table, so a one-block
+ * weld let the table start a sheet while the heading and its lead-in closed the
+ * previous one: the reader turns the page to find the table the heading promised.
+ *
+ * The run starts at a heading, carries every following block, and ends *with*
+ * the first reference block (a table, an aside or a list), which is the last
+ * member of the unit and so carries `keepWithNext: false`. It stops before the
+ * next heading, so one section's table is never welded to the previous section's
+ * heading. A heading whose next block is already a reference block is unchanged:
+ * the heading is welded to it and the reference block ends the unit.
+ *
+ * When no reference block is reachable before the next heading the run is the
+ * heading and the block immediately after it, which is the one-block weld the
+ * planner has always had. That keeps a heading with a plain lead-in from
+ * swallowing an unbounded run of prose and, with it, the whole sheet.
+ *
+ * Pure and embeddable: it is a function of its argument alone, so the browser's
+ * assignment and a test run the same weld rather than two copies that agree
+ * today. `blocks` are `{ heading, reference, ...flags }`; the returned blocks are
+ * copies carrying a `keepWithNext` boolean, which is what `planSheets` reads.
+ */
+export function weldRuns(blocks) {
+  const welded = blocks.map((block) => ({ ...block, keepWithNext: false }));
+
+  for (let start = 0; start < welded.length; start += 1) {
+    if (welded[start].heading !== true) continue;
+
+    let reference = -1;
+    for (let index = start + 1; index < welded.length; index += 1) {
+      if (welded[index].heading === true) break;
+      if (welded[index].reference === true) {
+        reference = index;
+        break;
+      }
+    }
+
+    if (reference === -1) {
+      welded[start].keepWithNext = true;
+      continue;
+    }
+
+    for (let index = start; index < reference; index += 1) {
+      welded[index].keepWithNext = true;
+    }
+  }
+
+  return welded;
+}
+
+/**
  * Which blocks go on which sheet, and every break that decision made.
  *
  * A sheet is `columns` columns of `blockCapacity` each, filled top to bottom and
@@ -66,12 +139,14 @@ export function splitName({ tag, heading, text }) {
  *     the column the band happens to fall in: a table that spans after the first
  *     column is already 800px deep begins 800px down whether the next narrow
  *     block would have gone in column one or column two.
- *   - **A heading travels with the block it introduces.** A block carrying
- *     `keepWithNext` (a heading wrapper, measured by the assignment) and the
- *     block after it are packed as one unit, so a heading cannot be stranded at
- *     the foot of a column - or at the foot of a sheet - while the thing it
- *     introduces starts the next one. The unit is reported as a single split,
- *     named for the heading, when it has to move.
+ *   - **A heading travels with the reference block it introduces.** A block
+ *     carrying `keepWithNext` and the block after it are packed as one unit, so a
+ *     heading cannot be stranded at the foot of a column - or at the foot of a
+ *     sheet - while the thing it introduces starts the next one. `weldRuns` sets
+ *     those marks: a heading is welded through its lead-in to the first reference
+ *     block (a table, an aside or a list), so a heading, its "Utilize: ..." line
+ *     and the table they promise are one unit. The unit is reported as a single
+ *     split, named for the heading, when it has to move.
  *   - **A block taller than a column gets a sheet of its own, and is reported if
  *     it is taller than the sheet.** It is never clipped and never split. A
  *     paragraph too long for one column prints down both of them, which is what
@@ -87,7 +162,9 @@ export function splitName({ tag, heading, text }) {
  *
  * `blocks` are measured: `{ height, columns, name, kind, keepWithNext }`, where
  * `columns` is how many of the sheet's columns the block spans and `keepWithNext`
- * marks a block that must not be separated from the one that follows it. A
+ * marks a block that must not be separated from the one that follows it. The
+ * marks are read from beyond `keepWithNext` rather than made here, because the
+ * run a heading welds is a property of the document: `weldRuns` computes them. A
  * horizontal rule the author wrote is an ordinary block here: the generator owns
  * every break, and every one it chooses is reported. See ADR-0024.
  */

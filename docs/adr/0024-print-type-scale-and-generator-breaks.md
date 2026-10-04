@@ -53,8 +53,9 @@ outright rather than left as stray gold dividers in the book.
 **The print routes set a 13px root, restate the three pixel heading steps in rem
 against it, keep the cover and contents titles in pixels, print asides flat, drop
 the two interactive tools, keep every block - paragraphs, lists, headings, asides
-and tables - whole inside its column, weld a heading to the block it introduces so
-a boundary cannot fall between them, fill the first column before the second,
+and tables - whole inside its column, weld a heading through its lead-in to the
+reference block it introduces so a boundary cannot fall between them, fill the
+first column before the second,
 charge a spanning band below the taller column it follows, set all four insets to
 15mm, and treat a horizontal rule as a gold divider rather than a sheet break. The
 generator chooses every page boundary, reports each one by name, and records them
@@ -142,6 +143,32 @@ heading if it has to move. The unit is transitive, so an `h2` above an `h3` abov
 the first paragraph is one thing to place, and it is never split between two
 columns or two sheets. On `dnd/injuries` the heading and its table now share the
 second column of sheet 7.
+
+### The weld runs through the lead-in to the reference block
+
+The weld above stopped one block short of its own purpose. `dnd/skills` shapes
+every craft section as a heading, a one-line lead-in ("Utilize: ...") and then a
+table, so welding the heading to the block immediately after it left the table a
+block of its own: it could start a sheet while the heading and the lead-in that
+promised it closed the previous one, and the reader turned the page to find the
+table the heading promised.
+
+The assignment now marks each block's own kind - whether it is a heading, whether
+it is a reference block (a table, an aside or a list, and Starlight's
+`div.starlight-aside` counts) - and `weldRuns` computes the marks `planSheets`
+reads: a run starts at a heading, carries every following block, and ends with the
+first reference block, which is the last member of the unit. The run stops before
+the next heading, so one section's table is never welded to the previous section's
+heading, and a heading whose next block is already a reference block is unchanged.
+When no reference block is reachable before the next heading the run is the
+heading and the block immediately after it, which is the one-block weld this ADR
+originally described.
+
+The manifest moved with it: the `dnd/skills` craft sheets now begin at `div at h2
+"Brewer's Supplies (Intelligence)"` and its siblings rather than at `table at
+"Craft Materials Cost ..."`, so a sheet starts with the heading that introduces
+its table rather than with the table alone. The book is still 27 sheets and 17
+splits, under the bound of 30.
 
 ### A spanning band starts below the taller column
 
@@ -250,9 +277,10 @@ with `dnd/injuries` now two sheets and `dnd/master-armor-table` two.
   planner already used, so a paragraph prints in one column rather than straddling
   the gutter, a whole list moves with the heading it belongs to, and an aside or a
   table is never cut in half down the gutter.
-- Good, because a heading is welded to the block it introduces in the planner, not
-  only hinted at with `break-after: avoid`, so a boundary the planner chooses can
-  no longer strand a heading on the sheet before its table.
+- Good, because a heading is welded through its lead-in to the reference block it
+  introduces in the planner, not only hinted at with `break-after: avoid`, so a
+  boundary the planner chooses can no longer strand a heading - or the lead-in
+  line under it - on the sheet before its table.
 - Good, because a spanning band is charged below the taller of the two columns, and
   a heading that introduces a full-width table is kept in column one, so the
   `dnd/master-armor-table` headings read down one side instead of one of them

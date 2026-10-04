@@ -311,6 +311,60 @@ describe('a heading and the block it introduces', () => {
   });
 });
 
+describe('a heading, its lead-in and the table they introduce', () => {
+  // `dnd/skills` shapes every craft section as a heading, a one-line lead-in
+  // ("Utilize: ...") and then a table. The table is a block of its own, so under
+  // the old one-block weld it could start a sheet while the heading and the
+  // lead-in that promised it closed the previous one.
+  it('never lets the table start a sheet without the heading and its lead-in', async () => {
+    const window = await run([
+      {
+        slug: 'dnd/skills',
+        blocks: [
+          { tag: 'p', h: 500, text: 'before' },
+          { tag: 'h2', h: 200, text: "Brewer's Supplies" },
+          { tag: 'p', h: 200, text: 'Utilize: Detect poisoned drink' },
+          { tag: 'table', h: 400, text: 'craft' },
+        ],
+      },
+    ]);
+
+    expect(sheetTexts(window).map((text) => text.replace(/\s+/g, ''))).toEqual([
+      'before',
+      "Brewer'sSuppliesUtilize:Detectpoisoneddrinkcraft",
+    ]);
+    // One split, named for the heading the run starts with, rather than one for
+    // the table that used to begin the second sheet.
+    expect(layoutOf(window).splits).toEqual([
+      { source: 'dnd/skills', sheet: 2, kind: 'h2', label: `h2 at "Brewer's Supplies"` },
+    ]);
+  });
+
+  // A list and an aside are reference blocks too, so a heading that introduces a
+  // lead-in and a list is welded the same way.
+  it('welds a heading and its lead-in to a list', async () => {
+    const window = await run([
+      {
+        slug: 'dnd/skills',
+        blocks: [
+          { tag: 'p', h: 500, text: 'before' },
+          { tag: 'h2', h: 200, text: 'Steps' },
+          { tag: 'p', h: 200, text: 'Do these' },
+          { tag: 'ul', h: 400, text: 'firstsecond' },
+        ],
+      },
+    ]);
+
+    expect(sheetTexts(window).map((text) => text.replace(/\s+/g, ''))).toEqual([
+      'before',
+      'StepsDothesefirstsecond',
+    ]);
+    expect(layoutOf(window).splits).toEqual([
+      { source: 'dnd/skills', sheet: 2, kind: 'h2', label: 'h2 at "Steps"' },
+    ]);
+  });
+});
+
 describe('a block too tall for any sheet', () => {
   // A paragraph with no block boundary inside it. There is nowhere to break it
   // without cutting a sentence in half, so it spans its pages and is reported.

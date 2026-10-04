@@ -76,7 +76,7 @@
       "part": 1,
       "parts": 2,
       "section": "Standard Array",
-      "textHash": "9df0125e766a5bceeda4d6d2b40d67842387d905fa3f3e54dd0ef981d5d890ee"
+      "textHash": "98d878a522c8d7b4b771def4acd3db2dae8b9fe8dc09c05732c5e92bcaef1db9"
     },
     {
       "number": 4,
@@ -87,7 +87,7 @@
       "part": 2,
       "parts": 2,
       "section": "",
-      "textHash": "8f70f93f932e3a0388036eec44a2388b370e8997e1a992dc34ec8dc17a6e3b16"
+      "textHash": "08d4ae1b1a9cf8218b65397782f3620e99dcd32609a6591ff98c61099f55a6f9"
     },
     {
       "number": 5,
@@ -153,7 +153,7 @@
       "part": 1,
       "parts": 2,
       "section": "Light Armor",
-      "textHash": "eea81e78b8f7653acabc5ff5c1ea8db6bc950ed2a8f30c800868ca03f2e462bd"
+      "textHash": "49f673ea22512ce7b0ced1ac64fccb92d0a5cc246cf86f3a4846543a3b3beef1"
     },
     {
       "number": 11,
@@ -163,8 +163,8 @@
       "title": "Master Armor Table",
       "part": 2,
       "parts": 2,
-      "section": "Footnotes",
-      "textHash": "fbb08d88a99d14cbfb1aecb67e70f337f405640cba38cf930d1857fe985c2b6a"
+      "section": "Armor Sizes",
+      "textHash": "89c70feb2a005c9ceac1a247993891ed1df9463e896a3c1fad864aecf8b675c3"
     },
     {
       "number": 12,
@@ -186,7 +186,7 @@
       "part": 2,
       "parts": 12,
       "section": "Calculate value of gathered ingredients",
-      "textHash": "38092f9eb2dcb7884214eedf5f3a81da6dc31aa62860b8644605f5d897d55c0f"
+      "textHash": "cfbd3a14e62703160bf8fafff33dde4b015a004b7cf26527d653283168af5cab"
     },
     {
       "number": 14,
@@ -196,8 +196,8 @@
       "title": "Skills",
       "part": 3,
       "parts": 12,
-      "section": "Carpenter’s Tools (Strength)",
-      "textHash": "6ede8ec8db9d818ae831f9373ea9fa40a3481740292bb0611846be9eeca0490a"
+      "section": "Brewer’s Supplies (Intelligence)",
+      "textHash": "0f45c614a97f193f21ba8709d75e87fb2cb768830007d9132fdd03407d7871b1"
     },
     {
       "number": 15,
@@ -207,8 +207,8 @@
       "title": "Skills",
       "part": 4,
       "parts": 12,
-      "section": "Mason’s Tools (Strength)",
-      "textHash": "1248923c28a12c800a31f03e720ddfbbd7e9879d912ba54dd0212ff7cb636a84"
+      "section": "Jeweler’s Tools (Intelligence)",
+      "textHash": "d57f5b87b43862eb72cda45762f2937715539def461514044a3acf24c8859e61"
     },
     {
       "number": 16,
@@ -218,8 +218,8 @@
       "title": "Skills",
       "part": 5,
       "parts": 12,
-      "section": "Tinker’s Tools (Dexterity)",
-      "textHash": "b677f062fd1bc831733274ae9a84d726832ed7904d9b3d38e1a8fd12271711f4"
+      "section": "Smith’s Tools (Strength)",
+      "textHash": "ac1947fe97410e853a56cda3608cd661900b6ce572153d5e04553b1acc1d75b1"
     },
     {
       "number": 17,
@@ -229,8 +229,8 @@
       "title": "Skills",
       "part": 6,
       "parts": 12,
-      "section": "Weaver’s Tools (Dexterity)",
-      "textHash": "8e1c1cfedb270fa4d569361e27cc47e77f4e7a207f8eea7fd1e7843ed6ac37d6"
+      "section": "Tinker’s Tools (Dexterity)",
+      "textHash": "4f5262e7ab27c05ff8d297e44b93045564627aa7eb71fcb21746b7a1d756cb30"
     },
     {
       "number": 18,
@@ -274,7 +274,7 @@
       "part": 10,
       "parts": 12,
       "section": "",
-      "textHash": "6ce5919f6b37380e7e5b8cf2b6223c777ca1e383d51d194acb453466fdd29405"
+      "textHash": "ca6a2591fa144f5987d606df2968b530cdd941b73e413ce73b2b195f1ae7bcb3"
     },
     {
       "number": 22,
@@ -285,7 +285,7 @@
       "part": 11,
       "parts": 12,
       "section": "",
-      "textHash": "8bb567fccd8eb7b888c16820aec5fe7205a79dce8b9b6dba8b24359f70187842"
+      "textHash": "46ab02857398723f5bcc7ae1c922ea4f1bb3b8a10d2c8094becde56318f9a3ec"
     },
     {
       "number": 23,
@@ -347,8 +347,8 @@
     {
       "source": "dnd/character-creation",
       "sheet": 4,
-      "kind": "aside",
-      "label": "aside at \"ExampleA roll of 3 on a d6 is rounded up to 4. A…\""
+      "kind": "div",
+      "label": "div at h2 \"Classes rolling d6’s or d8’s\""
     },
     {
       "source": "dnd/injuries",
@@ -365,8 +365,8 @@
     {
       "source": "dnd/master-armor-table",
       "sheet": 11,
-      "kind": "aside",
-      "label": "aside at \"NoteAdapting a suit of armor to fit a different…\""
+      "kind": "div",
+      "label": "div at h2 \"Armor Sizes\""
     },
     {
       "source": "dnd/skills",
@@ -377,26 +377,26 @@
     {
       "source": "dnd/skills",
       "sheet": 14,
-      "kind": "table",
-      "label": "table at \"Craft Materials Cost Workday Antitoxin 25 gp 1 B…\""
+      "kind": "div",
+      "label": "div at h2 \"Brewer’s Supplies (Intelligence)\""
     },
     {
       "source": "dnd/skills",
       "sheet": 15,
-      "kind": "table",
-      "label": "table at \"Craft Materials Cost Workday Difficulty Class Sl…\""
+      "kind": "div",
+      "label": "div at h2 \"Jeweler’s Tools (Intelligence)\""
     },
     {
       "source": "dnd/skills",
       "sheet": 16,
-      "kind": "table",
-      "label": "table at \"Craft Materials Cost Workday Difficulty Class Da…\""
+      "kind": "div",
+      "label": "div at h2 \"Smith’s Tools (Strength)\""
     },
     {
       "source": "dnd/skills",
       "sheet": 17,
-      "kind": "table",
-      "label": "table at \"Craft Materials Cost Workday Difficulty Class Mu…\""
+      "kind": "div",
+      "label": "div at h2 \"Tinker’s Tools (Dexterity)\""
     },
     {
       "source": "dnd/skills",
@@ -425,8 +425,8 @@
     {
       "source": "dnd/skills",
       "sheet": 22,
-      "kind": "p",
-      "label": "p at \"Finally, an alchemist crafting a potion must acq…\""
+      "kind": "aside",
+      "label": "aside at \"DangerAdditionally, when a creature attempting t…\""
     },
     {
       "source": "dnd/skills",
