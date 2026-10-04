@@ -1,8 +1,8 @@
 ---
-status: accepted
+status: superseded
 date: 2026-10-04
 supersedes: null
-superseded_by: null
+superseded_by: 0022
 tags: [print, pdf, handbook, publishing, deploy]
 ---
 

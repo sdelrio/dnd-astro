@@ -84,7 +84,7 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 | `make check` | Run every gate: lint, typecheck, test, build |
 | `make capture` | Write `desktop.png` and `mobile.png` for design review |
 | `make measure` | Measure a rendered page: overflow, contrast, tap, pointer |
-| `make handbook` | Print the book - a cover, a contents and the eight house rules - as one A4 PDF at `public/handbook/`, plus the committed manifest |
+| `make handbook` | Print the book - a cover, a contents and the eight house rules - as one A4 PDF under `tmp/`, plus the committed manifest. Not published yet |
 | `make handbook-art` | Write the committed parchment tile and footer ornament (`ARGS='--check'` fails when stale) |
 | `make submodule-init` | Check out the pinned Impeccable skill submodule |
 | `make submodule-update` | Bump Impeccable to upstream HEAD and relink |
@@ -99,7 +99,7 @@ Committed layout, with generated output annotated:
 
 ```text
 docs/                    Architecture decisions, specs, and agent workflow docs
-  adr/                   Accepted architecture decision records (ADR 0001 - 0021)
+  adr/                   Architecture decision records (ADR 0001 - 0022)
   agents/                Issue tracker, triage, and domain conventions
   specs/                 Feature specifications
 public/                  Static assets served as-is
@@ -108,7 +108,6 @@ public/                  Static assets served as-is
     party.json           Current party roster
   fonts/                 Self-hosted webfont files
   handbook/
-    handbook.pdf         The committed artifact: a cover, a contents and the eight house rules as sheets
     manifest.json        Committed record of the last handbook run; the staleness gate
     ornament.svg         Generated footer rule, drawn in the gold rule colour
     parchment.png        Generated 256px sRGB paper tile, tiled by the print stylesheet
@@ -185,7 +184,7 @@ The Starlight sidebar groups are configured in `astro.config.mjs`:
 | Fantasy Grounds | explicit slugs under `fantasy-grounds/` |
 | Handbook | explicit slug `handbook`, the printed handbook's publisher page |
 
-The first two groups autogenerate from their directory, so a new page appears as soon as it lands. The Fantasy Grounds group lists explicit slugs instead, so new pages there must be added to the sidebar by hand. The Handbook group carries the one page that is not house rules: it states the printed handbook's version and edition date and links the PDF, and it lives outside `dnd/` so the Handbook is not printed into itself. The sidebar is global, so it is reachable from every page. The former Guides group was retired: its XmlCard test page is still built at `src/content/docs/guides/xml-card-test.mdx`, but its front matter sets `sidebar.hidden`, so it is reachable by URL only and never appears in the sidebar.
+The first two groups autogenerate from their directory, so a new page appears as soon as it lands. The Fantasy Grounds group lists explicit slugs instead, so new pages there must be added to the sidebar by hand. The Handbook group carries the one page that is not house rules: it states the printed handbook's version and edition date and that the PDF is not published yet, and it lives outside `dnd/` so the Handbook is not printed into itself. The sidebar is global, so it is reachable from every page. The former Guides group was retired: its XmlCard test page is still built at `src/content/docs/guides/xml-card-test.mdx`, but its front matter sets `sidebar.hidden`, so it is reachable by URL only and never appears in the sidebar.
 
 Admonitions follow the restriction listed under [Rendering conventions](#rendering-conventions): only the four Starlight types are allowed.
 

@@ -5,7 +5,6 @@ import { join } from 'node:path';
 import {
   HANDBOOK_EDITION,
   HANDBOOK_EDITION_DATE,
-  HANDBOOK_FILE,
   HANDBOOK_SOURCE_DIRECTORY,
   HANDBOOK_TITLE,
   HANDBOOK_VERSION,
@@ -13,12 +12,13 @@ import {
 } from '../utils/handbook';
 
 /**
- * The page a reader downloads the Handbook from.
+ * The page that will publish the Handbook once the design settles.
  *
  * It exists because the index page cannot carry a download button - a test
  * asserts no `LinkButton` appears anywhere in that page's source, and the surface
- * brief states the whole surface is the index - and because a downloadable PDF of
- * house rules has to say what version it is before it can be trusted at a table.
+ * brief states the whole surface is the index - and because a PDF of house rules
+ * has to say what version it is before it can be trusted at a table. Until the
+ * design settles it states the version and the edition date and links nothing.
  * It lives outside the house-rule pages so the Handbook is not printed into
  * itself, and it is reached through a fourth sidebar group, which is what makes
  * it discoverable from every page rather than only from the homepage.
@@ -58,25 +58,21 @@ describe('the publisher page', () => {
     expect(HANDBOOK_EDITION).toBe(`Version ${HANDBOOK_VERSION}, edition ${HANDBOOK_EDITION_DATE}`);
   });
 
-  // The one path the artifact and the link are both named from, so a reader who
-  // follows the link and a maintainer who runs the command are looking at the
-  // same file rather than at two that agree today. That the command writes there
-  // is asserted where the command's default is: `handbook-helpers.test.mjs`.
-  it('links the artifact at the published path', () => {
-    expect(page).toContain('HANDBOOK_FILE');
-    expect(HANDBOOK_FILE).toBe('/handbook/handbook.pdf');
+  // The book is not published, so this page states that and links no file. A
+  // link that resolves to nothing is the one failure a publisher page cannot
+  // have, and until the design settles there is nothing for a link to resolve
+  // to.
+  it('states that the PDF is not published yet', () => {
+    expect(page).toMatch(/not published yet/i);
   });
 
-  // The href has to be an element rather than a markdown destination: MDX reads
-  // `{...}` inside `[text]({...})` as literal text and URL-encodes it, so the
-  // page renders a link to `%7BHANDBOOK_FILE%7D` - a link to nothing, on the one
-  // page whose whole job is to be a link.
-  it('writes the link as an element, so the path is the path and not its encoding', () => {
-    expect(page).toMatch(/<a href=\{HANDBOOK_FILE\}/);
-    expect(page).not.toMatch(/\]\(\{HANDBOOK_FILE\}\)/);
+  it('contains no link to a PDF', () => {
+    expect(page).not.toMatch(/\.pdf/i);
+    expect(page).not.toMatch(/<a[\s>]/);
+    expect(page).not.toMatch(/href=/);
   });
 
-  it('is a plain link rather than a button, because the index page is free of both', () => {
+  it('is a plain page rather than a button, because the index page is free of both', () => {
     expect(page).not.toMatch(/<LinkButton/);
     expect(page).not.toMatch(/actions:/);
   });
@@ -95,7 +91,7 @@ describe('the index page', () => {
   // under Part One. A download affordance here reverses a deliberate decision.
   it('carries no download affordance and no action button', () => {
     expect(indexSource).not.toMatch(/<LinkButton/);
-    expect(indexSource).not.toContain(HANDBOOK_FILE);
+    expect(indexSource).not.toMatch(/\.pdf/i);
     expect(indexSource).not.toContain('handbook');
   });
 

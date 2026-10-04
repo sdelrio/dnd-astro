@@ -77,7 +77,7 @@ help:
 	@printf "\n"
 	@printf "$(MAGENTA)Print$(RESET)\n"
 	@printf "  $(GREEN)make handbook$(RESET)  📕  Print the book: a cover, a contents and the eight house rules as fixed-size sheets\n"
-	@printf "$(DIM)                     writes public/handbook/handbook.pdf, the manifest, and every split it made\n"
+	@printf "$(DIM)                     writes tmp/handbook/handbook.pdf, the manifest, and every split it made\n"
 	@printf "$(DIM)                     ARGS='--url http://localhost:4321/handbook/spike-fixture/ --out tmp/spike.pdf --no-manifest'$(RESET)\n"
 	@printf "  $(GREEN)make handbook-art$(RESET)  🎨  Write the committed parchment tile and footer ornament\n"
 	@printf "$(DIM)                     ARGS='--check' fails when either is stale$(RESET)\n"

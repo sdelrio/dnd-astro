@@ -17,16 +17,17 @@ import { MANIFEST_PATH } from './handbook-manifest.mjs';
 
 export const DEFAULTS = {
   url: 'http://localhost:4321/handbook/print/',
-  // The published path, under `public/`, because the publisher page links a file
-  // and a downloadable handbook has to be in the tree for that link to resolve to
-  // something stable. It is the same string the page imports
-  // (`HANDBOOK_FILE` in `src/utils/handbook.ts`).
-  out: 'public/handbook/handbook.pdf',
+  // Under `tmp/`, because the book is not published yet: the publisher page
+  // states that plainly and links no file, so there is nothing for a `public/`
+  // path to resolve to. A generated PDF is scratch until the design settles and
+  // an ADR says otherwise; writing it under `tmp/` is what keeps it out of every
+  // commit and out of the built site.
+  out: 'tmp/handbook/handbook.pdf',
   // The per-sheet captures stay under `tmp/` whatever `--out` says: they are
   // several hundred kilobytes a sheet and the book is dozens of sheets, so they
   // are never committed, and deriving their directory from the artifact's own
-  // would put tens of megabytes of PNG into `public/` beside the one file the
-  // site serves.
+  // would put tens of megabytes of PNG wherever the artifact happens to be
+  // written, including beside the one file a published site would serve.
   pngDir: 'tmp/handbook/sheets',
   font: 'Cinzel',
   fontUrl: '/fonts/Cinzel.woff2',
@@ -150,7 +151,7 @@ export function parseArgs(argv) {
       case '--url': options.url = next(); break;
       // `--out` says nothing about where the captures go: they are evidence, they
       // are never committed, and moving the artifact must not move them into the
-      // tree it is published from.
+      // directory the artifact is written to.
       case '--out':
         options.out = next();
         break;

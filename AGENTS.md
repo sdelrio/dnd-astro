@@ -302,7 +302,10 @@ node .opencode/lib/design-review/handbook.mjs --help
 
 `make handbook` renders `/handbook/print/` into one A4 vector PDF at
 `tmp/handbook/handbook.pdf` plus one PNG per sheet in `tmp/handbook/sheets/`, with
-the site's own fonts, colours and spacing and none of its chrome. It reuses the
+the site's own fonts, colours and spacing and none of its chrome. The PDF is
+**not published yet** (ADR-0022 superseded ADR-0021): it is written under `tmp/`,
+which is gitignored, so it is committed nowhere and served from nowhere, and
+`make handbook` followed by `git status` leaves a clean tree. It reuses the
 same browser stack, browser-resolution order, font gate and `--start-dev-server`
 boundary as `make capture`, and like every command here it adds nothing to the
 manifest.
