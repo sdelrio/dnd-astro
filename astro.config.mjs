@@ -82,6 +82,15 @@ export default defineConfig({
             { label: 'Character Search', slug: 'fantasy-grounds/character-search' },
           ],
         },
+        // A group of its own rather than an entry in one of the three above: the
+        // sidebar is global, so this is what makes the printed Handbook reachable
+        // from every page of the site rather than from the homepage only. The
+        // index page is contractually free of action buttons, so the download is
+        // documented here instead of added there.
+        {
+          label: 'Handbook',
+          items: [{ label: 'D&D House Rules Handbook', slug: 'handbook' }],
+        },
       ],
     }),
   ],

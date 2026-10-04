@@ -79,6 +79,25 @@
   --handbook-paper: #ece2cd;
   --handbook-paper-image: url('/handbook/parchment.png');
 
+  /* The cover. A display step well past anything else on a sheet, because the
+     one thing a cover has to do is be read from across a table. */
+  --handbook-cover-title: 3rem;
+  --handbook-cover-title-tracking: 0.01em;
+  --handbook-cover-edition: 1rem;
+  --handbook-cover-edition-tracking: 0.08em;
+  /* The contents. A row is a two-track line: the chapter, and its page number on
+     the page edge, with a dotted leader between them the way a printed contents
+     sets one. */
+  --handbook-contents-gap: 0.75rem;
+  --handbook-contents-row-gap: 0.5rem;
+  --handbook-contents-leader: 1px;
+
+  /* The Point Buy panel's cost column, restated here because this file holds
+     every length the Handbook uses and nothing outside the root holds one. It
+     is the width the panel's own stylesheet gives that column at its wide
+     layout; see the panel rules at the foot of this file. */
+  --handbook-panel-cost: 7.5rem;
+
   /* The rule that means "start a new sheet", 2px because that is the weight of
      every gold rule on the site. */
   --handbook-rule-weight: 2px;
@@ -195,6 +214,61 @@ body {
   column-span: all;
 }
 
+/* The cover: the book's own title, centred on the page, with the edition under
+   it. Centred and vertically centred because a cover is the one sheet whose job
+   is to be looked at rather than read through, and `min-height` on the sheet box
+   is what puts it in the middle of the page rather than at the top of it. */
+[data-handbook-front='cover'] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+[data-handbook-front='cover'] h1 {
+  margin: 0;
+  font-size: var(--handbook-cover-title);
+  letter-spacing: var(--handbook-cover-title-tracking);
+}
+
+[data-handbook-front='cover'] .handbook-cover-edition {
+  margin: var(--handbook-contents-gap) 0 0;
+  font-family: var(--sl-font-table);
+  font-size: var(--handbook-cover-edition);
+  letter-spacing: var(--handbook-cover-edition-tracking);
+  text-transform: uppercase;
+}
+
+/* The contents. No list markers: an entry numbered "7." above a page number "23"
+   is two numbers about different things, and the one a reader wants is the page.
+   Two tracks with a dotted leader between them, which is the device a printed
+   contents has always used to carry the eye across the gap. */
+[data-handbook-front='contents'] ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+[data-handbook-front='contents'] li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--handbook-contents-gap);
+  padding-block: var(--handbook-contents-row-gap);
+}
+
+[data-handbook-front='contents'] li span:first-child {
+  border-bottom: var(--handbook-contents-leader) dotted var(--color-gold-rule);
+}
+
+[data-handbook-front='contents'] [data-handbook-contents-page] {
+  font-family: var(--sl-font-table);
+  /* Tabular figures, so the column of page numbers lines up on the page edge
+     instead of stepping by a digit's width. */
+  font-variant-numeric: tabular-nums;
+}
+
 /* The footer. Three tracks: the source page and the section it is in on the
    left, the ornament on the centre line, the page number on the right. Equal
    outer tracks are what put the ornament in the centre rather than wherever the
@@ -263,6 +337,36 @@ body {
    applies. So the rule that would have hidden it does not apply either, and a
    toolbar would be printed onto the sheet. The element only exists on the dev
    server, so this costs the production build nothing. */
+/* The Point Buy panel is a screen widget, and the sheet box is 643px - 40rem -
+   which is inside the 46rem at which the panel switches to its stacked phone
+   layout. Printed, that stacked layout is 1093px tall: taller than a sheet, so
+   the panel was broken across two of them at a boundary inside the component,
+   where no authored horizontal rule in a markdown page can reach.
+
+   These three rules give the panel back the wide layout it was designed for, in
+   which six ability scores are a ledger rather than a stack, and the whole
+   panel then measures about 640px. `!important` because the component's own
+   stylesheet states the phone layout as a media query of the same specificity
+   and this file loads after it; the component itself is unchanged, because the
+   phone layout is right on a phone.
+
+   Scoped to the flow rather than to a sheet because the flow is in the
+   committed route and the sheet attribute is added by the command at document
+   start: a rule that only matched once the sheets were assigned would not apply
+   to the layout the sheets were assigned from. */
+[data-handbook-flow] .pb-rule {
+  grid-template-columns: minmax(0, 1fr) auto auto auto auto !important;
+}
+
+[data-handbook-flow] .pb-rule > :first-child {
+  grid-column: auto !important;
+}
+
+[data-handbook-flow] .pb-cost {
+  width: var(--handbook-panel-cost) !important;
+  text-align: right !important;
+}
+
 astro-dev-toolbar {
   display: none !important;
 }

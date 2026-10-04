@@ -1,0 +1,60 @@
+---
+title: 'D&D House Rules Handbook'
+description: The eight house-rule pages as one downloadable A4 PDF.
+---
+
+import {
+  HANDBOOK_EDITION,
+  HANDBOOK_EDITION_DATE,
+  HANDBOOK_FILE,
+  HANDBOOK_TITLE,
+  HANDBOOK_VERSION,
+} from '../../utils/handbook';
+
+The eight house-rule pages of this site, printed as one A4 PDF with a cover, a
+contents and a page number on every sheet. It is the same content as the pages
+below, in sidebar order, and it is generated from them rather than maintained
+alongside them.
+
+**{HANDBOOK_TITLE}** - {HANDBOOK_EDITION}
+
+## Download
+
+{/* A JSX anchor rather than a markdown link: MDX reads `{...}` inside a markdown
+    link destination as literal text and URL-encodes it, so a markdown link whose
+    destination is that expression prints a link to the percent-encoded form of the
+    expression itself - a link to nothing, on the one page whose whole job is to be
+    a link. */}
+<a href={HANDBOOK_FILE} download>
+  Download the Handbook (PDF)
+</a>
+
+A4, one PDF, selectable text with the site's own fonts. It is the same file the
+publisher's `make handbook` writes and the repository keeps, so the edition you
+download is the edition the house rules are at today.
+
+## What is in it
+
+- **A cover and a contents.** The contents lists the eight house-rule pages and
+  the page each one starts on, not their section headings.
+- **Eight chapters in sidebar order.** Each source page starts on a fresh sheet
+  with its own title, so the book reads in the order the sidebar lists.
+- **A footer on every sheet** carrying the chapter, the section it starts in and
+  the page number, so "turn to twenty-two" means something.
+- **Two 306px columns to a sheet**, because a 643px measure at 16px body text is
+  a very long line for a page read at a table.
+
+## What is not in it
+
+There is no print-from-your-browser button, and that is deliberate. Offering one
+would imply the artifact is equivalent to what a reader's own printer produces
+from a screen page, which it is not: it has a cover, a contents, a page number on
+every sheet and breaks placed by the author of each page. The web pages remain
+the canonical source and are never replaced by the PDF.
+
+## If the PDF is out of date
+
+The repository keeps a small manifest beside the artifact: a content hash of the
+eight house rules, the sheet count, and each sheet's page number and text hash. A
+house rule edited without the artifact being regenerated fails the test suite, so
+a stale book cannot reach this page through a quiet change.

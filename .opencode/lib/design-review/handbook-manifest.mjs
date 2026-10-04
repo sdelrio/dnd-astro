@@ -55,8 +55,15 @@ export const SOURCE_DIRECTORY = 'src/content/docs/dnd';
  * A version, rather than a reader that tolerates whatever it finds, because a
  * manifest written by a later version of the command is not readable by an older
  * test and should say so rather than quietly pass the checks it happens to share.
+ *
+ * Version 2 is the book with front matter. Version 1 recorded only sheets printed
+ * from a source page, so a cover and a contents in the artifact were pages the
+ * record did not account for - and a record that does not account for the first
+ * two pages of a book is not a record of it. Each sheet now carries a `kind`:
+ * `source` for a sheet printed from one of the eight pages, `front` for the cover
+ * and the contents, which come from no source page and are not broken by one.
  */
-export const MANIFEST_VERSION = 1;
+export const MANIFEST_VERSION = 2;
 
 const HEX_64 = /^[0-9a-f]{64}$/;
 
@@ -163,9 +170,14 @@ export function buildManifest({ sources, sheets, splits = [] }) {
     sheets: sheets.map((sheet) => ({
       number: sheet.number,
       page: sheet.page,
-      source: sheet.source,
-      part: sheet.part,
-      parts: sheet.parts,
+      kind: sheet.kind ?? 'source',
+      // Empty for a front sheet rather than absent: a reader that finds the key
+      // knows the book has sheets with no source page, and one that finds a
+      // missing key has to guess whether the file is truncated or the sheet is.
+      source: sheet.source ?? '',
+      title: sheet.title ?? '',
+      part: sheet.part ?? 1,
+      parts: sheet.parts ?? 1,
       section: sheet.section ?? '',
       textHash: sha256('utf8', sheetText(sheet)),
     })),
@@ -277,11 +289,30 @@ export function validateManifest({ label, text }) {
     if (!Number.isInteger(sheet.page) || sheet.page < 1) {
       fail(`sheets[${index}] has no page number a reader could turn to.`);
     }
-    if (!slugs.has(sheet.source)) {
-      fail(`sheets[${index}] is printed from ${JSON.stringify(sheet.source)}, which no source page provides.`);
-    }
     if (!isHash(sheet.textHash)) {
       fail(`sheets[${index}] has no usable textHash, so nothing would notice its text changing.`);
+    }
+
+    // Front matter is printed from no source page and is never broken by one, so
+    // the two cases are checked against each other rather than both being asked
+    // to name a source: a front sheet claiming one, or a source sheet claiming
+    // none, is a record that disagrees with the artifact.
+    if (sheet.kind === 'front') {
+      if (sheet.source !== '') {
+        fail(`sheets[${index}] is front matter printed from ${JSON.stringify(sheet.source)}.`);
+      }
+      if (sheet.part !== 1 || sheet.parts !== 1) {
+        fail(`sheets[${index}] is front matter and does not say it is one whole sheet.`);
+      }
+      return;
+    }
+
+    if (sheet.kind !== 'source') {
+      fail(`sheets[${index}] is ${JSON.stringify(sheet.kind)}, which is neither front matter nor a source page.`);
+    }
+
+    if (!slugs.has(sheet.source)) {
+      fail(`sheets[${index}] is printed from ${JSON.stringify(sheet.source)}, which no source page provides.`);
     }
     if (!Number.isInteger(sheet.part) || sheet.part < 1 || !Number.isInteger(sheet.parts) || sheet.parts < sheet.part) {
       fail(`sheets[${index}] does not say which part of its source page it is.`);
@@ -303,6 +334,8 @@ export function validateManifest({ label, text }) {
     }
     if (!Number.isInteger(split.sheet) || split.sheet < 1 || split.sheet > sheets.length) {
       fail(`splits[${index}] names sheet ${JSON.stringify(split.sheet)}, which is not in the book.`);
+    } else if (sheets[split.sheet - 1]?.kind === 'front') {
+      fail(`splits[${index}] is in the front matter, which is never broken at a block boundary.`);
     }
     if (typeof split.label !== 'string' || split.label.trim() === '') {
       fail(`splits[${index}] has no label, and a split nobody can name is a split nobody can act on.`);
