@@ -21,8 +21,32 @@ IMPECCABLE_SKILLS_opencode := .opencode/skills
 IMPECCABLE_SKILLS_claude   := .claude/skills
 IMPECCABLE_SKILLS          := $(IMPECCABLE_SKILLS_$(IMPECCABLE_PROVIDER))
 
+# Scratch space: `tmp/` at the repo root, gitignored, and where AGENTS.md sends
+# every temporary file. `clean-tmp` reads the root rather than hardcoding it so a
+# test can point the target at a fixture it owns instead of a developer's own
+# scratch files.
+TMP_ROOT ?= tmp
+
+# How old a scratch file has to be before `make clean-tmp` removes it. Overridable
+# from the command line, so a different age never means editing the recipe:
+# `make clean-tmp TMP_RETENTION_DAYS=1`.
+TMP_RETENTION_DAYS ?= 3
+
+# `ARGS='-n'` is the dry run. `-n` is a predicate find rejects on GNU and a verb
+# on BSD, so the recipe picks the verb itself instead of handing the flag on, and
+# it matches the whole word rather than any ARGS that happens to contain "-n".
+TMP_DRY_RUN := $(filter -n,$(ARGS))
+TMP_CLEAN_FILE := $(if $(TMP_DRY_RUN),-print,-delete)
+
+# The second pass removes what the first one emptied. A dry run deletes nothing,
+# so `-empty` would call a directory that still holds a stale file non-empty and
+# the listing would under-report what a real run removes. A directory is empty
+# afterwards exactly when it holds nothing but stale files, so the dry run asks
+# that question per directory instead, at the cost of one extra find each.
+TMP_CLEAN_DIR := $(if $(TMP_DRY_RUN),-type d -exec sh -c 'test -z "$$(find "$$1" -mindepth 1 ! \( -type f -mtime +$(TMP_RETENTION_DAYS) \) -print -quit)"' _ {} \; -print,-type d -empty -delete)
+
 .PHONY: help test lint typecheck build check capture measure handbook handbook-art \
-        upgrade submodule-init submodule-update submodule-link
+        upgrade clean-tmp submodule-init submodule-update submodule-link
 
 # The design review capture command. See ADR-0012.
 CAPTURE := node .opencode/lib/design-review/capture.mjs
@@ -71,6 +95,8 @@ help:
 	@printf "$(MAGENTA)Maintenance$(RESET)\n"
 	@printf "  $(GREEN)make upgrade$(RESET)       ⚠️  Interactive. Upgrades Astro and rewrites package.json\n"
 	@printf "  $(DIM)                         Changes your dependencies - read the diff$(RESET)\n"
+	@printf "  $(GREEN)make clean-tmp$(RESET)     🧺  Delete ./tmp files older than three days, then the directories they empty\n"
+	@printf "$(DIM)                         ARGS='-n' lists without deleting, TMP_RETENTION_DAYS=<days> sets the age$(RESET)\n"
 	@printf "\n"
 	@printf "$(DIM)Wrap the pnpm scripts documented in AGENTS.md$(RESET)\n"
 	@printf "\n"
@@ -124,6 +150,22 @@ handbook-art:
 
 upgrade:
 	pnpm dlx @astrojs/upgrade
+
+# Removes scratch files under $(TMP_ROOT) that have not been touched in more than
+# $(TMP_RETENTION_DAYS) days, then the directories those files emptied. Two passes,
+# files first and directories second, because one `find -delete` over the whole tree
+# fails with "Directory not empty" whenever a stale directory still holds a fresh
+# file - the common case here, since tmp/ mixes long-lived capture directories with
+# screenshots written into them. ARGS='-n' lists what a run removes and deletes
+# nothing. The root itself is never a candidate, only what is inside it.
+clean-tmp:
+	@if [ ! -d "$(TMP_ROOT)" ]; then \
+		echo "clean-tmp: $(TMP_ROOT)/ does not exist, nothing to clean"; \
+	else \
+		echo "clean-tmp: files under $(TMP_ROOT)/ older than $(TMP_RETENTION_DAYS) days$(if $(TMP_DRY_RUN), (dry run),)"; \
+		find "$(TMP_ROOT)" -mindepth 1 -type f -mtime +$(TMP_RETENTION_DAYS) $(TMP_CLEAN_FILE) && \
+		find "$(TMP_ROOT)" -mindepth 1 $(TMP_CLEAN_DIR); \
+	fi
 
 submodule-init:
 	git submodule update --init --recursive $(IMPECCABLE)
