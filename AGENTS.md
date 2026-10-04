@@ -348,13 +348,17 @@ manifest.
   in a column moves whole to the next instead of straddling the gutter. That makes
   Chrome's layout the atomic-block model the planner already uses. A block taller
   than a whole column still breaks, because it has nowhere else to go.
-- **A heading travels with the block it introduces.** The assignment marks a
-  heading wrapper (`sl-heading-wrapper`, or a bare `h1`-`h6`) `keepWithNext`, and
-  the planner packs it and the block after it as one unit, so a sheet boundary
-  cannot fall between them. `break-after: avoid` alone cannot cross a boundary the
-  planner chose - on `dnd/injuries` the "Injury Severity Table" heading was
-  stranded at the foot of one sheet while its table took the next - so the fix is
-  in the planner, and the unit is reported as one split named for the heading.
+- **A heading travels with the reference block it introduces.** The assignment
+  marks a heading wrapper (`sl-heading-wrapper`, or a bare `h1`-`h6`) and welds it
+  through every following block to the first reference block - a table, an aside
+  or a list - so the planner packs the heading, its lead-in and the table it
+  promises as one unit and a sheet boundary cannot fall between them.
+  `break-after: avoid` alone cannot cross a boundary the planner chose - on
+  `dnd/injuries` the "Injury Severity Table" heading was stranded at the foot of
+  one sheet while its table took the next, and on `dnd/skills` the same defect sat
+  one block further along, with the heading and its "Utilize: ..." line closing
+  one sheet while the craft table opened the next - so the fix is in the planner,
+  and the unit is reported as one split named for the heading.
 - The print route sets **its own root font size, 13px** (`--handbook-root-size`),
   and every rem step in the site's typography and spacing follows it. Body text is
   `1rem` on a `1.75` leading - 13px on 22.75px, which is 54 characters to a 306px

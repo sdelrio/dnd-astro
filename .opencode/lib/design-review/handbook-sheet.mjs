@@ -22,10 +22,13 @@
  *     inside it does not. Reading both `width` and `scrollWidth` is what catches
  *     the second one; guessing from a tag name catches neither reliably.
  *   - **What is welded to what.** A heading is marked so the planner packs it
- *     with the block it introduces as one unit: `break-after: avoid` is only a
- *     hint, and it cannot cross a sheet boundary this assignment chose. A heading
- *     stranded at the foot of a sheet while its table takes the next is the
- *     defect that mark exists to prevent.
+ *     with the reference block it introduces - its lead-in line and the table,
+ *     aside or list that line promised - as one unit: `break-after: avoid` is
+ *     only a hint, and it cannot cross a sheet boundary this assignment chose. A
+ *     heading stranded at the foot of a sheet while its table takes the next is
+ *     the defect that mark exists to prevent, and a table that starts a sheet
+ *     while its heading and lead-in close the previous one is the same defect one
+ *     block further along.
  *   - **Where a source page that does not fit is broken.** At the nearest block
  *     boundary, never inside a block and never clipped: content is moved into
  *     sheets of its own rather than cut. Every break is recorded and reported by
@@ -48,7 +51,7 @@
 
 import { COLUMN_TOLERANCE_PX, elementsWiderThanColumn, pageNumberLabel } from './handbook-helpers.mjs';
 import { contentsEntries } from './handbook-contents.mjs';
-import { SPLIT_NAME_TEXT_LIMIT, planSheets, splitName } from './handbook-split.mjs';
+import { SPLIT_NAME_TEXT_LIMIT, isReferenceBlock, planSheets, splitName, weldRuns } from './handbook-split.mjs';
 
 /**
  * The name `elementsWiderThanColumn`'s own default argument refers to.
@@ -105,6 +108,8 @@ export function sheetAssignmentScript() {
   ${embed(contentsEntries)}
   ${embed(planSheets)}
   ${embed(splitName)}
+  ${embed(isReferenceBlock)}
+  ${embed(weldRuns)}
   const ${COLUMN_TOLERANCE_PX_NAME} = ${COLUMN_TOLERANCE_PX};
   const ${SPLIT_NAME_TEXT_LIMIT_NAME} = ${SPLIT_NAME_TEXT_LIMIT};
 
@@ -312,6 +317,18 @@ export function sheetAssignmentScript() {
       /^h[1-6]$/.test(element.tagName.toLowerCase()) ||
       (element.classList && element.classList.contains('sl-heading-wrapper'));
 
+    /**
+     * Whether a block is a reference block: what a heading is welded to.
+     *
+     * A table, an aside or a list, and the class test is load-bearing: Starlight
+     * draws an aside as a div.starlight-aside rather than as an aside, so a tag
+     * alone would leave a callout loose from the heading that introduced it. The
+     * decision itself is isReferenceBlock, embedded above, so a run in the
+     * browser and a run in a test classify a block the same way.
+     */
+    const isReference = (element) =>
+      isReferenceBlock({ tag: element.tagName, className: element.className ?? '' });
+
     /** An empty copy of an element: the same attributes and classes, no children. */
     const shellOf = (element) => {
       const shell = element.cloneNode(false);
@@ -379,7 +396,18 @@ export function sheetAssignmentScript() {
       if (group.length > 0) groups.push(group);
 
       if (groups.length <= 1) {
-        return [{ wrap, nodes: [table], height: occupied(table), columns, tag: 'table', label, heading: false }];
+        return [
+          {
+            wrap,
+            nodes: [table],
+            height: occupied(table),
+            columns,
+            tag: 'table',
+            label,
+            heading: false,
+            reference: true,
+          },
+        ];
       }
 
       return groups.map((rowsInGroup) => {
@@ -398,6 +426,7 @@ export function sheetAssignmentScript() {
           tag: 'table',
           label,
           heading: false,
+          reference: true,
         };
       });
     };
@@ -418,7 +447,18 @@ export function sheetAssignmentScript() {
       const label = labelOf(node);
 
       if (height <= budget) {
-        return [{ wrap, nodes: [node], height, columns, tag, label, heading: isHeading(node) }];
+        return [
+          {
+            wrap,
+            nodes: [node],
+            height,
+            columns,
+            tag,
+            label,
+            heading: isHeading(node),
+            reference: isReference(node),
+          },
+        ];
       }
 
       if (tag === 'table') return fragmentTable(node, budget, wrap);
@@ -434,7 +474,18 @@ export function sheetAssignmentScript() {
       // and one longer than the sheet spans its pages. Neither is clipping, and
       // the report says which happened rather than the artifact deciding quietly.
       if (kids.length === 0) {
-        return [{ wrap, nodes: [node], height, columns, tag, label, heading: isHeading(node) }];
+        return [
+          {
+            wrap,
+            nodes: [node],
+            height,
+            columns,
+            tag,
+            label,
+            heading: isHeading(node),
+            reference: isReference(node),
+          },
+        ];
       }
 
       const shell = shellOf(node);
@@ -568,15 +619,20 @@ export function sheetAssignmentScript() {
       const columns = columnsOf(section);
 
       const pieces = [...flow.children].flatMap((child) => fragmentNode(child, budget, []));
-      const blocks = pieces.map((piece) => ({
-        height: piece.height,
-        columns: piece.columns,
-        name: piece.label,
-        kind: piece.tag,
-        // A heading is welded to the block that follows it, so the planner packs
-        // them as one unit and a sheet boundary cannot fall between them.
-        keepWithNext: piece.heading === true,
-      }));
+      // The weld is computed rather than read off each block: a heading is welded
+      // through its lead-in to the reference block it introduces, so the planner
+      // packs the heading, the lead-in and the table as one unit and a sheet
+      // boundary cannot fall between any of them.
+      const blocks = weldRuns(
+        pieces.map((piece) => ({
+          height: piece.height,
+          columns: piece.columns,
+          name: piece.label,
+          kind: piece.tag,
+          heading: piece.heading === true,
+          reference: piece.reference === true,
+        }))
+      );
 
       const planned = planSheets({ blocks, blockCapacity: budget, columns });
 

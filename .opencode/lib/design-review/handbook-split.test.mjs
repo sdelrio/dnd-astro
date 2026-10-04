@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { planSheets, splitName } from './handbook-split.mjs';
+import { isReferenceBlock, planSheets, splitName, weldRuns } from './handbook-split.mjs';
 
 /**
  * The planner: where a source page stops being one sheet.
@@ -274,6 +274,82 @@ describe('a heading and the block it introduces', () => {
 
     expect(plan.sheets).toEqual([[0, 1]]);
     expect(plan.splits).toEqual([]);
+  });
+});
+
+describe('welding a heading through its lead-in to its reference block', () => {
+  const p = (overrides = {}) => ({
+    height: 100,
+    name: 'p',
+    kind: 'p',
+    heading: false,
+    reference: false,
+    ...overrides,
+  });
+  const h = (name) => p({ name, kind: 'h2', heading: true });
+  const table = (name = 'table') => p({ name, kind: 'table', reference: true });
+
+  const welds = (blocks) => weldRuns(blocks).map((block) => block.keepWithNext);
+
+  // `dnd/skills`: a heading, a one-line lead-in, then a table. The heading used
+  // to weld only to the lead-in, so the table could start a sheet of its own
+  // while the heading and its lead-in closed the previous one.
+  it('welds the heading and its lead-in to the reference block they introduce', () => {
+    expect(welds([h('Brewer'), p(), table()])).toEqual([true, true, false]);
+  });
+
+  // The Injury Severity Table shape, one block further back: the heading's next
+  // block is already the reference block, so nothing changes for it.
+  it('leaves a heading whose next block is already a reference block unchanged', () => {
+    expect(welds([h('Injury Severity Table'), table()])).toEqual([true, false]);
+  });
+
+  // The run ends with exactly one reference block; a second table is not swept
+  // into the same unit.
+  it('stops at the first reference block and includes only that one', () => {
+    expect(welds([h('Magnificent Mansion'), p(), table(), p(), table()])).toEqual([
+      true,
+      true,
+      false,
+      false,
+      false,
+    ]);
+  });
+
+  // A heading that runs into another heading before it reaches a reference block
+  // does not swallow the next section's table: the run stops at the heading, and
+  // the new heading starts its own run.
+  it('stops the run at the next heading', () => {
+    expect(welds([h('One'), p(), h('Two'), p(), table()])).toEqual([true, false, true, true, false]);
+  });
+
+  // The transitive case the planner already knew: a heading above a heading is
+  // welded through, so the first heading reaches the reference block beyond the
+  // second.
+  it('welds a run of headings through to the reference block', () => {
+    expect(welds([h('Section'), h('Subsection'), p(), table()])).toEqual([true, true, true, false]);
+  });
+
+  it('leaves a heading with nothing after it as the unit it is', () => {
+    expect(welds([h('Last')])).toEqual([true]);
+  });
+
+  // A reference block not introduced by a heading is an ordinary block: nothing
+  // welds it to what follows.
+  it('does not weld blocks that no heading introduces', () => {
+    expect(welds([table(), p()])).toEqual([false, false]);
+  });
+
+  it('recognises a reference block by its tag or by its Starlight aside class', () => {
+    expect(isReferenceBlock({ tag: 'table', className: '' })).toBe(true);
+    expect(isReferenceBlock({ tag: 'aside', className: '' })).toBe(true);
+    expect(isReferenceBlock({ tag: 'ul', className: '' })).toBe(true);
+    expect(isReferenceBlock({ tag: 'ol', className: '' })).toBe(true);
+    expect(isReferenceBlock({ tag: 'div', className: 'starlight-aside starlight-aside--note' })).toBe(true);
+    // The tag arrives as the DOM spells it, not as a selector spells it.
+    expect(isReferenceBlock({ tag: 'TABLE', className: '' })).toBe(true);
+    expect(isReferenceBlock({ tag: 'p', className: '' })).toBe(false);
+    expect(isReferenceBlock({ tag: 'div', className: 'prose' })).toBe(false);
   });
 });
 
