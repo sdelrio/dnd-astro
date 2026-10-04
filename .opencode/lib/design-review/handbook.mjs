@@ -146,6 +146,7 @@ export async function run(argv) {
     // the assignment measured.
     const probeTarget = await openPageSession(client, PRINT_MEDIA);
     let sheetBox;
+    let textBox;
 
     try {
       await client.send(
@@ -154,8 +155,21 @@ export async function run(argv) {
         probeTarget.sessionId,
       );
       await navigate(client, probeTarget.sessionId, options.url);
-      sheetBox = (await readLayout(client, probeTarget.sessionId, options.url)).sheet;
-      log.info(`Sheet box: ${sheetBox.width}x${sheetBox.height} (read from the rendered page)`);
+      const probe = await readLayout(client, probeTarget.sessionId, options.url);
+      sheetBox = probe.sheet;
+      // The text block, not the page box: the viewport must be the measure the
+      // content is laid out at, or a media query at the page width would be
+      // crossed that the print layout never crosses. There is no fallback to the
+      // page box - that fallback is exactly the wrong width, so a missing text
+      // block is a refusal rather than a silent widening.
+      if (!probe.text?.width || !probe.text?.height) {
+        throw new RouteError(
+          `${options.url} published no text block, so the viewport the pages are measured at cannot be ` +
+            'set and the layout would be measured at the wrong width.'
+        );
+      }
+      textBox = probe.text;
+      log.info(`Page box: ${sheetBox.width}x${sheetBox.height} (read from the rendered page)`);
     } finally {
       await closePageSession(client, probeTarget);
     }
@@ -177,13 +191,16 @@ export async function run(argv) {
         sessionId,
       );
 
-      // The viewport is the sheet box, so the screen layout the sheet
-      // assignment measures is the print layout the PDF is made from. Starlight
-      // steps its heading scale at 50em, so a wider viewport would measure a
-      // larger document than the one that gets printed.
+      // The viewport is the *text block*, not the page box, so the screen layout
+      // the assignment measures is the print layout the PDF is made from.
+      // Starlight steps its heading scale at 50em and Tailwind at 48rem, so a
+      // viewport as wide as the page box would cross a media query the text block
+      // does not and measure a document that is not the one that gets printed.
+      // The root's propagated paper still covers the whole page box in a capture
+      // taken past the viewport, which is checked by reading the capture back.
       await setViewport(client, sessionId, {
-        width: sheetBox.width,
-        height: sheetBox.height,
+        width: Math.ceil(textBox.width),
+        height: Math.ceil(textBox.height),
         // Desktop emulation, deliberately: the capture command's helper infers
         // a phone from a sub-768px width, and mobile emulation makes Chrome lay
         // the page out against a default layout viewport of 980px when there is
@@ -212,11 +229,14 @@ export async function run(argv) {
 
       // The box height is legitimately larger than the sheet when a source page
       // does not fit, so only the width is an invariant: every sheet is as wide
-      // as the printable area, or the pagination below is counting the wrong
-      // document.
-      if (widths.length > 1 || widths[0] !== layout.sheet.width) {
+      // as the page box, or the pagination below is counting the wrong
+      // document. The page box is fractional, and a sheet's laid-out box is
+      // whole pixels, so the comparison rounds the declared width the same way.
+      const declaredWidth = Math.round(layout.sheet.width);
+
+      if (widths.length > 1 || widths[0] !== declaredWidth) {
         log.warn(
-          `The sheets laid out at ${widths.join(' and ')}px wide, not the ${layout.sheet.width}px the ` +
+          `The sheets laid out at ${widths.join(' and ')}px wide, not the ${declaredWidth}px the ` +
             'print stylesheet declares, so the page count below is bounded against the wrong measure.'
         );
       }
@@ -475,32 +495,19 @@ const LAYOUT_FINGERPRINT_SCRIPT = `(() => [...document.querySelectorAll('[${SHEE
  * Every capture is the first page box of the document, and each sheet is moved
  * onto it in turn while the others are hidden.
  *
- * The page box is the sheet's content area plus the margins the `@page` rule
- * declares, and ADR-0020 aligns the sheet with the *content*: the margins exist
- * in the page box and nowhere in the document. So the document has to be put
- * where the page box puts the content before a capture can show the page.
- *
- * Built by construction rather than inferred, and that is the whole point. Laying
- * the sheets out on a page grid would have to know how many pages the sheets
- * before each one took, and ADR-0020 records that the page count is a floor and a
- * ceiling rather than an exact total - measured, this document bounds between 8
- * and 39 pages and prints 37. A grid the run lays out itself has no such
- * uncertainty, and hiding the other sheets is what keeps a four-page sheet's
- * second page out of the next sheet's capture.
- *
- * The move is a transform rather than margins, for two reasons. Margins between
- * adjacent sheets collapse, so the sheet before this one's bottom margin and this
- * one's top margin would become one number and the arithmetic would be wrong by
- * however much the larger was. And a transform lays nothing out, so the document
- * the capture is taken from is the document the PDF was printed from - which is
+ * The sheet is the page box, so a sheet's own border box top is where its page
+ * starts: the document has to be moved by that much to put the sheet on the
+ * first page. A translation rather than a margin, because margins between
+ * adjacent sheets collapse and a transform lays nothing out, so the document the
+ * capture is taken from is the document the PDF was printed from - which is
  * checked rather than assumed, by comparing the layout either side of it.
  *
  * The capture is the sheet's *first* printed page. A sheet that spans three pages
  * has three, and only the first is capturable: the page boxes of pages two and
  * three exist only in the fragmentainer, and the run says which sheets those are.
  */
-function pageGridOffset(sheet, page) {
-  return page.marginTop - sheet.top;
+function pageGridOffset(sheet) {
+  return -sheet.top;
 }
 
 /** The first page box, which is where every capture is taken. */
@@ -513,23 +520,22 @@ export const PAGE_CAPTURE_TOP = 0;
  * Three things make a capture evidence about the artifact rather than a second
  * opinion about it, and all three are here:
  *
- *   - **The page box, not the sheet box.** A reader holds a page with margins on
- *     it. At the page box and a vertical raster scale of 2 that is 1588 x 2246,
- *     and the size is read back out of the PNG header rather than trusted from
- *     the capture call.
- *   - **The margins the `@page` rule adds.** ADR-0020 aligns the sheet with the
- *     page's *content* and leaves the margins to the page box, so the rendered
- *     document is the printable area with no page around it. The body is offset
- *     by the declared left margin and each sheet is moved down by the declared
- *     top margin, one sheet at a time with the others hidden - a translation of
- *     the same layout and not a second layout, because it is applied by a
+ *   - **The page box, which is the sheet.** A reader holds a page with margins
+ *     on it, and the paper now reaches every edge because the root paints the
+ *     whole page box and the sheet carries the margins as padding. At the page box
+ *     and a vertical raster scale of 2 that is 1588 x 2246, and the size is read
+ *     back out of the PNG header rather than trusted from the capture call.
+ *   - **The sheet moved onto the first page box.** Each sheet is moved up to the
+ *     first page box, one sheet at a time with the others hidden - a translation
+ *     of the same layout and not a second layout, because it is applied by a
  *     transform and undone afterwards. The layout either side of it is compared
  *     and the run refuses if it differs, which is what makes "the same DOM" a
  *     checked claim rather than an asserted one.
  *   - **One file per sheet.** A sheet that spills onto a second page has no
- *     second capture, because the top margin of page two exists only in the page
- *     box and there is nowhere on screen for it to be captured from. The run
- *     says which sheets those are rather than writing a picture of the wrong page.
+ *     second capture, because the page box of page two exists only in the
+ *     fragmentainer and there is nowhere on screen for it to be captured from. The
+ *     run says which sheets those are rather than writing a picture of the wrong
+ *     page.
  */
 async function captureSheets({ client, sessionId, layout, options }) {
   const dir = resolve(REPO_ROOT, options.pngDir);
@@ -547,20 +553,15 @@ async function captureSheets({ client, sessionId, layout, options }) {
     if (/^sheet-\d+\.png$/.test(name)) rmSync(join(dir, name), { force: true });
   }
 
-  // The page box, not the sheet box: a reader holds a page with margins on it,
-  // and the sheet box is only that page's content area. Each sheet is moved onto
-  // the first page box in turn, with the others hidden, and all of it is put back
-  // afterwards.
+  // There is no page box outside the sheet any more, so nothing is offset and
+  // nothing is extended: the root paints the whole page box and the sheet carries
+  // its margins as padding. Each sheet is moved onto the first page box in turn,
+  // with the others hidden, and all of it is put back afterwards.
   const before = await evaluate(client, sessionId, LAYOUT_FINGERPRINT_SCRIPT);
-  const extent = Math.max(
-    ...layout.sheets.map((sheet) => layout.page.marginTop + sheet.box.height + layout.page.marginBottom)
-  );
   const apply = `(() => {
      const style = document.createElement('style');
      style.setAttribute('data-handbook-capture-inset', '');
      style.textContent = [
-       'body { margin-left: ${layout.page.marginLeft}px; }',
-       ':root { min-height: ${extent}px; }',
        '[data-handbook-sheet] { visibility: hidden; }',
      ].join('\\n');
      document.head.appendChild(style);
@@ -591,7 +592,7 @@ async function captureSheets({ client, sessionId, layout, options }) {
 
   try {
     for (const sheet of layout.sheets) {
-      await evaluate(client, sessionId, showOnly(pageGridOffset(sheet, layout.page), sheet.number));
+      await evaluate(client, sessionId, showOnly(pageGridOffset(sheet), sheet.number));
       const name = pngFileName(sheet.number);
       const shot = await client.send(
         'Page.captureScreenshot',
@@ -601,8 +602,12 @@ async function captureSheets({ client, sessionId, layout, options }) {
           clip: {
             x: 0,
             y: PAGE_CAPTURE_TOP,
-            width: layout.page.width,
-            height: layout.page.height,
+            // The page box is fractional and a capture clip is whole CSS pixels,
+            // so it is rounded up: a clip a fraction under the page box would
+            // crop the last row of the margin, and the raster size is read back
+            // out of the PNG either way.
+            width: Math.ceil(layout.page.width),
+            height: Math.ceil(layout.page.height),
             scale: options.rasterScale,
           },
         },
@@ -647,8 +652,8 @@ async function captureSheets({ client, sessionId, layout, options }) {
 
   // Every sheet is one page unless a block in it was too tall for any sheet to
   // hold, and the split report above names those by name. What is left here is the
-  // consequence: the top margin of a second page exists only in the page box, so a
-  // sheet that spans two pages has a capture of its first page and none of the
+  // consequence: the page box of a second page exists only in the fragmentainer,
+  // so a sheet that spans two pages has a capture of its first page and none of the
   // other. Said here rather than left to be found by counting files.
   const spanning = layout.sheets.filter((sheet) => sheet.pages > 1);
   if (spanning.length > 0) {
@@ -675,7 +680,7 @@ async function captureSheets({ client, sessionId, layout, options }) {
  * faces before it measures and the command needs the measurement rather than a
  * race with it. The refusal names the reason, because the two reasons are very
  * different and both are silent otherwise: a page that assigned nothing is not
- * the print route, and a print stylesheet that stopped declaring the sheet box
+ * the print route, and a print stylesheet that stopped declaring the page box
  * would otherwise print the whole document as one very long page.
  */
 async function readLayout(client, sessionId, url) {
@@ -694,7 +699,7 @@ async function readLayout(client, sessionId, url) {
   if (!layout || !layout.sheet?.width || !layout.sheet?.height) {
     throw new RouteError(
       `${url} assigned no sheets, so there is nothing to print and no page geometry to print it on. ` +
-        'Either it is not the print route, or its print stylesheet declares no sheet box.'
+        'Either it is not the print route, or its print stylesheet declares no page box.'
     );
   }
 

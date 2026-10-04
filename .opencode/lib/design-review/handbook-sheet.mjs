@@ -120,39 +120,49 @@ export function sheetAssignmentScript() {
     };
 
     const sheet = {
-      width: readLength('--handbook-sheet-width'),
-      height: readLength('--handbook-sheet-height'),
+      width: readLength('--handbook-page-width'),
+      height: readLength('--handbook-page-height'),
     };
 
     if (sheet.width === null || sheet.height === null) {
       throw new Error(
-        'The print stylesheet did not declare --handbook-sheet-width and --handbook-sheet-height, ' +
+        'The print stylesheet did not declare --handbook-page-width and --handbook-page-height, ' +
         'so a page boundary cannot be placed and the document would print as one long page.'
       );
     }
 
-    // The page box is what a capture is taken at rather than what content is
-    // measured against, so it is reported rather than enforced here - but a run
-    // that has to discover it is missing from a written capture has spent a whole
-    // browser session to learn a number the stylesheet either declares or does not.
-    // The margins travel with it because the capture has to know where the page
-    // box puts the sheet inside the page.
+    // The page box is the sheet: the paper reaches the page's edge and the four
+    // margins are the sheet's own padding rather than a page box around it. A
+    // capture is taken at the page box, so it travels with the sheet.
     const page = {
-      width: readLength('--handbook-page-width'),
-      height: readLength('--handbook-page-height'),
+      width: sheet.width,
+      height: sheet.height,
       marginTop: readLength('--handbook-page-margin-top'),
       marginRight: readLength('--handbook-page-margin-right'),
       marginBottom: readLength('--handbook-page-margin-bottom'),
       marginLeft: readLength('--handbook-page-margin-left'),
     };
 
-    if (page.width === null || page.height === null || page.marginLeft === null) {
+    if (
+      page.marginLeft === null ||
+      page.marginTop === null ||
+      page.marginRight === null ||
+      page.marginBottom === null
+    ) {
       throw new Error(
-        'The print stylesheet did not declare --handbook-page-width, --handbook-page-height and ' +
-        '--handbook-page-margin-left, so a capture of a sheet would be taken at the wrong size and ' +
-        'with no page around it.'
+        'The print stylesheet did not declare every --handbook-page-margin-*, so the text block the ' +
+        'pages are measured against has no size. A missing inset would be read as zero and widen the ' +
+        'block, so nothing is measured or written.'
       );
     }
+
+    // The text block: the page box less the four margins, which are the sheet's
+    // padding. It is what content is packed into; the page box is what a capture
+    // is taken at.
+    const measure = {
+      width: page.width - page.marginLeft - page.marginRight,
+      height: page.height - page.marginTop - page.marginBottom,
+    };
 
     const columnWidth = readLength('--handbook-column-width');
     const ornament = readUrl('--handbook-ornament');
@@ -364,36 +374,42 @@ export function sheetAssignmentScript() {
     };
 
     /**
-     * How tall a sheet painted, and therefore how many printed pages it takes.
+     * How tall a sheet's text block painted, and therefore how many printed pages
+     * it takes.
      *
-     * The flow's own box rather than the lowest descendant inside it, for the
-     * same reason occupied reads the client height: the flow is a block outside
-     * the multicolumn it contains, so its box is the height the columns were
-     * laid out in, while a descendant's rect is not that. The footer reserve is
-     * padding on the flow and is not painted, so it comes off.
+     * The extent is measured from the top of the sheet's content box - the border
+     * box plus its top padding - rather than from the border box, because the sheet
+     * is now the page box and its top padding is blank paper rather than text.
+     * Measuring from the border box would report every sheet as a whole page tall
+     * whatever it holds.
      *
-     * The painted extent rather than the box: the sheet box is a min-height box,
-     * so a sheet whose content fits has a box a whole page tall whatever it holds,
-     * and reading the box would report every sheet as exactly one page.
+     * The footer is excluded, because it is absolutely positioned in the bottom
+     * margin band and its box reaches the foot of the page: included, every sheet
+     * would look full.
+     *
+     * The painted extent rather than the box, and the client height rather than the
+     * rect: Chrome reports the *column's* height rather than a block's own for some
+     * blocks laid out inside a multicolumn - measured in this book as a 56px
+     * paragraph reporting a 1557px box - and a sheet that inherited that number was
+     * reported as spanning two printed pages when it spans one, which costs the run
+     * a capture of its second page.
      */
     const measureSheet = (section) => {
       const rect = section.getBoundingClientRect();
-      let bottom = rect.bottom;
+      const top = rect.top + (parseFloat(getComputedStyle(section).paddingTop) || 0);
+      let bottom = top;
 
       for (const descendant of section.querySelectorAll('*')) {
+        if (descendant.closest('[data-handbook-footer]') !== null) continue;
+
         const box = descendant.getBoundingClientRect();
         // The rect for where the block is, its own height for how far it reaches.
-        // Chrome reports the *column's* height rather than a block's own for some
-        // blocks laid out inside a multicolumn - measured in this book as a 56px
-        // paragraph reporting a 1557px box - and a sheet that inherited that
-        // number was reported as spanning two printed pages when it spans one,
-        // which costs the run a capture of its second page.
         bottom = Math.max(bottom, Math.min(box.bottom, box.top + occupied(descendant)));
       }
 
-      const contentHeight = Math.ceil(bottom - rect.top);
+      const contentHeight = Math.ceil(bottom - top);
 
-      return { contentHeight, pages: Math.max(1, Math.ceil(contentHeight / sheet.height)) };
+      return { contentHeight, pages: Math.max(1, Math.ceil(contentHeight / measure.height)) };
     };
 
     /** Build a flow's contents out of the pieces assigned to it. */
@@ -448,10 +464,11 @@ export function sheetAssignmentScript() {
       if (flow === null) return 0;
 
       const heading = section.querySelector('h1');
-      const reserve = parseFloat(getComputedStyle(flow).paddingBottom) || 0;
       // The title is page furniture above the measure, so the first sheet of a
-      // source page has that much less room in it than a continuation does.
-      const budget = sheet.height - reserve - (heading === null ? 0 : occupied(heading));
+      // source page has that much less room in it than a continuation does. There
+      // is no footer reserve: the footer prints in the bottom margin band, so the
+      // whole text block is available to content.
+      const budget = measure.height - (heading === null ? 0 : occupied(heading));
       const columns = columnsOf(section);
 
       const pieces = [...flow.children].flatMap((child) => fragmentNode(child, budget, []));
@@ -673,17 +690,9 @@ export function sheetAssignmentScript() {
       contents,
       sheet,
       page,
+      text: measure,
       columnWidth,
       ornament,
-      // How tall the document turned out to be. The root element's automatic
-      // height is the viewport rather than the content, so the paper painted on
-      // it stops at the viewport - and a capture clipped to the page box of a
-      // short last sheet would show flat colour down its bottom margin. The
-      // command extends the root by the page's bottom margin for the captures.
-      documentHeight: Math.max(
-        document.documentElement.scrollHeight,
-        document.body ? document.body.scrollHeight : 0
-      ),
       splits,
       sheets: published,
     };

@@ -17,8 +17,19 @@ import { LAYOUT_GLOBAL, SHEET_ATTRIBUTE, sheetAssignmentScript } from './handboo
  * that is the space it takes in a column and the number the planner adds up.
  */
 
-/** The sheet geometry ADR-0020 states, as the print stylesheet declares it. */
-const SHEET = { width: 643, height: 972, reserve: 34 };
+/** The page geometry the print stylesheet declares, and the text block it leaves. */
+const PAGE = {
+  width: 793.7,
+  height: 1122.51,
+  marginTop: 94.49,
+  marginRight: 56.69,
+  marginBottom: 56.69,
+  marginLeft: 94.49,
+};
+const SHEET = {
+  width: PAGE.width - PAGE.marginLeft - PAGE.marginRight,
+  height: PAGE.height - PAGE.marginTop - PAGE.marginBottom,
+};
 
 /** Stack the blocks of a flow, the way a layout would, and report every box. */
 function layoutEngine(window, declared) {
@@ -31,9 +42,9 @@ function layoutEngine(window, declared) {
     if (children.length === 0) return declared.get(element) ?? 20;
 
     const stack = children.reduce((total, child) => total + occupied(child), 0);
-    // The flow reserves room for the footer the command injects under it, so that
-    // reserve is inside its height rather than printed underneath the last rule.
-    return element.hasAttribute('data-handbook-flow') ? stack + SHEET.reserve : stack;
+    // The footer prints in the bottom margin band rather than in the flow, so the
+    // flow reserves no space for it.
+    return stack;
   };
 
   const topOf = (element) => {
@@ -91,14 +102,12 @@ async function run(pages) {
   const { document } = window;
   const declared = new Map();
 
-  document.documentElement.style.setProperty('--handbook-sheet-width', `${SHEET.width}px`);
-  document.documentElement.style.setProperty('--handbook-sheet-height', `${SHEET.height}px`);
-  document.documentElement.style.setProperty('--handbook-page-width', '794px');
-  document.documentElement.style.setProperty('--handbook-page-height', '1123px');
-  document.documentElement.style.setProperty('--handbook-page-margin-top', '94.49px');
-  document.documentElement.style.setProperty('--handbook-page-margin-right', '56.69px');
-  document.documentElement.style.setProperty('--handbook-page-margin-bottom', '56.69px');
-  document.documentElement.style.setProperty('--handbook-page-margin-left', '94.49px');
+  document.documentElement.style.setProperty('--handbook-page-width', `${PAGE.width}px`);
+  document.documentElement.style.setProperty('--handbook-page-height', `${PAGE.height}px`);
+  document.documentElement.style.setProperty('--handbook-page-margin-top', `${PAGE.marginTop}px`);
+  document.documentElement.style.setProperty('--handbook-page-margin-right', `${PAGE.marginRight}px`);
+  document.documentElement.style.setProperty('--handbook-page-margin-bottom', `${PAGE.marginBottom}px`);
+  document.documentElement.style.setProperty('--handbook-page-margin-left', `${PAGE.marginLeft}px`);
   document.documentElement.style.setProperty('--handbook-column-width', '306px');
   document.documentElement.style.setProperty('--handbook-ornament', 'url("/handbook/ornament.svg")');
 
@@ -128,7 +137,6 @@ async function run(pages) {
 
     const flow = document.createElement('div');
     flow.setAttribute('data-handbook-flow', '');
-    flow.style.paddingBottom = `${SHEET.reserve}px`;
     for (const block of page.blocks) flow.appendChild(build(block));
     section.appendChild(flow);
 
@@ -254,14 +262,15 @@ describe('a source page that does not fit', () => {
   });
 
   it('splits until every sheet fits, rather than once and hoping', async () => {
-    // Six 300px blocks over three sheets of two: a single pass that split at one
-    // boundary would leave the last sheet two blocks too tall.
+    // Six 300px blocks over two sheets of three: the text block is 971.33px, so
+    // three blocks fill a column and a single pass that split at one boundary
+    // would leave the last sheet too tall.
     const window = await run([
       { slug: 'dnd/skills', blocks: Array.from({ length: 6 }, (_, index) => ({ tag: 'p', h: 300, text: `b${index}` })) },
     ]);
 
-    expect(sheetsOf(window).map((sheet) => sheet.pages)).toEqual([1, 1, 1]);
-    expect(sheetTexts(window).map((text) => text.replace(/\s+/g, ''))).toEqual(['b0b1', 'b2b3', 'b4b5']);
+    expect(sheetsOf(window).map((sheet) => sheet.pages)).toEqual([1, 1]);
+    expect(sheetTexts(window).map((text) => text.replace(/\s+/g, ''))).toEqual(['b0b1b2', 'b3b4b5']);
   });
 
   it('keeps two source pages apart, and starts the second on a fresh sheet', async () => {

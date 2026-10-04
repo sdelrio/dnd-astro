@@ -28,6 +28,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 | 0020 | Render the Handbook with a Sheet Box, Not With Print CSS | accepted | 2026-10-03 |
 | 0021 | Publish the Printed Handbook From the Repository | superseded | 2026-10-04 |
 | 0022 | Do Not Publish the Printed Handbook Until the Design Settles | accepted | 2026-10-04 |
+| 0023 | The Sheet Is the Page Box | accepted | 2026-10-04 |
 
 ## About ADRs
 
