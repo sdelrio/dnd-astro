@@ -1,22 +1,28 @@
 ---
 /**
- * The Handbook's print route: the eight house-rule pages, in sidebar order, as
- * one inert document.
+ * The Handbook's print route: a cover, a contents, and the eight house-rule
+ * pages in sidebar order, as one inert document.
  *
- * The route renders content and nothing else. There is no sidebar, no table of
- * contents and no navigation, because a printed sheet is the rule and nothing
- * else; there is no client-side JavaScript, because the artifact must not be a
- * page a reader could run code on; and the sheets themselves are not marked
- * here. The section below is a *source page*, and the command turns source
- * pages into sheets at document start, so the committed route is HTML that
- * does nothing on its own.
+ * The route renders content and nothing else. There is no sidebar, no site
+ * navigation, because a printed sheet is the rule and nothing else; there is no
+ * client-side JavaScript, because the artifact must not be a page a reader could
+ * run code on; and the sheets themselves are not marked here. Each section below
+ * is a *sheet candidate*, and the command turns them into sheets at document
+ * start, so the committed route is HTML that does nothing on its own.
+ *
+ * The route authors the cover, because a title, a version and an edition date
+ * are known at build time. It does not author the contents rows: a page number
+ * does not exist until layout has run, so the same pass that assigns sheets fills
+ * the contents and stamps the numbers. That is why there is no second render and
+ * no second build of the site - two builds are two chances for the two to
+ * disagree about where a chapter starts.
  *
  * See ADR-0020 and `make handbook`.
  */
 import { getCollection, render } from 'astro:content';
 
 import PrintDocument from '../../layouts/PrintDocument.astro';
-import { handbookSourcePages } from '../../utils/handbook';
+import { HANDBOOK_EDITION, HANDBOOK_TITLE, handbookSourcePages } from '../../utils/handbook';
 
 const entries = await getCollection('docs');
 const bySlug = new Map(entries.map((entry) => [entry.id, entry]));
@@ -35,7 +41,28 @@ const sourcePages = await Promise.all(
 );
 ---
 
-<PrintDocument title="D&D House Rules">
+<PrintDocument title={HANDBOOK_TITLE}>
+  {/* The cover. Everything on it is known before the site is built: what the book
+      is called, which version it is and the day that version was cut. A reader
+      holding a PDF of house rules needs all three before the first page, and a
+      page number here would point at nothing. */}
+  <section class="sl-markdown-content" data-handbook-front="cover" data-handbook-title="Cover">
+    <h1 class="handbook-cover-title">{HANDBOOK_TITLE}</h1>
+    <p class="handbook-cover-edition">{HANDBOOK_EDITION}</p>
+  </section>
+
+  {/* The contents. The list inside it is empty here and is filled by the command
+      at document start, because the page numbers in it only exist once the sheets
+      have been assigned - in the same pass, from the same render. */}
+  <section
+    class="sl-markdown-content"
+    data-handbook-front="contents"
+    data-handbook-title="Contents"
+  >
+    <h1>Contents</h1>
+    <ol data-handbook-contents-list></ol>
+  </section>
+
   {
     sourcePages.map(({ slug, title, columns, Content }) => (
       <section

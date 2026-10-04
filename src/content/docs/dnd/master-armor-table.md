@@ -25,6 +25,8 @@ tags: [armor, shields, resizing, dnd]
 | Breastplate | 4 | 2 | -- | 20 lb. | 400 gp | - |
 | Half-Plate | 5 | 2 | Disadvantage | 40 lb. | 750 gp | - |
 
+---
+
 ## Heavy Armor
 
 | Armor | AC[^AC] | Dex[^DEX] | Stealth | Weight | Cost | Special |
@@ -49,6 +51,8 @@ When wearing magical armor or shields, they are damaged only if struck by magica
 | Medium Shield | 2 |  | 6 lb.| 10 gp |
 | Tower Shield | 3 (4 vs ranged) | -2 ATK | 20 lb.| 25 gp |
 
+
+---
 
 ## Armor Sizes
 

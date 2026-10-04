@@ -57,7 +57,7 @@ import {
 } from './handbook-helpers.mjs';
 import { compareCaptures, describeComparison } from './handbook-captures.mjs';
 import { buildManifest, manifestText, sourceEntries, validateManifest } from './handbook-manifest.mjs';
-import { LAYOUT_GLOBAL, sheetAssignmentScript } from './handbook-sheet.mjs';
+import { LAYOUT_GLOBAL, SHEET_ATTRIBUTE, sheetAssignmentScript } from './handbook-sheet.mjs';
 import {
   REPO_ROOT,
   closePageSession,
@@ -221,7 +221,12 @@ export async function run(argv) {
         );
       }
 
-      const sources = new Set(layout.sheets.map((sheet) => sheet.source)).size;
+      // Front matter is a sheet of the book but not a sheet printed from a source
+      // page, so it is not counted as one: this is the number of pages the book
+      // is made from.
+      const sources = new Set(
+        layout.sheets.filter((sheet) => sheet.kind === 'source').map((sheet) => sheet.source)
+      ).size;
 
       log.info(
         `Source pages: ${sources}, sheets: ${layout.sheets.length}, ` +
@@ -458,9 +463,9 @@ class RouteError extends Error {
  * change here - which is the claim being made - while a capture that actually
  * relaid a sheet out would not.
  */
-const LAYOUT_FINGERPRINT_SCRIPT = `(() => [...document.querySelectorAll('[data-handbook-source]')]
+const LAYOUT_FINGERPRINT_SCRIPT = `(() => [...document.querySelectorAll('[${SHEET_ATTRIBUTE}]')]
   .map((element) =>
-    \`\${element.getAttribute('data-handbook-source')}@\${element.offsetTop}+\${element.offsetHeight}\`
+    \`\${element.getAttribute('${SHEET_ATTRIBUTE}')}@\${element.offsetTop}+\${element.offsetHeight}\`
   )
   .join('|'))()`;
 
@@ -563,14 +568,19 @@ async function captureSheets({ client, sessionId, layout, options }) {
    })()`;
   const restore = `(() => {
      for (const node of document.querySelectorAll('[data-handbook-capture-inset]')) node.remove();
-     for (const sheet of document.querySelectorAll('[data-handbook-source]')) sheet.removeAttribute('style');
+     for (const sheet of document.querySelectorAll('[${SHEET_ATTRIBUTE}]')) sheet.removeAttribute('style');
      return true;
    })()`;
   // One sheet at a time, shown by inline style over a stylesheet that hides them
   // all. Hiding every sheet with a rule and then showing one with a second rule
   // would leave all of them visible, because each sheet carries both.
+  //
+  // Every sheet, keyed by the sheet attribute rather than by data-handbook-source:
+  // the front matter is a sheet of the book too, and a reset that only cleared the
+  // inline style off the source pages left the cover visible on every capture
+  // taken after its own.
   const showOnly = (offset, number) => `(() => {
-     for (const sheet of document.querySelectorAll('[data-handbook-source]')) sheet.removeAttribute('style');
+     for (const sheet of document.querySelectorAll('[${SHEET_ATTRIBUTE}]')) sheet.removeAttribute('style');
      const sheet = document.querySelector('[data-handbook-sheet="${number}"]');
      sheet.style.visibility = 'visible';
      sheet.style.transform = 'translateY(${offset}px)';

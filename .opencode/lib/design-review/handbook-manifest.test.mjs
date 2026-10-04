@@ -182,7 +182,7 @@ describe('the manifest', () => {
     expect(once.endsWith('\n')).toBe(true);
     // Two spaces, one sheet per block of lines: reviewable in a diff, which is
     // the entire reason this file exists in the repository.
-    expect(once.split('\n').slice(0, 2)).toEqual(['{', '  "version": 1,']);
+    expect(once.split('\n').slice(0, 2)).toEqual(['{', `  "version": ${MANIFEST_VERSION},`]);
     expect(once.split('\n')[2]).toMatch(/^ {2}"sourceHash": "[0-9a-f]{64}",$/);
   });
 });
