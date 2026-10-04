@@ -388,10 +388,10 @@ describe('the split report', () => {
     expect(describeSplits(splits)[0]).toMatch(/2/);
   });
 
-  // The destination: an authored horizontal rule at the point the generator would
-  // have broken makes the split disappear, and this is what says so while it lasts.
-  it('says what a split becomes when the author breaks there instead', () => {
-    expect(describeSplits(splits).join('\n')).toMatch(/horizontal rule|hr/);
+  // The generator owns the breaks, so the report has to say what a split is: a
+  // block boundary it chose, not a clip and not a break inside a block.
+  it('says every split is a block boundary the run chose', () => {
+    expect(describeSplits(splits).join('\n')).toMatch(/block boundary/);
   });
 
   // Not a split, and it is not hidden either: nothing was broken, so it is
@@ -405,7 +405,7 @@ describe('the split report', () => {
     expect(report).toMatch(/not cut|spans/i);
   });
 
-  it('says there is nothing to report when every break was authored', () => {
+  it('says there is nothing to report when nothing needed a split', () => {
     const report = describeSplits([]).join('\n');
 
     expect(report).toMatch(/no automatic splits|0/);

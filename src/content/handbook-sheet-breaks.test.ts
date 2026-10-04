@@ -6,9 +6,13 @@ const repoRoot = join(__dirname, '../..');
 const HANDBOOK_DIR = join(repoRoot, 'src/content/docs/dnd');
 
 /**
- * #423: a horizontal rule in a house-rule page means "start a new sheet".
+ * #423: a horizontal rule in a house-rule page is a gold divider.
  *
- * The meaning is agreed, but the way to write one is not safe by accident. A
+ * Since ADR-0024 it no longer starts a sheet, and the vestigial print rules that
+ * commit `ecf883a` authored to force breaks have been removed, so the eight
+ * house-rule pages currently author no horizontal rules at all. The guard stays
+ * because the way to write one is still not safe by accident: if a rule is
+ * authored again, a
  * `---` needs a blank line above it, and that is a parser constraint rather than
  * a style one, because two readers of the same file disagree about a rule that
  * does not have one:
@@ -86,14 +90,11 @@ describe('the authored sheet breaks in the house-rule pages', () => {
     expect(houseRuleFiles()).toHaveLength(8);
   });
 
-  // The non-vacuity assertion for this ticket. Without it the rule above would
-  // hold over zero rules for as long as nobody authored one, and the split gate
-  // in the manifest is what says a rule was supposed to be there.
-  it('has at least one authored break, because a break nobody wrote is not a break', () => {
-    const breaks = houseRuleFiles().flatMap((file) => authoredBreaks(readFileSync(file, 'utf8')));
-
-    expect(breaks.length).toBeGreaterThan(0);
-  });
+  // Non-vacuity is the scanner's own, asserted against worked examples in the
+  // next describe. It is not asserted on the content, because since ADR-0024
+  // removed the break a rule forced and the vestigial print rules were deleted,
+  // the house-rule pages author none, and demanding one to guard would be
+  // demanding a divider the book does not want.
 
   it('gives every horizontal rule a blank line above it', () => {
     const unreadable = houseRuleFiles().flatMap((file) =>

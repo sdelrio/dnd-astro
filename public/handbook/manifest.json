@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "sourceHash": "df8c49ea0e1df62593a5f70e4ff0df8aa745f63e420f8c76ee3bd989055e9310",
-  "sheetCount": 66,
+  "sourceHash": "b019ec44b245fe9a8030dfbd17b4f743b327e761a7bf62641066b3da1d6191e3",
+  "sheetCount": 27,
   "sources": [
     {
       "slug": "dnd/character-creation",
       "path": "src/content/docs/dnd/character-creation.mdx",
-      "hash": "edcc63362b61201b77fe3125758b1abe0d6c04bd652c0423c2eccd67f9e11e0b"
+      "hash": "a335102b18a02162148bbba43a002bc371c6b4e57ea6ec2f3043f3cca440924e"
     },
     {
       "slug": "dnd/classes",
@@ -16,32 +16,32 @@
     {
       "slug": "dnd/injuries",
       "path": "src/content/docs/dnd/injuries.md",
-      "hash": "9e1bed1c9eeca7e42be3def86ae19444178a115acd19170d5889d766f1ebab30"
+      "hash": "39e1ac908cbc6ea19ded3a8adeb38a86e5a69bba63fbd8e71a4cb359e6e60b55"
     },
     {
       "slug": "dnd/magic",
       "path": "src/content/docs/dnd/magic.md",
-      "hash": "8b325c295a71711030c00f0207395f1a8abad516fd7aef6a10a92b8ab853689e"
+      "hash": "8b5a20b573114c09ac6ae41baf858871b84b37475348ab7ef4d86c911220420d"
     },
     {
       "slug": "dnd/master-armor-table",
       "path": "src/content/docs/dnd/master-armor-table.md",
-      "hash": "0064b64415fa0f1b1ddd31ee09514d28909eba54d455029a669d32197a9565ab"
+      "hash": "b5009b13f160ec952bc0725c8a45f065557e3c6bf50efed7000155067269a7de"
     },
     {
       "slug": "dnd/skills",
       "path": "src/content/docs/dnd/skills.md",
-      "hash": "a54942030baa0d9d8e8d051800d7e3431d4f8e12420b372450f83970d32e6663"
+      "hash": "f267b8d1c7493b016dd7505394c5cb21f6192c62c2dd462eb2e96b1385bcd906"
     },
     {
       "slug": "dnd/weapon-mastery",
       "path": "src/content/docs/dnd/weapon-mastery.mdx",
-      "hash": "0470ab3b87f5e92ed5743337f279683b1a960d4517dfae574f87c22b291576d9"
+      "hash": "903dd89c167a08525b807af31327feff2274fb8ade31ef4e1cd9eaf76dbb9ae0"
     },
     {
       "slug": "dnd/weapon-properties",
       "path": "src/content/docs/dnd/weapon-properties.mdx",
-      "hash": "f7191a1518f00d385ecb0c2693f128760cc3f1e1f83a45322586a885f626ee4e"
+      "hash": "20f33a7f35880ed2f4e3fc7be957306cca6cee52f473dad6a3cc97c580bca604"
     }
   ],
   "sheets": [
@@ -65,7 +65,7 @@
       "part": 1,
       "parts": 1,
       "section": "",
-      "textHash": "5e97dcb79309282dcbebe72bff1aed377838cc6ab5c618faf490cce4dba0fc7a"
+      "textHash": "bdcc4c6c38d3846e9e790b35487941c815ccfc8a3e61fbcbca544a51e661bbc9"
     },
     {
       "number": 3,
@@ -74,9 +74,9 @@
       "source": "dnd/character-creation",
       "title": "Character Creation",
       "part": 1,
-      "parts": 5,
+      "parts": 2,
       "section": "Standard Array",
-      "textHash": "741277f8297a1ab2be185c95b4dba3af729480a216d777223c479ed20af7ff18"
+      "textHash": "9df0125e766a5bceeda4d6d2b40d67842387d905fa3f3e54dd0ef981d5d890ee"
     },
     {
       "number": 4,
@@ -85,174 +85,174 @@
       "source": "dnd/character-creation",
       "title": "Character Creation",
       "part": 2,
-      "parts": 5,
-      "section": "Ability scores",
-      "textHash": "f2b03cc2452f6f585989d2acb3606f62706b8f0f50926398113ef9a3ba60836e"
+      "parts": 2,
+      "section": "",
+      "textHash": "8f70f93f932e3a0388036eec44a2388b370e8997e1a992dc34ec8dc17a6e3b16"
     },
     {
       "number": 5,
       "page": 5,
-      "kind": "source",
-      "source": "dnd/character-creation",
-      "title": "Character Creation",
-      "part": 3,
-      "parts": 5,
-      "section": "Stat Rolling",
-      "textHash": "4aafac4567777fe690461b0e88e444c0f709ef470c229a651497647a63b4d417"
-    },
-    {
-      "number": 6,
-      "page": 6,
-      "kind": "source",
-      "source": "dnd/character-creation",
-      "title": "Character Creation",
-      "part": 4,
-      "parts": 5,
-      "section": "",
-      "textHash": "e1f9d8dbeaf2d4e7bb95ff53e20cf84fdfd435782ce74feb92a3d6a6a610ca4c"
-    },
-    {
-      "number": 7,
-      "page": 7,
-      "kind": "source",
-      "source": "dnd/character-creation",
-      "title": "Character Creation",
-      "part": 5,
-      "parts": 5,
-      "section": "Stat Rolling Rules",
-      "textHash": "874f055635b8b4bd818e77b8946e3975e010348103df9a2be23b7c0729325ab9"
-    },
-    {
-      "number": 8,
-      "page": 8,
       "kind": "source",
       "source": "dnd/classes",
       "title": "Classes",
       "part": 1,
       "parts": 1,
       "section": "Paladin",
-      "textHash": "03ecd8344c6ace6f2f4b8dda78b543e0985e3a9688714f206b502a913ee4460b"
+      "textHash": "085440246275f89f0d1ce963e1c034f1a07b17e4fc9e3e4f28ad017cf227e477"
+    },
+    {
+      "number": 6,
+      "page": 6,
+      "kind": "source",
+      "source": "dnd/injuries",
+      "title": "Lingering Injuries",
+      "part": 1,
+      "parts": 2,
+      "section": "Injury Treatment",
+      "textHash": "64639354fbcc0e7780262a26f57ae79b3e6cd55cac2ca3ec606fad533352a1b6"
+    },
+    {
+      "number": 7,
+      "page": 7,
+      "kind": "source",
+      "source": "dnd/injuries",
+      "title": "Lingering Injuries",
+      "part": 2,
+      "parts": 2,
+      "section": "Injury Severity Table",
+      "textHash": "1cb1e36961ee0b328569bec8234b3e4bec85b5fcc990351407d4570bb43345cb"
+    },
+    {
+      "number": 8,
+      "page": 8,
+      "kind": "source",
+      "source": "dnd/magic",
+      "title": "Magic",
+      "part": 1,
+      "parts": 2,
+      "section": "General Magic Rules",
+      "textHash": "22015fa4ea605c4add8767c3e9980ca3521c0b01054d4769132ad394884d80ea"
     },
     {
       "number": 9,
       "page": 9,
       "kind": "source",
-      "source": "dnd/injuries",
-      "title": "Lingering Injuries",
-      "part": 1,
-      "parts": 3,
-      "section": "Injury Treatment",
-      "textHash": "b12133817ac0ae2c78e64b24ed814bf993b558851544c57aea9774945d7ea125"
+      "source": "dnd/magic",
+      "title": "Magic",
+      "part": 2,
+      "parts": 2,
+      "section": "Resurrection weakness",
+      "textHash": "64c81bafec307dde3a77202fb129c0b55115e017068bf57eec16cfed77679f62"
     },
     {
       "number": 10,
       "page": 10,
       "kind": "source",
-      "source": "dnd/injuries",
-      "title": "Lingering Injuries",
-      "part": 2,
-      "parts": 3,
-      "section": "Medical Treatment (Medicine)",
-      "textHash": "afd0fc8be512bedd47882ee12aef8410b2f78060cb532cd10339cd5f5ebaf68b"
+      "source": "dnd/master-armor-table",
+      "title": "Master Armor Table",
+      "part": 1,
+      "parts": 2,
+      "section": "Light Armor",
+      "textHash": "eea81e78b8f7653acabc5ff5c1ea8db6bc950ed2a8f30c800868ca03f2e462bd"
     },
     {
       "number": 11,
       "page": 11,
       "kind": "source",
-      "source": "dnd/injuries",
-      "title": "Lingering Injuries",
-      "part": 3,
-      "parts": 3,
-      "section": "Magical Treatment (Potions and Healing Spells)",
-      "textHash": "f820369a701d4aeaec522bb12072a7f3865dacf94333e4caa37cfdc045922741"
+      "source": "dnd/master-armor-table",
+      "title": "Master Armor Table",
+      "part": 2,
+      "parts": 2,
+      "section": "Footnotes",
+      "textHash": "fbb08d88a99d14cbfb1aecb67e70f337f405640cba38cf930d1857fe985c2b6a"
     },
     {
       "number": 12,
       "page": 12,
       "kind": "source",
-      "source": "dnd/magic",
-      "title": "Magic",
+      "source": "dnd/skills",
+      "title": "Skills",
       "part": 1,
-      "parts": 5,
-      "section": "General Magic Rules",
-      "textHash": "a5213a25c804420f0ae3663c5c96f5e3cd875efed8ed7437c05d4ab94cfd2929"
+      "parts": 12,
+      "section": "Rolling skill checks without proficiency",
+      "textHash": "ec2b33358ad480301ad25c0a1af9b8c690903c134d12887219e1da314c9e2a43"
     },
     {
       "number": 13,
       "page": 13,
       "kind": "source",
-      "source": "dnd/magic",
-      "title": "Magic",
+      "source": "dnd/skills",
+      "title": "Skills",
       "part": 2,
-      "parts": 5,
-      "section": "Spells",
-      "textHash": "3c9d938fe02bdffb9e8897f6bcd97ef17a08375f6b3f0df95a951a9d89645873"
+      "parts": 12,
+      "section": "Calculate value of gathered ingredients",
+      "textHash": "38092f9eb2dcb7884214eedf5f3a81da6dc31aa62860b8644605f5d897d55c0f"
     },
     {
       "number": 14,
       "page": 14,
       "kind": "source",
-      "source": "dnd/magic",
-      "title": "Magic",
+      "source": "dnd/skills",
+      "title": "Skills",
       "part": 3,
-      "parts": 5,
-      "section": "Resurrection",
-      "textHash": "8b148f8b97249654cce8ab7b0eb99d1d87e48adfd2bfaf0d1148097691a2e5e5"
+      "parts": 12,
+      "section": "Carpenter’s Tools (Strength)",
+      "textHash": "6ede8ec8db9d818ae831f9373ea9fa40a3481740292bb0611846be9eeca0490a"
     },
     {
       "number": 15,
       "page": 15,
       "kind": "source",
-      "source": "dnd/magic",
-      "title": "Magic",
+      "source": "dnd/skills",
+      "title": "Skills",
       "part": 4,
-      "parts": 5,
-      "section": "Instant Death",
-      "textHash": "a72f528bd2e501a1509ded04afc01e740705b3dca835b045ed939f6f42937c1a"
+      "parts": 12,
+      "section": "Mason’s Tools (Strength)",
+      "textHash": "1248923c28a12c800a31f03e720ddfbbd7e9879d912ba54dd0212ff7cb636a84"
     },
     {
       "number": 16,
       "page": 16,
       "kind": "source",
-      "source": "dnd/magic",
-      "title": "Magic",
+      "source": "dnd/skills",
+      "title": "Skills",
       "part": 5,
-      "parts": 5,
-      "section": "Spellcasting Services",
-      "textHash": "743c8ff406eb964e2e0716ea8b9da46c951766d5b9b322b10727717a33112b5a"
+      "parts": 12,
+      "section": "Tinker’s Tools (Dexterity)",
+      "textHash": "b677f062fd1bc831733274ae9a84d726832ed7904d9b3d38e1a8fd12271711f4"
     },
     {
       "number": 17,
       "page": 17,
       "kind": "source",
-      "source": "dnd/master-armor-table",
-      "title": "Master Armor Table",
-      "part": 1,
-      "parts": 3,
-      "section": "Light Armor",
-      "textHash": "2ac692b47e9fd648f462f6c8ce6b8fa9c9a39de36d2347972b701c2bd922e93d"
+      "source": "dnd/skills",
+      "title": "Skills",
+      "part": 6,
+      "parts": 12,
+      "section": "Weaver’s Tools (Dexterity)",
+      "textHash": "8e1c1cfedb270fa4d569361e27cc47e77f4e7a207f8eea7fd1e7843ed6ac37d6"
     },
     {
       "number": 18,
       "page": 18,
       "kind": "source",
-      "source": "dnd/master-armor-table",
-      "title": "Master Armor Table",
-      "part": 2,
-      "parts": 3,
-      "section": "Heavy Armor",
-      "textHash": "8a70a4be760c0a6500b1431110b6079a0aec8e84d03c09e560d2087d48d9b340"
+      "source": "dnd/skills",
+      "title": "Skills",
+      "part": 7,
+      "parts": 12,
+      "section": "The Advanced Tools",
+      "textHash": "21d16d6ab376264de4ae2c897c0a871c93b8d7e99e32b456356e1865dfeb08dc"
     },
     {
       "number": 19,
       "page": 19,
       "kind": "source",
-      "source": "dnd/master-armor-table",
-      "title": "Master Armor Table",
-      "part": 3,
-      "parts": 3,
-      "section": "Armor Sizes",
-      "textHash": "d327ff17ac6c3891f47ba814b376722fb97d47e65bd2d3ef5037c674a57c1f09"
+      "source": "dnd/skills",
+      "title": "Skills",
+      "part": 8,
+      "parts": 12,
+      "section": "Poisoner’s Kit (Intelligence)",
+      "textHash": "808acf5e5063d21cd507f3d4311b5507227698399a9d3e4400cf20aa7c407859"
     },
     {
       "number": 20,
@@ -260,10 +260,10 @@
       "kind": "source",
       "source": "dnd/skills",
       "title": "Skills",
-      "part": 1,
-      "parts": 37,
-      "section": "Rolling skill checks without proficiency",
-      "textHash": "a68dfbf063b408b769cc75fe9de52c9ad0cee0f8b3b88a8fe6eb0513f877c5dc"
+      "part": 9,
+      "parts": 12,
+      "section": "Calligrapher’s Supplies (Dexterity)",
+      "textHash": "b2be3285e4e7f47f3cbdc9c14b5337d3d86971fa8d1b9b2f12b6ddc50daf079b"
     },
     {
       "number": 21,
@@ -271,10 +271,10 @@
       "kind": "source",
       "source": "dnd/skills",
       "title": "Skills",
-      "part": 2,
-      "parts": 37,
-      "section": "Overchanneling Attunement",
-      "textHash": "a9382d07e9e81d76b95f0e901f300f0a3e5e8ea83feaa9959b948db0e082cb4c"
+      "part": 10,
+      "parts": 12,
+      "section": "",
+      "textHash": "6ce5919f6b37380e7e5b8cf2b6223c777ca1e383d51d194acb453466fdd29405"
     },
     {
       "number": 22,
@@ -282,10 +282,10 @@
       "kind": "source",
       "source": "dnd/skills",
       "title": "Skills",
-      "part": 3,
-      "parts": 37,
+      "part": 11,
+      "parts": 12,
       "section": "",
-      "textHash": "58f9a3038e721ebe4cfac3106dce15ac76c3b7e6fadabb2bfc07ed74fc472ad1"
+      "textHash": "8bb567fccd8eb7b888c16820aec5fe7205a79dce8b9b6dba8b24359f70187842"
     },
     {
       "number": 23,
@@ -293,484 +293,158 @@
       "kind": "source",
       "source": "dnd/skills",
       "title": "Skills",
-      "part": 4,
-      "parts": 37,
-      "section": "Foraging for Ingredients",
-      "textHash": "61afcbf345c76678000a2e637f9b9d3d966de2fc8007eb7d064e9cdaaa959e82"
+      "part": 12,
+      "parts": 12,
+      "section": "Other Tools",
+      "textHash": "879fd5a20d8c8e08aea657e966e241d01447056feb76c7968c97fde1e80e2b12"
     },
     {
       "number": 24,
       "page": 24,
       "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 5,
-      "parts": 37,
-      "section": "Crafting",
-      "textHash": "cb121ac405d8fcaa2a4576f5abb30dfa81ed04b034bf391f4efb84a14e2a9e59"
+      "source": "dnd/weapon-mastery",
+      "title": "Weapon Master Property",
+      "part": 1,
+      "parts": 3,
+      "section": "Weapon Master table",
+      "textHash": "f102750a70a948cd2800bd3ac2d04b79336feaba53b75f4db7b7c4a52c8551f7"
     },
     {
       "number": 25,
       "page": 25,
       "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 6,
-      "parts": 37,
-      "section": "",
-      "textHash": "5889877024abdc1aa5db7037b525368e3b5367245a7526223cecc7f386bff99d"
+      "source": "dnd/weapon-mastery",
+      "title": "Weapon Master Property",
+      "part": 2,
+      "parts": 3,
+      "section": "Vex",
+      "textHash": "ec17b6ecfd47a60a5300e0d4d5e867acaa8260fb0dc1bf69ed1ad66e4bc3235e"
     },
     {
       "number": 26,
       "page": 26,
       "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 7,
-      "parts": 37,
-      "section": "",
-      "textHash": "4e9dae41da81320988f871529c714cca5a270bf000a4561c6ad170d509db265d"
+      "source": "dnd/weapon-mastery",
+      "title": "Weapon Master Property",
+      "part": 3,
+      "parts": 3,
+      "section": "Changing Weapon Masteries",
+      "textHash": "aff35deffa1960ae8ce6fcd645ec0f0a0527e5a852d2876fbf155b4653437141"
     },
     {
       "number": 27,
       "page": 27,
       "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 8,
-      "parts": 37,
-      "section": "Brewer’s Supplies (Intelligence)",
-      "textHash": "f9a6d75e1f8d281562b78fdbd7c38a94a7933ebf86a1c07a39e1e29e026b75c2"
-    },
-    {
-      "number": 28,
-      "page": 28,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 9,
-      "parts": 37,
-      "section": "Carpenter’s Tools (Strength)",
-      "textHash": "6956b5c585e55c73103c5b1c3925a72af0e812713b238447e6fa73433f0cc2fc"
-    },
-    {
-      "number": 29,
-      "page": 29,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 10,
-      "parts": 37,
-      "section": "Cobbler’s Tools (Dexterity)",
-      "textHash": "015112b296f9884e84e579b03ba5adf45e031b348c197b9d4dce5e6416dd6a0a"
-    },
-    {
-      "number": 30,
-      "page": 30,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 11,
-      "parts": 37,
-      "section": "Glassblower’s Tools (Intelligence)",
-      "textHash": "93d6df4819f60d15ce97ed939f8bfdeabdbddf7b05d457cffdcb96cc7f7b19e2"
-    },
-    {
-      "number": 31,
-      "page": 31,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 12,
-      "parts": 37,
-      "section": "Leatherworker’s Tools (Dexterity)",
-      "textHash": "704501ad38b3aa181e38a9e81bd6fe0e5e118d08baca8381536d6875bf4747c8"
-    },
-    {
-      "number": 32,
-      "page": 32,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 13,
-      "parts": 37,
-      "section": "Mason’s Tools (Strength)",
-      "textHash": "1b12cd1593177fc99ab3f60bfd71a74e8c470e13e715ff888469e7dac80faad8"
-    },
-    {
-      "number": 33,
-      "page": 33,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 14,
-      "parts": 37,
-      "section": "Potter’s Tools (Intelligence)",
-      "textHash": "c2fbfa5ddbc3caddcfdeafbafad14591d8c4952cdea56aa1958e29c5172b6341"
-    },
-    {
-      "number": 34,
-      "page": 34,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 15,
-      "parts": 37,
-      "section": "Smith’s Tools (Strength)",
-      "textHash": "ffbc0db7a79e54f986ed047656c3b6d795b4ed14274096a54b37e6194aa6af46"
-    },
-    {
-      "number": 35,
-      "page": 35,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 16,
-      "parts": 37,
-      "section": "",
-      "textHash": "c736db59f7e34e5d48b1b357d31bd04686c627b9311c3a9946c0f9bfe808e163"
-    },
-    {
-      "number": 36,
-      "page": 36,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 17,
-      "parts": 37,
-      "section": "Tinker’s Tools (Dexterity)",
-      "textHash": "e9e19191f986ef5626d05d882015bce6af601719ff59428f3cfb702bc25f1d27"
-    },
-    {
-      "number": 37,
-      "page": 37,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 18,
-      "parts": 37,
-      "section": "Weaver’s Tools (Dexterity)",
-      "textHash": "95badc02da6edbf60c195a4ba84a508f0731285ace1744917d61db5a347f3b06"
-    },
-    {
-      "number": 38,
-      "page": 38,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 19,
-      "parts": 37,
-      "section": "Woodcarver’s Tools (Dexterity)",
-      "textHash": "e999cb421527551f9fc7e00f572b40756e9e2bf364dcf4dec84ed6f16214a17a"
-    },
-    {
-      "number": 39,
-      "page": 39,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 20,
-      "parts": 37,
-      "section": "Herbalism Kit (Intelligence)",
-      "textHash": "0613f27e6bed7793a2cfcb19169882b8281ec2c2a3ab03ff65d6d8ecb58dc474"
-    },
-    {
-      "number": 40,
-      "page": 40,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 21,
-      "parts": 37,
-      "section": "",
-      "textHash": "c2188816b42e07d7cb3bc608a84c7b96af5dd2931f2baebc4f37a7ba80a58ac1"
-    },
-    {
-      "number": 41,
-      "page": 41,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 22,
-      "parts": 37,
-      "section": "Poisoner’s Kit (Intelligence)",
-      "textHash": "d33d6ececa301281db021e2548b44b043c0331b85b1fb6849fd0ef7958223934"
-    },
-    {
-      "number": 42,
-      "page": 42,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 23,
-      "parts": 37,
-      "section": "",
-      "textHash": "a40a489ca704fb7f9cecf8e77eade853d3ba810330b3ccfa933f081e2b01a0c5"
-    },
-    {
-      "number": 43,
-      "page": 43,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 24,
-      "parts": 37,
-      "section": "Calligrapher’s Supplies (Dexterity)",
-      "textHash": "9dbb765b8b34e8dfbe0d545dfa6bc0b6550c06def987ffc4d4089be3a3d59e42"
-    },
-    {
-      "number": 44,
-      "page": 44,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 25,
-      "parts": 37,
-      "section": "",
-      "textHash": "2e40405573ba335c38d8b427aae668433b37b994e9f3699d0452b17546bc0021"
-    },
-    {
-      "number": 45,
-      "page": 45,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 26,
-      "parts": 37,
-      "section": "",
-      "textHash": "b4451f19404911e3e267628c8352618f195070bf8e0ac08b396e3754d8f3dc15"
-    },
-    {
-      "number": 46,
-      "page": 46,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 27,
-      "parts": 37,
-      "section": "",
-      "textHash": "3d6e869d9bb845a293cd487f0e788a5cb8705ec44dfbce3c796129ffed79eaf4"
-    },
-    {
-      "number": 47,
-      "page": 47,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 28,
-      "parts": 37,
-      "section": "Alchemist’s Supplies (Intelligence)",
-      "textHash": "18e716d19915719b552c200f023154efdb6da58804d446c3c779dccb2bac622b"
-    },
-    {
-      "number": 48,
-      "page": 48,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 29,
-      "parts": 37,
-      "section": "",
-      "textHash": "389349ec91f3d17dd28a57ad41f11f004f878fa827ff685e27696523d9b25485"
-    },
-    {
-      "number": 49,
-      "page": 49,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 30,
-      "parts": 37,
-      "section": "",
-      "textHash": "28da7fa5ba0c9c0058c489d9feb4aff9bf84318ae1097fef4aa4a2de11a7fdbc"
-    },
-    {
-      "number": 50,
-      "page": 50,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 31,
-      "parts": 37,
-      "section": "",
-      "textHash": "f02988789c32ca44ccd9670ae067245cfe3f80ed98f39442710eb700a1bc3ac4"
-    },
-    {
-      "number": 51,
-      "page": 51,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 32,
-      "parts": 37,
-      "section": "",
-      "textHash": "d24886ab63714e047093e1f2eab1fdd73cadb09e5dc2ac7613d9a18d0f60b9d5"
-    },
-    {
-      "number": 52,
-      "page": 52,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 33,
-      "parts": 37,
-      "section": "",
-      "textHash": "9c29c67da1c998613d90f756c170a3ca6d6b129a9e33356346cf3df4e9fa798a"
-    },
-    {
-      "number": 53,
-      "page": 53,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 34,
-      "parts": 37,
-      "section": "",
-      "textHash": "99fa97161faa56bfa6b6f8a9381c886dc9d26ed2963f850a8a49b1f39b61dbb6"
-    },
-    {
-      "number": 54,
-      "page": 54,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 35,
-      "parts": 37,
-      "section": "",
-      "textHash": "cce851e37bdf77b39fcf978edce220f4adae533d51b0a4f5c63447567218b67d"
-    },
-    {
-      "number": 55,
-      "page": 55,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 36,
-      "parts": 37,
-      "section": "Other Tools",
-      "textHash": "bc99775ceae1e7f3c9d67d5566678a8b625952c1cd09caa46d2e6b4a3d22e165"
-    },
-    {
-      "number": 56,
-      "page": 56,
-      "kind": "source",
-      "source": "dnd/skills",
-      "title": "Skills",
-      "part": 37,
-      "parts": 37,
-      "section": "Navigator’s Tools (Wisdom)",
-      "textHash": "c4c5117d6217eb773ff4756708cf02dc44977950b35ee223531cf369e16de809"
-    },
-    {
-      "number": 57,
-      "page": 57,
-      "kind": "source",
-      "source": "dnd/weapon-mastery",
-      "title": "Weapon Master Property",
-      "part": 1,
-      "parts": 7,
-      "section": "",
-      "textHash": "73a266713fbf1bfa448925d6d1ba3fd5efe8718603823956729ecf9b0ace3941"
-    },
-    {
-      "number": 58,
-      "page": 58,
-      "kind": "source",
-      "source": "dnd/weapon-mastery",
-      "title": "Weapon Master Property",
-      "part": 2,
-      "parts": 7,
-      "section": "Weapon Master table",
-      "textHash": "17cd0d51336ac0f3026dc49bfdfd1be3501fd62758e88084a076cd8c21660988"
-    },
-    {
-      "number": 59,
-      "page": 59,
-      "kind": "source",
-      "source": "dnd/weapon-mastery",
-      "title": "Weapon Master Property",
-      "part": 3,
-      "parts": 7,
-      "section": "Weapon masteries",
-      "textHash": "a7b42ae70a405bf486d5f9c7c2e97f64032fa658b4fe8002dcb32338d36d020c"
-    },
-    {
-      "number": 60,
-      "page": 60,
-      "kind": "source",
-      "source": "dnd/weapon-mastery",
-      "title": "Weapon Master Property",
-      "part": 4,
-      "parts": 7,
-      "section": "Cleave",
-      "textHash": "70124d2a7b6125c7024079d264af55dd2366ad4d649638aca7d4d7896abf8378"
-    },
-    {
-      "number": 61,
-      "page": 61,
-      "kind": "source",
-      "source": "dnd/weapon-mastery",
-      "title": "Weapon Master Property",
-      "part": 5,
-      "parts": 7,
-      "section": "Vex",
-      "textHash": "9bfdb2dfdd093919950a3c068a62d8cdaa510c74408b7c3bced21aac2a76069e"
-    },
-    {
-      "number": 62,
-      "page": 62,
-      "kind": "source",
-      "source": "dnd/weapon-mastery",
-      "title": "Weapon Master Property",
-      "part": 6,
-      "parts": 7,
-      "section": "Keen",
-      "textHash": "778345e7eb6fb9ddfb17f5df7197575ae106dcc08f4dcc2b809a3df148bb4b75"
-    },
-    {
-      "number": 63,
-      "page": 63,
-      "kind": "source",
-      "source": "dnd/weapon-mastery",
-      "title": "Weapon Master Property",
-      "part": 7,
-      "parts": 7,
-      "section": "Sap",
-      "textHash": "6e5bea3d03aaa55bcb0842a88d6f1bace7b61dc84ab411f5fe95e6ba44e924db"
-    },
-    {
-      "number": 64,
-      "page": 64,
-      "kind": "source",
       "source": "dnd/weapon-properties",
       "title": "Weapon Properties",
       "part": 1,
-      "parts": 3,
+      "parts": 1,
       "section": "Simple Melee Weapons",
-      "textHash": "2e410214f2f5321879b54d1382d30f81220ff53a09bf9b3c3f40960506150b70"
-    },
-    {
-      "number": 65,
-      "page": 65,
-      "kind": "source",
-      "source": "dnd/weapon-properties",
-      "title": "Weapon Properties",
-      "part": 2,
-      "parts": 3,
-      "section": "Martial Melee Weapons",
-      "textHash": "051fc5258808a6a1a14c4045588ebeef85fd240a141bff354a613dbc1a2ad870"
-    },
-    {
-      "number": 66,
-      "page": 66,
-      "kind": "source",
-      "source": "dnd/weapon-properties",
-      "title": "Weapon Properties",
-      "part": 3,
-      "parts": 3,
-      "section": "Martial Ranged Weapons",
-      "textHash": "6f1df1b564f96d80394cda48133cde646d49bba9258fa0559e488dcb6cbeab88"
+      "textHash": "aab10e2831d383dacbada5d2d29da1cda3ea76f94ba150ac275082015b0f8bdd"
     }
   ],
-  "splits": []
+  "splits": [
+    {
+      "source": "dnd/character-creation",
+      "sheet": 4,
+      "kind": "aside",
+      "label": "aside at \"ExampleA roll of 3 on a d6 is rounded up to 4. A…\""
+    },
+    {
+      "source": "dnd/injuries",
+      "sheet": 7,
+      "kind": "ul",
+      "label": "ul at \"Scope. Magical treatment includes targeted spell…\""
+    },
+    {
+      "source": "dnd/magic",
+      "sheet": 9,
+      "kind": "div",
+      "label": "div at h2 \"Resurrection weakness\""
+    },
+    {
+      "source": "dnd/master-armor-table",
+      "sheet": 11,
+      "kind": "aside",
+      "label": "aside at \"NoteAdapting a suit of armor to fit a different…\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 13,
+      "kind": "div",
+      "label": "div at h2 \"Calculate value of gathered ingredients\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 14,
+      "kind": "table",
+      "label": "table at \"Craft Materials Cost Workday Antitoxin 25 gp 1 B…\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 15,
+      "kind": "table",
+      "label": "table at \"Craft Materials Cost Workday Difficulty Class Sl…\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 16,
+      "kind": "table",
+      "label": "table at \"Craft Materials Cost Workday Difficulty Class Da…\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 17,
+      "kind": "table",
+      "label": "table at \"Craft Materials Cost Workday Difficulty Class Mu…\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 18,
+      "kind": "div",
+      "label": "div at h2 \"The Advanced Tools\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 19,
+      "kind": "div",
+      "label": "div at h2 \"Poisoner’s Kit (Intelligence)\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 20,
+      "kind": "div",
+      "label": "div at h2 \"Calligrapher’s Supplies (Dexterity)\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 21,
+      "kind": "aside",
+      "label": "aside at \"NoteTo make an item, you need three things: An A…\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 22,
+      "kind": "p",
+      "label": "p at \"Finally, an alchemist crafting a potion must acq…\""
+    },
+    {
+      "source": "dnd/skills",
+      "sheet": 23,
+      "kind": "table",
+      "label": "table at \"Magical Effect Affinity Creature Type Abjuration…\""
+    },
+    {
+      "source": "dnd/weapon-mastery",
+      "sheet": 25,
+      "kind": "p",
+      "label": "p at \"If you hit a creature with a melee attack roll u…\""
+    },
+    {
+      "source": "dnd/weapon-mastery",
+      "sheet": 26,
+      "kind": "p",
+      "label": "p at \"This mastery is exclusively for firearms. You ro…\""
+    }
+  ]
 }

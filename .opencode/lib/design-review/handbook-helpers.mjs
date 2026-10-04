@@ -183,8 +183,8 @@ export function parseArgs(argv) {
  * content accounts for lands above it.
  *
  * The count is a bound rather than an equality, and that is measured rather than
- * assumed. The print fragmentainer holds 971.33 CSS px of document per page plus a
- * fraction - a fixture of exactly 1944px printed two pages and the same fixture
+ * assumed. The print fragmentainer holds 1009.13 CSS px of document per page plus a
+ * fraction - a fixture of exactly 2018px printed two pages and the same fixture
  * one pixel taller printed three - and the print layout of a source page can be
  * a little shorter than its screen measurement: Character Creation measured
  * 4038px and printed four pages, Skills measured 16756px and printed seventeen.
@@ -327,26 +327,25 @@ export function describeSheets(sheets) {
 /**
  * The split report: every place the generator decided where a source page ends.
  *
- * This is the report the whole ticket is for. A generator that quietly decides
- * where a page ends is a generator that can quietly change which page a rule
- * appears on, and nothing would say so - so every break is printed here by name,
- * recorded in the manifest beside it, and replaced by an authored horizontal rule
- * as the content converges on breaks a person chose.
+ * The generator owns every page break in the book, so a boundary it chose and did
+ * not say so is a boundary that can change with nothing to show for it. Every one
+ * is printed here by name and recorded in the manifest beside it. Each is a block
+ * boundary: nothing is broken inside a block and nothing is clipped.
  *
  * Two kinds of line, and the difference matters: a **split** is a boundary this
- * run invented, and an **oversized block** is content that was not broken at all
+ * run chose, and an **oversized block** is content that was not broken at all
  * because there was no block boundary inside it to break at. The second is not a
- * split and is not hidden as one; it is a paragraph that will span two pages until
- * the author gives it somewhere else to break.
+ * split and is not hidden as one; it is a paragraph that will span two pages
+ * because there is nowhere inside it to break.
  */
 export function describeSplits(splits) {
   if (splits.length === 0) {
-    return ['  no automatic splits: every break in the book is one the author wrote.'];
+    return ['  no automatic splits: the book fits its sheets without one.'];
   }
 
   const lines = [
-    `  ${splits.length} automatic split${splits.length === 1 ? '' : 's'}, none of them authored. Each one is`,
-    '  a page boundary this run chose; an authored horizontal rule at that point replaces it.',
+    `  ${splits.length} automatic split${splits.length === 1 ? '' : 's'}. Each one is a page`,
+    '  boundary this run chose at a block boundary; every one is named below.',
   ];
 
   splits.forEach((split, index) => {
@@ -522,12 +521,11 @@ export function pageNumberLabel(page, total) {
  * One file per sheet, not one per printed page, because that is what can be
  * captured faithfully. A capture is a clip of the rendered document, and the
  * rendered document has no page margin between a sheet's first page and its
- * second: in print the 25mm top margin is added by the page box on every page,
- * and there is nowhere on screen for it to appear. So sheet one of two is a
- * capture and sheet two is not, rather than a capture that shows the bottom of
- * one page where the top of the next should be. Splitting a source page into
- * sheets that are one page each is what makes every page capturable, and that is
- * the next ticket's work.
+ * second: in print the 15mm top inset is added by the sheet's own padding on
+ * every page, and there is nowhere on screen for it to appear. So sheet one of
+ * two is a capture and sheet two is not, rather than a capture that shows the
+ * bottom of one page where the top of the next should be. Splitting a source page
+ * into sheets that are one page each is what makes every page capturable.
  */
 export function pngFileName(sheetNumber) {
   if (!Number.isInteger(sheetNumber) || sheetNumber < 1) {
@@ -544,10 +542,11 @@ export function pngFileName(sheetNumber) {
 /**
  * Sub-pixel slack before an element counts as too wide for its column.
  *
- * 642.52px of text block less a 30px gutter does not divide into two whole columns, so
- * Chrome hands back 306.5 rather than 306 and a paragraph can legitimately be
- * 306.4 wide. Treating that as an overflow would span most paragraphs across
- * both columns and destroy the two-column measure the span exists to protect.
+ * The flow is pinned to 306 x 2 + 30 = 642, so a column should measure a whole
+ * 306 and a full-width block should too. Sub-pixel rounding in the rect can still
+ * hand back a fraction over - 306.4 rather than 306 - and treating that as an
+ * overflow would span most paragraphs across both columns and destroy the
+ * two-column measure the span exists to protect.
  */
 export const COLUMN_TOLERANCE_PX = 1;
 

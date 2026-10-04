@@ -69,6 +69,13 @@ ticket inherits:
 | Text block | The page box less the padding: 642.52 x 971.33 CSS px |
 | Columns (default) | 2, each 306px, 30px gutter |
 
+:::note
+[ADR-0024](0024-print-type-scale-and-generator-breaks.md) amends the insets in this
+table: the top and left become 15mm, so all four are 15mm and the text block is
+680.32 x 1009.13 CSS px. The page box, the sheet-is-the-page-box decision and the
+two 306px columns are unchanged.
+:::
+
 The page box is declared a hair *under* A4 rather than rounded up. This reverses
 the round-up rule ADR-0020 gave and its reason: a sheet a fraction over the page
 box paginates a second, near-empty page, and a sheet a fraction under it costs

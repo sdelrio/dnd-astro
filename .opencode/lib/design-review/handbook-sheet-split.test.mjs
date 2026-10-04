@@ -21,10 +21,10 @@ import { LAYOUT_GLOBAL, SHEET_ATTRIBUTE, sheetAssignmentScript } from './handboo
 const PAGE = {
   width: 793.7,
   height: 1122.51,
-  marginTop: 94.49,
+  marginTop: 56.69,
   marginRight: 56.69,
   marginBottom: 56.69,
-  marginLeft: 94.49,
+  marginLeft: 56.69,
 };
 const SHEET = {
   width: PAGE.width - PAGE.marginLeft - PAGE.marginRight,
@@ -262,7 +262,7 @@ describe('a source page that does not fit', () => {
   });
 
   it('splits until every sheet fits, rather than once and hoping', async () => {
-    // Six 300px blocks over two sheets of three: the text block is 971.33px, so
+    // Six 300px blocks over two sheets of three: the text block is 1009.13px, so
     // three blocks fill a column and a single pass that split at one boundary
     // would leave the last sheet too tall.
     const window = await run([
@@ -281,6 +281,33 @@ describe('a source page that does not fit', () => {
 
     expect(sheetsOf(window).map((sheet) => sheet.source)).toEqual(['dnd/magic', 'dnd/skills', 'dnd/skills']);
     expect(sheetsOf(window).map((sheet) => sheet.number)).toEqual([1, 2, 3]);
+  });
+});
+
+describe('a heading and the block it introduces', () => {
+  // The browser's `break-after: avoid` is only a hint, and it cannot cross a
+  // sheet boundary the assignment chose: on `dnd/injuries` the "Injury Severity
+  // Table" heading was stranded at the foot of one sheet while its table took
+  // the next. The planner welds them, so the split falls before the heading.
+  it('never leaves the heading on a sheet without the block it introduces', async () => {
+    const window = await run([
+      {
+        slug: 'dnd/injuries',
+        blocks: [
+          { tag: 'p', h: 400, text: 'before' },
+          { tag: 'h2', h: 600, text: 'Injury Severity Table' },
+          { tag: 'table', h: 600, text: 'severity' },
+        ],
+      },
+    ]);
+
+    expect(sheetTexts(window).map((text) => text.replace(/\s+/g, ''))).toEqual([
+      'before',
+      'InjurySeverityTableseverity',
+    ]);
+    expect(layoutOf(window).splits).toEqual([
+      { source: 'dnd/injuries', sheet: 2, kind: 'h2', label: 'h2 at "Injury Severity Table"' },
+    ]);
   });
 });
 
@@ -363,19 +390,21 @@ describe('a wide table that does not fit', () => {
   });
 });
 
-describe('a break the author wrote', () => {
-  it('starts a new sheet and is not reported as a split', async () => {
+describe('a horizontal rule in the flow', () => {
+  // The generator owns the breaks now (ADR-0024): an `hr` is a divider, not a
+  // boundary, so it packs beside its neighbours and starts no sheet of its own.
+  it('does not start a new sheet', async () => {
     const window = await run([
       { slug: 'dnd/injuries', blocks: [{ tag: 'p', h: 300 }, { tag: 'hr', h: 20 }, { tag: 'p', h: 300 }] },
     ]);
 
-    expect(sheetsOf(window).map((sheet) => sheet.part)).toEqual([1, 2]);
+    expect(sheetsOf(window).map((sheet) => sheet.part)).toEqual([1]);
     expect(layoutOf(window).splits).toEqual([]);
   });
 
-  // This is the convergence the ticket is for: the authored break at the point the
-  // generator would have broken means there is nothing left to report.
-  it('replaces the automatic break it was placed at', async () => {
+  // It does not stand in for a break the generator would have reported: when the
+  // content still overflows, the boundary is still chosen and still named.
+  it('does not hide the automatic break the content still needs', async () => {
     const window = await run([
       {
         slug: 'dnd/skills',
@@ -384,12 +413,11 @@ describe('a break the author wrote', () => {
           { tag: 'p', h: 400 },
           { tag: 'hr', h: 20 },
           { tag: 'p', h: 400 },
-          { tag: 'p', h: 400 },
         ],
       },
     ]);
 
-    expect(layoutOf(window).splits).toEqual([]);
+    expect(layoutOf(window).splits.length).toBeGreaterThan(0);
   });
 });
 

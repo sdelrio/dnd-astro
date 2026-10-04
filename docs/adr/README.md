@@ -29,6 +29,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 | 0021 | Publish the Printed Handbook From the Repository | superseded | 2026-10-04 |
 | 0022 | Do Not Publish the Printed Handbook Until the Design Settles | accepted | 2026-10-04 |
 | 0023 | The Sheet Is the Page Box | accepted | 2026-10-04 |
+| 0024 | A 13px Print Type Scale, and the Generator Owns the Page Breaks | accepted | 2026-10-04 |
 
 ## About ADRs
 

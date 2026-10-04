@@ -18,7 +18,6 @@ No feature provides absolute immunity to area-of-effect spells for allies. The E
 When subjected to an effect that allows a Dexterity saving throw to take only half damage, the target takes no damage on a success and only half damage on a failure. This version of Evasion functions even while incapacitated, and the target makes the saving throw normally.
 :::
 
----
 
 ## Spells
 
@@ -41,7 +40,6 @@ This spell no longer requires concentration.
 ### True Strike
 The damage dealt by this spell is of the same type as the weapon used. If the weapon is magical, the damage is also considered magical.
 
----
 
 ## Resurrection
 
@@ -61,7 +59,6 @@ The difficulty of the resurrection depends on the spell used:
 | *Resurrection* | The target makes the saves with Advantage |
 | *True Resurrection* or *Wish* | Automatic success; no rolls required |
 
----
 
 ### Instant Death
 
@@ -71,7 +68,6 @@ Characters killed by the Instant Death rule cannot be restored to life using the
 
 If a character dies while still suffering the penalties of a resurrection spell, their Constitution score is permanently reduced by 1.
 
----
 
 ## Spellcasting Services  
 

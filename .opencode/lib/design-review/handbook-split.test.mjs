@@ -11,22 +11,30 @@ import { planSheets, splitName } from './handbook-split.mjs';
  * measurements, and a function of measurements can be asserted without a browser.
  *
  * The expected values below are worked out by hand from the geometry the print
- * stylesheet states - a text block 971.33px tall, two columns of it, so a sheet
- * holds 1942px of column - rather than recomputed the way the planner computes
+ * stylesheet states - a text block 1009.13px tall, two columns of it, so a sheet
+ * holds 2018px of column - rather than recomputed the way the planner computes
  * them.
  */
 
 const SHEET = { blockCapacity: 900, columns: 2 };
 
-/** A measured block. `columns: 2` is an element that spans both columns. */
+/**
+ * A measured block. `columns: 2` is an element that spans both columns, and
+ * `keepWithNext` is a heading that must travel with the block after it.
+ */
 function block(height, overrides = {}) {
   return {
     height,
     columns: overrides.columns ?? 1,
     name: overrides.name ?? `block ${height}`,
     kind: overrides.kind ?? 'p',
-    authored: overrides.authored ?? false,
+    keepWithNext: overrides.keepWithNext ?? false,
   };
+}
+
+/** A heading, which the assignment marks as keeping with the block it introduces. */
+function heading(height, name, overrides = {}) {
+  return block(height, { ...overrides, keepWithNext: true, name, kind: 'div' });
 }
 
 describe('the planner', () => {
@@ -143,29 +151,29 @@ describe('the planner', () => {
     expect(plan.oversized).toEqual([{ block: 0, name: 'Weapon Mastery', kind: 'table' }]);
   });
 
-  // This is the convergence the whole ticket is for: a horizontal rule the author
-  // wrote is a break, and it is not a split the generator has to report.
-  it('breaks where the author asked, and does not call it a split', () => {
+  // The generator owns the breaks now (ADR-0024): a horizontal rule is an
+  // ordinary block that packs beside its neighbours, not a break that forces a
+  // sheet of its own.
+  it('treats a horizontal rule as an ordinary block, not a break', () => {
     const plan = planSheets({
-      blocks: [
-        block(300),
-        block(2, { authored: true, name: 'rule', kind: 'hr' }),
-        block(300, { name: 'Dash', kind: 'h2' }),
-        block(300),
-      ],
+      blocks: [block(300), block(20, { name: 'rule', kind: 'hr' }), block(300), block(300)],
       ...SHEET,
     });
 
-    expect(plan.sheets).toEqual([[0, 1], [2, 3]]);
+    expect(plan.sheets).toEqual([[0, 1, 2, 3]]);
     expect(plan.splits).toEqual([]);
   });
 
-  // An authored break at the very end must not open an empty sheet, or the book
-  // gains a blank page every time a source page ends with a rule.
-  it('does not open a sheet for an authored break that ends the content', () => {
-    const plan = planSheets({ blocks: [block(300), block(2, { authored: true, name: 'rule', kind: 'hr' })], ...SHEET });
+  // And it does not stand in for a split the generator would have reported: the
+  // break still falls where the capacity says, and it is still named.
+  it('does not let a rule hide an automatic break around it', () => {
+    const plan = planSheets({
+      blocks: [block(800), block(20, { name: 'rule', kind: 'hr' }), block(800), block(800)],
+      ...SHEET,
+    });
 
-    expect(plan.sheets).toEqual([[0, 1]]);
+    expect(plan.sheets).toEqual([[0, 1, 2], [3]]);
+    expect(plan.splits).toHaveLength(1);
   });
 
   // A sheet holding exactly its capacity is closed, rather than waiting for a
@@ -184,6 +192,88 @@ describe('the planner', () => {
 
   it('plans a source page with no content as no sheets at all', () => {
     expect(planSheets({ blocks: [], ...SHEET }).sheets).toEqual([]);
+  });
+
+  // A spanning band starts below the taller of the columns filled in its row,
+  // not below the column the band happens to fall in. A 800px block in column
+  // one and a 200px block in column two put the band at 800, whatever column
+  // the next narrow block would have used.
+  it('starts a spanning band below the taller column, not the current one', () => {
+    const plan = planSheets({
+      blocks: [block(800), block(200), block(300, { columns: 2, name: 'Band', kind: 'table' }), block(300)],
+      ...SHEET,
+    });
+
+    // 800 of column one, 200 of column two, a 300px band below the taller
+    // column: the next 300px block overflows the 900px sheet.
+    expect(plan.sheets).toEqual([
+      [0, 1, 2],
+      [3],
+    ]);
+    expect(plan.splits).toEqual([{ block: 3, name: 'block 300', kind: 'p' }]);
+  });
+});
+
+describe('a heading and the block it introduces', () => {
+  // A heading is one unit with the block after it. Without that, a heading that
+  // fits the foot of a column is left there while its block starts the next
+  // sheet - the stranded heading the owner saw on the Injuries page.
+  it('moves as one unit and is reported as one split, named for the heading', () => {
+    const plan = planSheets({
+      blocks: [block(400), heading(600, 'Injury Severity Table'), block(600)],
+      ...SHEET,
+    });
+
+    // The 1200px unit does not fit a 900px column, so it takes a sheet of its
+    // own and the split is named for the heading, not the block it holds.
+    expect(plan.sheets).toEqual([
+      [0],
+      [1, 2],
+    ]);
+    expect(plan.splits).toEqual([{ block: 1, name: 'Injury Severity Table', kind: 'div' }]);
+  });
+
+  // The unit is transitive: an h2 above an h3 above the first paragraph are one
+  // thing to place, or the h3 is stranded between them.
+  it('welds a run of headings to the first block that follows them', () => {
+    const plan = planSheets({
+      blocks: [
+        block(900),
+        heading(100, 'Section'),
+        heading(100, 'Subsection'),
+        block(800),
+      ],
+      ...SHEET,
+    });
+
+    expect(plan.sheets).toEqual([
+      [0],
+      [1, 2, 3],
+    ]);
+    expect(plan.splits).toEqual([{ block: 1, name: 'Section', kind: 'div' }]);
+  });
+
+  // A unit that fits the next column moves whole rather than being split: the
+  // heading and its block are never in different columns.
+  it('carries the whole unit into the next column rather than splitting it', () => {
+    const plan = planSheets({
+      blocks: [block(700), heading(100, 'Heading'), block(200)],
+      ...SHEET,
+    });
+
+    // 700 + 300 does not fit column one, and the unit is not reported because a
+    // continuation into column two is not a split.
+    expect(plan.sheets).toEqual([[0, 1, 2]]);
+    expect(plan.splits).toEqual([]);
+  });
+
+  // A heading is only welded forward, so the last block on a page is an
+  // ordinary block again and the planner can break after it.
+  it('does not weld the last heading on a page to nothing', () => {
+    const plan = planSheets({ blocks: [block(800), heading(200, 'Heading')], ...SHEET });
+
+    expect(plan.sheets).toEqual([[0, 1]]);
+    expect(plan.splits).toEqual([]);
   });
 });
 
