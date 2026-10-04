@@ -22,11 +22,6 @@ import {
   validatePng,
 } from './handbook-helpers.mjs';
 
-// The publisher page links a path and the command writes one. They are the same
-// string in two places, and this is what holds the two together: a link that
-// resolves to nothing is the one failure the publisher page cannot have.
-import { HANDBOOK_FILE } from '../../../src/utils/handbook';
-
 /**
  * The parts of the Handbook command that decide whether the artifact is
  * believable, tested without a browser.
@@ -64,11 +59,11 @@ function pdfBytes({ pages = 1, mediaBox = '0 0 595.28 841.89', trailer = true, p
 }
 
 describe('parseArgs', () => {
-  it('defaults to the print route, the published artifact and the local display face', () => {
+  it('defaults to the print route, an unpublished artifact and the local display face', () => {
     const options = parseArgs([]);
 
     expect(options.url).toBe('http://localhost:4321/handbook/print/');
-    expect(options.out).toBe('public/handbook/handbook.pdf');
+    expect(options.out).toBe('tmp/handbook/handbook.pdf');
     expect(options.font).toBe('Cinzel');
     expect(options.fontUrl).toBe('/fonts/Cinzel.woff2');
   });
@@ -99,13 +94,13 @@ describe('parseArgs', () => {
     expect(() => parseArgs(['--raster-scale', '0.5'])).toThrow(/raster scale/i);
   });
 
-  // The artifact is published, so its path is `public/handbook/handbook.pdf` and
-  // the publisher page links exactly that. The captures are several hundred
-  // kilobytes a sheet and the book is dozens of sheets, so they stay under `tmp/`
-  // whatever the artifact is told to write: a run that moved them beside the PDF
-  // would publish tens of megabytes of PNG beside the one file the site serves.
-  it('publishes the artifact at the path the publisher page links to', () => {
-    expect(parseArgs([]).out).toBe(`public${HANDBOOK_FILE}`);
+  // The artifact is not published, so its default path is under `tmp/`, which is
+  // gitignored: `make handbook` followed by `git status` leaves a clean tree, and
+  // the build has no PDF to deploy. The captures stay under `tmp/handbook/sheets`
+  // whatever `--out` says, so moving the artifact never moves them.
+  it('writes the artifact under tmp/, where it is never committed', () => {
+    expect(DEFAULTS.out.startsWith('tmp/')).toBe(true);
+    expect(parseArgs([]).out).toBe('tmp/handbook/handbook.pdf');
     expect(parseArgs([]).pngDir).toBe('tmp/handbook/sheets');
     expect(parseArgs(['--out', 'tmp/spike.pdf']).pngDir).toBe('tmp/handbook/sheets');
   });
@@ -133,8 +128,9 @@ describe('parseArgs', () => {
   });
 
   it('writes the manifest to the one committed path', () => {
-    // Beside the artwork and, once the publisher page exists, beside the artifact
-    // itself: the record of the book belongs with the book.
+    // Under `public/`, beside the committed artwork: the record of the book is
+    // committed and served even while the artifact itself is not, because the
+    // manifest is a staleness gate rather than a download.
     expect(parseArgs([]).manifest).toBe('public/handbook/manifest.json');
   });
 
@@ -171,7 +167,7 @@ describe('parseArgs', () => {
 
     expect(options.url).toBe('http://localhost:4322/handbook/spike-fixture/');
     expect(options.out).toBe('tmp/spike.pdf');
-    expect(DEFAULTS.out).toBe('public/handbook/handbook.pdf');
+    expect(DEFAULTS.out).toBe('tmp/handbook/handbook.pdf');
   });
 });
 

@@ -73,9 +73,10 @@ _Avoid_: Total bonus, score total, power level
 ## The printed handbook
 
 **Handbook**:
-The single committed PDF of the eight house-rule pages, generated at dev time and
-downloadable from the site. One file, one edition, one version: a reader holding
-it is holding a specific rendering of specific content.
+The single PDF of the eight house-rule pages, generated at dev time. It is not
+published yet: it is written under `tmp/`, committed nowhere and served from
+nowhere, because its design is still being settled. One file, one edition, one
+version: a reader holding it is holding a specific rendering of specific content.
 _Avoid_: PDF, book, printable, export, download
 
 **Sheet**:
@@ -107,10 +108,11 @@ _Avoid_: Lockfile, checksum, report, index, log
 
 **Publisher page**:
 The page at `/handbook/` that states the Handbook's version and edition date and
-links the PDF. It lives outside the house-rule pages so the Handbook is not
-printed into itself, and it is reached through a sidebar group, which makes it
-discoverable from every page rather than from the homepage only. The index page
-carries no download affordance at all, deliberately.
+that the PDF is not published yet. It lives outside the house-rule pages so the
+Handbook is not printed into itself, and it is reached through a sidebar group,
+which makes it discoverable from every page rather than from the homepage only.
+It links no file until the design settles, and the index page carries no download
+affordance at all, deliberately.
 _Avoid_: Download page, index page, landing page
 
 **Contents**:

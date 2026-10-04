@@ -1,12 +1,11 @@
 ---
 title: 'D&D House Rules Handbook'
-description: The eight house-rule pages as one downloadable A4 PDF.
+description: The eight house-rule pages as one A4 PDF, not published yet.
 ---
 
 import {
   HANDBOOK_EDITION,
   HANDBOOK_EDITION_DATE,
-  HANDBOOK_FILE,
   HANDBOOK_TITLE,
   HANDBOOK_VERSION,
 } from '../../utils/handbook';
@@ -18,20 +17,16 @@ alongside them.
 
 **{HANDBOOK_TITLE}** - {HANDBOOK_EDITION}
 
-## Download
+## Availability
 
-{/* A JSX anchor rather than a markdown link: MDX reads `{...}` inside a markdown
-    link destination as literal text and URL-encodes it, so a markdown link whose
-    destination is that expression prints a link to the percent-encoded form of the
-    expression itself - a link to nothing, on the one page whose whole job is to be
-    a link. */}
-<a href={HANDBOOK_FILE} download>
-  Download the Handbook (PDF)
-</a>
+The PDF is not published yet. The printed design is still being settled, so this
+page links to no file: a download that cannot be fulfilled is worse than none at
+all. When the design is settled, the artifact will be published and this page will
+link it.
 
 A4, one PDF, selectable text with the site's own fonts. It is the same file the
-publisher's `make handbook` writes and the repository keeps, so the edition you
-download is the edition the house rules are at today.
+publisher's `make handbook` writes, so when it is published the edition you
+download will be the edition the house rules are at today.
 
 ## What is in it
 
@@ -54,7 +49,7 @@ the canonical source and are never replaced by the PDF.
 
 ## If the PDF is out of date
 
-The repository keeps a small manifest beside the artifact: a content hash of the
-eight house rules, the sheet count, and each sheet's page number and text hash. A
-house rule edited without the artifact being regenerated fails the test suite, so
-a stale book cannot reach this page through a quiet change.
+The repository keeps a small committed manifest: a content hash of the eight
+house rules, the sheet count, and each sheet's page number and text hash. A house
+rule edited without the artifact being regenerated fails the test suite, so a
+stale book cannot reach this page through a quiet change.

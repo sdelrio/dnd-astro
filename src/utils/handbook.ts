@@ -37,20 +37,12 @@ export const HANDBOOK_VERSION = '1.0';
  * rather than as prose.
  *
  * Both surfaces again: a reader who wants to know whether the copy on the table
- * is the one this site is serving should not have to infer it from a file name.
+ * is the current edition should not have to infer it from a file name.
  */
 export const HANDBOOK_EDITION_DATE = '2026-10-04';
 
 /**
- * Where the artifact is published, which is what the publisher page links to.
- *
- * The path the command writes, so a link on the site and a file on disk are the
- * same path rather than two that agree today.
- */
-export const HANDBOOK_FILE = '/handbook/handbook.pdf';
-
-/**
- * The download as one line, for the cover and the publisher page to share.
+ * The edition as one line, for the cover and the publisher page to share.
  *
  * "Version 1.0, edition 2026-10-04" rather than two labelled fields, because a
  * book states its edition on one line and a reader reads a cover rather than a

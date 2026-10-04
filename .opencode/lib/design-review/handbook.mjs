@@ -293,8 +293,8 @@ export async function run(argv) {
       writeFileSync(staging, bytes);
       renameSync(staging, outPath);
 
-      // Read back from disk, not from the buffer that was written: the file is
-      // what a reader downloads, so the file is what gets validated.
+      // Read back from disk, not from the buffer that was written: the file on
+      // disk is the artifact, so the file is what gets validated.
       const onDisk = readFileSync(outPath);
       const readBack = validatePdf({ label, bytes: onDisk, pageBounds });
 
