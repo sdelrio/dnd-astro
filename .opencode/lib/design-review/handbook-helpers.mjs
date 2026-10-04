@@ -1,5 +1,3 @@
-import { dirname, join } from 'node:path';
-
 import { MANIFEST_PATH } from './handbook-manifest.mjs';
 
 /**
@@ -19,7 +17,17 @@ import { MANIFEST_PATH } from './handbook-manifest.mjs';
 
 export const DEFAULTS = {
   url: 'http://localhost:4321/handbook/print/',
-  out: 'tmp/handbook/handbook.pdf',
+  // The published path, under `public/`, because the publisher page links a file
+  // and a downloadable handbook has to be in the tree for that link to resolve to
+  // something stable. It is the same string the page imports
+  // (`HANDBOOK_FILE` in `src/utils/handbook.ts`).
+  out: 'public/handbook/handbook.pdf',
+  // The per-sheet captures stay under `tmp/` whatever `--out` says: they are
+  // several hundred kilobytes a sheet and the book is dozens of sheets, so they
+  // are never committed, and deriving their directory from the artifact's own
+  // would put tens of megabytes of PNG into `public/` beside the one file the
+  // site serves.
+  pngDir: 'tmp/handbook/sheets',
   font: 'Cinzel',
   fontUrl: '/fonts/Cinzel.woff2',
   rasterScale: 2,
@@ -36,19 +44,6 @@ export const DEFAULTS = {
  * evidence. See `handbook-captures.mjs`.
  */
 export { MANIFEST_PATH };
-
-/**
- * Where the per-sheet captures go when the run does not say.
- *
- * Derived from the PDF's own directory rather than stated as a second default,
- * so moving the artifact moves its evidence with it. `sheets/` sits inside it so
- * a directory listing of the output reads as the book and its pages rather than
- * as two unrelated sets of files.
- */
-export function defaultPngDir(out) {
-  const directory = dirname(String(out));
-  return join(directory, 'sheets');
-}
 
 /**
  * A raster scale is how many pixels one CSS pixel becomes, and a capture finer
@@ -113,7 +108,7 @@ Options:
   --url <url>              page to print          (default ${DEFAULTS.url})
   --out <file>             PDF to write           (default ${DEFAULTS.out})
   --png-dir <dir>          where the per-sheet captures go
-                           (default ${defaultPngDir(DEFAULTS.out)}, or a sheets/ beside --out)
+                           (default ${DEFAULTS.pngDir}, which is never committed)
   --raster-scale <n>       device pixels per CSS pixel for the captures
                            (default ${DEFAULTS.rasterScale}, which writes 1588 x 2246 per sheet)
   --manifest <path>        the committed record of the run  (default ${MANIFEST_PATH})
@@ -134,7 +129,6 @@ Options:
 export function parseArgs(argv) {
   const options = {
     ...DEFAULTS,
-    pngDir: defaultPngDir(DEFAULTS.out),
     manifest: MANIFEST_PATH,
     baseline: null,
     compare: null,
@@ -154,9 +148,11 @@ export function parseArgs(argv) {
 
     switch (arg) {
       case '--url': options.url = next(); break;
+      // `--out` says nothing about where the captures go: they are evidence, they
+      // are never committed, and moving the artifact must not move them into the
+      // tree it is published from.
       case '--out':
         options.out = next();
-        options.pngDir = defaultPngDir(options.out);
         break;
       case '--png-dir': options.pngDir = next(); break;
       case '--raster-scale': options.rasterScale = parseRasterScale(next()); break;

@@ -100,10 +100,25 @@ _Avoid_: Page break, overflow, truncation, pagination, clip
 
 **Manifest**:
 The small committed record of the Handbook: a content hash of the eight sources,
-the sheet count, and each sheet's page number and text hash. It is the gate that
-makes a stale artifact fail rather than ship. The hash is content-based, never a
-timestamp.
+the sheet count, and each sheet's page number, kind and text hash. It is the gate
+that makes a stale artifact fail rather than ship. The hash is content-based, never
+a timestamp.
 _Avoid_: Lockfile, checksum, report, index, log
+
+**Publisher page**:
+The page at `/handbook/` that states the Handbook's version and edition date and
+links the PDF. It lives outside the house-rule pages so the Handbook is not
+printed into itself, and it is reached through a sidebar group, which makes it
+discoverable from every page rather than from the homepage only. The index page
+carries no download affordance at all, deliberately.
+_Avoid_: Download page, index page, landing page
+
+**Contents**:
+The sheet after the cover, listing the eight source pages and the page each one
+starts on, and nothing else: forty sub-entries on one sheet is a wall. Its page
+numbers are filled by the same layout pass that assigns sheets, so the site is
+built once and the two cannot disagree.
+_Avoid_: Table of contents, index, sheet 2
 
 **Capture**:
 One Sheet's page, as a PNG at an exact raster size, taken from the same DOM and

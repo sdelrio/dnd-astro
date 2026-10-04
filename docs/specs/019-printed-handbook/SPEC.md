@@ -1,5 +1,5 @@
 ---
-status: draft
+status: archived
 title: "The printed D&D handbook: eight house-rule pages as one A4 artifact"
 author: "opencode"
 date: "2026-10-03"
@@ -12,6 +12,7 @@ affects:
   - docs/adr/0012-dependency-free-cdp-capture-client.md
   - docs/adr/0019-self-host-cinzel.md
   - docs/adr/0020-sheet-box-renderer.md
+  - docs/adr/0021-publish-the-printed-handbook.md
   - docs/fonts-licensing.md
   - astro.config.mjs
   - src/content.config.ts

@@ -19,11 +19,15 @@ Attuning to a item requires a number of successful checks depending on item rari
 
 > The DC of this check is 15.
 
+---
+
 The character must achieve a specific number of consecutive successes. To resolve the attempt, perform either an **Arcana check** or a check using your **spellcasting ability modifier plus your proficiency bonus**.
 
 ### Overchanneling Attunement
 
 If an initial attunement roll fails, you may choose to Commit All Energies. Doing so guarantees eventual attunement but carries a risk of physical collapse.
+
+---
 
 #### The Procedure
 
@@ -35,6 +39,8 @@ If an initial attunement roll fails, you may choose to Commit All Energies. Doin
 6. **Success**: You break the item's influence and stabilize at level 5 exhaustion.
 7. **Failure**: You succumb to the item (Death by Exhaustion).
 8. **Recovery**: Exhaustion gained through this process is specialized. It is removed entirely by a single casting of Greater Restoration or a completed Long Rest. This specific exhaustion must be fully cleared before any exhaustion from other sources can be reduced.
+
+---
 
 | Item Rarity | Successes required | CON SAVE DC |
 |:-----------:|:--------------:|:--------------:|
@@ -56,6 +62,8 @@ After completing a foraging period, perform a **Wisdom (Survival)** check agains
 > 5 gp + (1 gp * Margin of Success)
 
 The *"Margin of Success"* is the difference between the check result and the Biome DC.
+
+---
 
 **Rare Finds**: If the final check result is 25 or higher, the character discovers a **Rare Ingredient** in addition to the standard yield. Consult the **Rare Ingredient Value Table** below to determine its specific properties and worth.
 
@@ -83,6 +91,8 @@ The *"Margin of Success"* is the difference between the check result and the Bio
 
 ***PHB 233***
 
+---
+
 :::note Crafting Time
 Crafting non-magical items takes a number of workdays (8h/day) equal to: `The purchase price of the item / 10`
 Another character can combine its efforts halving the crafting time and but It must be proficient with the required tools.
@@ -95,6 +105,8 @@ To make an item, you need raw materials worth half the purchase cost of the item
 
 Failing the crafting roll doesn't mean the effort is wasted. The crafter may simply need extra time and resources to finish the item. Determine the margin of failure and check the table below:
 
+---
+
 | Margin of Failure | Result | 
 |:-----------:|:--------------:
 | 1 | Add +10% cost in raw materials |
@@ -105,6 +117,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 
 
 
+---
+
 ### Brewer's Supplies (Intelligence)
 
 **Utilize:** Detect poisoned drink (DC 15), or identify alcohol (DC 10)
@@ -113,6 +127,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | :-------- | :---------------------: | :-----: |
 | Antitoxin | 25 gp                   | 1       |
 | Beer      | 1 gp/gallon             | 1       |
+
+---
 
 ### Carpenter's Tools (Strength)
 
@@ -139,6 +155,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | :---- | :------------- | :------ | :---------------- |
 | Map   | 5 sp           | 1       | Automatic Success |
 
+---
+
 ### Cobbler's Tools (Dexterity)
 
 **Utilize:** Modify footwear to better adapt to terrain (DC 10)
@@ -154,6 +172,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | Craft   | Materials Cost           | Workday                  | Difficulty Class |
 | :------ | :----------------------- | :----------------------- | :--------------- |
 | Rations | 2 sp per ration          | 1 (for every 20 rations) | DC 10            |
+
+---
 
 ### Glassblower's Tools (Intelligence)
 
@@ -175,6 +195,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | Arcane focus  | 25 sp to 10 gp    | 1-2          | DC 15            |
 | Holy symbol   | 25 sp             | 1            | DC 10            |
 
+---
+
 ### Leatherworker's Tools (Dexterity)
 
 **Utilize:** Add a custom design to a leather item, make a pouch (DC 10)
@@ -191,6 +213,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | Map or Scroll Case    | 5 sp                    | 1                          | DC 10                |
 | Parchment             | 1 sp per 10 parchments  | 1 (for every 10 parchments)| Automatic Success |
 | Waterskin             | 1 sp                    | 1                          | DC 10                |
+
+---
 
 ### Mason's Tools (Strength)
 
@@ -209,6 +233,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | Holy symbol   | 25 sp           | 1       | DC 10            |
 | Druidic focus | 5 sp to 5 gp    | 1       | DC 15            |
 
+---
+
 ### Potter's Tools (Intelligence)
 
 **Utilize:** Discern what a ceramic object held in the past 24 hours (DC 15)
@@ -218,9 +244,13 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | Jug   | 0 sp           | 1       | Automatic Success |
 | Lamp  | 2 sp           | 1       | DC 10             |
 
+---
+
 ### Smith's Tools (Strength)
 
 **Utilize:** Pry open a door or container (DC 20)
+
+---
 
 | Craft                   | Materials Cost          | Workday                      | Difficulty Class  |
 | :---------------------- | :---------------------- | :--------------------------- | :---------------- |
@@ -253,6 +283,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | Sling Bullets           | 0 gp                    | 1                            | Automatic Success |
 
 
+---
+
 ### Tinker's Tools (Dexterity)
 
 **Utilize:** Assemble a tiny item from scraps (DC 20)
@@ -273,6 +305,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | Signal Whistle  | 0 gp           | 1       | Automatic Success |
 | Tinderbox       | 2 sp           | 1       | Automatic Success |
 
+---
+
 ### Weaver's Tools (Dexterity)
 
 **Utilize:** Mend a tear in clothing (DC 10). Sew a tiny design (DC 10).
@@ -291,6 +325,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 | String            | 1 sp           | 1       | Automatic Success |
 | Tent              | 1 gp           | 1       | DC 15             |
 | Traveler's Clothes| 1 gp           | 1       | DC 15             |
+
+---
 
 ### Woodcarver's Tools (Dexterity)
 
@@ -314,6 +350,8 @@ Failing the crafting roll doesn't mean the effort is wasted. The crafter may sim
 The tools in this chapter allow to craft magical items, such as potions, poisons and spell scrolls.
 
 
+---
+
 ### Herbalism Kit (Intelligence)
 
 :::note Potions Crafting Time
@@ -325,6 +363,8 @@ Another character can combine its efforts halving the crafting time and but It m
 To make an item, you need raw materials worth half the purchase cost of the item (rounded down). The DM determines wheter the appropiate raw materials are available. 
 :::
 
+
+---
 
 **Utilize:** Identify a plant (DC 10)
 
@@ -344,6 +384,8 @@ To make an item, you need raw materials worth half the purchase cost of the item
 | Potion of Greater Stamina| 125 gp                  | 5                        | DC 15                                          |
 | Other                    | Varies                  | -                        | -                                              |
 
+---
+
 ### Poisoner's Kit (Intelligence)
 
 :::note Poisons Crafting Time
@@ -355,6 +397,8 @@ Another character can combine its efforts halving the crafting time and but It m
 To make an item, you need raw materials worth half the purchase cost of the item (rounded down). The DM determines wheter the appropiate raw materials are available. 
 :::
 
+
+---
 
 **Utilize:** Detect a poisoned object (DC 10)
 
@@ -371,6 +415,8 @@ To make an item, you need raw materials worth half the purchase cost of the item
 | Serpent Venom       | 35 gp           | 1       | DC 10 (Automatic success if proficient in Nature) |
 | Pale Tincture       | 325 gp          | 7       | DC 15                                       |
 
+---
+
 ### Calligrapher's Supplies (Dexterity)
 
 **Utilize:** Write a text with impressive flourishes that guard against forgery (DC 15)
@@ -380,6 +426,8 @@ To make an item, you need raw materials worth half the purchase cost of the item
 | Ink         | 5 gp           | 1       | Automatic Success                                  |
 | Magic Inks  | Varies         | 1       | DC 10 (Automatic success if proficient in Arcana or Religion) |
 | Spell Scroll| See table below| -       | -                                                  |
+
+---
 
 #### Crafting Spell Scrolls
 
@@ -394,11 +442,15 @@ The DC for inscribing a scroll is 10 + spell level
 :::
 
 
+---
+
 **PREREQUISITES FOR THE SCRIBE**
 + To scribe an arcane spell scroll, you must have proficiency in the Arcana skill. If you also have proficiency in Calligrapher's supplies the check is automatically successful.
 + To scribe a divine spell scroll, you must have proficicency in the Religion skill. If you also have proficiency in Calligrapher's supplies the check is automatically successful.
 
 You must have the spell prepared in each day of the inscription, and you must also have at hand any Material Component required by the spell;
+
+---
 
 :::note
 If the spell consumes its Material Components, they are consumed only when you complete the scroll.
@@ -419,6 +471,8 @@ If the spell consumes its Material Components, they are consumed only when you c
 | 8th | 60 workdays | 5.000 GP | DC 18 | 
 | 9th | 120 workdays | 12.500 GP | DC 19 | 
 
+
+---
 
 ### Alchemist's Supplies (Intelligence)
 
@@ -445,6 +499,8 @@ To make an item, you need three things: An Alchemical Base, a Suitable Reagent a
 | Paper              | 1 sp per 10 sheets   | 1 (per 10 sheets)      | Automatic Success |
 | Perfume            | 25 sp                | 1                      | DC 10             |
 
+---
+
 #### Alchemical Potions
 
 Alchemical potions contain spells, mimic the effects of spells or have an effect out of the scope of normal spells, such as a Potion of Giant Strength. 
@@ -456,12 +512,16 @@ Magic is not a cooperative energy and doesn’t appreciate being forced into a t
 A series of successful Intelligence ability checks (typically three) is required to complete this process, along with an extended waiting period while the potion brews.
 :::
 
+---
+
 The nature of the ability checks represents the 3 steps necessary to complete the process: The creation of the Potion’s base, the addition of the bonding agent and the infusion of magic into the potion.
 At minimum this requires a set of alchemist’s supplies, but many experienced crafters use something far more elaborate and safer laboratories, with specialized equipment to make this checks easier.
 
 :::danger
 Additionally, when a creature attempting to brew a potion fails an Intelligence ability check by 10 or more, the potion explodes catastrophically, destroying any tools or equipment that were being used to create it.
 :::
+
+---
 
 Finally, an alchemist crafting a potion must acquire specific and potent ingredients. These components are used in various stages of the brewing process, forming the potion’s base and bonding agent, the details of which follow. Note that these do not encompass all the ingredients required to create a potion, merely the most significant ones.
 The difficulty DC and time required to brew a potion according to its rarity are detailed in the Alchemy Crafting table.
@@ -485,6 +545,8 @@ The difficulty DC and time required to brew a potion according to its rarity are
 Elixirs require twice the preparation time.
 :::
 
+---
+
 ##### STEP 1 - ALCHEMICAL BASE
 
 Making a potion with ordinary water is a literal recipe for disaster.
@@ -496,6 +558,8 @@ When crafting potions, the first Intelligence ability check performed should be 
 At the end of this process roll and Alchemist's supplies or Brewer's supplies tool check
 :::
 
+---
+
 ##### STEP 2 - BONDING REAGENT
 
 Binding magic to an alchemical base requires a potent agent through which the magic will flow.
@@ -505,6 +569,8 @@ Additionally, the rarity of the potion determines of strength of the creature fr
 :::note
 At the end of this process roll and Alchemist's supplies tool check
 :::
+
+---
 
 **BONDING AGENT HARVESTING**
 
@@ -520,6 +586,8 @@ At the end of this process roll and Alchemist's supplies tool check
 | Transmutation | Ooze, Aberration, Monstrosity, Dragon |
 
 
+---
+
 ##### STEP 3 - MAGIC INFUSION
 
 The last step of alchemy is infusing magic to the base + reagent. The alchemist must cast a spell of the same level as the potion spell level and it must be from the school of magic the reagent has affinity for.
@@ -527,6 +595,8 @@ The last step of alchemy is infusing magic to the base + reagent. The alchemist 
 :::note
 At the end of this process roll and Alchemist's supplies tool check or Arcana skill check
 :::
+
+---
 
 ## Other Tools
 
@@ -549,6 +619,8 @@ At the end of this process roll and Alchemist's supplies tool check or Arcana sk
 ### Musical Instrument (Charisma)
 
 **Utilize:** Play a known tune (DC 10) or improvise a song (DC 15)
+
+---
 
 ### Navigator's Tools (Wisdom)
 
