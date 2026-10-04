@@ -183,7 +183,7 @@ export function parseArgs(argv) {
  * content accounts for lands above it.
  *
  * The count is a bound rather than an equality, and that is measured rather than
- * assumed. The print fragmentainer holds 972 CSS px of document per page plus a
+ * assumed. The print fragmentainer holds 971.33 CSS px of document per page plus a
  * fraction - a fixture of exactly 1944px printed two pages and the same fixture
  * one pixel taller printed three - and the print layout of a source page can be
  * a little shorter than its screen measurement: Character Creation measured
@@ -544,7 +544,7 @@ export function pngFileName(sheetNumber) {
 /**
  * Sub-pixel slack before an element counts as too wide for its column.
  *
- * 643px of sheet less a 30px gutter does not divide into two whole columns, so
+ * 642.52px of text block less a 30px gutter does not divide into two whole columns, so
  * Chrome hands back 306.5 rather than 306 and a paragraph can legitimately be
  * 306.4 wide. Treating that as an overflow would span most paragraphs across
  * both columns and destroy the two-column measure the span exists to protect.

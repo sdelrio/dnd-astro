@@ -113,6 +113,12 @@ The sheet box is the exact size of the page content area: A4 less the margins is
 642.5 x 971.3 CSS px, rounded up to whole pixels, because a sheet one pixel short
 would clip the last line of a rule.
 
+**Amended by [ADR-0023](0023-sheet-is-page-box.md).** The sheet is now the page
+box, A4 to its edge, and the four insets are the sheet's own padding rather than a
+`@page` margin. The round-up rule above is reversed: the page box is a hair under
+A4 rather than a hair over it. The columns, the `min-height` box and the break
+after each sheet are unchanged.
+
 It is a `min-height` box with a break after it, and the spike is why that is not
 written as `height`. A page boundary is still a property of the DOM rather than a
 hope about the renderer, and a source page that fits is still exactly one page. A

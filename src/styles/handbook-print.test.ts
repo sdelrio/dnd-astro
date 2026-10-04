@@ -5,12 +5,11 @@ import { describe, expect, it } from 'vitest';
  * The page geometry of the Handbook, asserted against the one stylesheet that
  * states it.
  *
- * ADR-0020 makes the sheet box the central mechanism: a page boundary is a
- * property of the DOM, so "where does this page end" has an answer a diff can
- * review. That only holds if the box is exactly the printable area, which is a
- * claim about four millimetre values and two pixel values agreeing - so it is
- * derived here rather than restated, because a test that repeats the number it
- * is checking cannot fail.
+ * A sheet is the page box: paper to its edge, with the insets as the sheet's own
+ * padding and no `@page` margin. That only holds if the box is exactly A4 at the
+ * CSS reference resolution and the text block is exactly the page box less the
+ * four margins - so both are derived here rather than restated, because a test
+ * that repeats the number it is checking cannot fail.
  */
 
 const css = readFileSync(new URL('./handbook-print.css', import.meta.url), 'utf8');
@@ -22,15 +21,21 @@ const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
 const PX_PER_MM = 96 / 25.4;
 
 /**
- * The printable area in whole CSS pixels, rounded up.
+ * A4 at the CSS reference resolution, truncated to two decimals so the page box
+ * is genuinely *under* A4 rather than rounded up.
  *
- * Up, not to nearest: a sheet one pixel short of the printable area clips the
- * last line of a rule, which is the failure this whole mechanism exists to
- * avoid. A sheet fractionally larger costs nothing, because the page margin
- * still trims it.
+ * Truncated rather than rounded, which is the rule this file reverses: a page box
+ * a fraction over A4 paginates a second, near-empty page, while one a fraction
+ * under it costs nothing. 210mm is 793.7008px and 297mm is 1122.5197px, so two
+ * decimals gives 793.70 and 1122.51.
  */
-function printablePx(millimetres: number): number {
-  return Math.ceil(millimetres * PX_PER_MM);
+function pageBoxPx(millimetres: number): number {
+  return Math.floor(millimetres * PX_PER_MM * 100) / 100;
+}
+
+/** An inset, rounded to two decimals the way the stylesheet declares it. */
+function insetPx(millimetres: number): number {
+  return Number((millimetres * PX_PER_MM).toFixed(2));
 }
 
 function declaration(property: string): string {
@@ -39,13 +44,31 @@ function declaration(property: string): string {
   return declarations.match(new RegExp(`(?<![-\\w])${property}:\\s*([^;]+);`))?.[1].trim() ?? '';
 }
 
-function millimetres(value: string): number {
-  return Number(/^([\d.]+)mm$/.exec(value)?.[1]);
-}
-
 /** A declared length in pixels, as a number. */
 function pixels(property: string): number {
   return Number(/^([\d.]+)px$/.exec(declaration(property))?.[1]);
+}
+
+/** The text block width: the page box less the left and right margins. */
+function contentWidth(): number {
+  return round2(
+    pixels('--handbook-page-width') -
+      pixels('--handbook-page-margin-left') -
+      pixels('--handbook-page-margin-right')
+  );
+}
+
+/** The text block height: the page box less the top and bottom margins. */
+function contentHeight(): number {
+  return round2(
+    pixels('--handbook-page-height') -
+      pixels('--handbook-page-margin-top') -
+      pixels('--handbook-page-margin-bottom')
+  );
+}
+
+function round2(value: number): number {
+  return Number(value.toFixed(2));
 }
 
 /**
@@ -65,55 +88,57 @@ function rule(selector: string): string {
     .join('\n');
 }
 
-describe('the page box a sheet is captured at', () => {
-  // A sheet is printed on a page, and the thing a reader holds is the page: its
-  // margins are part of it. So the capture is the page box, not the sheet box,
-  // and the two are different numbers - 794 x 1123 against 643 x 972 - which is
-  // exactly why both have to be stated.
-  it('is A4 at the CSS reference resolution, rounded up', () => {
+describe('the page box, which is the sheet', () => {
+  it('is A4 at the CSS reference resolution, to two decimals of a pixel', () => {
     expect({
       width: declaration('--handbook-page-width'),
       height: declaration('--handbook-page-height'),
-    }).toEqual({ width: `${printablePx(210)}px`, height: `${printablePx(297)}px` });
+    }).toEqual({ width: `${pageBoxPx(210)}px`, height: `${pageBoxPx(297)}px` });
   });
 
-  it('carries the same margins the @page rule declares', () => {
-    // Derived from the millimetres rather than restated, because the @page rule
-    // is what the printer actually honours and a second copy of the margins in
-    // pixels is two numbers that can disagree.
-    const [top, right, bottom, left] = declaration('margin').split(/\s+/).map(millimetres);
+  // The rule this file used to carry rounded up, and its reason is reversed: a
+  // sheet a fraction over the page box paginates a second, near-empty page, while
+  // one a fraction under it costs nothing. The comparison is against the exact
+  // millimetre value, not its ceiling, so a rounded-up declaration cannot pass.
+  it('is declared a hair under A4 rather than rounded up', () => {
+    expect(pixels('--handbook-page-width')).toBeLessThan(210 * PX_PER_MM);
+    expect(pixels('--handbook-page-height')).toBeLessThan(297 * PX_PER_MM);
+  });
 
+  // There is no `--handbook-sheet-width` any more: the sheet is the page box, so
+  // a second pair of numbers would be two numbers that can disagree.
+  it('is the only box, so a sheet is a page and nothing else', () => {
+    expect(declarations).not.toContain('--handbook-sheet-width');
+    expect(declarations).not.toContain('--handbook-sheet-height');
+
+    expect(rule('[data-handbook-sheet]')).toContain('width: var(--handbook-page-width);');
+    expect(rule('[data-handbook-sheet]')).toContain('min-height: var(--handbook-page-height);');
+  });
+
+  it('is the text block plus exactly the four margins, which are the sheet padding', () => {
+    // Derived from the reference resolution rather than restated.
     expect({
       top: declaration('--handbook-page-margin-top'),
       right: declaration('--handbook-page-margin-right'),
       bottom: declaration('--handbook-page-margin-bottom'),
       left: declaration('--handbook-page-margin-left'),
     }).toEqual({
-      top: `${(top * PX_PER_MM).toFixed(2)}px`,
-      right: `${(right * PX_PER_MM).toFixed(2)}px`,
-      bottom: `${(bottom * PX_PER_MM).toFixed(2)}px`,
-      left: `${(left * PX_PER_MM).toFixed(2)}px`,
+      top: `${insetPx(25)}px`,
+      right: `${insetPx(15)}px`,
+      bottom: `${insetPx(15)}px`,
+      left: `${insetPx(25)}px`,
     });
-  });
 
-  // The one relationship that ties the two boxes together: the printable area
-  // is the page box less the margins, and it is the sheet box.
-  it('is the sheet box plus exactly those margins', () => {
-    // The relationship is asserted through the same rounding the boxes are
-    // declared with: the margins are stated to two decimals of a pixel and the
-    // sheet box is the printable area rounded up, so the page box less the
-    // margins has to land inside the sheet box rather than exactly on it.
-    const pageWidth =
-      pixels('--handbook-page-width') -
-      pixels('--handbook-page-margin-left') -
-      pixels('--handbook-page-margin-right');
-    const pageHeight =
-      pixels('--handbook-page-height') -
-      pixels('--handbook-page-margin-top') -
-      pixels('--handbook-page-margin-bottom');
+    // The content box is the page box less the four margins, exactly.
+    expect(contentWidth()).toBe(round2(pageBoxPx(210) - insetPx(25) - insetPx(15)));
+    expect(contentHeight()).toBe(round2(pageBoxPx(297) - insetPx(25) - insetPx(15)));
 
-    expect(Math.ceil(pageWidth)).toBe(pixels('--handbook-sheet-width'));
-    expect(Math.ceil(pageHeight)).toBe(pixels('--handbook-sheet-height'));
+    // And the sheet is padded by exactly those margins, so its content box is
+    // that text block.
+    expect(rule('[data-handbook-sheet]')).toContain(
+      'padding: var(--handbook-page-margin-top) var(--handbook-page-margin-right) var(--handbook-page-margin-bottom) var(--handbook-page-margin-left);'
+    );
+    expect(rule('[data-handbook-sheet]')).toContain('box-sizing: border-box;');
   });
 });
 
@@ -127,16 +152,16 @@ describe('the two-column sheet', () => {
     }).toEqual({ columns: '2', width: '306px', gap: '30px' });
   });
 
-  // 306 x 2 + 30 is 642, one pixel inside the 643px sheet box. That spare pixel
-  // is why the columns are declared as a width rather than derived: Chrome's
-  // own column arithmetic hands back 306.5, and the tolerance the overflow check
-  // allows exists to absorb exactly that.
-  it('fills the sheet box without exceeding it', () => {
+  // 306 x 2 + 30 is 642, half a pixel inside the 642.52px text block. That spare
+  // half pixel is why the columns are declared as a width rather than derived:
+  // Chrome's own column arithmetic hands back 306.5, and the tolerance the
+  // overflow check allows exists to absorb exactly that.
+  it('fills the text block without exceeding it', () => {
     const columns = Number(declaration('--handbook-columns'));
     const filled = pixels('--handbook-column-width') * columns + pixels('--handbook-column-gap');
 
-    expect(filled).toBeLessThanOrEqual(pixels('--handbook-sheet-width'));
-    expect(pixels('--handbook-sheet-width') - filled).toBeLessThanOrEqual(2);
+    expect(filled).toBeLessThanOrEqual(contentWidth());
+    expect(contentWidth() - filled).toBeLessThanOrEqual(2);
   });
 
   it('fills the flow box with the declared columns', () => {
@@ -144,9 +169,9 @@ describe('the two-column sheet', () => {
     expect(rule('[data-handbook-flow]')).toContain('column-gap: var(--handbook-column-gap);');
   });
 
-  // A single 643px measure at 16px body text is a very long line for a page read
-  // at a table, which is the whole reason for the columns. The opt-out exists for
-  // the page where the long line is the lesser problem.
+  // A single 642.52px measure at 16px body text is a very long line for a page
+  // read at a table, which is the whole reason for the columns. The opt-out
+  // exists for the page where the long line is the lesser problem.
   it('lets a page opt out to a single column', () => {
     expect(rule('[data-handbook-columns="1"] [data-handbook-flow]')).toContain('column-count: 1;');
   });
@@ -169,6 +194,13 @@ describe('the sheet footer', () => {
     expect(rule('[data-handbook-footer]')).toContain('bottom: 0;');
   });
 
+  // The footer prints inside the bottom margin band - the sheet's bottom padding -
+  // and is inset by the same margins as the text, so it lines up with the measure.
+  it('prints inside the bottom margin band, inset by the page margins', () => {
+    expect(rule('[data-handbook-footer]')).toContain('left: var(--handbook-page-margin-left);');
+    expect(rule('[data-handbook-footer]')).toContain('right: var(--handbook-page-margin-right);');
+  });
+
   it('puts the source page and section on the left and the page number on the right', () => {
     // Three tracks: the left pair, the ornament in the centre, the number on the
     // right. Equal outer tracks are what put the ornament on the centre line
@@ -181,10 +213,11 @@ describe('the sheet footer', () => {
     expect(rule('[data-handbook-footer-page]')).toContain('font-variant-numeric: tabular-nums;');
   });
 
-  it('leaves room for the footer, so the last rule of a page is not under it', () => {
-    expect(rule('[data-handbook-flow]')).toContain(
-      `padding-bottom: var(--handbook-footer-reserve);`
-    );
+  // The footer is in the bottom margin band now, so the flow must reserve no
+  // space for it. That is the 34px every sheet got back.
+  it('reserves no space in the flow for the footer', () => {
+    expect(rule('[data-handbook-flow]')).not.toContain('padding-bottom');
+    expect(declarations).not.toContain('--handbook-footer-reserve');
   });
 
   it('takes its ornament from the one committed file, not from a second drawing', () => {
@@ -202,21 +235,19 @@ describe('the parchment the sheet is printed on', () => {
   });
 
   it('paints the paper behind the whole page rather than behind the measure', () => {
-    // The root element's background covers the page box, margins included, which
-    // is what a sheet of paper is. On the body it would stop at the 643px
-    // measure and leave white down both sides of every page.
+    // The root element's background propagates across the page, which is what a
+    // sheet of paper is. On the body it would stop at the sheet's own measure and
+    // leave white down both sides of every page.
     expect(rule(':root')).toContain('background-image: var(--handbook-paper-image);');
   });
 
   it('leaves the sheet itself unpainted, so the paper is what a sheet is printed on', () => {
     // Starlight's reset paints the documentation background behind the body.
     // On the website that is right; on a sheet it is a white rectangle in the
-    // middle of the paper, and it covers the printable area exactly, so the
-    // committed parchment underneath would show only as a border. Measured: the
-    // white ran from 94px to 737px across and the full 972px of the sheet down.
+    // middle of the paper, so the committed parchment underneath would show only
+    // as a border.
     expect(rule('body')).toContain('background-color: transparent;');
   });
-
 
   it('names the paper colour beside the image, so the file can be any size', () => {
     // Tiled at its natural size: `auto` rather than a declared length, because a
@@ -252,10 +283,12 @@ describe('the rule that means "start a new sheet"', () => {
 });
 
 describe('the geometry is stated once', () => {
-  // The millimetres are the geometry's origin: the @page rule is what the
-  // printer actually honours, and every pixel below is derived from it rather than chosen.
-  it('states the page geometry in millimetres only once', () => {
-    expect([...declarations.matchAll(/(\d+)mm/g)].map(([, value]) => value)).toEqual(['25', '15', '15', '25']);
+  // A4 is the geometry's origin, named once by the `@page` size. The margins are
+  // pixel values derived from it, not a second millimetre declaration that can
+  // disagree with the page box.
+  it('names A4 as the page size and derives every length in pixels', () => {
+    expect(declaration('size')).toBe('A4 portrait');
+    expect([...declarations.matchAll(/\d+mm/g)]).toEqual([]);
   });
 
   // The stronger form of the guard the sheet box first needed. It covered only
@@ -275,40 +308,16 @@ describe('handbook print stylesheet', () => {
     expect(declaration('size')).toBe('A4 portrait');
   });
 
-  // 25mm top and left, 15mm right and bottom: the wider margin is the one a
-  // reader turns past, so it is the top and the spine side.
-  it('margins 25mm top and left and 15mm right and bottom', () => {
-    expect(declaration('margin')).toBe('25mm 15mm 15mm 25mm');
+  // No page margin: with none, there is nothing outside the content box to leave
+  // white, and the paper reaches every edge.
+  it('declares no page margin, so the paper reaches every edge', () => {
+    expect(declaration('margin')).toBe('0');
   });
 
-  it('makes the sheet box the exact size of the printable area', () => {
-    // 210mm and 297mm are A4's long and short edges; the margins above are what
-    // is left of them once the page is trimmed.
-    const printableWidthMm = 210 - 25 - 15;
-    const printableHeightMm = 297 - 25 - 15;
-
-    expect({
-      width: declaration('--handbook-sheet-width'),
-      height: declaration('--handbook-sheet-height'),
-    }).toEqual({
-      width: `${printablePx(printableWidthMm)}px`,
-      height: `${printablePx(printableHeightMm)}px`,
-    });
-  });
-
-  it('keeps the sheet box at the size ADR-0020 states', () => {
-    // The ADR is the document a later ticket inherits the numbers from, so the
-    // stylesheet and the ADR are asserted to agree rather than left to drift.
-    expect({
-      width: declaration('--handbook-sheet-width'),
-      height: declaration('--handbook-sheet-height'),
-    }).toEqual({ width: '643px', height: '972px' });
-  });
-
-  it('gives every sheet the printable height and a break after it', () => {
+  it('gives every sheet the page box height and a break after it', () => {
     const sheet = declarations.match(/\[data-handbook-sheet\]\s*\{([^}]*)\}/)?.[1] ?? '';
 
-    expect(sheet).toContain('min-height: var(--handbook-sheet-height);');
+    expect(sheet).toContain('min-height: var(--handbook-page-height);');
     expect(sheet).toContain('break-after: page;');
   });
 
@@ -344,28 +353,29 @@ describe('handbook print stylesheet', () => {
     expect(declarations).toMatch(/\.sl-anchor-link\s*\{[^}]*display:\s*none;/);
   });
 
-  it('gives the body the printable width, so the screen layout is the print layout', () => {
-    // The sheet box is the measure. A body wider than the printable area would
-    // paginate at a width the page does not have.
+  it('gives the body the page width, so the screen layout is the print layout', () => {
+    // The sheet is the page box. A body narrower than it would paginate at a
+    // width the page does not have.
     const body = declarations.match(/\bbody\s*\{([^}]*)\}/)?.[1] ?? '';
 
-    expect(body).toContain('width: var(--handbook-sheet-width);');
+    expect(body).toContain('width: var(--handbook-page-width);');
   });
 });
 
-describe('the printable area really is what the millimetres say', () => {
-  it('is 643 by 972 CSS px at the CSS reference resolution', () => {
+describe('the text block really is what the millimetres say', () => {
+  it('is 642.52 by 971.33 CSS px at the CSS reference resolution', () => {
     // Written out longhand rather than through the declarations above, so the
     // helper that reads the stylesheet is not what proves the arithmetic.
-    expect([printablePx(170), printablePx(257)]).toEqual([643, 972]);
+    expect([
+      round2(pageBoxPx(210) - insetPx(25) - insetPx(15)),
+      round2(pageBoxPx(297) - insetPx(25) - insetPx(15)),
+    ]).toEqual([642.52, 971.33]);
   });
 
-  it('agrees with the margin declaration the stylesheet actually carries', () => {
-    const [top, right, bottom, left] = declaration('margin').split(/\s+/).map(millimetres);
-
-    expect({
-      width: printablePx(210 - left - right),
-      height: printablePx(297 - top - bottom),
-    }).toEqual({ width: 643, height: 972 });
+  it('agrees with the margin declarations the stylesheet actually carries', () => {
+    expect({ width: contentWidth(), height: contentHeight() }).toEqual({
+      width: round2(pageBoxPx(210) - insetPx(25) - insetPx(15)),
+      height: round2(pageBoxPx(297) - insetPx(25) - insetPx(15)),
+    });
   });
 });

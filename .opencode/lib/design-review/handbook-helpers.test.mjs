@@ -458,25 +458,25 @@ function pngBytes({ width = 1588, height = 2246, bytes = 4096 } = {}) {
 }
 
 describe('the raster size a sheet is captured at', () => {
-  // The page box, not the sheet box: a capture of a sheet is a capture of the
-  // page it sits on, margins and all, which is what a reader holds.
-  const page = { width: 794, height: 1123 };
+  // The page box, which is the sheet: a capture of a sheet is a capture of the
+  // page, paper to its edge, which is what a reader holds.
+  const page = { width: 793.7, height: 1122.51 };
 
   it('is the page box at twice the scale by default', () => {
-    // 794 x 1123 CSS px is A4 at the CSS reference resolution, rounded up, and at
-    // a vertical raster scale of 2 that is 1588 x 2246. The command asserts
-    // this against the bytes it wrote rather than against this sentence.
+    // A4 at the CSS reference resolution is 793.7 x 1122.51 CSS px, and at a
+    // vertical raster scale of 2 that is 1588 x 2246. The command asserts this
+    // against the bytes it wrote rather than against this sentence.
     expect(rasterSize({ page, rasterScale: 2 })).toEqual({ width: 1588, height: 2246 });
   });
 
   it('takes the vertical raster scale as a flag rather than a constant', () => {
     expect(rasterSize({ page, rasterScale: 1 })).toEqual({ width: 794, height: 1123 });
-    expect(rasterSize({ page, rasterScale: 3 })).toEqual({ width: 2382, height: 3369 });
+    expect(rasterSize({ page, rasterScale: 3 })).toEqual({ width: 2382, height: 3368 });
   });
 
   it('rounds a fractional capture up, because a clipped pixel row is a defect', () => {
     // Chrome returns whole pixels, so 793.7 CSS px at 2x is 1588 and not 1587.
-    expect(rasterSize({ page: { width: 793.7, height: 1122.52 }, rasterScale: 2 })).toEqual({
+    expect(rasterSize({ page: { width: 793.7, height: 1122.51 }, rasterScale: 2 })).toEqual({
       width: 1588,
       height: 2246,
     });

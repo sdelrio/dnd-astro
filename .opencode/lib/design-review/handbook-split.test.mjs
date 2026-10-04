@@ -10,9 +10,10 @@ import { planSheets, splitName } from './handbook-split.mjs';
  * quietly change which page a rule appears on, so this decision is a function of
  * measurements, and a function of measurements can be asserted without a browser.
  *
- * The expected values below are worked out by hand from the geometry ADR-0020
- * states - a sheet is 972px tall, two columns of it, so a sheet holds 1944px of
- * column - rather than recomputed the way the planner computes them.
+ * The expected values below are worked out by hand from the geometry the print
+ * stylesheet states - a text block 971.33px tall, two columns of it, so a sheet
+ * holds 1942px of column - rather than recomputed the way the planner computes
+ * them.
  */
 
 const SHEET = { blockCapacity: 900, columns: 2 };

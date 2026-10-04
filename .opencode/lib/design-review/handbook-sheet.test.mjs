@@ -27,6 +27,11 @@ function box(element, { top = 0, width = 306, height = 20, scrollWidth = width }
   });
   Object.defineProperty(element, 'scrollWidth', { value: scrollWidth });
   Object.defineProperty(element, 'clientWidth', { value: width });
+  // The browser's own content height, which is what a block's height is read
+  // from: the print sheet measures a block by its client height rather than its
+  // rect, because Chrome reports the column's height rather than the block's own
+  // for some blocks inside a multicolumn.
+  Object.defineProperty(element, 'clientHeight', { value: height });
   return element;
 }
 
@@ -63,10 +68,8 @@ function windowWithSources(sources, front = {}) {
   const window = new Window({ url: 'http://localhost:4321/handbook/print/' });
   const { document } = window;
 
-  document.documentElement.style.setProperty('--handbook-sheet-width', '643px');
-  document.documentElement.style.setProperty('--handbook-sheet-height', '972px');
-  document.documentElement.style.setProperty('--handbook-page-width', '794px');
-  document.documentElement.style.setProperty('--handbook-page-height', '1123px');
+  document.documentElement.style.setProperty('--handbook-page-width', '793.7px');
+  document.documentElement.style.setProperty('--handbook-page-height', '1122.51px');
   document.documentElement.style.setProperty('--handbook-page-margin-top', '94.49px');
   document.documentElement.style.setProperty('--handbook-page-margin-right', '56.69px');
   document.documentElement.style.setProperty('--handbook-page-margin-bottom', '56.69px');
@@ -218,19 +221,29 @@ describe('the injected sheet assignment', () => {
   it('publishes the sheet geometry it read from the print stylesheet', async () => {
     const window = await run([{ slug: 'dnd/magic', height: 900 }]);
 
-    expect(window.__handbookLayout).toMatchObject({ sheet: { width: 643, height: 972 } });
+    expect(window.__handbookLayout).toMatchObject({ sheet: { width: 793.7, height: 1122.51 } });
   });
 
-  // The page box is a different pair of numbers from the sheet box, and it is
-  // what a capture is taken at: a reader holds a page, margins and all. The
-  // margins travel with it because the capture has to know where the page box
-  // places the sheet inside the page.
+  // The page box is the sheet: paper to its edge, with the four margins as the
+  // sheet's own padding rather than a page margin. The margins travel with it
+  // because the text block and the capture footer are measured against them.
   it('publishes the page box and the margins the captures are taken at', async () => {
     const window = await run([{ slug: 'dnd/magic', height: 900 }]);
 
     expect(window.__handbookLayout).toMatchObject({
-      page: { width: 794, height: 1123, marginLeft: 94.49, marginTop: 94.49, marginRight: 56.69 },
+      page: { width: 793.7, height: 1122.51, marginLeft: 94.49, marginTop: 94.49, marginRight: 56.69 },
     });
+  });
+
+  // The text block is the page box less the margins, which are the sheet
+  // padding. It is what content is packed into; the page box is what a capture
+  // is taken at, and the command reads this to size the viewport the screen
+  // layout is measured at.
+  it('publishes the text block the pages are packed into', async () => {
+    const window = await run([{ slug: 'dnd/magic', height: 900 }]);
+
+    expect(window.__handbookLayout.text.width).toBeCloseTo(642.52, 2);
+    expect(window.__handbookLayout.text.height).toBeCloseTo(971.33, 2);
   });
 
   it('publishes each source page by name with the height it measured', async () => {
@@ -252,23 +265,22 @@ describe('the injected sheet assignment', () => {
     expect(sheetAssignmentScript()).toContain(LAYOUT_GLOBAL);
   });
 
-  // A missing sheet box is not a smaller sheet, it is no pagination at all, so
+  // A missing page box is not a smaller sheet, it is no pagination at all, so
   // the script refuses rather than defaulting to a number it invented.
-  it('refuses to assign sheets when the stylesheet declares no sheet box', async () => {
+  it('refuses to assign sheets when the stylesheet declares no page box', async () => {
     const window = new Window({ url: 'http://localhost:4321/handbook/print/' });
     window.document.body.appendChild(window.document.createElement('section'));
 
-    await expect(window.eval(sheetAssignmentScript())).rejects.toThrow(/handbook-sheet-height/);
+    await expect(window.eval(sheetAssignmentScript())).rejects.toThrow(/handbook-page-width/);
   });
 
-  // The same argument for the page box, and a different failure: without it every
-  // capture is written at the wrong size, which the read-back would catch and
-  // which would otherwise cost a full run to discover.
-  it('refuses to assign sheets when the stylesheet declares no page box', async () => {
+  // The margins are the sheet's padding and the text block is the page box less
+  // them, so without them there is no measure to pack content into.
+  it('refuses to assign sheets when the stylesheet declares no page margin', async () => {
     const window = windowWithSources([{ slug: 'dnd/magic', height: 900 }]);
-    window.document.documentElement.style.removeProperty('--handbook-page-width');
+    window.document.documentElement.style.removeProperty('--handbook-page-margin-top');
 
-    await expect(window.eval(sheetAssignmentScript())).rejects.toThrow(/handbook-page-width/);
+    await expect(window.eval(sheetAssignmentScript())).rejects.toThrow(/handbook-page-margin/);
   });
 });
 

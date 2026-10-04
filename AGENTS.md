@@ -312,11 +312,14 @@ manifest.
 
 - The page geometry lives in `src/styles/handbook-print.css` and nowhere else, and
   **every length in that file is a custom property on `:root`** - a test fails on a
-  `px`, `em` or `rem` anywhere outside it. `@page { size: A4; margin: 25mm 15mm 15mm
-  25mm }` is the page; `--handbook-sheet-width` / `--handbook-sheet-height`
-  (643 x 972 CSS px) are the sheet box; `--handbook-page-width` /
-  `--handbook-page-height` (794 x 1123) are the page box, which is what a capture
-  is taken at. The command reads all of it out of the rendered page rather than
+  `px`, `em` or `rem` anywhere outside it. `@page { size: A4 portrait; margin: 0 }`
+  is the page, and the sheet box *is* the page box:
+  `--handbook-page-width` / `--handbook-page-height` (793.7 x 1122.51 CSS px, A4
+  at two decimals, each truncated a hair under rather than rounded up) are the page
+  box, and the
+  25mm top and left and 15mm right and bottom insets are the sheet's own padding
+  (`--handbook-page-margin-*`) rather than a page margin, so the paper reaches
+  every edge. The command reads all of it out of the rendered page rather than
   carrying a copy.
 - A sheet is **two 306px columns with a 30px gutter** by default. Anything wider
   than its column spans both columns, decided by measurement rather than by a rule
@@ -328,10 +331,10 @@ manifest.
 - Each sheet's footer carries the source page and the section it starts in on the
   left, a decorative rule in the centre and the page number on the right, reading
   `12 of 48` rather than a bare number.
-- Each sheet's PNG is **exactly 1588 x 2246**, which is the 794 x 1123 page box at
-  the vertical raster scale. The scale is `--raster-scale` and defaults to 2. The
-  size is read back out of the PNG's own header, and a capture at the wrong size is
-  a failure rather than a file.
+- Each sheet's PNG is **exactly 1588 x 2246**, which is the 793.7 x 1122.51 page
+  box at the vertical raster scale. The scale is `--raster-scale` and defaults to
+  2. The size is read back out of the PNG's own header, and a capture at the wrong
+  size is a failure rather than a file.
 - The PNG and the PDF come from one DOM and one stylesheet, and that is checked:
   the captures move the page, and the command compares the layout either side of it
   and refuses if it differs.
@@ -353,13 +356,13 @@ manifest.
   laid out inside a multicolumn - measured in this book as a 56px paragraph
   reporting a 1557px box - and a run that believed it broke sheets that had room
   for them and reported boundaries nobody wrote.
-- **The Point Buy panel prints in its wide layout.** The sheet box is 643px, which
-  is inside the 46rem at which that panel switches to its stacked phone layout, and
-  printed that way it is 1093px tall: taller than a sheet, and broken at a boundary
-  inside the component where no authored rule in a markdown page can reach. Three
-  rules at the foot of `handbook-print.css` give it back the ledger it was designed
-  as; the component itself is unchanged, because the phone layout is right on a
-  phone.
+- **The Point Buy panel prints in its wide layout.** The text block is 642.52px,
+  which is inside the 46rem at which that panel switches to its stacked phone
+  layout, and printed that way it is 1093px tall: taller than a sheet, and broken
+  at a boundary inside the component where no authored rule in a markdown page can
+  reach. Three rules at the foot of `handbook-print.css` give it back the ledger it
+  was designed as; the component itself is unchanged, because the phone layout is
+  right on a phone.
 
 ### The split report and the manifest
 
