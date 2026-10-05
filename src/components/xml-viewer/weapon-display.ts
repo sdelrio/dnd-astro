@@ -43,12 +43,26 @@ function baseAbility(weaponType: number): string {
   return weaponType === 1 ? 'dexterity' : 'strength';
 }
 
+/**
+ * The one rule for "which ability does this row add a bonus from", shared by the
+ * attack total and by every damage part so the two cannot disagree.
+ *
+ * A sheet states a stat by naming an ability, by writing the literal `base` to
+ * mean the weapon's own base ability, or by leaving it blank, which means the same
+ * thing `base` does. Treating the blank case differently on the two paths is what
+ * made a damage part lose its Strength or Dexterity bonus while its attack line
+ * kept it: the rest of the row was right, so nothing on the card looked wrong.
+ */
+function resolveStat(stat: string, weaponType: number): string {
+  return stat && stat !== 'base' ? stat : baseAbility(weaponType);
+}
+
 function attackTotal(weapon: Weapon, abilities: Abilities, profBonus: number): number {
-  const stat =
-    weapon.attackstat && weapon.attackstat !== 'base'
-      ? weapon.attackstat
-      : baseAbility(weapon.type);
-  return weapon.attackbonus + profBonus + abilityBonus(abilities, stat);
+  return (
+    weapon.attackbonus +
+    profBonus +
+    abilityBonus(abilities, resolveStat(weapon.attackstat, weapon.type))
+  );
 }
 
 function normalizeDice(dice: string): string {
@@ -85,8 +99,7 @@ function titleCaseDamageType(type: string): string {
 }
 
 function damageTotal(part: WeaponDamage, abilities: Abilities, weaponType: number): string {
-  const stat = part.stat === 'base' ? baseAbility(weaponType) : part.stat;
-  const statBonus = stat ? abilityBonus(abilities, stat) : 0;
+  const statBonus = abilityBonus(abilities, resolveStat(part.stat, weaponType));
   const modifier = part.bonus + statBonus * part.statmult;
   const dice = normalizeDice(part.dice);
   const head = `${dice}${modifier !== 0 ? signed(modifier) : ''}`;
