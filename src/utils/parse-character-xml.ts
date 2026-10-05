@@ -311,12 +311,40 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   }));
   const coins: Coins = { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 };
   const coinsNode = (root.coins ?? {}) as Record<string, XmlField>;
-  for (const entry of Object.values(coinsNode)) {
-    if (!entry || typeof entry !== 'object') continue;
+  // Fantasy Grounds writes the purse twice inside one <coins> node: once as
+  // id-NNNNN records and again as slot1..slot6 blocks, and the two need not agree.
+  // The slots are what the sheet last drew into its coin boxes, the records are
+  // what it stores, so reading every child and adding them reports a purse twice
+  // as large as the one on the page: lothiriel's own SP 13 / CP 7 came out as
+  // 14 / 8. Read ONE representation rather than summing: the id records when the
+  // node carries any, the slots when it does not, and assign rather than
+  // accumulate so a denomination is counted once or not at all.
+  const coinRecords = (prefix: string) =>
+    Object.entries(coinsNode).filter(
+      ([key, item]) => key.startsWith(prefix) && item !== null && typeof item === 'object'
+    );
+  const representation = coinRecords('id-').length > 0 ? 'id-' : 'slot';
+  const assigned = new Map<keyof Coins, number>();
+  for (const [, item] of coinRecords(representation)) {
+    const entry = item as XmlNode;
     const denomination = COIN_DENOMINATIONS[getText(entry, 'name').toUpperCase()];
     if (!denomination) continue;
-    coins[denomination] += Number(getText(entry, 'amount') || 0);
+    const amount = Number(getText(entry, 'amount') || 0);
+    const seen = assigned.get(denomination);
+    // Two records claiming one denomination with different amounts is a sheet the
+    // parser cannot read honestly: either number is a guess and their sum is
+    // neither, which is the defect this replaced. Fail the sheet and name the
+    // denomination rather than publish a purse the sheet never wrote. Two records
+    // that agree (viktor carries SP in slot2 and slot3, both zero) are one
+    // denomination written twice, not two purses, and there is nothing to add.
+    if (seen !== undefined && seen !== amount) {
+      throw new Error(
+        `<coins> records ${denomination} twice with different amounts (${seen} and ${amount})`
+      );
+    }
+    assigned.set(denomination, amount);
   }
+  for (const [denomination, amount] of assigned) coins[denomination] = amount;
 
   return {
     name: getText(root, 'name'),
