@@ -307,7 +307,7 @@
       "part": 1,
       "parts": 3,
       "section": "Weapon Master table",
-      "textHash": "f102750a70a948cd2800bd3ac2d04b79336feaba53b75f4db7b7c4a52c8551f7"
+      "textHash": "4e723343207d8d8d30b3a9fc4d48a83ae2587fcf04ec2e1c736f1affe31f9892"
     },
     {
       "number": 25,
@@ -317,8 +317,8 @@
       "title": "Weapon Master Property",
       "part": 2,
       "parts": 3,
-      "section": "Vex",
-      "textHash": "ec17b6ecfd47a60a5300e0d4d5e867acaa8260fb0dc1bf69ed1ad66e4bc3235e"
+      "section": "Cleave",
+      "textHash": "fda99eb7a1934c67103d383a79fc971585a7292e2a7d5497191595fbc3403410"
     },
     {
       "number": 26,
@@ -328,8 +328,8 @@
       "title": "Weapon Master Property",
       "part": 3,
       "parts": 3,
-      "section": "Changing Weapon Masteries",
-      "textHash": "aff35deffa1960ae8ce6fcd645ec0f0a0527e5a852d2876fbf155b4653437141"
+      "section": "Powerful",
+      "textHash": "e8422357180a1e456f4c8eb09b57db4021e2a69f3facba0a1bd51e4d9442fed2"
     },
     {
       "number": 27,
@@ -437,14 +437,14 @@
     {
       "source": "dnd/weapon-mastery",
       "sheet": 25,
-      "kind": "p",
-      "label": "p at \"If you hit a creature with a melee attack roll u…\""
+      "kind": "div",
+      "label": "div at h2 \"Cleave\""
     },
     {
       "source": "dnd/weapon-mastery",
       "sheet": 26,
-      "kind": "p",
-      "label": "p at \"This mastery is exclusively for firearms. You ro…\""
+      "kind": "div",
+      "label": "div at h2 \"Powerful\""
     }
   ]
 }

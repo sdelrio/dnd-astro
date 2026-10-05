@@ -156,19 +156,26 @@ table the heading promised.
 The assignment now marks each block's own kind - whether it is a heading, whether
 it is a reference block (a table, an aside or a list, and Starlight's
 `div.starlight-aside` counts) - and `weldRuns` computes the marks `planSheets`
-reads: a run starts at a heading, carries every following block, and ends with the
-first reference block, which is the last member of the unit. The run stops before
+reads: a run starts at a heading, carries every following block, and stops before
 the next heading, so one section's table is never welded to the previous section's
-heading, and a heading whose next block is already a reference block is unchanged.
-When no reference block is reachable before the next heading the run is the
-heading and the block immediately after it, which is the one-block weld this ADR
-originally described.
+heading. Within that section the run ends with the first reference block, which is
+the last member of the unit, and a heading whose next block is already a reference
+block is unchanged. When no reference block is reachable before the next heading
+the run is section-bounded rather than the one-block weld this ADR originally
+described: it carries the heading and every following block up to the section end,
+and the next heading starts its own run. The section bound is the whole rule, so a
+run never welds past an intervening subheading - the transitive heading case (an
+`h2` above an `h3` above the paragraph they introduce) still welds through to the
+reference block.
 
 The manifest moved with it: the `dnd/skills` craft sheets now begin at `div at h2
 "Brewer's Supplies (Intelligence)"` and its siblings rather than at `table at
 "Craft Materials Cost ..."`, so a sheet starts with the heading that introduces
-its table rather than with the table alone. The book is still 27 sheets and 17
-splits, under the bound of 30.
+its table rather than with the table alone. The section-bounded run moved the
+`dnd/weapon-mastery` boundaries the same way: its mastery sheets now begin at
+`div at h2 "Cleave"` and `div at h2 "Powerful"` rather than at the paragraphs those
+sections contain, so the heading that introduces a mastery travels with it. The
+book is still 27 sheets and 17 splits, under the bound of 30.
 
 ### A spanning band starts below the taller column
 
