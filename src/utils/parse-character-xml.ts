@@ -148,11 +148,15 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
    * collecting one of those invents a phantom entry with a blank name.
    * Field-less records (`<id-00004 />`) parse to a bare string rather than a
    * node, so keep the object check too: they have nothing to read.
+   *
+   * `prefix` defaults to `id-` because that is how every Fantasy Grounds
+   * collection is keyed. One node keys its records differently - `<coins>`, which
+   * also writes the same records out as `slot1..slot6` - so it names its own.
    */
-  function getCollection(obj: XmlField | undefined): XmlNode[] {
+  function getCollection(obj: XmlField | undefined, prefix = 'id-'): XmlNode[] {
     if (!obj || typeof obj !== 'object') return [];
     return Object.entries(obj)
-      .filter(([key, item]) => key.startsWith('id-') && typeof item === 'object')
+      .filter(([key, item]) => key.startsWith(prefix) && item !== null && typeof item === 'object')
       .map(([, item]) => item as XmlNode);
   }
   // Patch: decode entities in all text output
@@ -309,14 +313,39 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
     weight: Number(getText(item, 'weight') || 0),
     carried: Number(getText(item, 'carried') || 0),
   }));
-  const coins: Coins = { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 };
-  const coinsNode = (root.coins ?? {}) as Record<string, XmlField>;
-  for (const entry of Object.values(coinsNode)) {
-    if (!entry || typeof entry !== 'object') continue;
+  const coinsNode = root.coins;
+  // Fantasy Grounds writes the purse twice inside one <coins> node: once as
+  // id-NNNNN records and again as slot1..slot6 blocks, and the two need not agree.
+  // The slots are what the sheet last drew into its coin boxes, the records are
+  // what it stores, so reading every child and adding them reports a purse twice
+  // as large as the one on the page: lothiriel's own SP 13 / CP 7 came out as
+  // 14 / 8. Read ONE representation rather than summing: the id records when the
+  // node carries any, the slots when it does not, and assign rather than
+  // accumulate so a denomination is counted once or not at all. Both go through
+  // the collection filter, which is what keeps a look-alike node beside the purse
+  // from being read as a coin.
+  const representation = getCollection(coinsNode).length > 0 ? 'id-' : 'slot';
+  const purse = new Map<keyof Coins, number>();
+  for (const entry of getCollection(coinsNode, representation)) {
     const denomination = COIN_DENOMINATIONS[getText(entry, 'name').toUpperCase()];
     if (!denomination) continue;
-    coins[denomination] += Number(getText(entry, 'amount') || 0);
+    const amount = Number(getText(entry, 'amount') || 0);
+    const seen = purse.get(denomination);
+    // Two records claiming one denomination with different amounts is a sheet the
+    // parser cannot read honestly: either number is a guess and their sum is
+    // neither, which is the defect this replaced. Fail the sheet and name the
+    // denomination rather than publish a purse the sheet never wrote. Two records
+    // that agree (viktor carries SP in slot2 and slot3, both zero) are one
+    // denomination written twice, not two purses, and there is nothing to add.
+    if (seen !== undefined && seen !== amount) {
+      throw new Error(
+        `<coins> records ${denomination} twice with different amounts (${seen} and ${amount})`
+      );
+    }
+    purse.set(denomination, amount);
   }
+  const coins: Coins = { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 };
+  for (const [denomination, amount] of purse) coins[denomination] = amount;
 
   return {
     name: getText(root, 'name'),

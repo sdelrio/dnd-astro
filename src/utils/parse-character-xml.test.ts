@@ -324,23 +324,84 @@ describe('parseCharacterXML', () => {
     expect(result?.coins).toEqual({ pp: 4, gp: 468, ep: 22, sp: 22, cp: 52 });
   });
 
-  it('sums amounts that share a denomination and ignores empty coin entries', () => {
+  it('reads the id records when a sheet carries both representations of one purse', () => {
+    // Fantasy Grounds writes <coins> twice over: once as id-NNNNN records and again
+    // as slot1..slot6 blocks, and the two do not agree - the slots are what the
+    // sheet last rendered into its coin boxes, the records are what it stores.
+    // Adding both gives a purse twice as large as the one on the page.
+    const xml = `
+      <root>
+        <character>
+          <coins>
+            <id-00001><amount type="number">5</amount><name type="string">GP</name></id-00001>
+            <id-00002><amount type="number">2</amount><name type="string">SP</name></id-00002>
+            <slot1><amount type="number">9</amount><name type="string">RATIONS</name></slot1>
+            <slot2><amount type="number">7</amount><name type="string">GP</name></slot2>
+            <slot3><amount type="number">3</amount></slot3>
+            <slot4 />
+            <slot5><amount type="number">4</amount><name type="string">SP</name></slot5>
+            <slot6><amount type="number">11</amount><name type="string">CP</name></slot6>
+          </coins>
+        </character>
+      </root>
+    `;
+    expect(parseCharacterXML(xml)?.coins).toEqual({ pp: 0, gp: 5, ep: 0, sp: 2, cp: 0 });
+  });
+
+  it('reads the slot blocks when a sheet carries no id records at all', () => {
+    // The other shape is the whole node on its own, and a sheet that has only it
+    // must still be read rather than treated as an empty purse.
     const xml = `
       <root>
         <character>
           <coins>
             <slot1><amount type="number">5</amount><name type="string">gp</name></slot1>
-            <slot2><amount type="number">7</amount><name type="string">GP</name></slot2>
-            <slot3><amount type="number">9</amount><name type="string">RATIONS</name></slot3>
-            <slot4><amount type="number">3</amount></slot4>
-            <slot5 />
-            <slot6><amount type="number">2</amount><name type="string">SP</name></slot6>
+            <slot2><amount type="number">9</amount><name type="string">RATIONS</name></slot2>
+            <slot3><amount type="number">3</amount></slot3>
+            <slot4 />
+            <slot5><amount type="number">2</amount><name type="string">SP</name></slot5>
           </coins>
         </character>
       </root>
     `;
+    expect(parseCharacterXML(xml)?.coins).toEqual({ pp: 0, gp: 5, ep: 0, sp: 2, cp: 0 });
+  });
+
+  it("reports lothiriel's purse as its sheet states it, not as both copies added", () => {
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/lothiriel.xml'), 'utf8');
     const result = parseCharacterXML(xml);
-    expect(result?.coins).toEqual({ pp: 0, gp: 12, ep: 0, sp: 2, cp: 0 });
+    expect(result?.coins).toEqual({ pp: 0, gp: 105, ep: 0, sp: 13, cp: 7 });
+  });
+
+  it("reads viktor's purse, whose slots name the same denomination twice", () => {
+    // viktor carries SP in both slot2 and slot3, both zero. Two records for one
+    // denomination are a sheet that cannot say which is which, but they agree, so
+    // there is nothing to add: the denomination is read once.
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/viktor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result).not.toBeNull();
+    expect(result?.coins).toEqual({ pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 });
+  });
+
+  it('fails the sheet rather than adding two records for one denomination', () => {
+    // Two records claiming the same denomination with different amounts is a purse
+    // the parser cannot read honestly: either number is a guess and their sum is
+    // neither. Answering with the sum is the defect, so the sheet is refused and
+    // named rather than published with a purse nobody wrote.
+    const xml = `
+      <root>
+        <character>
+          <coins>
+            <id-00001><amount type="number">5</amount><name type="string">gp</name></id-00001>
+            <id-00002><amount type="number">7</amount><name type="string">GP</name></id-00002>
+          </coins>
+        </character>
+      </root>
+    `;
+    const result = tryParseCharacterXml(xml);
+    expect(result.ok).toBe(false);
+    expect(result.ok ? '' : result.reason).toContain('gp');
+    expect(parseCharacterXML(xml)).toBeNull();
   });
 
   it('defaults missing or empty coins to all zeros', () => {
