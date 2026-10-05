@@ -187,11 +187,43 @@ describe('a source page that does not fit', () => {
 
   it('names every split it made, by the block the new sheet starts with', async () => {
     const window = await run([
-      { slug: 'dnd/skills', blocks: [{ tag: 'h2', h: 400, text: 'Dash' }, { tag: 'p', h: 400 }, { tag: 'p', h: 400 }] },
+      {
+        slug: 'dnd/skills',
+        blocks: [
+          { tag: 'h2', h: 400, text: 'Dash' },
+          { tag: 'p', h: 200, text: 'lead' },
+          { tag: 'table', h: 200, text: 'craft' },
+          { tag: 'p', h: 400 },
+        ],
+      },
     ]);
 
     expect(layoutOf(window).splits).toEqual([
       { source: 'dnd/skills', sheet: 2, kind: 'p', label: 'p' },
+    ]);
+  });
+
+  // A heading with no reachable reference block welds every block up to the next
+  // heading, so the whole section travels together and the break falls before the
+  // heading rather than between it and the prose it introduces. Under the old
+  // one-block weld the heading took only its first paragraph and the second
+  // started the next sheet.
+  it('keeps a reference-less run whole rather than breaking inside it', async () => {
+    const window = await run([
+      {
+        slug: 'dnd/skills',
+        blocks: [
+          { tag: 'p', h: 500, text: 'before' },
+          { tag: 'h2', h: 200, text: 'Lone' },
+          { tag: 'p', h: 200, text: 'lead' },
+          { tag: 'p', h: 200, text: 'more' },
+        ],
+      },
+    ]);
+
+    expect(sheetTexts(window).map((text) => text.replace(/\s+/g, ''))).toEqual(['before', 'Loneleadmore']);
+    expect(layoutOf(window).splits).toEqual([
+      { source: 'dnd/skills', sheet: 2, kind: 'h2', label: 'h2 at "Lone"' },
     ]);
   });
 

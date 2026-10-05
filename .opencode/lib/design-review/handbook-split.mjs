@@ -77,17 +77,19 @@ export function isReferenceBlock({ tag, className }) {
  * weld let the table start a sheet while the heading and its lead-in closed the
  * previous one: the reader turns the page to find the table the heading promised.
  *
- * The run starts at a heading, carries every following block, and ends *with*
+ * The run is section-bounded: it starts at a heading, carries every following
+ * block, and stops before the next heading, so one section's table is never
+ * welded to the previous section's heading. Within that section it ends *with*
  * the first reference block (a table, an aside or a list), which is the last
- * member of the unit and so carries `keepWithNext: false`. It stops before the
- * next heading, so one section's table is never welded to the previous section's
- * heading. A heading whose next block is already a reference block is unchanged:
- * the heading is welded to it and the reference block ends the unit.
+ * member of the unit and so carries `keepWithNext: false`. A heading whose next
+ * block is already a reference block is unchanged: the heading is welded to it
+ * and the reference block ends the unit.
  *
- * When no reference block is reachable before the next heading the run is the
- * heading and the block immediately after it, which is the one-block weld the
- * planner has always had. That keeps a heading with a plain lead-in from
- * swallowing an unbounded run of prose and, with it, the whole sheet.
+ * When no reference block is reachable before the next heading the run still
+ * carries the heading and every following block up to the section end, rather
+ * than welding the heading to the block immediately after it alone. The section
+ * bound is what keeps a heading with a plain lead-in from welding past an
+ * intervening subheading: the subheading's own heading starts the next run.
  *
  * Pure and embeddable: it is a function of its argument alone, so the browser's
  * assignment and a test run the same weld rather than two copies that agree
@@ -100,21 +102,23 @@ export function weldRuns(blocks) {
   for (let start = 0; start < welded.length; start += 1) {
     if (welded[start].heading !== true) continue;
 
-    let reference = -1;
+    // The run ends at the section end, or with the first reference block in the
+    // section when there is one. `end` stays -1 when the next block is already
+    // the next heading, so the heading is welded to that heading alone and the
+    // next heading continues the run - the transitive weld.
+    let end = -1;
     for (let index = start + 1; index < welded.length; index += 1) {
       if (welded[index].heading === true) break;
-      if (welded[index].reference === true) {
-        reference = index;
-        break;
-      }
+      end = index;
+      if (welded[index].reference === true) break;
     }
 
-    if (reference === -1) {
+    if (end === -1) {
       welded[start].keepWithNext = true;
       continue;
     }
 
-    for (let index = start; index < reference; index += 1) {
+    for (let index = start; index < end; index += 1) {
       welded[index].keepWithNext = true;
     }
   }

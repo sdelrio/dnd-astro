@@ -330,6 +330,20 @@ describe('welding a heading through its lead-in to its reference block', () => {
     expect(welds([h('Section'), h('Subsection'), p(), table()])).toEqual([true, true, true, false]);
   });
 
+  // No reference block before the next heading: the run is section-bounded, so
+  // it carries every following block up to the section end rather than welding
+  // the heading to the block immediately after it alone.
+  it('welds a heading to every block up to the next heading when no reference block follows', () => {
+    expect(welds([h('Lone'), p(), p(), p()])).toEqual([true, true, true, false]);
+  });
+
+  // The section bound still holds when neither section reaches a reference
+  // block: the first heading's run ends at the intervening heading and the
+  // second heading starts its own run, rather than the first welding through.
+  it('ends a reference-less run at the next heading and starts a new one there', () => {
+    expect(welds([h('One'), p(), p(), h('Two'), p(), p()])).toEqual([true, true, false, true, true, false]);
+  });
+
   it('leaves a heading with nothing after it as the unit it is', () => {
     expect(welds([h('Last')])).toEqual([true]);
   });
