@@ -8,7 +8,11 @@ import {
   renameSync,
 } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
-import { tryParseCharacterXml, type CharacterData } from './parse-character-xml';
+import {
+  tryParseCharacterXml,
+  type CharacterData,
+  type UnrecognisedCollection,
+} from './parse-character-xml';
 import { probeAvatarPath } from './avatar-path';
 
 export interface StoredCharacter extends CharacterData {
@@ -247,6 +251,15 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
       continue;
     }
 
+    // The parse contract drops collection keys it cannot read as records. That
+    // drop is deliberate for nested look-alikes and a silent loss for a
+    // renumbered or hand-added record, so report the difference here, by name,
+    // and still build the sheet. Failing is issue #446's job and covers the
+    // catastrophic case; this covers the quiet one.
+    if (parsed.unrecognised.length > 0) {
+      logger.warn(unrecognisedKeysMessage(xmlFile, parsed.unrecognised));
+    }
+
     const avatarPath = probeAvatarPath(filename, avatarDir);
     characters.push({ ...parsed.character, filename, avatarPath });
   }
@@ -289,6 +302,32 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
 function isRosterRegression(previous: StoredCharacter[], next: StoredCharacter[]): boolean {
   if (previous.length === 0) return false;
   return next.length < previous.length * MIN_ROSTER_RETENTION;
+}
+
+/**
+ * The warning for a sheet whose collections carried keys the parser dropped.
+ *
+ * Names the sheet, every collection, and every key, so what was lost is
+ * diagnosable from the log alone. It says the sheet still built, because the
+ * parse contract is unchanged and a single exotic collection must not fail a
+ * sheet; the count is the size of the drop.
+ */
+function unrecognisedKeysMessage(
+  xmlFile: string,
+  unrecognised: UnrecognisedCollection[]
+): string {
+  const total = unrecognised.reduce((sum, entry) => sum + entry.keys.length, 0);
+  const noun = total === 1 ? 'key' : 'keys';
+  const detail = unrecognised
+    .map(({ collection, keys }) => `<${collection}> (${keys.map((key) => `"${key}"`).join(', ')})`)
+    .join('; ');
+  return (
+    `[xml-viewer] Warning: Dropped ${total} unrecognised collection ${noun} while parsing ` +
+    `character sheet ${xmlFile}: ${detail}. Fantasy Grounds collections are keyed by id-NNNNN ` +
+    `records, so anything else is not read and the records under it are missing from the sheet's ` +
+    `page. The sheet still builds. If those records matter, check the sheet's export or ` +
+    `parse-character-xml.ts.`
+  );
 }
 
 /** A sheet file's basename, which is also its URL slug. */

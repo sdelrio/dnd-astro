@@ -247,6 +247,92 @@ describe('build-xml-characters', () => {
       expect(existsSync(outputFile)).toBe(true);
     });
 
+    it('warns naming the sheet, the collection and the keys when a collection has an unrecognised key', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(
+        join(xmlDir, 'renumbered.xml'),
+        `<?xml version="1.0" encoding="utf-8"?>
+<root version="4.5">
+  <character>
+    <name type="string">Renumbered</name>
+    <skilllist>
+      <id-00001>
+        <name type="string">Perception</name>
+        <prof type="number">1</prof>
+        <total type="number">5</total>
+        <stat type="string">wisdom</stat>
+      </id-00001>
+      <skill-002>
+        <name type="string">Arcana</name>
+        <prof type="number">1</prof>
+        <total type="number">3</total>
+        <stat type="string">intelligence</stat>
+      </skill-002>
+    </skilllist>
+  </character>
+</root>`
+      );
+
+      const warnings: string[] = [];
+      const result = buildXmlCharacters({
+        xmlDir,
+        avatarDir,
+        outputFile,
+        logger: { log: () => {}, warn: (msg: string) => warnings.push(msg) },
+      });
+
+      // The sheet still builds; the drop is observable rather than fatal.
+      expect(result.map((c) => c.filename)).toEqual(['renumbered']);
+      const said = warnings.join('\n');
+      expect(said).toContain('renumbered.xml');
+      expect(said).toContain('skilllist');
+      expect(said).toContain('skill-002');
+    });
+
+    it('does not warn about the powers block nested inside an inventory item', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(
+        join(xmlDir, 'nested.xml'),
+        `<?xml version="1.0" encoding="utf-8"?>
+<root version="4.5">
+  <character>
+    <name type="string">Nested</name>
+    <inventorylist>
+      <id-00001>
+        <name type="string">Entrenching Mattock</name>
+        <count type="number">1</count>
+        <weight type="number">3</weight>
+        <carried type="number">1</carried>
+        <powers>
+          <id-00001><name type="string">Entrench</name></id-00001>
+        </powers>
+      </id-00001>
+    </inventorylist>
+  </character>
+</root>`
+      );
+
+      const warnings: string[] = [];
+      buildXmlCharacters({
+        xmlDir,
+        avatarDir,
+        outputFile,
+        logger: { log: () => {}, warn: (msg: string) => warnings.push(msg) },
+      });
+
+      expect(warnings).toEqual([]);
+    });
+
     it('skips a sheet whose basename is not a safe URL slug, with a warning naming the file', () => {
       const xmlDir = join(tempDir, 'sheets');
       const avatarDir = join(tempDir, 'avatars');

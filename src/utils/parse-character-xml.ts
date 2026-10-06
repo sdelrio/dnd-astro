@@ -135,7 +135,24 @@ const SUBCLASS_NAME_PATTERNS: Record<string, RegExp> = {
   Wizard: /^School of \S.*$|^Bladesinging$|^War Magic$/,
 };
 
-function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
+/**
+ * A collection key the parser could not read as a record and did not
+ * deliberately exclude. The parse still succeeds; this is what lets the build
+ * hook say which keys a sheet dropped and from where.
+ */
+export interface UnrecognisedCollection {
+  /** The Fantasy Grounds collection node the keys were found in, e.g. "skilllist". */
+  collection: string;
+  /** The non-attribute object keys the parser dropped, in document order. */
+  keys: string[];
+}
+
+interface ParsedCharacter {
+  character: CharacterData;
+  unrecognised: UnrecognisedCollection[];
+}
+
+function parseCharacterXmlUnsafe(xml: string): ParsedCharacter | null {
   const parser = new XMLParser({
     ignoreAttributes: false,
     attributeNamePrefix: '@_',
@@ -155,25 +172,74 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   // text value when they do not (e.g. a top-level <profbonus>). Both shapes
   // carry the same characters, so read whichever one is there.
   type XmlField = XmlNode | string | number;
+  // The unrecognised keys this parse dropped, accumulated as each collection is
+  // read. `CharacterData` is unchanged: the report travels beside it so the
+  // generated artifact keeps its shape.
+  const unrecognised: UnrecognisedCollection[] = [];
+  /**
+   * Whether a non-record key's value is itself a collection of records.
+   *
+   * This is the distinction between the two kinds of key the record filter
+   * drops, and it is the whole reason the filter is load-bearing rather than
+   * defensive. Fantasy Grounds nests a look-alike collection inside an unrelated
+   * one - a `<powers>` block carried by an inventory item, whose own children are
+   * `id-NNNNN` records. Such a node is deliberately excluded, never a record, so
+   * it is not worth a warning. A key whose value has no record children is a
+   * record the parser cannot read (renumbered `id-` keys, a hand-added sheet),
+   * and that is the quiet loss this makes observable.
+   */
+  function isNestedCollection(value: XmlField, prefixes: readonly string[]): boolean {
+    if (!value || typeof value !== 'object') return false;
+    return Object.keys(value).some((key) => prefixes.some((prefix) => key.startsWith(prefix)));
+  }
   // Helper for extracting collections by id keys
   /**
    * Fantasy Grounds collections are keyed by generated record identifiers
-   * (`id-NNNNN`). Filter to those keys: sheets nest look-alike nodes with the
-   * same child shape elsewhere in the tree (e.g. a <powers/> inside an
-   * inventory item, or a <language/> sibling inside <languagelist>), and
-   * collecting one of those invents a phantom entry with a blank name.
+   * (`id-NNNNN`). Filter to those keys. Two kinds of key are dropped, and the
+   * difference between them is the whole point:
+   *
+   * - A nested look-alike collection - a `<powers/>` block carried by an
+   *   inventory item, whose own children are `id-NNNNN` records - is rejected on
+   *   purpose. Collecting it as a record invents a phantom entry with a blank
+   *   name. It is never reported.
+   * - A bare sibling key with no record children (a `<language/>` inside
+   *   `<languagelist>`, or a sheet whose records were renumbered) cannot be told
+   *   apart from a record the parser should have read, so it is collected onto
+   *   `unrecognised` and the caller reports it.
+   *
    * Field-less records (`<id-00004 />`) parse to a bare string rather than a
    * node, so keep the object check too: they have nothing to read.
    *
    * `prefix` defaults to `id-` because that is how every Fantasy Grounds
    * collection is keyed. One node keys its records differently - `<coins>`, which
    * also writes the same records out as `slot1..slot6` - so it names its own.
+   * `acceptedPrefixes` names the record prefixes a collection legitimately
+   * carries but does not read here (the purse's two representations), so the
+   * alternate is not mistaken for an unrecognised key.
    */
-  function getCollection(obj: XmlField | undefined, prefix = 'id-'): XmlNode[] {
+  function getCollection(
+    obj: XmlField | undefined,
+    {
+      prefix = 'id-',
+      label,
+      acceptedPrefixes = [prefix],
+    }: { prefix?: string; label: string; acceptedPrefixes?: readonly string[] }
+  ): XmlNode[] {
     if (!obj || typeof obj !== 'object') return [];
-    return Object.entries(obj)
+    const entries = Object.entries(obj);
+    const records = entries
       .filter(([key, item]) => key.startsWith(prefix) && item !== null && typeof item === 'object')
       .map(([, item]) => item as XmlNode);
+    const unknown = entries
+      .filter(([key, item]) => {
+        if (key === '#text' || key.startsWith('@_')) return false;
+        if (acceptedPrefixes.some((accepted) => key.startsWith(accepted))) return false;
+        if (item === null || typeof item !== 'object') return false;
+        return !isNestedCollection(item, acceptedPrefixes);
+      })
+      .map(([key]) => key);
+    if (unknown.length > 0) unrecognised.push({ collection: label, keys: unknown });
+    return records;
   }
   // Patch: decode entities in all text output
   // Parse top-level values
@@ -192,7 +258,7 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   // granted feature whose name is the subclass itself. Sheets rebuilt mid-play
   // can leave features of an older subclass behind; first featurelist match
   // wins.
-  const featureEntries = getCollection(root.featurelist);
+  const featureEntries = getCollection(root.featurelist, { label: 'featurelist' });
   const subclassBySource = new Map<string, string>();
   for (const f of featureEntries) {
     const fsource = getText(f, 'source');
@@ -248,7 +314,7 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   // Skills: the prof-only list (prof > 0) keeps its SPEC-003 shape, allSkills
   // exposes every entry, and passives read every entry regardless of prof (a
   // prof 0 skill still has a passive value).
-  const skillEntries = getCollection(root.skilllist).map((s) => ({
+  const skillEntries = getCollection(root.skilllist, { label: 'skilllist' }).map((s) => ({
     name: getText(s, 'name'),
     total: coerceNumber(getText(s, 'total')),
     prof: coerceNumber(getText(s, 'prof')),
@@ -271,9 +337,13 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
     }
   }
   // Languages
-  const languages = getCollection(root.languagelist).map((l) => getText(l, 'name'));
+  const languages = getCollection(root.languagelist, { label: 'languagelist' }).map((l) =>
+    getText(l, 'name')
+  );
   // Feats
-  const feats = getCollection(root.featlist).map((f) => getText(f, 'name'));
+  const feats = getCollection(root.featlist, { label: 'featlist' }).map((f) =>
+    getText(f, 'name')
+  );
   // Features
   const features = featureEntries.map((f) => ({
     level: coerceNumber(getText(f, 'level')),
@@ -283,21 +353,21 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   // Powers: direct children of <character> only (root.powers is already the
   // direct node, so nested <powers/> inside inventory items never reach here).
   // Entries use id-NNNNN keys like every other FG collection.
-  const powers = getCollection(root.powers).map((p) => ({
+  const powers = getCollection(root.powers, { label: 'powers' }).map((p) => ({
     level: coerceNumber(getText(p, 'level')),
     name: getText(p, 'name'),
     group: getText(p, 'group'),
     prepared: coerceNumber(getText(p, 'prepared')),
     preparedDomain: coerceNumber(getText(p, 'preparedDomain')),
   }));
-  const weapons = getCollection(root.weaponlist).map((w) => ({
+  const weapons = getCollection(root.weaponlist, { label: 'weaponlist' }).map((w) => ({
     name: getText(w, 'name'),
     attackbonus: coerceNumber(getText(w, 'attackbonus')),
     attackstat: getText(w, 'attackstat'),
     properties: getText(w, 'properties'),
     carried: coerceNumber(getText(w, 'carried')),
     type: coerceNumber(getText(w, 'type')),
-    damage: getCollection(w.damagelist).map((d) => ({
+    damage: getCollection(w.damagelist, { label: 'damagelist' }).map((d) => ({
       bonus: coerceNumber(getText(d, 'bonus')),
       dice: getText(d, 'dice'),
       stat: getText(d, 'stat'),
@@ -325,7 +395,7 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
       used: coerceNumber(getText(block, 'used')),
     };
   });
-  const inventory = getCollection(root.inventorylist).map((item) => ({
+  const inventory = getCollection(root.inventorylist, { label: 'inventorylist' }).map((item) => ({
     name: getText(item, 'name'),
     count: coerceNumber(getText(item, 'count')),
     weight: coerceNumber(getText(item, 'weight')),
@@ -342,9 +412,19 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   // accumulate so a denomination is counted once or not at all. Both go through
   // the collection filter, which is what keeps a look-alike node beside the purse
   // from being read as a coin.
-  const representation = getCollection(coinsNode).length > 0 ? 'id-' : 'slot';
+  const hasIdRecords =
+    !!coinsNode &&
+    typeof coinsNode === 'object' &&
+    Object.entries(coinsNode).some(
+      ([key, item]) => key.startsWith('id-') && item !== null && typeof item === 'object'
+    );
+  const representation = hasIdRecords ? 'id-' : 'slot';
   const purse = new Map<keyof Coins, number>();
-  for (const entry of getCollection(coinsNode, representation)) {
+  for (const entry of getCollection(coinsNode, {
+    prefix: representation,
+    label: 'coins',
+    acceptedPrefixes: ['id-', 'slot'],
+  })) {
     const denomination = COIN_DENOMINATIONS[getText(entry, 'name').toUpperCase()];
     if (!denomination) continue;
     const amount = coerceNumber(getText(entry, 'amount'));
@@ -366,36 +446,39 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   for (const [denomination, amount] of purse) coins[denomination] = amount;
 
   return {
-    name: getText(root, 'name'),
-    race: getText(root, 'race'),
-    alignment: getText(root, 'alignment'),
-    background: getText(root, 'background'),
-    deity: getText(root, 'deity'),
-    classes,
-    abilities,
-    ac,
-    hp,
-    tempHp,
-    speed,
-    initiative,
-    profBonus,
-    skills,
-    allSkills,
-    passives,
-    languages,
-    feats,
-    features,
-    powers,
-    weapons,
-    spellSlots,
-    inventory,
-    coins,
+    character: {
+      name: getText(root, 'name'),
+      race: getText(root, 'race'),
+      alignment: getText(root, 'alignment'),
+      background: getText(root, 'background'),
+      deity: getText(root, 'deity'),
+      classes,
+      abilities,
+      ac,
+      hp,
+      tempHp,
+      speed,
+      initiative,
+      profBonus,
+      skills,
+      allSkills,
+      passives,
+      languages,
+      feats,
+      features,
+      powers,
+      weapons,
+      spellSlots,
+      inventory,
+      coins,
+    },
+    unrecognised,
   };
 }
 
 export function parseCharacterXML(xml: string): CharacterData | null {
   try {
-    return parseCharacterXmlUnsafe(xml);
+    return parseCharacterXmlUnsafe(xml)?.character ?? null;
   } catch {
     return null;
   }
@@ -404,7 +487,7 @@ export function parseCharacterXML(xml: string): CharacterData | null {
 export const parseCharacterXml = parseCharacterXML;
 
 export type ParseCharacterXmlResult =
-  | { ok: true; character: CharacterData }
+  | { ok: true; character: CharacterData; unrecognised: UnrecognisedCollection[] }
   | { ok: false; reason: string };
 
 /**
@@ -415,11 +498,11 @@ export type ParseCharacterXmlResult =
  */
 export function tryParseCharacterXml(xml: string): ParseCharacterXmlResult {
   try {
-    const character = parseCharacterXmlUnsafe(xml);
-    if (!character) {
+    const parsed = parseCharacterXmlUnsafe(xml);
+    if (!parsed) {
       return { ok: false, reason: 'no <character> node found' };
     }
-    return { ok: true, character };
+    return { ok: true, character: parsed.character, unrecognised: parsed.unrecognised };
   } catch (err) {
     const reason = err instanceof Error ? err.message : String(err);
     return { ok: false, reason };
