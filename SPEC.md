@@ -128,7 +128,9 @@ Two other files sit directly in `src/components/` and are deliberately **not** a
 Agents executing changes in this repository must maintain the following file system boundaries:
 
 ```text
-├── .github/workflows/    # CI Automation (Optional, Cloudflare hooks directly to Git)
+├── .opencode/
+│   └── lib/
+│       └── design-review/           # Dev-time browser capture, page measurement, and handbook generators
 ├── docs/
 │   ├── adr/                         # Architecture Decision Records (the binding decisions)
 │   ├── specs/                       # Per-feature specifications, indexed in docs/specs/README.md
@@ -136,7 +138,7 @@ Agents executing changes in this repository must maintain the following file sys
 │   └── audits/                      # Dated audit reports
 ├── src/
 │   ├── assets/
-│   │   └── fantasy-grounds-sheets/  # Canonical storage for source .xml dossiers
+│   │   └── fantasy-grounds-sheets/  # Canonical storage for source .xml dossiers (111 files)
 │   ├── components/
 │   │   ├── IconifyIcon.astro        # Zero-JS Astro component for Iconify icons in MDX
 │   │   ├── ThemeProvider.astro      # Starlight theme override (injected via astro.config.mjs)
@@ -147,9 +149,12 @@ Agents executing changes in this repository must maintain the following file sys
 │   │   ├── rulebook-index/          # Site index, set as a spread; no Alpine, one scroll script
 │   │   └── xml-viewer/              # Alpine.js component for character presentation
 │   ├── generated/
-│   │   └── characters.json          # THE generated artifact: build-hook output from the .xml sheets
+│   │   └── characters.json          # Generated artifact (gitignored): build-hook output from the .xml sheets
+│   ├── layouts/
+│   │   └── PrintDocument.astro      # Chrome-free shell for the printed handbook routes
 │   ├── styles/
 │   │   ├── tailwind.css             # Site stylesheet, loaded as Starlight customCss
+│   │   ├── handbook-print.css       # Printed handbook page geometry and print-only rules
 │   │   └── contrast.ts              # Contrast-ratio helper used by the colour tests
 │   ├── test-utils/
 │   │   └── alpine-dom.ts            # Mounts a component with astro/container and boots real Alpine
@@ -160,6 +165,12 @@ Agents executing changes in this repository must maintain the following file sys
 │   ├── content/
 │   │   └── docs/                    # Starlight MDX files (Standard static rulebooks)
 │   └── pages/                       # Custom Astro routes bypassing default Starlight if needed
+│       ├── fantasy-grounds/
+│       │   └── characters/
+│       │       └── [slug].astro     # Prerendered character page
+│       └── handbook/
+│           ├── print.astro          # Inert print route the handbook generator renders
+│           └── spike-fixture.astro  # Two-sheet regression fixture for the handbook renderer
 ├── astro.config.mjs                 # Main engine setup (Astro + Starlight + Alpine integrations)
 ├── package.json                     # Dependency manifests specifying Node 24 baseline
 └── SPEC.md                          # This architectural specification document
@@ -171,7 +182,7 @@ Five of the paths above are load-bearing in a way that is easy to mistake for in
 
 * **`src/alpine.ts` - the Alpine entrypoint.** `@astrojs/alpinejs` is configured with `entrypoint: '/src/alpine.ts'`, so this one file is injected into **every page on the site**. It holds the only `Alpine.data` registrations in the project, one per `x-data` root: `diceRoller`, `featExplorer`, `pointBuy`, `partyView`, `charSearch`, `xmlCard`. A new interactive component is not wired up until it is registered here, and a bad import edge here is site-wide, not page-wide (ADR-0013). `src/alpine-client-graph.test.ts` walks the module graph from this file to keep it browser-safe.
 * **`src/content.config.ts` - the content configuration.** Declares the `docs` collection with Starlight's `docsLoader` and `docsSchema`. This is what gives the rulebook pages frontmatter, the sidebar, and type checking.
-* **`src/styles/` - the styles directory.** `src/styles/tailwind.css` is the site stylesheet and is wired in through Starlight's `customCss` in `astro.config.mjs`, not imported by a component. `src/styles/contrast.ts` is a shared helper the colour tests use.
+* **`src/styles/` - the styles directory.** `src/styles/tailwind.css` is the site stylesheet and is wired in through Starlight's `customCss` in `astro.config.mjs`, not imported by a component. `src/styles/handbook-print.css` defines the printed handbook's page geometry and print-only rules. `src/styles/contrast.ts` is a shared helper the colour tests use.
 * **`src/test-utils/alpine-dom.ts` - the test harness.** Renders a component with `astro/container` and boots a real Alpine over it, so behaviour is exercised by clicking real controls in a real DOM rather than by scanning `.astro` source text for strings. ADR-0010 requires this shape, and the source-scanning tests it replaced could not tell a working Alpine expression from a broken one.
 * **`src/generated/` - the generated-data directory.** Holds `src/generated/characters.json`, the single artifact written by the XML build hook and consumed by the character pages and the card components. It is generated, not authored: do not hand-edit it, and do not expect it to exist in a fresh clone until a render command has run.
 

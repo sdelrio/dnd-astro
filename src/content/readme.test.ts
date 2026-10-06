@@ -255,21 +255,39 @@ describe('README', () => {
     const paths = treeEntries(tree).map((entry) => entry.path);
 
     const expected = [
+      '.opencode/',
+      '.opencode/lib/',
+      '.opencode/lib/design-review/',
       'docs/',
       'public/fg/',
       'public/fg/avatar/',
       'public/fg/party.json',
       'public/fonts/',
       'scripts/',
+      'src/assets/',
+      'src/assets/fantasy-grounds-sheets/',
+      'src/alpine.ts',
       'src/components/',
+      'src/components/IconifyIcon.astro',
+      'src/components/ThemeProvider.astro',
+      'src/components/ThemeSelect.astro',
       'src/components/dice-roller/',
       'src/components/feats-explorer/',
       'src/components/point-buy/',
+      'src/components/rulebook-index/',
       'src/components/xml-viewer/',
+      'src/content.config.ts',
       'src/content/docs/',
       'src/generated/',
+      'src/layouts/',
+      'src/layouts/PrintDocument.astro',
       'src/pages/fantasy-grounds/characters/[slug].astro',
+      'src/pages/handbook/print.astro',
+      'src/pages/handbook/spike-fixture.astro',
       'src/styles/',
+      'src/test-utils/',
+      'src/test-utils/alpine-dom.ts',
+      'src/types/',
       'src/utils/',
       'terraform/',
       'worker/',
@@ -525,7 +543,6 @@ describe('README', () => {
     expect(readme).not.toContain('Seasoned astronaut');
     expect(readme).not.toContain('pnpm create astro');
     expect(readme).not.toMatch(/[├└]──/);
-    expect(readme).not.toContain('src/assets/');
     expect(readme).not.toContain('\u2014');
   });
 
