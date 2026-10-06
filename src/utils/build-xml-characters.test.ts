@@ -17,6 +17,7 @@ import {
   buildXmlCharacters,
   shouldRebuildXmlCharacters,
   xmlCharacterArtifactsExist,
+  isSafeSlug,
 } from './build-xml-characters';
 
 /**
@@ -244,6 +245,81 @@ describe('build-xml-characters', () => {
       expect(result[0].filename).toBe('valid');
       expect(warnings.some((w) => w.includes('broken.xml'))).toBe(true);
       expect(existsSync(outputFile)).toBe(true);
+    });
+
+    it('skips a sheet whose basename is not a safe URL slug, with a warning naming the file', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(join(xmlDir, 'valid.xml'), validXmlSample);
+      writeFileSync(join(xmlDir, 'Milo the Bold!.xml'), validXmlSample);
+      writeFileSync(join(xmlDir, 'Captain & Co.xml'), validXmlSample);
+
+      const warnings: string[] = [];
+      const result = buildXmlCharacters({
+        xmlDir,
+        avatarDir,
+        outputFile,
+        logger: { log: () => {}, warn: (msg: string) => warnings.push(msg) },
+      });
+
+      expect(result.map((c) => c.filename)).toEqual(['valid']);
+      const said = warnings.join('\n');
+      expect(said).toContain('Milo the Bold!.xml');
+      expect(said).toContain('Captain & Co.xml');
+      expect(said).toMatch(/safe URL slug/);
+      expect(said).toMatch(/rename/i);
+    });
+
+    it('rejects an uppercase basename because it cannot round-trip as a route slug', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(join(xmlDir, 'valid.xml'), validXmlSample);
+      writeFileSync(join(xmlDir, 'Milo.xml'), validXmlSample);
+
+      const warnings: string[] = [];
+      const result = buildXmlCharacters({
+        xmlDir,
+        avatarDir,
+        outputFile,
+        logger: { log: () => {}, warn: (msg: string) => warnings.push(msg) },
+      });
+
+      expect(result.map((c) => c.filename)).toEqual(['valid']);
+      expect(warnings.join('\n')).toContain('Milo.xml');
+    });
+
+    it('reports a collision with both filenames when two basenames normalise to one slug', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+
+      // A case-sensitive filesystem can hold both; a case-insensitive one
+      // cannot, so the listing that the build reads is supplied directly.
+      vi.mocked(readdirSync).mockReturnValueOnce(['milo.xml', 'Milo.xml'] as never);
+
+      let thrown: unknown;
+      try {
+        buildXmlCharacters({ xmlDir, avatarDir, outputFile, logger: noopLogger });
+      } catch (err) {
+        thrown = err;
+      }
+
+      expect(thrown).toBeInstanceOf(Error);
+      const message = (thrown as Error).message;
+      expect(message).toContain('milo.xml');
+      expect(message).toContain('Milo.xml');
+      expect(message).toMatch(/collid|duplicate|same/i);
     });
 
     it('processes sheets in deterministic sorted order even when readdir returns unsorted names', () => {
@@ -530,6 +606,31 @@ describe('build-xml-characters', () => {
     });
   });
 
+  describe('isSafeSlug', () => {
+    it('accepts lowercase letters, digits, hyphens and underscores', () => {
+      for (const slug of ['milo', 'a', '3', 'milo-cambarro', 'a_b_1', 'zatoichi']) {
+        expect(isSafeSlug(slug)).toBe(true);
+      }
+    });
+
+    it('rejects anything that a URL would have to escape, and empty names', () => {
+      for (const slug of [
+        'Milo',
+        'milo cambarro',
+        'milo!',
+        'A/B',
+        '..\\escape',
+        'milo.cambarro',
+        '-milo',
+        '_milo',
+        '',
+        'milo\n',
+      ]) {
+        expect(isSafeSlug(slug)).toBe(false);
+      }
+    });
+  });
+
   describe('shouldRebuildXmlCharacters', () => {
     it('always rebuilds for render commands even when artifacts exist', () => {
       expect(shouldRebuildXmlCharacters('dev', true)).toBe(true);
@@ -553,6 +654,15 @@ describe('build-xml-characters', () => {
     it('successfully processes all sheets in src/assets/fantasy-grounds-sheets', () => {
       const characters = buildXmlCharacters();
       expect(characters.length).toBe(111);
+
+      // Every committed sheet keeps building, and every kept filename is a safe
+      // URL slug with no two sheets normalising to the same one. A file that
+      // failed either rule is skipped or thrown over, so the roster would not
+      // reach 111.
+      const slugs = characters.map((c) => c.filename);
+      const unsafe = slugs.filter((slug) => !isSafeSlug(slug));
+      expect(unsafe).toEqual([]);
+      expect(new Set(slugs.map((slug) => slug.toLowerCase())).size).toBe(characters.length);
 
       const draknor = characters.find((c) => c.filename === 'draknor');
       expect(draknor).toBeDefined();

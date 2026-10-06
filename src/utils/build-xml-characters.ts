@@ -16,6 +16,25 @@ export interface StoredCharacter extends CharacterData {
   avatarPath: string;
 }
 
+/**
+ * The rule a sheet's basename must satisfy to become a character route slug.
+ *
+ * A slug is embedded in a path with no escaping. `buildXmlCharacters` stores it
+ * on the record, `[slug].astro` hands it to Astro as a prerender parameter, and
+ * `XmlCard.astro` joins it into a portrait link by hand. Those are two
+ * independent joins, so anything a URL would have to percent-encode - a space,
+ * an uppercase letter, an ampersand, a path separator - makes them disagree, and
+ * nothing would catch it. A lowercase alphanumeric start followed by lowercase
+ * letters, digits, hyphens or underscores needs no escaping, so it round-trips
+ * identically through both.
+ */
+export const SAFE_SLUG_PATTERN = /^[a-z0-9][a-z0-9_-]*$/;
+
+/** Whether a sheet basename is a URL slug that needs no escaping. */
+export function isSafeSlug(slug: string): boolean {
+  return SAFE_SLUG_PATTERN.test(slug);
+}
+
 export interface BuildXmlCharactersOptions {
   rootDir?: string;
   xmlDir?: string;
@@ -139,7 +158,17 @@ function writeJsonAtomically(filePath: string, data: unknown): void {
  * `./generated-characters.ts`).
  * Sheet order is sorted so output is deterministic across filesystems.
  * A sheet that cannot be read or parsed is skipped with a warning, and a roster
- * that still holds sheets keeps building. Three cases are NOT warnings:
+ * that still holds sheets keeps building.
+ *
+ * The basename is the URL slug, and it is validated here, at the one place it is
+ * derived, because it has two consumers: the prerendered route takes it as a
+ * build parameter and the card builds a portrait link from it by hand. A
+ * basename that is not a safe URL slug is skipped with a warning naming the
+ * file; two basenames that collide after lowercasing throw, with both files
+ * named, rather than letting Astro report an opaque duplicate route. See
+ * SAFE_SLUG_PATTERN.
+ *
+ * Three cases are NOT warnings:
  *
  * - A non-empty sheet directory in which ZERO sheets parse throws. A directory
  *   of nothing but corrupt files is an upstream change, not a roster, and
@@ -170,10 +199,35 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
   const xmlFiles = readdirSync(xmlDir)
     .filter((f) => f.endsWith('.xml'))
     .sort();
+
+  // Two sheets that fold to the same slug would prerender one route twice, which
+  // Astro reports as an opaque duplicate-route error. The filenames are known
+  // before anything is read, so the collision is reported here, by name, rather
+  // than left to the router.
+  const collisions = findSlugCollisions(xmlFiles);
+  if (collisions.length > 0) {
+    throw new Error(slugCollisionMessage(xmlDir, collisions));
+  }
+
   const characters: StoredCharacter[] = [];
   const skipped: string[] = [];
 
   for (const xmlFile of xmlFiles) {
+    // Validate the name before reading the file: the slug is derived from it and
+    // reaches two consumers, so a bad name is a bad name whether or not the
+    // sheet would otherwise parse.
+    const filename = sheetBasename(xmlFile);
+    if (!isSafeSlug(filename)) {
+      logger.warn(
+        `[xml-viewer] Warning: Skipping character sheet ${xmlFile}: the basename ` +
+          `"${filename}" is not a safe URL slug. Rename the file so the basename uses ` +
+          `only lowercase letters, digits, hyphens and underscores; a name a URL has to ` +
+          `escape gets no character page and no portrait link.`
+      );
+      skipped.push(xmlFile);
+      continue;
+    }
+
     const xmlPath = join(xmlDir, xmlFile);
     let xml: string;
     try {
@@ -193,7 +247,6 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
       continue;
     }
 
-    const filename = xmlFile.replace(/\.xml$/, '');
     const avatarPath = probeAvatarPath(filename, avatarDir);
     characters.push({ ...parsed.character, filename, avatarPath });
   }
@@ -236,6 +289,53 @@ export function buildXmlCharacters(options: BuildXmlCharactersOptions = {}): Sto
 function isRosterRegression(previous: StoredCharacter[], next: StoredCharacter[]): boolean {
   if (previous.length === 0) return false;
   return next.length < previous.length * MIN_ROSTER_RETENTION;
+}
+
+/** A sheet file's basename, which is also its URL slug. */
+function sheetBasename(xmlFile: string): string {
+  return xmlFile.replace(/\.xml$/, '');
+}
+
+/**
+ * The basenames that share a slug once case is folded, with every filename in
+ * the group.
+ *
+ * Normalisation is lowercasing. A safe slug is already lowercase, so the case
+ * that matters is two sheets differing only in case (`Milo.xml` beside
+ * `milo.xml`): they are two build parameters for one route, which is the opaque
+ * duplicate-route failure this reports by name. A directory that holds both on a
+ * case-sensitive filesystem is rare, and a case-insensitive one cannot, but the
+ * build reads a listing either way and must not depend on the filesystem's
+ * case-sensitivity to avoid the collision.
+ */
+function findSlugCollisions(xmlFiles: string[]): Array<[string, string[]]> {
+  const bySlug = new Map<string, string[]>();
+  for (const xmlFile of xmlFiles) {
+    const slug = sheetBasename(xmlFile).toLowerCase();
+    const files = bySlug.get(slug);
+    if (files) files.push(xmlFile);
+    else bySlug.set(slug, [xmlFile]);
+  }
+  return [...bySlug.entries()].filter(([, files]) => files.length > 1);
+}
+
+/**
+ * The thrown message for a slug collision. It names every colliding file and the
+ * slug they share, which is what the router's duplicate-route error does not do.
+ */
+function slugCollisionMessage(
+  xmlDir: string,
+  collisions: Array<[string, string[]]>
+): string {
+  const detail = collisions
+    .map(([slug, files]) => `  - ${files.map((file) => `"${file}"`).join(' and ')} all become "${slug}"`)
+    .join('\n');
+  return (
+    `[xml-viewer] Character sheet filenames collide after slug normalisation, so two sheets ` +
+    `would prerender the same character page. This build stops rather than let Astro emit an ` +
+    `opaque duplicate-route error. Rename the sheets so every basename is unique after ` +
+    `lowercasing:\n${detail}\nSheets live in ${xmlDir}.`
+  );
 }
 
 /**
