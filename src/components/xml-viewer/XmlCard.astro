@@ -1,6 +1,7 @@
 ---
 import type { CharacterData } from '@/utils/parse-character-xml';
 import { resolveAvatarPath } from '@/utils/avatar-path';
+import { characterSheetPath } from '@/utils/character-route';
 import { signed } from '@/utils/format';
 import { groupBy } from '@/utils/group-by';
 import { toWeaponRows } from '@/components/xml-viewer/weapon-display';
@@ -368,7 +369,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
 >
   <header class="char-header">
     {character.filename && link ? (
-      <a href={`/fantasy-grounds/characters/${character.filename}`} aria-label={`View ${name} character sheet`} class="char-portrait-link">
+      <a href={characterSheetPath(character.filename)} aria-label={`View ${name} character sheet`} class="char-portrait-link">
         <img class="char-portrait" src={avatarSrc} alt={`${name} portrait`} title={name} />
       </a>
     ) : (
