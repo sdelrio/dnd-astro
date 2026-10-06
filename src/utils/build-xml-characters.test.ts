@@ -790,6 +790,28 @@ describe('build-xml-characters', () => {
       expect(draknorSlots).toHaveLength(9);
       expect(draknorSlots.every((slot) => slot.max === 0 && slot.used === 0)).toBe(true);
 
+      // A Warlock's pact magic slots are their own optional list, read from the
+      // node the spell slot list deliberately skips. viktor is a Warlock whose
+      // normal levels are all zero, so without this the artifact carries no slot
+      // information for him at all.
+      const viktor = characters.find((c) => c.filename === 'viktor');
+      expect(viktor?.pactMagicSlots).toEqual([{ level: 2, max: 2, used: 2 }]);
+      // A character with no pact slots carries no list rather than an empty one,
+      // which is what leaves the card's pact strip absent for them.
+      expect(antonidas?.pactMagicSlots).toBeUndefined();
+
+      // Every Warlock in the corpus records pact slots, and each is read into its
+      // own list. Those numbers had no reader before: the card showed their
+      // casting figures and no slot row, so this is the guard that the five
+      // Warlocks stop being the class the card cannot account for.
+      const warlocks = characters.filter((c) =>
+        c.classes.some((entry) => /warlock/i.test(entry.name))
+      );
+      expect(warlocks).toHaveLength(5);
+      for (const warlock of warlocks) {
+        expect(warlock.pactMagicSlots?.length, warlock.filename).toBeGreaterThan(0);
+      }
+
       const milo = characters.find((c) => c.filename === 'milo');
       expect(milo).toBeDefined();
       expect(milo?.name).toBe('Milo Cambarro (N)');

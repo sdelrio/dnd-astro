@@ -4,6 +4,7 @@ import {
   spellAttackBonus,
   spellSaveDc,
   toSpellSlotRows,
+  toPactMagicRows,
   hasSpellcasting,
   isSpellGroup,
 } from './spellcasting-display';
@@ -339,6 +340,40 @@ describe('toSpellSlotRows', () => {
     expect(toSpellSlotRows([{ level: 1, max: 2, used: 4 }])).toEqual([
       { level: 1, label: 'Level 1', spent: '4/2' },
     ]);
+  });
+});
+
+describe('toPactMagicRows', () => {
+  it('labels each pact plate distinctly, in level order and used out of total', () => {
+    // A pact plate reads `Pact 3` rather than `Level 3`, so the strip a Warlock
+    // sees cannot be mistaken for the ordinary spell slot levels above it even
+    // before its own caption is read.
+    expect(
+      toPactMagicRows([
+        { level: 2, max: 2, used: 2 },
+        { level: 3, max: 0, used: 0 },
+        { level: 4, max: 3, used: 1 },
+      ])
+    ).toEqual([
+      { level: 2, label: 'Pact 2', spent: '2/2' },
+      { level: 4, label: 'Pact 4', spent: '1/3' },
+    ]);
+  });
+
+  it('omits a level with no pact slots, matching the normal strip rule', () => {
+    expect(toPactMagicRows([{ level: 1, max: 0, used: 0 }])).toEqual([]);
+  });
+
+  it('reports a sheet that says it spent more pact slots than it has rather than correcting it', () => {
+    // The same rule the normal strip follows: the sheet in front of the player is
+    // the record, and 4/2 is what it says.
+    expect(toPactMagicRows([{ level: 3, max: 2, used: 4 }])).toEqual([
+      { level: 3, label: 'Pact 3', spent: '4/2' },
+    ]);
+  });
+
+  it('returns nothing at all when the character has no pact slots', () => {
+    expect(toPactMagicRows([])).toEqual([]);
   });
 });
 
