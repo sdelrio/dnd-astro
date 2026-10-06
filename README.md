@@ -169,7 +169,7 @@ The site is statically generated: every page ships as HTML and CSS, and no UI fr
 
 `astro.config.mjs` registers an `xml-character-viewer` integration whose `astro:config:setup` hook runs on every Astro startup, dev and build, so the generated data exists before any page renders. The hook calls `buildXmlCharacters()` in `src/utils/build-xml-characters.ts`, which:
 
-1. Reads the committed Fantasy Grounds `.xml` sheets under `src/assets`.
+1. Reads the committed Fantasy Grounds `.xml` sheets under `src/assets/fantasy-grounds-sheets`.
 2. Parses each Character sheet with `fast-xml-parser` (through `src/utils/parse-character-xml.ts`) into a `CharacterData` record.
 3. Resolves each avatar path with the `.jpg` -> `.png` -> `faceless.svg` fallback.
 4. Writes `src/generated/characters.json`, the single build-time character artifact, which is gitignored and rebuilt on every dev server start and production build.
