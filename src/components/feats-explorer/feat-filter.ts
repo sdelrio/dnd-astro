@@ -12,6 +12,17 @@ export interface FeatFilterState {
   level?: string;
 }
 
+/**
+ * The book filter's value for a feat that names no book. The dataset carries
+ * such feats - ten of the 219 - and before this constant existed no named book
+ * option could return them, so picking any book dropped them for good. The
+ * value doubles as the option's label because the two are the same word on
+ * purpose: a reader chooses the bucket by the name the card's footer prints.
+ * It shares no spelling with a book code (`phb`, `hof`, `fef`, `echh`), so it
+ * cannot collide with a real book.
+ */
+export const UNATTRIBUTED_BOOK = 'Unattributed';
+
 export interface LevelBucket {
   value: string;
   label: string;
@@ -72,7 +83,9 @@ export function filterFeats<T extends Feat>(
     const matchesAbility =
       ability === 'All' ||
       (feat.abilityIncrease !== undefined && feat.abilityIncrease.includes(ability));
-    const matchesBook = book === 'All' || feat.book === book;
+    const matchesBook =
+      book === 'All' ||
+      (book === UNATTRIBUTED_BOOK ? !feat.book : feat.book === book);
     const matchesLevelFilter = matchesLevel(feat.level, level);
     return matchesSearch && matchesAbility && matchesBook && matchesLevelFilter;
   });

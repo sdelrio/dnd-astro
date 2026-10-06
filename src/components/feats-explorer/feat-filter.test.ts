@@ -5,10 +5,11 @@ import {
   matchesLevel,
   filterFeats,
   LEVEL_BUCKETS,
+  UNATTRIBUTED_BOOK,
   type Feat,
   type FeatFilterState,
 } from './feat-filter';
-import { FEATS } from './feat-data';
+import { BOOKS, FEATS } from './feat-data';
 
 const feats: Feat[] = [
   { name: 'Alert', level: 0, book: 'phb' },
@@ -194,5 +195,66 @@ describe('filterFeats', () => {
     const input = [...feats];
     filterFeats(input, { ...noFilters, level: '0' });
     expect(input).toHaveLength(feats.length);
+  });
+});
+
+/**
+ * #458: ten feats carry no `book`, and the book filter used to offer only the
+ * four named books. Selecting any of them dropped those ten, and no selection
+ * could bring them back on its own - the one outcome the explorer exists to
+ * prevent, a feat in the archive a reader cannot find by any filter. The
+ * Unattributed bucket is the book filter's option for a feat that names no
+ * book, and these tests hold the invariant the fix exists to restore: every
+ * feat is reachable through the book dimension, and the buckets partition the
+ * dataset rather than leaving a tail behind.
+ *
+ * The offered values mirror the book `<select>`: the named books the component
+ * renders from `BOOKS`, plus the shared `UNATTRIBUTED_BOOK` sentinel the view
+ * adds a static option for.
+ */
+describe('book filter reachability', () => {
+  const offeredBooks = [...Object.keys(BOOKS), UNATTRIBUTED_BOOK];
+
+  it('offers a book value for every book the dataset carries, including none', () => {
+    const offered = new Set(offeredBooks);
+    for (const feat of FEATS) {
+      // Truthiness, not `??`: the filter and `bookLabel` both treat an absent
+      // or empty book as unattributed, so the guard has to agree with them.
+      const value = feat.book || UNATTRIBUTED_BOOK;
+      expect(
+        offered.has(value),
+        `feat "${feat.name}" carries book ${String(feat.book)}, which no book option offers`,
+      ).toBe(true);
+    }
+  });
+
+  it('reaches every feat through a single book selection', () => {
+    const reached = new Set<string>();
+    for (const value of offeredBooks) {
+      for (const feat of filterFeats(FEATS, { book: value })) reached.add(feat.name);
+    }
+    expect(reached.size).toBe(FEATS.length);
+  });
+
+  it('lists exactly the unattributed feats under the Unattributed option', () => {
+    const expected = FEATS.filter((feat) => !feat.book).map((feat) => feat.name);
+    // The dataset the issue was written against: ten feats name no book.
+    expect(expected).toHaveLength(10);
+    expect(filterFeats(FEATS, { book: UNATTRIBUTED_BOOK }).map((feat) => feat.name)).toEqual(
+      expected,
+    );
+  });
+
+  it('still shows only that book when a named book is selected', () => {
+    for (const code of Object.keys(BOOKS)) {
+      const matched = filterFeats(FEATS, { book: code });
+      expect(matched).toHaveLength(FEATS.filter((feat) => feat.book === code).length);
+      expect(matched.every((feat) => feat.book === code)).toBe(true);
+    }
+  });
+
+  it('never lets the Unattributed bucket overlap a named book', () => {
+    const unattributed = filterFeats(FEATS, { book: UNATTRIBUTED_BOOK });
+    expect(unattributed.every((feat) => !feat.book)).toBe(true);
   });
 });

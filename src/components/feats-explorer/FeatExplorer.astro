@@ -1,5 +1,5 @@
 ---
-import { LEVEL_BUCKETS } from './feat-filter';
+import { LEVEL_BUCKETS, UNATTRIBUTED_BOOK } from './feat-filter';
 ---
 
 <div
@@ -72,6 +72,12 @@ import { LEVEL_BUCKETS } from './feat-filter';
             <template x-for="(label, code) in books" :key="code">
               <option :value="code" x-text="label"></option>
             </template>
+            <!-- The ten feats that name no book. Without this option every
+                 named book excludes them and no selection brings them back,
+                 which is the one outcome the explorer must not have: a feat a
+                 reader cannot reach by any filter. Added after the named books
+                 so the list reads "the books, then no book". -->
+            <option value={UNATTRIBUTED_BOOK}>Unattributed</option>
           </select>
         </span>
       </div>
