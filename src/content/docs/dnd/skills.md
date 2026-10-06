@@ -88,13 +88,13 @@ The *"Margin of Success"* is the difference between the check result and the Bio
 ***PHB 233***
 
 
-:::note Crafting Time
+:::note[Crafting Time]
 Crafting non-magical items takes a number of workdays (8h/day) equal to: `The purchase price of the item / 10`
 Another character can combine its efforts halving the crafting time and but It must be proficient with the required tools.
 :::
 
 
-:::note Raw Materials
+:::note[Raw Materials]
 To make an item, you need raw materials worth half the purchase cost of the item (rounded down). The DM determines wheter the appropiate raw materials are available.
 :::
 
@@ -335,12 +335,12 @@ The tools in this chapter allow to craft magical items, such as potions, poisons
 
 ### Herbalism Kit (Intelligence)
 
-:::note Potions Crafting Time
+:::note[Potions Crafting Time]
 Crafting potions takes a number of workdays (8h/day) equal to: `The purchase price of the item / 50`
 Another character can combine its efforts halving the crafting time and but It must be proficient with the required tools.
 :::
 
-:::note Raw Materials
+:::note[Raw Materials]
 To make an item, you need raw materials worth half the purchase cost of the item (rounded down). The DM determines wheter the appropiate raw materials are available. 
 :::
 
@@ -367,12 +367,12 @@ To make an item, you need raw materials worth half the purchase cost of the item
 
 ### Poisoner's Kit (Intelligence)
 
-:::note Poisons Crafting Time
+:::note[Poisons Crafting Time]
 Crafting poisons takes a number of workdays (8h/day) equal to: `The purchase price of the item / 100`
 Another character can combine its efforts halving the crafting time and but It must be proficient with the required tools.
 :::
 
-:::note Raw Materials
+:::note[Raw Materials]
 To make an item, you need raw materials worth half the purchase cost of the item (rounded down). The DM determines wheter the appropiate raw materials are available. 
 :::
 
@@ -413,7 +413,7 @@ A spellcaster can transfer a spell to a scroll and create a *Spell Scroll*.
 The scroll's spell uses the unmodified Spell Save DC or Spell Attack Bonus of the scroll creator. If the inscribed scroll is a cantrip, the cantrip is cast as if the caster were the spell's creator level.
 :::
 
-:::note Create Spell Scroll DC
+:::note[Create Spell Scroll DC]
 The DC for inscribing a scroll is 10 + spell level
 :::
 
@@ -449,12 +449,12 @@ If the spell consumes its Material Components, they are consumed only when you c
 
 ### Alchemist's Supplies (Intelligence)
 
-:::note Alchemical Potions Crafting Time
+:::note[Alchemical Potions Crafting Time]
 Crafting time depends on the potion rarity. See the Alchemy Crafting Table Below. Time is in workdays of 8 hours.
 Another character can combine its efforts halving the crafting time and but It must be proficient with the required tools.
 :::
 
-:::note Raw Materials
+:::note[Raw Materials]
 To make an item, you need three things: An Alchemical Base, a Suitable Reagent and an Appropiated Spell
 :::
 

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "sourceHash": "19701ca1eb4e4ce6eed37bd7c7681662d6c9ebe30d948c0e431b9d6f5c966b1a",
+  "sourceHash": "48d635cb9537b5b2dc7830573c86da13d0001fcde48e07fe54ee469a9cd27939",
   "sheetCount": 27,
   "sources": [
     {
@@ -16,22 +16,22 @@
     {
       "slug": "dnd/injuries",
       "path": "src/content/docs/dnd/injuries.md",
-      "hash": "39e1ac908cbc6ea19ded3a8adeb38a86e5a69bba63fbd8e71a4cb359e6e60b55"
+      "hash": "14991a2f5e270174e4a26fce3c1f7bb15aa3f23db9416bee621f07d3a9649393"
     },
     {
       "slug": "dnd/magic",
       "path": "src/content/docs/dnd/magic.md",
-      "hash": "2760a6109eb68e6a9ae0042ea84b3023aecd93dd0f3819f6c639704cc76d3243"
+      "hash": "0a2b2a06337f2e8f5219aafcdea77e68e61905b7cd782474e7b58a911c01738f"
     },
     {
       "slug": "dnd/master-armor-table",
       "path": "src/content/docs/dnd/master-armor-table.md",
-      "hash": "b5009b13f160ec952bc0725c8a45f065557e3c6bf50efed7000155067269a7de"
+      "hash": "0d6e9a2a84cc4c6a3a0134c346b4159ae11301a8dfd70f55e14030ac261528a6"
     },
     {
       "slug": "dnd/skills",
       "path": "src/content/docs/dnd/skills.md",
-      "hash": "f267b8d1c7493b016dd7505394c5cb21f6192c62c2dd462eb2e96b1385bcd906"
+      "hash": "3cbdffc3fdae2b6f534d720f32e3c3557506b798ebebdb1d676a9b2aaa4f1fdb"
     },
     {
       "slug": "dnd/weapon-mastery",
@@ -109,7 +109,7 @@
       "part": 1,
       "parts": 2,
       "section": "Injury Treatment",
-      "textHash": "64639354fbcc0e7780262a26f57ae79b3e6cd55cac2ca3ec606fad533352a1b6"
+      "textHash": "cb934aa0da4c2d4360f93218200ccffce7ab7a32e39bfb0acd9a23b08139224f"
     },
     {
       "number": 7,
@@ -131,7 +131,7 @@
       "part": 1,
       "parts": 2,
       "section": "General Magic Rules",
-      "textHash": "22015fa4ea605c4add8767c3e9980ca3521c0b01054d4769132ad394884d80ea"
+      "textHash": "8084f4f77a8524e7d8a33d912065377d89d771133aaa6b202e49106a0048aa34"
     },
     {
       "number": 9,
@@ -142,7 +142,7 @@
       "part": 2,
       "parts": 2,
       "section": "Resurrection weakness",
-      "textHash": "64c81bafec307dde3a77202fb129c0b55115e017068bf57eec16cfed77679f62"
+      "textHash": "7231547152cb4fe75685609052869524178c5bf0184299938d550b1adf7b3f83"
     },
     {
       "number": 10,
@@ -164,7 +164,7 @@
       "part": 2,
       "parts": 2,
       "section": "Armor Sizes",
-      "textHash": "89c70feb2a005c9ceac1a247993891ed1df9463e896a3c1fad864aecf8b675c3"
+      "textHash": "549d1fda851eb5579d17c320d6a7a031eba309c584bb399a9dff4c523bb2b218"
     },
     {
       "number": 12,
@@ -186,7 +186,7 @@
       "part": 2,
       "parts": 12,
       "section": "Calculate value of gathered ingredients",
-      "textHash": "cfbd3a14e62703160bf8fafff33dde4b015a004b7cf26527d653283168af5cab"
+      "textHash": "a49e82e64d99b6acb20bf844c8126786ee3e493460daa43a9e9c2fe5799ca803"
     },
     {
       "number": 14,
@@ -241,7 +241,7 @@
       "part": 7,
       "parts": 12,
       "section": "The Advanced Tools",
-      "textHash": "21d16d6ab376264de4ae2c897c0a871c93b8d7e99e32b456356e1865dfeb08dc"
+      "textHash": "c9c8a47937dca32b64ed851d7d517d10340f43a1f86101c4a9616ff19a22f112"
     },
     {
       "number": 19,
@@ -252,7 +252,7 @@
       "part": 8,
       "parts": 12,
       "section": "Poisoner’s Kit (Intelligence)",
-      "textHash": "808acf5e5063d21cd507f3d4311b5507227698399a9d3e4400cf20aa7c407859"
+      "textHash": "209fbd9ebd0058e0a0c66c7ac38be2e81eb9816ec8375f86a11273748ba8dcab"
     },
     {
       "number": 20,
@@ -263,7 +263,7 @@
       "part": 9,
       "parts": 12,
       "section": "Calligrapher’s Supplies (Dexterity)",
-      "textHash": "b2be3285e4e7f47f3cbdc9c14b5337d3d86971fa8d1b9b2f12b6ddc50daf079b"
+      "textHash": "5313309e0d4de4e2cf07e2730d0ca8d7a02a16fbb3c455d97c2a437207d9e120"
     },
     {
       "number": 21,
@@ -274,7 +274,7 @@
       "part": 10,
       "parts": 12,
       "section": "",
-      "textHash": "ca6a2591fa144f5987d606df2968b530cdd941b73e413ce73b2b195f1ae7bcb3"
+      "textHash": "af843b2250c31ff6e3cf47573b243bb5a0787e07466f4fd53f64fb27c79e86fc"
     },
     {
       "number": 22,
@@ -420,7 +420,7 @@
       "source": "dnd/skills",
       "sheet": 21,
       "kind": "aside",
-      "label": "aside at \"NoteTo make an item, you need three things: An A…\""
+      "label": "aside at \"Raw MaterialsTo make an item, you need three thi…\""
     },
     {
       "source": "dnd/skills",

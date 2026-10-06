@@ -56,7 +56,7 @@ When wearing magical armor or shields, they are damaged only if struck by magica
 
 **Pag 219 PHB**
 
-:::note Resizing
+:::note[Resizing]
 Adapting a suit of armor to fit a different size has a cost of 10% the price of the armor for each size difference. The time cost is (1 day/size difference) for light armor and easy manteinance armor and (2 days/size difference) for the rest.
 :::
 
