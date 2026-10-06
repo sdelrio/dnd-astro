@@ -1,5 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import he from 'he';
+import { coerceNumber } from './numeric';
 
 export interface PassiveSkills {
   perception: number;
@@ -202,8 +203,8 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   for (const f of featureEntries) {
     const fsource = getText(f, 'source');
     if (!fsource || subclassBySource.has(fsource)) continue;
-    if (Number(getText(f, 'level') || 0) !== 1) continue;
-    if (Number(getText(f, 'locked') || 0) !== 1) continue;
+    if (coerceNumber(getText(f, 'level')) !== 1) continue;
+    if (coerceNumber(getText(f, 'locked')) !== 1) continue;
     const pattern = SUBCLASS_NAME_PATTERNS[fsource];
     const fname = getText(f, 'name');
     if (pattern && pattern.test(fname)) subclassBySource.set(fsource, fname);
@@ -215,7 +216,9 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
     const cc = rawClasses[key];
     // Both name and level might be encoded/strings with entities
     const cname = typeof cc.name === 'string' ? he.decode(cc.name) : he.decode(cc.name?.['#text'] ?? '');
-    const clevel = typeof cc.level === 'number' ? cc.level : Number(cc.level?.['#text'] ?? 0);
+    const clevel = coerceNumber(
+      typeof cc.level === 'number' ? cc.level : cc.level?.['#text']
+    );
     const csubclass = getText(cc, 'specialization') || subclassBySource.get(cname) || '';
     if (cname) {
       classes.push({ name: cname, level: clevel, ...(csubclass ? { subclass: csubclass } : {}) });
@@ -227,28 +230,28 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   for (const stat of Object.keys(abilitiesObj || {})) {
     const s = abilitiesObj[stat];
     abilities[stat] = {
-      score: Number(getText(s, 'score') || 0),
-      bonus: Number(getText(s, 'bonus') || 0),
-      save: Number(getText(s, 'save') || 0),
-      saveprof: Number(getText(s, 'saveprof') || 0),
+      score: coerceNumber(getText(s, 'score')),
+      bonus: coerceNumber(getText(s, 'bonus')),
+      save: coerceNumber(getText(s, 'save')),
+      saveprof: coerceNumber(getText(s, 'saveprof')),
     };
   }
   // Defenses (flat, per SPEC-003 Step 2 output shape)
-  const ac = Number(getText(root.defenses?.ac, 'total') || 0);
-  const hp = Number(getText(root.hp, 'total') || 0);
-  const tempHp = Number(getText(root.hp, 'temporary') || 0);
-  const speed = Number(getText(root.speed, 'total') || 0);
-  const initiative = Number(getText(root.initiative, 'total') || 0);
+  const ac = coerceNumber(getText(root.defenses?.ac, 'total'));
+  const hp = coerceNumber(getText(root.hp, 'total'));
+  const tempHp = coerceNumber(getText(root.hp, 'temporary'));
+  const speed = coerceNumber(getText(root.speed, 'total'));
+  const initiative = coerceNumber(getText(root.initiative, 'total'));
   // Prof bonus: read like every other defensive total, so an encoded value is
   // decoded and coerced rather than parsed from raw text.
-  const profBonus = Number(getText(root, 'profbonus') || 0);
+  const profBonus = coerceNumber(getText(root, 'profbonus'));
   // Skills: the prof-only list (prof > 0) keeps its SPEC-003 shape, allSkills
   // exposes every entry, and passives read every entry regardless of prof (a
   // prof 0 skill still has a passive value).
   const skillEntries = getCollection(root.skilllist).map((s) => ({
     name: getText(s, 'name'),
-    total: Number(getText(s, 'total') || 0),
-    prof: Number(getText(s, 'prof') || 0),
+    total: coerceNumber(getText(s, 'total')),
+    prof: coerceNumber(getText(s, 'prof')),
     stat: getText(s, 'stat'),
   }));
   const skills = skillEntries
@@ -273,7 +276,7 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   const feats = getCollection(root.featlist).map((f) => getText(f, 'name'));
   // Features
   const features = featureEntries.map((f) => ({
-    level: Number(getText(f, 'level') || 0),
+    level: coerceNumber(getText(f, 'level')),
     name: getText(f, 'name'),
     source: getText(f, 'source'),
   }));
@@ -281,24 +284,24 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   // direct node, so nested <powers/> inside inventory items never reach here).
   // Entries use id-NNNNN keys like every other FG collection.
   const powers = getCollection(root.powers).map((p) => ({
-    level: Number(getText(p, 'level') || 0),
+    level: coerceNumber(getText(p, 'level')),
     name: getText(p, 'name'),
     group: getText(p, 'group'),
-    prepared: Number(getText(p, 'prepared') || 0),
-    preparedDomain: Number(getText(p, 'preparedDomain') || 0),
+    prepared: coerceNumber(getText(p, 'prepared')),
+    preparedDomain: coerceNumber(getText(p, 'preparedDomain')),
   }));
   const weapons = getCollection(root.weaponlist).map((w) => ({
     name: getText(w, 'name'),
-    attackbonus: Number(getText(w, 'attackbonus') || 0),
+    attackbonus: coerceNumber(getText(w, 'attackbonus')),
     attackstat: getText(w, 'attackstat'),
     properties: getText(w, 'properties'),
-    carried: Number(getText(w, 'carried') || 0),
-    type: Number(getText(w, 'type') || 0),
+    carried: coerceNumber(getText(w, 'carried')),
+    type: coerceNumber(getText(w, 'type')),
     damage: getCollection(w.damagelist).map((d) => ({
-      bonus: Number(getText(d, 'bonus') || 0),
+      bonus: coerceNumber(getText(d, 'bonus')),
       dice: getText(d, 'dice'),
       stat: getText(d, 'stat'),
-      statmult: Number(getText(d, 'statmult') || 1),
+      statmult: coerceNumber(getText(d, 'statmult'), 1),
       type: getText(d, 'type'),
     })),
   }));
@@ -318,15 +321,15 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
     const block = powerMeta[`spellslots${level}`];
     return {
       level,
-      max: Number(getText(block, 'max') || 0),
-      used: Number(getText(block, 'used') || 0),
+      max: coerceNumber(getText(block, 'max')),
+      used: coerceNumber(getText(block, 'used')),
     };
   });
   const inventory = getCollection(root.inventorylist).map((item) => ({
     name: getText(item, 'name'),
-    count: Number(getText(item, 'count') || 0),
-    weight: Number(getText(item, 'weight') || 0),
-    carried: Number(getText(item, 'carried') || 0),
+    count: coerceNumber(getText(item, 'count')),
+    weight: coerceNumber(getText(item, 'weight')),
+    carried: coerceNumber(getText(item, 'carried')),
   }));
   const coinsNode = root.coins;
   // Fantasy Grounds writes the purse twice inside one <coins> node: once as
@@ -344,7 +347,7 @@ function parseCharacterXmlUnsafe(xml: string): CharacterData | null {
   for (const entry of getCollection(coinsNode, representation)) {
     const denomination = COIN_DENOMINATIONS[getText(entry, 'name').toUpperCase()];
     if (!denomination) continue;
-    const amount = Number(getText(entry, 'amount') || 0);
+    const amount = coerceNumber(getText(entry, 'amount'));
     const seen = purse.get(denomination);
     // Two records claiming one denomination with different amounts is a sheet the
     // parser cannot read honestly: either number is a guess and their sum is

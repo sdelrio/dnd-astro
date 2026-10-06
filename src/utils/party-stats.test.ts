@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { partyStats } from './party-stats';
+import { averageInitiativeLabel, partyStats } from './party-stats';
 import { parseCharacterXML } from './parse-character-xml';
 
 describe('partyStats', () => {
@@ -105,6 +105,25 @@ describe('partyStats', () => {
     expect(stats.avgInit).toBe(2);
     // 5 + 7 + 3 = 15
     expect(stats.totalLevel).toBe(15);
+  });
+
+  it('never displays a signed zero for a party averaging a negative initiative', () => {
+    // -1/3 rounds to negative zero, which satisfies `>= 0` and so a sign decided
+    // from the average would print it as `+0`: a negative average rendered as no
+    // modifier at all.
+    const members = [-1, 0, 0].map((initiative) => ({
+      roles: [],
+      character: { hp: 10, ac: 10, initiative, classes: [] },
+    }));
+    const stats = partyStats(members);
+    expect(Object.is(stats.avgInit, -0)).toBe(false);
+    expect(averageInitiativeLabel(stats.avgInit)).toBe('0');
+  });
+
+  it('signs a positive average and leaves a negative one to its own minus', () => {
+    expect(averageInitiativeLabel(3)).toBe('+3');
+    expect(averageInitiativeLabel(0)).toBe('0');
+    expect(averageInitiativeLabel(-2)).toBe('-2');
   });
 
   it('matches manual calculation from raw XML data for current party (acceptance criteria)', () => {

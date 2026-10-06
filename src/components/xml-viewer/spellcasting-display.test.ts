@@ -266,6 +266,15 @@ describe('spellSaveDc and spellAttackBonus', () => {
     expect(spellSaveDc(2, -1)).toBe(9);
     expect(spellAttackBonus(2, -1)).toBe(1);
   });
+
+  it('prints a number rather than NaN when a caster modifier is not finite', () => {
+    // The parser no longer produces one, but the plate prints whatever it is
+    // handed, so the last reader before rendering refuses the value too.
+    expect(spellSaveDc(2, NaN)).toBe(10);
+    expect(spellAttackBonus(2, NaN)).toBe(2);
+    expect(Number.isFinite(spellSaveDc(Infinity, 4))).toBe(true);
+    expect(Number.isFinite(spellAttackBonus(NaN, NaN))).toBe(true);
+  });
 });
 
 describe('toSpellSlotRows', () => {

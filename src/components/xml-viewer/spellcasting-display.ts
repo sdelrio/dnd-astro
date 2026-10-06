@@ -12,6 +12,7 @@
 // card itself should decide *whether* a section exists; this module decides what
 // the section says.
 import type { CharacterData } from '@/utils/parse-character-xml';
+import { coerceNumber } from '@/utils/numeric';
 
 type Abilities = CharacterData['abilities'];
 type Classes = CharacterData['classes'];
@@ -195,7 +196,7 @@ export function resolveCastingAbility(
  * ability, which is the constant the printed formula carries.
  */
 export function spellSaveDc(profBonus: number, castingModifier: number): number {
-  return 8 + profBonus + castingModifier;
+  return 8 + coerceNumber(profBonus) + coerceNumber(castingModifier);
 }
 
 /**
@@ -204,7 +205,7 @@ export function spellSaveDc(profBonus: number, castingModifier: number): number 
  * No +8: the +8 belongs to the save DC's constant, not to an attack.
  */
 export function spellAttackBonus(profBonus: number, castingModifier: number): number {
-  return profBonus + castingModifier;
+  return coerceNumber(profBonus) + coerceNumber(castingModifier);
 }
 
 export interface SpellSlotRow {
