@@ -20,6 +20,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import FeatExplorer from './FeatExplorer.astro';
 import { BOOKS, FEATS } from './feat-data';
 import { featDataset, featExplorerComponent } from './feat-explorer-component';
+import { filterFeats, UNATTRIBUTED_BOOK } from './feat-filter';
 import { mountAlpine, type MountedAlpine } from '@/test-utils/alpine-dom';
 
 let harness: MountedAlpine;
@@ -100,7 +101,7 @@ describe('FeatExplorer at runtime', () => {
     for (const id of ['fx-ability', 'fx-book', 'fx-level']) {
       const select = harness.window.document.querySelector(`#${id}`) as unknown as HTMLSelectElement;
       expect(select.value, id).toBe('All');
-      expect(select.options, id).toHaveLength(id === 'fx-level' ? 5 : id === 'fx-book' ? 5 : 7);
+      expect(select.options, id).toHaveLength(id === 'fx-level' ? 5 : id === 'fx-book' ? 6 : 7);
     }
   });
 
@@ -119,6 +120,49 @@ describe('FeatExplorer at runtime', () => {
     expect(expected.length).toBe(32);
     expect(cardNames()).toEqual(expected.map((feat) => feat.name));
     expect(countline()).toBe(`${expected.length} of ${FEATS.length} feats on this sheet`);
+  });
+
+  it('offers the unattributed feats as their own book option (#458)', async () => {
+    // The ten feats with no book used to be unreachable once any book was
+    // picked. The option is the fix, and it lists exactly those ten - not the
+    // named books, and not the named books' feats.
+    const book = harness.window.document.querySelector('#fx-book') as unknown as HTMLSelectElement;
+    const option = [...book.options].find((o) => o.value === UNATTRIBUTED_BOOK);
+    expect(option?.textContent?.trim()).toBe('Unattributed');
+
+    const expected = FEATS.filter((feat) => !feat.book);
+    expect(expected).toHaveLength(10);
+    await pick('fx-book', UNATTRIBUTED_BOOK);
+    expect(cardNames()).toEqual(expected.map((feat) => feat.name));
+    expect(countline()).toBe(`${expected.length} of ${FEATS.length} feats on this sheet`);
+    expect(harness.messages).toEqual([]);
+  });
+
+  it('reaches every feat through a single book option', () => {
+    // The invariant from #458, asserted against the options the select
+    // actually renders: no feat in the archive is left with no book selection
+    // that returns it. Scoped to the book dimension, which is the one whose
+    // options did not cover the dataset, and to the specific buckets ("All" is
+    // the no-filter default, so counting it would make the assertion vacuous).
+    const book = harness.window.document.querySelector('#fx-book') as unknown as HTMLSelectElement;
+    const values = [...book.options]
+      .map((option) => option.value)
+      .filter((value) => value !== 'All');
+
+    const reached = new Set<string>();
+    for (const value of values) {
+      for (const feat of filterFeats(FEATS, { book: value })) reached.add(feat.name);
+    }
+    expect(reached.size).toBe(FEATS.length);
+
+    // And none of the named buckets may carry an unattributed feat: the ten are
+    // reached only by the Unattributed option.
+    const unattributed = new Set(FEATS.filter((feat) => !feat.book).map((feat) => feat.name));
+    for (const value of values.filter((v) => v !== UNATTRIBUTED_BOOK)) {
+      for (const feat of filterFeats(FEATS, { book: value })) {
+        expect(unattributed.has(feat.name), `${feat.name} leaked into ${value}`).toBe(false);
+      }
+    }
   });
 
   it('stacks a search on a filter, so the two narrow together', async () => {
@@ -282,7 +326,9 @@ describe('the dataset arrives as its own chunk, not inside the page', () => {
   it('fills both selects from the chunk, not just the grid', async () => {
     const book = harness.window.document.querySelector('#fx-book') as unknown as HTMLSelectElement;
     const ability = harness.window.document.querySelector('#fx-ability') as unknown as HTMLSelectElement;
-    expect(book.options).toHaveLength(Object.keys(BOOKS).length + 1);
+    // The four named books, the All default, and the Unattributed bucket #458
+    // added, so the select can reach the ten feats that name no book.
+    expect(book.options).toHaveLength(Object.keys(BOOKS).length + 2);
     expect(ability.options).toHaveLength(6 + 1);
   });
 
