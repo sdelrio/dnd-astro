@@ -21,14 +21,14 @@ D&D Companion is a static-first SSG compendium that hosts the campaign's house r
 - **Point Buy**: allocates ability scores with the standard 5e point-buy calculator.
 - **XML Character Viewer**: parses Fantasy Grounds character XML at build time into character cards and pages.
 
-Interactivity runs as Alpine.js islands on top of the static HTML, so the pages ship without a client-side framework runtime.
+Interactivity runs as small Alpine.js components on top of the static HTML. The Alpine runtime is injected site-wide, so the pages ship without a UI framework runtime.
 
 ## Tech stack
 
 | Layer | Technology |
 | --- | --- |
 | Site framework | Astro 7 (SSG) + Starlight |
-| Interactivity | Alpine.js islands |
+| Interactivity | Alpine.js components |
 | Styling | Tailwind v4 |
 | Character data | fast-xml-parser build pipeline |
 | Diagrams | Mermaid |
@@ -114,9 +114,9 @@ public/                  Static assets served as-is
 scripts/                 Content extraction and CI helper scripts
 src/
   components/
-    dice-roller/         Dice Roller Alpine.js island
-    feats-explorer/      Feat Explorer Alpine.js island
-    point-buy/           Point Buy Alpine.js island
+    dice-roller/         Dice Roller Alpine.js component
+    feats-explorer/      Feat Explorer Alpine.js component
+    point-buy/           Point Buy Alpine.js component
     xml-viewer/          XML Character Viewer components (XmlCard, CharSearch, PartyView)
   content/
     docs/                Starlight Markdown and MDX content
@@ -146,7 +146,7 @@ Build output and local scratch space (`dist/`, `.astro/`, `src/generated/`, `tmp
 
 ### Least client-side JavaScript
 
-The site is statically generated: every page ships as HTML and CSS, and interactive behavior lives in small Alpine.js islands scoped to the component that needs it. New interactivity belongs in an island, not in a site-wide framework bundle.
+The site is statically generated: every page ships as HTML and CSS, and no UI framework runtime ships to the browser. Interactive behavior lives in small Alpine.js components scoped to the component that needs it, each registered once in the shared entrypoint at `src/alpine.ts`. The Alpine runtime is injected site-wide by `@astrojs/alpinejs`, so new interactivity belongs in a scoped component wired into that entrypoint, not in a second UI framework bundle.
 
 ### Build-time Fantasy Grounds XML pipeline
 

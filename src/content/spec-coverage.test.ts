@@ -184,7 +184,10 @@ describe('SPEC.md component coverage', () => {
 
 	it('preserves the rule of least client-side JavaScript', () => {
 		expect(specSource).toContain('### Rule of Least Client-Side JavaScript');
-		expect(specSource).toContain('Frameworks must be scoped strictly to individual component instances');
+		expect(specSource).toMatch(/no UI framework runtime is shipped to the browser/i);
+		expect(specSource).toMatch(/small, scoped Alpine\.js components/);
+		expect(specSource).toMatch(/injected site-wide/);
+		expect(specSource).not.toMatch(/\bislands?\b/i);
 	});
 });
 

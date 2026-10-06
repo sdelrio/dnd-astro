@@ -1,13 +1,13 @@
 # Technical Specification: Custodied D&D Rules Compendium & Character Viewer
 
 ## 1. System Overview & Context
-This project is a high-performance, secure digital compendium for D&D homebrew and custom rules. It leverages a modern, decoupled static-first approach to maximize loading speeds, minimize client-side JavaScript execution, and isolate interactive logic using the island architecture.
+This project is a high-performance, secure digital compendium for D&D homebrew and custom rules. It leverages a modern, decoupled static-first approach to maximize loading speeds, minimize client-side JavaScript execution, and keep interactive logic in small, scoped components rather than a UI framework runtime.
 
 ### Tech Stack Constraints
 * **Core Framework:** Astro 7.3 (Static Site Generation / SSG mode)
 * **Documentation Base:** Astro Starlight (`@astrojs/starlight`)
 * **Runtime Environment:** Node.js 24
-* **Interactivity Tier 1 (Lightweight Client State):** Alpine.js (`alpinejs`, registered through `@astrojs/alpinejs`)
+* **Interactivity Tier 1 (Lightweight Client State):** Alpine.js (`alpinejs`, registered through `@astrojs/alpinejs`). The integration is configured with an explicit entrypoint, `src/alpine.ts`, so the runtime is injected site-wide while the interactive behavior stays in small, scoped `x-data` components
 * **Interactivity Tier 2 (Complex UI/Data Operations):** Not used - the project is Alpine-only. No UI framework runtime is shipped to the browser: React, Vue, Svelte and their peers are absent from `package.json`, and no page bundles one. That claim is scoped to framework runtimes, not to client JavaScript as a whole. Everything that does reach the browser is named in this list: Alpine.js, Starlight's own small chrome scripts, and the Mermaid loader and library described below, alongside the inline scripts the build emits
 * **Diagram Rendering:** `mermaid`, rendered client-side by the `astro-mermaid` integration registered in `astro.config.mjs` (see [ADR 0007](./docs/adr/0007-mermaid-rendering-strategy.md)). The integration injects a small loader into every page, but it imports the `mermaid` library dynamically and only on pages that contain a Mermaid diagram, so the exception to the rule of least client-side JavaScript stays scoped to those pages rather than becoming site-wide
 * **Styling:** Tailwind CSS (Integrated natively via Starlight)
@@ -36,7 +36,7 @@ This project is a high-performance, secure digital compendium for D&D homebrew a
 ## 3. UI/UX Architecture & Framework Distribution
 
 ### Rule of Least Client-Side JavaScript
-To optimize performance, JavaScript frameworks must not be universally bundled or loaded on documentation pages. Frameworks must be scoped strictly to individual component instances or specific layout islands.
+To optimize performance, no UI framework runtime is shipped to the browser, and interactive behavior lives in small, scoped Alpine.js components. The Alpine runtime itself is injected site-wide by `@astrojs/alpinejs` with an explicit entrypoint, so the behavior is scoped even though the runtime is not.
 
 ### Icon Components (Zero-JS / Static Server Hydration)
 Decorative icons from the Iconify ecosystem must be rendered via `src/components/IconifyIcon.astro`, a pure Astro component that reads SVG data from local `@iconify-json` packages (`@iconify-json/game-icons`, `@iconify-json/mdi`) at build time. No network call to the Iconify API is made, so offline builds still render icons. See [ADR 0001](./docs/adr/0001-icon-component.md) for full rationale.
