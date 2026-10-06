@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
+import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { parseCharacterXML, tryParseCharacterXml } from './parse-character-xml';
 
@@ -767,6 +767,91 @@ describe('parseCharacterXML', () => {
     expect(parseCharacterXML(xml)?.features).toEqual([
       { level: 0, name: 'Second Wind', source: 'Fighter' },
     ]);
+  });
+
+  describe('unrecognised collection keys', () => {
+    it('reports a record key the parser cannot read, naming the collection and the key', () => {
+      const xml = `
+        <root>
+          <character>
+            <skilllist>
+              <id-00001>
+                <name type="string">Perception</name>
+                <total type="number">5</total>
+                <prof type="number">1</prof>
+                <stat type="string">wisdom</stat>
+              </id-00001>
+              <skill-002>
+                <name type="string">Arcana</name>
+                <total type="number">3</total>
+                <prof type="number">1</prof>
+                <stat type="string">intelligence</stat>
+              </skill-002>
+            </skilllist>
+          </character>
+        </root>
+      `;
+      const result = tryParseCharacterXml(xml);
+      expect(result.ok).toBe(true);
+      expect(result.ok && result.unrecognised).toEqual([
+        { collection: 'skilllist', keys: ['skill-002'] },
+      ]);
+      // The recognised record still parses; the drop is reported, not fatal.
+      expect(result.ok && result.character.skills).toEqual([
+        { name: 'Perception', total: 5 },
+      ]);
+    });
+
+    it('does not report a nested collection node as an unrecognised key', () => {
+      const xml = `
+        <root>
+          <character>
+            <languagelist>
+              <id-00001><name type="string">Common</name></id-00001>
+              <powers>
+                <id-00001><name type="string">Entrench</name></id-00001>
+              </powers>
+            </languagelist>
+          </character>
+        </root>
+      `;
+      const result = tryParseCharacterXml(xml);
+      expect(result.ok).toBe(true);
+      expect(result.ok && result.unrecognised).toEqual([]);
+    });
+
+    it('does not report the powers block nested inside an inventory item', () => {
+      const xml = `
+        <root>
+          <character>
+            <inventorylist>
+              <id-00001>
+                <name type="string">Entrenching Mattock</name>
+                <powers>
+                  <id-00001><name type="string">Entrench</name></id-00001>
+                </powers>
+              </id-00001>
+            </inventorylist>
+          </character>
+        </root>
+      `;
+      const result = tryParseCharacterXml(xml);
+      expect(result.ok).toBe(true);
+      expect(result.ok && result.unrecognised).toEqual([]);
+    });
+
+    it('reports nothing for the well-formed committed corpus', () => {
+      const dir = join(__dirname, '../assets/fantasy-grounds-sheets');
+      const files = readdirSync(dir).filter((f) => f.endsWith('.xml'));
+      expect(files).toHaveLength(111);
+      const reported = files
+        .map((file) => {
+          const result = tryParseCharacterXml(readFileSync(join(dir, file), 'utf8'));
+          return { file, result };
+        })
+        .filter(({ result }) => result.ok && result.unrecognised.length > 0);
+      expect(reported).toEqual([]);
+    });
   });
 
   describe('the non-finite coercion invariant from #448', () => {
