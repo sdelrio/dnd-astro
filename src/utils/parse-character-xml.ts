@@ -85,6 +85,15 @@ export interface CharacterData {
   powers: Array<{ level: number; name: string; group: string; prepared: number; preparedDomain: number }>;
   weapons: WeaponData[];
   spellSlots: SpellSlotData[];
+  /**
+   * A Warlock's pact magic slots, read beside the normal spell slots.
+   *
+   * Optional rather than a fixed nine: a character with no pact slots has no
+   * pact strip at all, so a list that is absent and one that is empty would be
+   * the same fact. Only levels with a non-zero maximum are carried, matching the
+   * rule the normal strip applies to `spellSlots`.
+   */
+  pactMagicSlots?: SpellSlotData[];
   inventory: InventoryItem[];
   coins: Coins;
 }
@@ -383,9 +392,10 @@ function parseCharacterXmlUnsafe(xml: string): ParsedCharacter | null {
   // same fact to a reader ("no slots here"), and giving them two shapes is how the
   // card ends up filtering one and rendering the other.
   //
-  // Only `spellslots1`..`spellslots9` is read. The `pactmagicslots` blocks sit
-  // beside them with the same shape and belong to a Warlock's pact magic rather
-  // than to the spell slot table the card renders.
+  // Only `spellslots1`..`spellslots9` is read into the spell slot list. The
+  // `pactmagicslots` blocks sit beside them with the same shape and belong to a
+  // Warlock's pact magic rather than to the spell slot table, so they are read
+  // into their own list below instead.
   const powerMeta = (root.powermeta ?? {}) as Record<string, XmlField>;
   const spellSlots: SpellSlotData[] = SPELL_SLOT_LEVELS.map((level) => {
     const block = powerMeta[`spellslots${level}`];
@@ -395,6 +405,18 @@ function parseCharacterXmlUnsafe(xml: string): ParsedCharacter | null {
       used: coerceNumber(getText(block, 'used')),
     };
   });
+  // Pact magic is its own optional list, not a tenth spell level. Only the levels
+  // that actually hold slots are kept, so a character with none carries no list
+  // rather than a run of zeroed plates and a caption over them. `used` is left as
+  // the sheet wrote it, even above `max`, for the same reason the spell slots are.
+  const pactMagicSlots: SpellSlotData[] = SPELL_SLOT_LEVELS.map((level) => {
+    const block = powerMeta[`pactmagicslots${level}`];
+    return {
+      level,
+      max: coerceNumber(getText(block, 'max')),
+      used: coerceNumber(getText(block, 'used')),
+    };
+  }).filter((slot) => slot.max > 0);
   const inventory = getCollection(root.inventorylist, { label: 'inventorylist' }).map((item) => ({
     name: getText(item, 'name'),
     count: coerceNumber(getText(item, 'count')),
@@ -469,6 +491,7 @@ function parseCharacterXmlUnsafe(xml: string): ParsedCharacter | null {
       powers,
       weapons,
       spellSlots,
+      ...(pactMagicSlots.length > 0 ? { pactMagicSlots } : {}),
       inventory,
       coins,
     },

@@ -19,6 +19,7 @@ import {
   resolveCastingAbility,
   spellAttackBonus,
   spellSaveDc,
+  toPactMagicRows,
   toSpellSlotRows,
 } from '@/components/xml-viewer/spellcasting-display';
 import { cardPlateClass } from '@/components/xml-viewer/card-plate';
@@ -136,6 +137,7 @@ const {
   feats,
   weapons,
   spellSlots,
+  pactMagicSlots,
   features,
   powers,
   inventory,
@@ -229,6 +231,10 @@ const casting = resolveCastingAbility(classes, abilities);
 const spellSave = spellSaveDc(profBonus, casting.modifier);
 const spellAttack = spellAttackBonus(profBonus, casting.modifier);
 const spellSlotRows = toSpellSlotRows(spellSlots);
+// Pact magic rides the same panel as a second strip, so the Warlock whose normal
+// levels are empty still shows the slots their sheet records. Absent for everyone
+// else, which is what leaves an ordinary caster's panel byte for byte unchanged.
+const pactSlotRows = toPactMagicRows(pactMagicSlots ?? []);
 
 const inventoryRows = toInventoryRows(inventory);
 const inventoryWeight = carriedWeight(inventory);
@@ -642,6 +648,7 @@ const tabIds = tabs.map((tab) => tab.id).join(' ');
           saveDc={spellSave}
           attackBonus={spellAttack}
           slots={spellSlotRows}
+          pactSlots={pactSlotRows}
         />
       </div>
     )}

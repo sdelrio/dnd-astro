@@ -2194,6 +2194,13 @@ describe('XmlCard Spellcasting section', () => {
     );
   }
 
+  /** The pact magic strips only, keyed by the level each plate labels. */
+  function pactSlotPlates(section: string): Array<[level: string, figure: string]> {
+    return [...section.matchAll(/data-pact-slot="(\d)"[\s\S]*?<div[^>]*uppercase[^>]*>([^<]*)<\/div><div[^>]*>([^<]*)<\/div>/g)].map(
+      ([, level, label, figure]) => [level, `${label.trim()} ${figure.trim()}`]
+    );
+  }
+
   it('offers a Spellcasting entry and panel for a caster at medium and large', async () => {
     for (const display of ['medium', 'large'] as const) {
       const html = await renderCard(display, caster);
@@ -2374,6 +2381,81 @@ describe('XmlCard Spellcasting section', () => {
     );
     expect(slotPlates(section)).toEqual([]);
     expect(section).toContain('>Casting Ability<');
+  });
+
+  it('renders a labelled pact magic strip beside the normal slot strip for a Warlock', async () => {
+    // A Warlock's normal spell slots are empty and their pact pool is the only
+    // slot information the sheet holds. Before this the panel showed Casting
+    // Ability, Save DC and Attack Bonus and no slot row at all.
+    const section = spellcastingSection(
+      await renderCard('large', {
+        ...caster,
+        classes: [{ name: 'Warlock', level: 5, subclass: 'The Fiend' }],
+        spellSlots: caster.spellSlots?.map((slot) => ({ ...slot, max: 0, used: 0 })),
+        pactMagicSlots: [
+          { level: 1, max: 0, used: 0 },
+          { level: 3, max: 2, used: 0 },
+        ],
+      })
+    );
+    expect(section).toContain('>Pact Magic<');
+    expect(slotPlates(section)).toEqual([]);
+    expect(pactSlotPlates(section)).toEqual([['3', 'Pact 3 0/2']]);
+  });
+
+  it('renders both strips when a character has ordinary and pact slots', async () => {
+    const section = spellcastingSection(
+      await renderCard('large', {
+        ...caster,
+        classes: [{ name: 'Warlock', level: 5 }],
+        pactMagicSlots: [{ level: 3, max: 2, used: 1 }],
+      })
+    );
+    expect(slotPlates(section)).toEqual([
+      ['1', 'Level 1 2/4'],
+      ['2', 'Level 2 2/3'],
+      ['3', 'Level 3 0/2'],
+    ]);
+    expect(pactSlotPlates(section)).toEqual([['3', 'Pact 3 1/2']]);
+  });
+
+  it('reports pact slots spent beyond the total rather than clamping them', async () => {
+    // The same rule the normal strip follows: the card shows what the sheet says,
+    // so a sheet that reports 4 spent of 2 renders 4/2.
+    const section = spellcastingSection(
+      await renderCard('large', {
+        ...caster,
+        classes: [{ name: 'Warlock', level: 5 }],
+        pactMagicSlots: [{ level: 3, max: 2, used: 4 }],
+      })
+    );
+    expect(pactSlotPlates(section)).toEqual([['3', 'Pact 3 4/2']]);
+  });
+
+  it('leaves a character with no pact slots without a pact strip, unchanged', async () => {
+    // The strip is optional: a Wizard's panel is exactly what it was before the
+    // pact list existed, with no caption and no extra container.
+    const section = spellcastingSection(await renderCard('large', caster));
+    expect(section).not.toContain('Pact Magic');
+    expect(section).not.toContain('data-pact');
+    expect(pactSlotPlates(section)).toEqual([]);
+  });
+
+  it('renders the pact strip from the node, whichever class records it', async () => {
+    // Order of the Profane Soul is a Blood Hunter patron that casts pact magic,
+    // and gromash's sheet carries a pact slot. The strip follows the node rather
+    // than the class name, so a non-Warlock whose sheet records pact magic sees
+    // the same strip a Warlock does - no new derivation, just the node read.
+    const section = spellcastingSection(
+      await renderCard('large', {
+        ...caster,
+        classes: [{ name: 'Blood Hunter', level: 3, subclass: 'Order of the Profane Soul' }],
+        spellSlots: caster.spellSlots?.map((slot) => ({ ...slot, max: 0, used: 0 })),
+        pactMagicSlots: [{ level: 1, max: 1, used: 1 }],
+      })
+    );
+    expect(section).toContain('>Pact Magic<');
+    expect(pactSlotPlates(section)).toEqual([['1', 'Pact 1 1/1']]);
   });
 
   it('names the section once at large and not at all at medium', async () => {

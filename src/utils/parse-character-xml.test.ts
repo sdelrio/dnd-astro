@@ -292,17 +292,56 @@ describe('parseCharacterXML', () => {
     ]);
   });
 
-  it('reads nothing from the pact magic slot blocks beside the spell slots', () => {
+  it("reads a Warlock's pact slots into their own list, not into the spell slots", () => {
     // A Warlock's pact magic slots sit next to the spell slots with the same shape
-    // and a different name. The Spellcasting section is a caster's slot tracker, and
-    // a pact slot shown as a spell slot would be a number the sheet contradicts.
-    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/antonidas.xml'), 'utf8');
-    const pactSlots = readFileSync(
-      join(__dirname, '../assets/fantasy-grounds-sheets/antonidas.xml'),
-      'utf8'
-    ).match(/<pactmagicslots1>[\s\S]*?<\/pactmagicslots1>/);
-    expect(pactSlots).not.toBeNull();
-    expect(parseCharacterXML(xml)?.spellSlots[0]).toEqual({ level: 1, max: 4, used: 2 });
+    // and a different name. They are their own list: the normal strip is the spell
+    // slot table, and a pact slot shown among it would be a number the sheet
+    // contradicts. viktor is a Warlock whose normal levels are all zero and whose
+    // pact pool is 2 at level 2.
+    const xml = readFileSync(join(__dirname, '../assets/fantasy-grounds-sheets/viktor.xml'), 'utf8');
+    const result = parseCharacterXML(xml);
+    expect(result?.spellSlots.every((slot) => slot.max === 0 && slot.used === 0)).toBe(true);
+    expect(result?.pactMagicSlots).toEqual([{ level: 2, max: 2, used: 2 }]);
+  });
+
+  it('keeps only the pact levels that have slots, leaving the list absent when none do', () => {
+    // The normal strip drops a level whose maximum is zero rather than rendering a
+    // plate of zeroes, and the pact list follows the same rule. A list rather than
+    // a fixed nine, because a character with no pact magic has no pact strip at
+    // all rather than nine empty plates and a heading over them.
+    const withSlots = parseCharacterXML(`
+      <root>
+        <character>
+          <name type="string">Warlock</name>
+          <powermeta>
+            <pactmagicslots1><max type="number">0</max><used type="number">0</used></pactmagicslots1>
+            <pactmagicslots2><max type="number">2</max><used type="number">1</used></pactmagicslots2>
+            <pactmagicslots4><max type="number">3</max><used type="number">4</used></pactmagicslots4>
+          </powermeta>
+        </character>
+      </root>
+    `);
+    expect(withSlots?.pactMagicSlots).toEqual([
+      { level: 2, max: 2, used: 1 },
+      { level: 4, max: 3, used: 4 },
+    ]);
+
+    const without = parseCharacterXML(
+      `<root><character><name type="string">Fighter</name></character></root>`
+    );
+    expect(without?.pactMagicSlots).toBeUndefined();
+
+    const zeroed = parseCharacterXML(`
+      <root>
+        <character>
+          <name type="string">Warlock</name>
+          <powermeta>
+            <pactmagicslots1><max type="number">0</max><used type="number">0</used></pactmagicslots1>
+          </powermeta>
+        </character>
+      </root>
+    `);
+    expect(zeroed?.pactMagicSlots).toBeUndefined();
   });
 
   it('parses coins from the slot-keyed shape', () => {

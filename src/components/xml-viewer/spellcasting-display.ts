@@ -17,6 +17,7 @@ import { coerceNumber } from '@/utils/numeric';
 type Abilities = CharacterData['abilities'];
 type Classes = CharacterData['classes'];
 type SpellSlots = CharacterData['spellSlots'];
+type PactMagicSlots = NonNullable<CharacterData['pactMagicSlots']>;
 type Powers = CharacterData['powers'];
 
 /** The three abilities a caster can cast with, in the order the fallback prefers. */
@@ -230,12 +231,39 @@ export interface SpellSlotRow {
  * card that the sheet in front of the player contradicts.
  */
 export function toSpellSlotRows(spellSlots: SpellSlots): SpellSlotRow[] {
-  return spellSlots
+  return toSlotRows(spellSlots, (level) => `Level ${level}`);
+}
+
+/**
+ * One plate per pact level that has slots, labelled as a pact level.
+ *
+ * The same pair read the same way as the spell slots above - a level with a
+ * maximum of zero is dropped and `used` is never clamped - but the label says
+ * `Pact 3` rather than `Level 3`, so a Warlock's pact pool cannot be mistaken
+ * for the ordinary level it shares a number with. It is a second strip rather
+ * than a second section: the panel already renders a slot pair, and this reads
+ * the node beside the one it already reads.
+ */
+export function toPactMagicRows(pactMagicSlots: PactMagicSlots): SpellSlotRow[] {
+  return toSlotRows(pactMagicSlots, (level) => `Pact ${level}`);
+}
+
+/**
+ * The shared shape of both slot strips: filter out empty levels, order by level
+ * and read each as used out of total. One implementation, because the two strips
+ * are the same fact read from two nodes and a rule that drifted between them -
+ * clamping on one and not the other, say - would be a defect only one strip had.
+ */
+function toSlotRows(
+  slots: ReadonlyArray<{ level: number; max: number; used: number }>,
+  label: (level: number) => string
+): SpellSlotRow[] {
+  return slots
     .filter((slot) => slot.max > 0)
     .sort((a, b) => a.level - b.level)
     .map((slot) => ({
       level: slot.level,
-      label: `Level ${slot.level}`,
+      label: label(slot.level),
       spent: `${slot.used}/${slot.max}`,
     }));
 }

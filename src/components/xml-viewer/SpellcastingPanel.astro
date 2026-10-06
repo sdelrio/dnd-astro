@@ -1,6 +1,7 @@
 ---
-// The Spellcasting section's contents: the three casting figures, then the slot
-// plates.
+// The Spellcasting section's contents: the three casting figures, then the
+// ordinary slot strip and, for a character whose sheet records them, the pact
+// magic strip beneath it.
 //
 // It is its own component for the same reason `WeaponsTable.astro` and
 // `LanguagesFeats.astro` are: XmlCard.astro is the file that decides which
@@ -32,9 +33,11 @@ interface Props {
   saveDc: number;
   attackBonus: number;
   slots: SpellSlotRow[];
+  /** Pact magic rows, one per level with slots. Empty when the sheet records none. */
+  pactSlots: SpellSlotRow[];
 }
 
-const { ability, modifier, inferred, saveDc, attackBonus, slots } = Astro.props;
+const { ability, modifier, inferred, saveDc, attackBonus, slots, pactSlots } = Astro.props;
 
 const { short, name } = CASTING_ABILITY_LABEL[ability];
 
@@ -101,6 +104,32 @@ const abilityFigure = `${short} ${signed(modifier)}`;
           <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{slot.spent}</div>
         </div>
       ))}
+    </div>
+  )}
+
+  {/* Pact magic is a second strip, not another spell level. It is the same plate
+      row read from the `pactmagicslots` node beside `spellslots`, under its own
+      caption and inside its own gold rule, so a Warlock's pact pool cannot be
+      mistaken for the ordinary levels above it. A martial or an ordinary caster
+      carries no pact slots, so this renders nothing at all for them. */}
+  {pactSlots.length > 0 && (
+    <div
+      data-pact-magic
+      class="space-y-1 rounded-[7px] border border-gold-rule p-2 dark:border-gold-rule-dark"
+    >
+      <div class="text-[0.625rem] font-semibold uppercase tracking-[0.06em] text-gray-500 dark:text-gray-400">
+        Pact Magic
+      </div>
+      <div class="grid grid-cols-3 @md:grid-cols-5 @6xl:grid-cols-9 gap-2 text-center">
+        {pactSlots.map((slot) => (
+          <div class={cardPlateClass} data-pact-slot={slot.level}>
+            <div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              {slot.label}
+            </div>
+            <div class="text-lg font-bold text-gray-900 dark:text-gray-100">{slot.spent}</div>
+          </div>
+        ))}
+      </div>
     </div>
   )}
 </div>
