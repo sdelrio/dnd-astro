@@ -63,17 +63,10 @@ variable "cloudflare_username" {
   default     = ""
 }
 
-variable "custom_domain_zone_id" {
-  description = "Cloudflare zone ID for the custom domain (optional, auto-resolved if empty)"
-  type        = string
-  default     = ""
-}
-
 locals {
-  email_list            = split(",", var.allowed_emails)
-  protected_path_list   = split(",", var.protected_paths)
-  has_custom_domain     = var.custom_domain != ""
-  custom_domain_zone_id = var.custom_domain_zone != "" ? data.cloudflare_zone.custom_domain[0].id : null
+  email_list          = split(",", var.allowed_emails)
+  protected_path_list = split(",", var.protected_paths)
+  has_custom_domain   = var.custom_domain != ""
 
   # Production domain: custom_domain if set, else workers.dev, else pages.dev
   production_domain = local.has_custom_domain ? var.custom_domain : (
@@ -89,7 +82,10 @@ locals {
 
 data "cloudflare_zone" "custom_domain" {
   count = var.custom_domain_zone != "" ? 1 : 0
-  name  = var.custom_domain_zone
+
+  filter = {
+    name = var.custom_domain_zone
+  }
 }
 
 
