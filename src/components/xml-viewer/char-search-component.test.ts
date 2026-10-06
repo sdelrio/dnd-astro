@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { charSearchComponent } from './char-search-component';
+import { createCharFilter } from './char-filter';
 
 const characters = [
   {
@@ -66,6 +67,83 @@ describe('charSearchComponent', () => {
     expect(component.selectedClass).toBe('');
     expect(component.selectedRace).toBe('');
     expect(component.matchCount).toBe(3);
+  });
+});
+
+describe('charSearchComponent filter memoisation', () => {
+  function makeCountingComponent() {
+    let builds = 0;
+    const component = charSearchComponent((chars, state) => {
+      builds++;
+      return createCharFilter(chars, state);
+    });
+    component.$el = { dataset: { characters: JSON.stringify(characters) } };
+    component.init();
+    return { component, builds: () => builds };
+  }
+
+  it('builds the filter once across a whole read pass over every card', () => {
+    const { component, builds } = makeCountingComponent();
+    component.search = 'e';
+    for (let index = 0; index < characters.length; index++) {
+      component.matches(index);
+    }
+    void component.matchCount;
+    expect(builds()).toBe(1);
+  });
+
+  it('rebuilds exactly once per filter-input change', () => {
+    const { component, builds } = makeCountingComponent();
+    component.matches(0);
+    component.matches(1);
+    void component.matchCount;
+    expect(builds()).toBe(1);
+
+    component.search = 'bor';
+    component.matches(0);
+    component.matches(1);
+    void component.matchCount;
+    expect(builds()).toBe(2);
+
+    component.selectedClass = 'Wizard';
+    void component.matchCount;
+    expect(builds()).toBe(3);
+
+    component.selectedRace = 'Elf';
+    void component.matchCount;
+    expect(builds()).toBe(4);
+
+    component.clearFilters();
+    component.matches(0);
+    void component.matchCount;
+    expect(builds()).toBe(5);
+  });
+
+  it('keeps the count correct after every filter change, back to the unfiltered total', () => {
+    const { component } = makeCountingComponent();
+    expect(component.matchCount).toBe(3);
+    component.search = 'bor';
+    expect(component.matchCount).toBe(1);
+    component.search = '';
+    component.selectedClass = 'Wizard';
+    expect(component.matchCount).toBe(1);
+    component.selectedRace = 'Elf';
+    expect(component.matchCount).toBe(1);
+    component.clearFilters();
+    expect(component.matchCount).toBe(3);
+  });
+
+  it('reads the same filter instance for the count and for every card', () => {
+    let last: ReturnType<typeof createCharFilter> | undefined;
+    const component = charSearchComponent((chars, state) => {
+      last = createCharFilter(chars, state);
+      return last;
+    });
+    component.$el = { dataset: { characters: JSON.stringify(characters) } };
+    component.init();
+
+    expect(component.filter()).toBe(last);
+    expect(component.filter()).toBe(last);
   });
 });
 
