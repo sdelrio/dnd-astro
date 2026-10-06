@@ -7,6 +7,7 @@ import {
   readPartyRoster,
   resolvePartyMembers,
 } from './party-roster';
+import { partyStats } from '@/utils/party-stats';
 import type { StoredCharacter } from '@/utils/build-xml-characters';
 
 function fakeCharacter(filename: string): StoredCharacter {
@@ -192,6 +193,76 @@ describe('resolvePartyMembers', () => {
     expect(members[0].character.filename).toBe('draknor');
     expect(warnings).toHaveLength(1);
     expect(warnings[0]).toMatch(/character data missing for "ghost"/);
+  });
+
+  it('deduplicates members that name the same character and warns naming the duplicate', () => {
+    const { members, warnings } = resolvePartyMembers(
+      {
+        partyName: 'Test',
+        members: [
+          { filename: 'draknor', roles: ['tank'], notes: 'front line' },
+          { filename: 'draknor', roles: ['healer'] },
+        ],
+      },
+      (filename) => fakeCharacter(filename)
+    );
+    // The first entry wins whole: its roles and notes are the member's, and the
+    // second entry is named in the log rather than silently dropped.
+    expect(members).toHaveLength(1);
+    expect(members[0].roles).toEqual(['tank']);
+    expect(members[0].notes).toBe('front line');
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toMatch(/duplicate party member "draknor"/);
+  });
+
+  it('counts a duplicated character once in the party statistics', () => {
+    const { members } = resolvePartyMembers(
+      {
+        partyName: 'Test',
+        members: [
+          { filename: 'draknor', roles: ['tank'] },
+          { filename: 'draknor', roles: ['healer', 'damage'] },
+        ],
+      },
+      (filename) => fakeCharacter(filename)
+    );
+    const stats = partyStats(members);
+    expect(stats.totalHp).toBe(10);
+    expect(stats.totalLevel).toBe(1);
+    expect(stats.roleCounts).toEqual({ tank: 1 });
+  });
+
+  it('keeps the own-property role guard while deduplicating', () => {
+    const { members, warnings } = resolvePartyMembers(
+      {
+        partyName: 'Test',
+        members: [
+          { filename: 'draknor', roles: ['constructor', 'tank'] },
+          { filename: 'draknor', roles: ['__proto__', 'tank'] },
+        ],
+      },
+      (filename) => fakeCharacter(filename)
+    );
+    expect(members).toHaveLength(1);
+    expect(members[0].roles).toEqual(['tank']);
+    expect(warnings.some((m) => /unknown role "constructor"/.test(m))).toBe(true);
+    expect(warnings.some((m) => /unknown role "__proto__"/.test(m))).toBe(true);
+    expect(warnings.some((m) => /duplicate party member "draknor"/.test(m))).toBe(true);
+  });
+
+  it('leaves a roster with no duplicates untouched', () => {
+    const { members, warnings } = resolvePartyMembers(
+      {
+        partyName: 'Test',
+        members: [
+          { filename: 'draknor', roles: ['tank'] },
+          { filename: 'elarion', roles: ['damage'] },
+        ],
+      },
+      (filename) => fakeCharacter(filename)
+    );
+    expect(warnings).toEqual([]);
+    expect(members.map((m) => m.character.filename)).toEqual(['draknor', 'elarion']);
   });
 
   it('joins against the real generated character loader by default', () => {

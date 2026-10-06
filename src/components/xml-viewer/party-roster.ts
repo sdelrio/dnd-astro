@@ -144,10 +144,13 @@ export function resolvePartyMembers(
 ): { members: ResolvedPartyMember[]; warnings: string[] } {
   const warnings: string[] = [];
   const members: ResolvedPartyMember[] = [];
+  const seen = new Set<string>();
 
   for (const member of party.members) {
     const roles: Role[] = [];
     for (const role of member.roles) {
+      // The own-property check keeps a role named `constructor` or `__proto__`
+      // from being read off the prototype chain and accepted as a real role.
       if (Object.hasOwn(ROLE_CONFIG, role)) {
         roles.push(role as Role);
       } else {
@@ -164,6 +167,16 @@ export function resolvePartyMembers(
       warnings.push(`character data missing for "${member.filename}" - skipping member`);
       continue;
     }
+
+    // One character is one member. A roster that names the same sheet twice
+    // disagrees with itself, so the duplicate is named and dropped rather than
+    // counted again - otherwise the party view renders it twice and the
+    // statistics count its hit points twice.
+    if (seen.has(member.filename)) {
+      warnings.push(`duplicate party member "${member.filename}" - skipping duplicate entry`);
+      continue;
+    }
+    seen.add(member.filename);
 
     members.push({ ...member, roles, character });
   }
