@@ -28,13 +28,25 @@ describe('chunk', () => {
     expect(chunk(['a', 'b'], 1)).toEqual([['a', 'b']]);
   });
 
-  it('emits an empty trailing column when there are more columns than rows', () => {
-    // The card tables ask for two columns; a character with one proficient save
-    // still gets the second, empty, rather than a malformed grid.
-    expect(chunk(['a'], 2)).toEqual([['a'], []]);
+  it('drops the trailing empty column when there are fewer rows than columns', () => {
+    // The card tables ask for two columns; a one-row list would otherwise get a
+    // second table carrying only a header, which is the empty sheet ADR-0016
+    // exists to prevent.
+    expect(chunk(['a'], 2)).toEqual([['a']]);
   });
 
-  it('degrades to one column rather than an empty list for a bad count', () => {
-    expect(chunk(['a', 'b'], 0)).toEqual([['a', 'b']]);
+  it('returns no columns for an empty list, rather than one per column', () => {
+    expect(chunk([], 2)).toEqual([]);
+  });
+
+  it('rejects a count below one instead of reinterpreting it as one column', () => {
+    expect(() => chunk(['a', 'b'], 0)).toThrow(RangeError);
+    expect(() => chunk(['a', 'b'], -1)).toThrow(RangeError);
+  });
+
+  it('rejects a count that is not a positive integer', () => {
+    for (const count of [1.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+      expect(() => chunk(['a', 'b'], count)).toThrow(RangeError);
+    }
   });
 });
