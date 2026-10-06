@@ -9,6 +9,7 @@ import {
   statSync,
   utimesSync,
   readdirSync,
+  renameSync,
 } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
@@ -18,29 +19,31 @@ import {
   xmlCharacterArtifactsExist,
 } from './build-xml-characters';
 
+/**
+ * The real `node:fs` functions, captured before the spies below wrap them.
+ *
+ * A test that makes one call fail still has to let every other call through, so it
+ * needs the unwrapped function. Capturing it here rather than reading it back out of
+ * a spy's mock implementation keeps the fallback working whatever the installed spy
+ * does with its own configuration.
+ */
+const realFs = await vi.importActual<typeof import('node:fs')>('node:fs');
+
 vi.mock('node:fs', async (importOriginal) => {
   const actual = await importOriginal<typeof import('node:fs')>();
   return {
     ...actual,
     readdirSync: vi.fn(actual.readdirSync),
+    writeFileSync: vi.fn(actual.writeFileSync),
+    renameSync: vi.fn(actual.renameSync),
   };
 });
 
-describe('build-xml-characters', () => {
-  let tempDir: string;
-
-  beforeEach(() => {
-    tempDir = mkdtempSync(join(tmpdir(), 'build-xml-test-'));
-  });
-
-  afterEach(() => {
-    rmSync(tempDir, { recursive: true, force: true });
-  });
-
-  describe('buildXmlCharacters', () => {
-    const noopLogger = { log: () => {}, warn: () => {} };
-
-    const validXmlSample = `<?xml version="1.0" encoding="utf-8"?>
+/**
+ * One Fantasy Grounds sheet, small enough to keep the fixture readable and complete
+ * enough for the parser to produce a real CharacterData record.
+ */
+const validXmlSample = `<?xml version="1.0" encoding="utf-8"?>
 <root version="4.5">
   <character>
     <name type="string">Test Hero</name>
@@ -83,6 +86,20 @@ describe('build-xml-characters', () => {
     </coins>
   </character>
 </root>`;
+
+describe('build-xml-characters', () => {
+  let tempDir: string;
+
+  beforeEach(() => {
+    tempDir = mkdtempSync(join(tmpdir(), 'build-xml-test-'));
+  });
+
+  afterEach(() => {
+    rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  describe('buildXmlCharacters', () => {
+    const noopLogger = { log: () => {}, warn: () => {} };
 
     it('parses XML, resolves avatar, and writes the single artifact', () => {
       const xmlDir = join(tempDir, 'sheets');
@@ -289,6 +306,212 @@ describe('build-xml-characters', () => {
       expect(statSync(outputFile).mtimeMs).toBe(beforeOutput);
     });
 
+    it('keeps the previous records when a rebuild sharply shrinks the roster', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      for (const name of ['alpha', 'bravo', 'charlie', 'delta']) {
+        writeFileSync(join(xmlDir, `${name}.xml`), validXmlSample);
+      }
+
+      buildXmlCharacters({ xmlDir, avatarDir, outputFile, logger: noopLogger });
+      const healthy = JSON.parse(readFileSync(outputFile, 'utf8'));
+      expect(healthy).toHaveLength(4);
+
+      // An upstream parser change that loses three of the four sheets. One sheet
+      // still parses, so the run is not a total regression, but replacing four
+      // records with one is not a roster anyone voted for either.
+      rmSync(join(xmlDir, 'bravo.xml'));
+      rmSync(join(xmlDir, 'charlie.xml'));
+      rmSync(join(xmlDir, 'delta.xml'));
+      for (const name of ['bravo', 'charlie', 'delta']) {
+        writeFileSync(join(xmlDir, `${name}.xml`), '<not-a-character></not-a-character>');
+      }
+
+      const logs: string[] = [];
+      const warnings: string[] = [];
+      const result = buildXmlCharacters({
+        xmlDir,
+        avatarDir,
+        outputFile,
+        logger: { log: (msg: string) => logs.push(msg), warn: (msg: string) => warnings.push(msg) },
+      });
+
+      expect(JSON.parse(readFileSync(outputFile, 'utf8'))).toHaveLength(4);
+      expect(result.map((c) => c.filename)).toEqual(['alpha', 'bravo', 'charlie', 'delta']);
+      const said = [...logs, ...warnings].join('\n');
+      expect(said).toContain('kept the previous');
+      expect(said).toContain('4');
+      expect(said).toContain('1');
+    });
+
+    it('stages the artifact on a .part sibling and renames it into place', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(join(xmlDir, 'valid.xml'), validXmlSample);
+
+      const writes: string[] = [];
+      const renames: Array<[string, string]> = [];
+      const writeFileSyncMock = vi.mocked(writeFileSync);
+      const renameSyncMock = vi.mocked(renameSync);
+      writeFileSyncMock.mockImplementation((path: Parameters<typeof writeFileSync>[0], ...rest) => {
+        writes.push(String(path));
+        (realFs.writeFileSync as (...a: unknown[]) => void)(path, ...rest);
+      });
+      renameSyncMock.mockImplementation((from: Parameters<typeof renameSync>[0], to) => {
+        renames.push([String(from), String(to)]);
+        (realFs.renameSync as (...a: unknown[]) => void)(from, to);
+      });
+      try {
+        buildXmlCharacters({ xmlDir, avatarDir, outputFile, logger: noopLogger });
+      } finally {
+        writeFileSyncMock.mockReset();
+        renameSyncMock.mockReset();
+      }
+
+      // The artifact itself is never written in place: the bytes go to the
+      // sibling and a rename puts them where a reader looks.
+      expect(writes).toContain(`${outputFile}.part`);
+      expect(writes).not.toContain(outputFile);
+      expect(renames).toContainEqual([`${outputFile}.part`, outputFile]);
+      expect(existsSync(`${outputFile}.part`)).toBe(false);
+      expect(JSON.parse(readFileSync(outputFile, 'utf8'))).toHaveLength(1);
+    });
+
+    it('leaves the previous artifact intact and readable when the write is interrupted', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(join(xmlDir, 'alpha.xml'), validXmlSample);
+
+      buildXmlCharacters({ xmlDir, avatarDir, outputFile, logger: noopLogger });
+      const healthy = readFileSync(outputFile, 'utf8');
+
+      writeFileSync(join(xmlDir, 'bravo.xml'), validXmlSample);
+
+      // The write to the staging sibling throws, standing in for the process
+      // being killed (or the disk filling) part way through the write. A reader
+      // must still find the previous artifact, whole and parseable, and must not
+      // find a truncated file where it looks for the artifact.
+      const writeFileSyncMock = vi.mocked(writeFileSync);
+      writeFileSyncMock.mockImplementation((path: Parameters<typeof writeFileSync>[0], ...rest) => {
+        if (String(path).endsWith('.part')) {
+          throw Object.assign(new Error('ENOSPC: no space left on device'), { code: 'ENOSPC' });
+        }
+        (realFs.writeFileSync as (...a: unknown[]) => void)(path, ...rest);
+      });
+      try {
+        expect(() =>
+          buildXmlCharacters({ xmlDir, avatarDir, outputFile, logger: noopLogger })
+        ).toThrow();
+      } finally {
+        writeFileSyncMock.mockReset();
+      }
+
+      expect(readFileSync(outputFile, 'utf8')).toBe(healthy);
+      expect(JSON.parse(readFileSync(outputFile, 'utf8'))).toHaveLength(1);
+      expect(existsSync(`${outputFile}.part`)).toBe(false);
+    });
+
+    it('fails the build when a non-empty sheet directory yields zero characters', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      writeFileSync(join(xmlDir, 'alpha.xml'), validXmlSample);
+
+      buildXmlCharacters({ xmlDir, avatarDir, outputFile, logger: noopLogger });
+      const healthy = readFileSync(outputFile, 'utf8');
+
+      rmSync(join(xmlDir, 'alpha.xml'));
+      writeFileSync(join(xmlDir, 'alpha.xml'), '<not-a-character></not-a-character>');
+
+      const logs: string[] = [];
+      let thrown: unknown;
+      try {
+        buildXmlCharacters({
+          xmlDir,
+          avatarDir,
+          outputFile,
+          logger: { log: (msg: string) => logs.push(msg), warn: (msg: string) => logs.push(msg) },
+        });
+      } catch (err) {
+        thrown = err;
+      }
+
+      expect(thrown).toBeInstanceOf(Error);
+      const message = (thrown as Error).message;
+      expect(message).toContain(xmlDir);
+      expect(message).toContain('alpha.xml');
+      // Actionable: it says what the directory was, that nothing parsed, that the
+      // artifact was left alone, and where to look.
+      expect(message).toMatch(/0 of 1/);
+      expect(message).toMatch(/previous 1 records .* kept untouched/);
+      expect(message).toMatch(/parse-character-xml|fantasy-grounds-sheets/);
+      expect(readFileSync(outputFile, 'utf8')).toBe(healthy);
+    });
+
+    it('does not fail when the sheet directory is empty, and writes an empty artifact', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+
+      const result = buildXmlCharacters({ xmlDir, avatarDir, outputFile, logger: noopLogger });
+
+      expect(result).toEqual([]);
+      expect(JSON.parse(readFileSync(outputFile, 'utf8'))).toEqual([]);
+    });
+
+    it('still builds when healthy and corrupt sheets are mixed', () => {
+      const xmlDir = join(tempDir, 'sheets');
+      const avatarDir = join(tempDir, 'avatars');
+      const outputFile = join(tempDir, 'generated/characters.json');
+
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      for (const name of ['alpha', 'bravo', 'charlie', 'delta']) {
+        writeFileSync(join(xmlDir, `${name}.xml`), validXmlSample);
+      }
+
+      buildXmlCharacters({ xmlDir, avatarDir, outputFile, logger: noopLogger });
+
+      writeFileSync(join(xmlDir, 'bravo.xml'), '<not-a-character></not-a-character>');
+      writeFileSync(join(xmlDir, 'charlie.xml'), '<root><character><![CDATA[unterminated</root>');
+
+      const logs: string[] = [];
+      const warnings: string[] = [];
+      const result = buildXmlCharacters({
+        xmlDir,
+        avatarDir,
+        outputFile,
+        logger: { log: (msg: string) => logs.push(msg), warn: (msg: string) => warnings.push(msg) },
+      });
+
+      expect(result.map((c) => c.filename)).toEqual(['alpha', 'delta']);
+      expect(JSON.parse(readFileSync(outputFile, 'utf8')).map((c: { filename: string }) => c.filename)).toEqual([
+        'alpha',
+        'delta',
+      ]);
+      expect([...logs, ...warnings].join('\n')).not.toContain('kept the previous');
+      expect(warnings.some((w) => w.includes('bravo.xml'))).toBe(true);
+      expect(warnings.some((w) => w.includes('charlie.xml'))).toBe(true);
+    });
+
     it('warns gracefully when xmlDir does not exist', () => {
       const xmlDir = join(tempDir, 'non-existent-dir');
       const warnings: string[] = [];
@@ -385,9 +608,11 @@ describe('build-xml-characters', () => {
   });
 
   describe('xmlCharacterArtifactsExist', () => {
-    it('is true when the single src/generated artifact exists', () => {
+    const roster = JSON.stringify([{ filename: 'alpha', name: 'Alpha' }]);
+
+    it('is true when the single src/generated artifact holds a roster', () => {
       mkdirSync(join(tempDir, 'src/generated'), { recursive: true });
-      writeFileSync(join(tempDir, 'src/generated/characters.json'), '[]');
+      writeFileSync(join(tempDir, 'src/generated/characters.json'), roster);
 
       expect(xmlCharacterArtifactsExist(tempDir)).toBe(true);
     });
@@ -398,10 +623,80 @@ describe('build-xml-characters', () => {
 
     it('is true from the src artifact alone even when a legacy .astro copy is missing', () => {
       mkdirSync(join(tempDir, 'src/generated'), { recursive: true });
-      writeFileSync(join(tempDir, 'src/generated/characters.json'), '[]');
+      writeFileSync(join(tempDir, 'src/generated/characters.json'), roster);
 
       expect(existsSync(join(tempDir, '.astro/generated/characters.json'))).toBe(false);
       expect(xmlCharacterArtifactsExist(tempDir)).toBe(true);
+    });
+
+    it('is false for an empty roster, so sync and preview rebuild over the damage', () => {
+      mkdirSync(join(tempDir, 'src/generated'), { recursive: true });
+      writeFileSync(join(tempDir, 'src/generated/characters.json'), '[]');
+
+      expect(xmlCharacterArtifactsExist(tempDir)).toBe(false);
+      expect(shouldRebuildXmlCharacters('sync', xmlCharacterArtifactsExist(tempDir))).toBe(true);
+      expect(shouldRebuildXmlCharacters('preview', xmlCharacterArtifactsExist(tempDir))).toBe(
+        true
+      );
+    });
+
+    it('is false for a truncated artifact, so nothing trusts a half-written file', () => {
+      mkdirSync(join(tempDir, 'src/generated'), { recursive: true });
+      writeFileSync(join(tempDir, 'src/generated/characters.json'), '[{"filename":"alp');
+
+      expect(xmlCharacterArtifactsExist(tempDir)).toBe(false);
+    });
+
+    it('is false for an artifact that is not a roster', () => {
+      mkdirSync(join(tempDir, 'src/generated'), { recursive: true });
+      writeFileSync(join(tempDir, 'src/generated/characters.json'), '{"alpha":{}}');
+
+      expect(xmlCharacterArtifactsExist(tempDir)).toBe(false);
+    });
+  });
+
+  describe('the sticky-damage loop from #446', () => {
+    const noop = { log: () => {}, warn: () => {} };
+
+    /**
+     * The reproduction, end to end and at the seam the Astro config uses: start
+     * from a healthy artifact under a real rootDir, run the hook over sheets that
+     * no longer parse, then ask the two questions `astro check` and `preview` ask.
+     */
+    it('does not leave typecheck and preview accepting an empty roster after a total regression', () => {
+      const rootDir = join(tempDir, 'repo');
+      const xmlDir = join(rootDir, 'src/assets/fantasy-grounds-sheets');
+      const avatarDir = join(rootDir, 'public/fg/avatar');
+      mkdirSync(xmlDir, { recursive: true });
+      mkdirSync(avatarDir, { recursive: true });
+      for (const name of ['alpha', 'bravo', 'charlie', 'delta']) {
+        writeFileSync(join(xmlDir, `${name}.xml`), validXmlSample);
+      }
+
+      const options = { rootDir, xmlDir, avatarDir, logger: noop };
+      expect(buildXmlCharacters(options)).toHaveLength(4);
+      expect(shouldRebuildXmlCharacters('sync', xmlCharacterArtifactsExist(rootDir))).toBe(false);
+
+      // The sheets stop parsing upstream.
+      for (const name of ['alpha', 'bravo', 'charlie', 'delta']) {
+        writeFileSync(join(xmlDir, `${name}.xml`), '<not-a-character></not-a-character>');
+      }
+
+      // The hook refuses, loudly, and the artifact still holds the roster.
+      expect(() => buildXmlCharacters(options)).toThrow(/0 of 4/);
+
+      // This is the assertion the issue turns on: both non-render commands still
+      // see a valid artifact, because it was never degraded. The old behaviour
+      // returned [] here, and then `sync`/`preview` skipped the rebuild forever
+      // and an empty site typechecked green.
+      expect(xmlCharacterArtifactsExist(rootDir)).toBe(true);
+      expect(shouldRebuildXmlCharacters('sync', xmlCharacterArtifactsExist(rootDir))).toBe(false);
+      expect(shouldRebuildXmlCharacters('preview', xmlCharacterArtifactsExist(rootDir))).toBe(
+        false
+      );
+      expect(
+        JSON.parse(readFileSync(join(rootDir, 'src/generated/characters.json'), 'utf8'))
+      ).toHaveLength(4);
     });
   });
 });
