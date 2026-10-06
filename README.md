@@ -106,6 +106,7 @@ The table lists every make target; run `make help` for the same set grouped with
 Committed layout, with generated output annotated:
 
 ```text
+.github/                 Dependabot config; weekly dependency updates (not part of the site build)
 .opencode/               Dev-time tooling; not part of the site build
   lib/
     design-review/       Browser capture, page measurement, and handbook generators run by make

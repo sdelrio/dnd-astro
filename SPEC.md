@@ -128,6 +128,8 @@ Two other files sit directly in `src/components/` and are deliberately **not** a
 Agents executing changes in this repository must maintain the following file system boundaries:
 
 ```text
+├── .github/
+│   └── dependabot.yml               # Weekly dependency updates; groups Astro and Starlight
 ├── .opencode/
 │   └── lib/
 │       └── design-review/           # Dev-time browser capture, page measurement, and handbook generators
