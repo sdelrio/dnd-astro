@@ -656,6 +656,55 @@ describe('parseCharacterXML', () => {
     expect(result?.classes[0].subclass).toBeUndefined();
   });
 
+  describe('the subclass-name patterns the casting table relies on', () => {
+    // The casting tables name a Blood Hunter's patron and an Anti Paladin's oath,
+    // and the corpus guard in `casting-ability-corpus.test.ts` resolves the
+    // casting ability through them. A patron name the parser can never recover is a
+    // patron the card cannot resolve, so the two lists are reconciled rather than
+    // left to drift: this covers the level-1 granted-feature fallback, the path
+    // that recovers a subclass on a sheet whose class node lost its
+    // <specialization>.
+    const sheetWith = (className: string, featureName: string) => `
+      <root>
+        <character>
+          <classes>
+            <id-00001>
+              <name type="string">${className}</name>
+              <level type="number">3</level>
+            </id-00001>
+          </classes>
+          <featurelist>
+            <id-00001>
+              <level type="number">1</level>
+              <locked type="number">1</locked>
+              <name type="string">${featureName}</name>
+              <source type="string">${className}</source>
+            </id-00001>
+          </featurelist>
+        </character>
+      </root>
+    `;
+
+    it.each([
+      ['Blood Hunter', 'Order of the Profane Soul'],
+      ['Blood Hunter', 'Order of the Ghostslayer'],
+      ['Anti Paladin', 'Oathbreaker'],
+      ['Fighter', 'Psi Warrior'],
+      ['Fighter', 'Soulknife'],
+    ])('recovers the %s subclass from a level-1 feature named %s', (className, featureName) => {
+      const result = parseCharacterXML(sheetWith(className, featureName));
+      expect(result?.classes[0].subclass).toBe(featureName);
+    });
+
+    it('still ignores a level-1 feature that is not a subclass name', () => {
+      // The pattern is what keeps this from reading every level-1 feature as a
+      // subclass: Gromash's Blood Hunter sheet has `Hunter's Bane` and
+      // `Crimson Rite` at level 1, and neither is a patron.
+      const result = parseCharacterXML(sheetWith('Blood Hunter', "Hunter's Bane"));
+      expect(result?.classes[0].subclass).toBeUndefined();
+    });
+  });
+
   it('entity-decodes and number-coerces an encoded proficiency bonus', () => {
     const xml = `
       <root>
