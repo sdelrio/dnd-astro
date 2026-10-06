@@ -14,7 +14,7 @@ Features that trigger an effect on a missed attack, such as the *Potent Cantrip*
 
 No feature provides absolute immunity to area-of-effect spells for allies. The Evoker’s **Sculpt Spells** and the Sorcerer’s **Careful Spell** instead grant affected allies Advantage on the saving throw and the **Evasion** feature for that instance.
 
-:::note Evasion
+:::note[Evasion]
 When subjected to an effect that allows a Dexterity saving throw to take only half damage, the target takes no damage on a success and only half damage on a failure. This version of Evasion functions even while incapacitated, and the target makes the saving throw normally.
 :::
 
@@ -73,7 +73,7 @@ If a character dies while still suffering the penalties of a resurrection spell,
 
 The pricing for spellcasting services is calculated using the following formula, replacing the costs listed in the *Player’s Handbook* (p. 232):
 
-:::note Price formula
+:::note[Price formula]
 **Price** = (Spell Level² × 25) <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ Consumed Material Component Cost <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ (10% × Non-consumed Material Component Cost)
 :::
 
@@ -89,7 +89,7 @@ The pricing for spellcasting services is calculated using the following formula,
 | 8           | 1600  |
 | 9           | 2025  |
 
-:::note Rituals
+:::note[Rituals]
 
 Spells cast as rituals cost 50% of the base service price. Material component costs remain unchanged.
 
