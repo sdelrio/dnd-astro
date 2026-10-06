@@ -1,7 +1,7 @@
 ---
 description: Revised D&D magic and resurrection house rules.
 title: Magic
-ztags: [magic, spells, dnd]
+tags: [magic, spells, dnd]
 ---
 
 ## General Magic Rules

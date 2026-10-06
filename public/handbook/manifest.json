@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "sourceHash": "b019ec44b245fe9a8030dfbd17b4f743b327e761a7bf62641066b3da1d6191e3",
+  "sourceHash": "19701ca1eb4e4ce6eed37bd7c7681662d6c9ebe30d948c0e431b9d6f5c966b1a",
   "sheetCount": 27,
   "sources": [
     {
@@ -11,7 +11,7 @@
     {
       "slug": "dnd/classes",
       "path": "src/content/docs/dnd/classes.md",
-      "hash": "a2f5cf780af558d1543ba7d667814de81d353562640aca47aa2438bc069dc370"
+      "hash": "eecefc7bd2d6bdfe8ac2e991df7c53e4c48e9446c95e76a3943aaf2f7e55cc23"
     },
     {
       "slug": "dnd/injuries",
@@ -21,7 +21,7 @@
     {
       "slug": "dnd/magic",
       "path": "src/content/docs/dnd/magic.md",
-      "hash": "8b5a20b573114c09ac6ae41baf858871b84b37475348ab7ef4d86c911220420d"
+      "hash": "2760a6109eb68e6a9ae0042ea84b3023aecd93dd0f3819f6c639704cc76d3243"
     },
     {
       "slug": "dnd/master-armor-table",

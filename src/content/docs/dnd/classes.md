@@ -1,6 +1,7 @@
 ---
 title: Classes
 description: Overview of Paladin and Cleric class features
+tags: [class, classes, paladin, cleric, dnd]
 ---
 
 ## Paladin
