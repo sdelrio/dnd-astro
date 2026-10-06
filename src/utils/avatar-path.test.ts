@@ -77,6 +77,47 @@ describe('avatar-path', () => {
     });
   });
 
+  describe('resolveAvatarPath explicit override hardening', () => {
+    it('falls back when the override walks out of the avatar directory', () => {
+      writeFileSync(join(tempDir, 'party.json'), '{}');
+
+      expect(
+        resolveAvatarPath({ explicit: '../party.json', slug: 'other', avatarDir })
+      ).toBe(FACELESS_AVATAR);
+    });
+
+    it('falls back when the override is an absolute path to an existing file', () => {
+      const outside = join(tempDir, 'outside.png');
+      writeFileSync(outside, 'fake png');
+
+      expect(
+        resolveAvatarPath({ explicit: outside, slug: 'other', avatarDir })
+      ).toBe(FACELESS_AVATAR);
+    });
+
+    it('falls back when the override is a leading-dot dotfile', () => {
+      writeFileSync(join(avatarDir, '.secrets.png'), 'fake png');
+
+      expect(
+        resolveAvatarPath({ explicit: '.secrets.png', slug: 'other', avatarDir })
+      ).toBe(FACELESS_AVATAR);
+    });
+
+    it('still serves a plain existing filename that contains a dot', () => {
+      writeFileSync(join(avatarDir, 'milo.jpg'), 'fake jpg');
+
+      expect(
+        resolveAvatarPath({ explicit: 'milo.jpg', slug: 'other', avatarDir })
+      ).toBe('/fg/avatar/milo.jpg');
+    });
+
+    it('still falls back when a plain filename does not exist', () => {
+      expect(
+        resolveAvatarPath({ explicit: 'milo.jpg', slug: 'other', avatarDir })
+      ).toBe(FACELESS_AVATAR);
+    });
+  });
+
   describe('resolveAvatarPath without an explicit override', () => {
     it('prefers the stored path from the build pipeline', () => {
       expect(
