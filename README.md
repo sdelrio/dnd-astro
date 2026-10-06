@@ -98,6 +98,9 @@ Run `make help` for the full list, grouped the same way.
 Committed layout, with generated output annotated:
 
 ```text
+.opencode/               Dev-time tooling; not part of the site build
+  lib/
+    design-review/       Browser capture, page measurement, and handbook generators run by make
 docs/                    Architecture decisions, specs, and agent workflow docs
   adr/                   Architecture decision records (ADR 0001 - 0024)
   agents/                Issue tracker, triage, and domain conventions
@@ -113,21 +116,35 @@ public/                  Static assets served as-is
     parchment.png        Generated 256px sRGB paper tile, tiled by the print stylesheet
 scripts/                 Content extraction and CI helper scripts
 src/
+  assets/
+    fantasy-grounds-sheets/  Committed source Fantasy Grounds .xml character sheets (111 files)
+  alpine.ts              Site-wide Alpine entrypoint: every Alpine.data registration
   components/
+    IconifyIcon.astro    Zero-JS Iconify icon component, used from MDX
+    ThemeProvider.astro  Starlight theme override, injected via astro.config.mjs
+    ThemeSelect.astro    Starlight theme override, injected via astro.config.mjs
     dice-roller/         Dice Roller Alpine.js component
     feats-explorer/      Feat Explorer Alpine.js component
     point-buy/           Point Buy Alpine.js component
+    rulebook-index/      Site index spread the homepage mounts
     xml-viewer/          XML Character Viewer components (XmlCard, CharSearch, PartyView)
+  content.config.ts      Docs content collection config, loaded by Starlight
   content/
     docs/                Starlight Markdown and MDX content
   generated/             gitignored: characters.json, rebuilt on every dev/build
+  layouts/
+    PrintDocument.astro  Chrome-free shell every printed handbook document renders into
   pages/
     fantasy-grounds/
       characters/
         [slug].astro     Prerendered Character page route
     handbook/
       print.astro        Inert print route the handbook generator renders
-  styles/                Tailwind v4 entry and theme CSS
+      spike-fixture.astro  Two-sheet regression fixture for the handbook renderer
+  styles/                Tailwind v4 entry, theme CSS, and the print stylesheet
+  test-utils/
+    alpine-dom.ts        Mounts a component and boots a real Alpine over it
+  types/                 Shared ambient declarations
   utils/                 XML parsing and build pipeline modules
 terraform/               Cloudflare infrastructure as code
 worker/                  Cloudflare Worker static assets entrypoint
