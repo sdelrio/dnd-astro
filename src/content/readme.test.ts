@@ -6,6 +6,34 @@ const repoRoot = join(__dirname, '../..');
 const readme = readFileSync(join(repoRoot, 'README.md'), 'utf8');
 const adrIndex = readFileSync(join(repoRoot, 'docs/adr/README.md'), 'utf8');
 const configSource = readFileSync(join(repoRoot, 'astro.config.mjs'), 'utf8');
+const buildPipelineSource = readFileSync(
+  join(repoRoot, 'src/utils/build-xml-characters.ts'),
+  'utf8'
+);
+
+/**
+ * The committed sheet directory, read out of the build hook that consumes it.
+ *
+ * #467: the README's pipeline step said the hook reads sheets "under `src/assets`",
+ * the parent, and the guard `expect(readme).not.toContain('src/assets/')` passed
+ * because the wrong path it named carried no trailing slash. A guard phrased as a
+ * near-miss of a wrong path lets the wrong path through. The subject here is the
+ * hook's own literal instead, so the guard and the hook cannot drift apart.
+ */
+function committedSheetDirectory() {
+  const match = buildPipelineSource.match(
+    /xmlDir\s*=\s*options\.xmlDir\s*\?\?\s*resolve\(rootDir,\s*'([^']+)'\)/
+  );
+
+  if (match === null) {
+    throw new Error(
+      'build-xml-characters.ts no longer resolves an xmlDir from a string literal, ' +
+        'so the README guard has no source of truth to read'
+    );
+  }
+
+  return match[1];
+}
 
 /** The Starlight `sidebar: [...]` block, located by bracket matching. */
 function starlightSidebarBlock() {
@@ -265,7 +293,7 @@ describe('README', () => {
       'public/fonts/',
       'scripts/',
       'src/assets/',
-      'src/assets/fantasy-grounds-sheets/',
+      `${committedSheetDirectory()}/`,
       'src/alpine.ts',
       'src/components/',
       'src/components/IconifyIcon.astro',
@@ -354,6 +382,17 @@ describe('README', () => {
     expect(architecture).toContain('Card');
     expect(architecture).toContain('Character page');
     expect(architecture).toMatch(/prerender/i);
+  });
+
+  it('names the committed sheet directory the build hook actually reads', () => {
+    const architecture = section('Architecture');
+    const sheetDir = committedSheetDirectory();
+
+    expect(sheetDir).toMatch(/^src\/assets\/.+/);
+
+    const escaped = sheetDir.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    expect(architecture).toMatch(new RegExp(`${escaped}(?![\\w-])`));
   });
 
   it('uses CONTEXT.md vocabulary for the character viewer', () => {
