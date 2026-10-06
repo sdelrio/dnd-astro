@@ -519,7 +519,7 @@ describe('README', () => {
 
     expect(deployment).toContain('terraform/');
     expect(deployment).toContain('cloudflare_workers_script');
-    expect(deployment).toContain('cloudflare_workers_domain');
+    expect(deployment).toContain('cloudflare_workers_custom_domain');
     expect(deployment).toMatch(/custom domain/i);
     expect(deployment).toContain('terraform import');
     expect(deployment).toContain(adrPaths.infraImport);

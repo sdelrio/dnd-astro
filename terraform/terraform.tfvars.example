@@ -15,6 +15,3 @@ custom_domain_zone = ""
 
 # Cloudflare username for workers.dev fallback (used when custom_domain is empty)
 cloudflare_username = "your-cloudflare-username"
-
-# Zone ID for the custom domain (optional, auto-resolved when empty)
-custom_domain_zone_id = ""

@@ -110,6 +110,7 @@ Committed layout, with generated output annotated:
 .opencode/               Dev-time tooling; not part of the site build
   lib/
     design-review/       Browser capture, page measurement, and handbook generators run by make
+.github/                 Dependabot config for pnpm and terraform manifests
 docs/                    Architecture decisions, specs, audits, and agent workflow docs
   adr/                   Architecture decision records (ADR 0001 - 0024)
   agents/                Issue tracker, triage, and domain conventions
@@ -229,14 +230,14 @@ The site deploys to Cloudflare Workers with static assets instead of the legacy 
 
 Infrastructure is managed as code in `terraform/`:
 
-- `terraform/main.tf` declares the `cloudflare_workers_script`, an optional `cloudflare_workers_domain` custom domain with a proxied CNAME `cloudflare_record`, and the Zero Trust Access resources: an Email OTP (`onetimepin`) identity provider, one self-hosted application per protected path, and an allow policy scoped to the configured email list.
-- Resources created in the Cloudflare dashboard are adopted with `terraform import` before the first apply. `terraform/Makefile` wraps the worker, domain, and DNS imports (`make import-worker`, `make import-domain`, `make import-dns`); see [ADR 0002](docs/adr/0002-infrastructure-import-existing-resources.md).
+- `terraform/main.tf` declares the `cloudflare_workers_script` and an optional `cloudflare_workers_custom_domain`; Workers creates and owns the DNS record for the custom domain (a separate record resource always conflicts with it, API error 81062), so no record is declared. The Zero Trust Access resources are an Email OTP (`onetimepin`) identity provider and one self-hosted application per protected path, with an allow policy scoped to the configured email list attached inline under `policies` (provider v5 inlined the application-scoped policy resource).
+- Resources created in the Cloudflare dashboard are adopted with `terraform import` before the first apply. `terraform/Makefile` wraps the worker and domain imports (`make import-worker`, `make import-domain`); see [ADR 0002](docs/adr/0002-infrastructure-import-existing-resources.md).
 - Secrets and account identifiers stay out of git: they live in the gitignored `terraform.tfvars` or in environment variables. Copy the committed template [terraform/terraform.tfvars.example](terraform/terraform.tfvars.example) to `terraform/terraform.tfvars` and fill in real values. This README documents the approach only, never the values.
 - [terraform/.terraform.lock.hcl](terraform/.terraform.lock.hcl) is committed on purpose so every operator gets the same pinned provider versions. State, plans, tfvars, and `.terraform/` stay ignored. If the lock file goes missing, restore it with `git checkout -- terraform/.terraform.lock.hcl` before running `terraform init`; see `make help` in `terraform/`.
 
 ### Wrangler deploy path (historical note)
 
-Workers Builds configuration is dashboard-only. The Cloudflare Terraform provider in use (v4) has no resource for build or deploy commands, so `terraform/` manages the worker script, custom domain, DNS, and Access only. The dashboard is the single source of truth for the build settings, so a wrangler version bump happens there by hand and Terraform cannot drift-correct it.
+Workers Builds configuration is dashboard-only. The Cloudflare Terraform provider (v5, as of the dependabot provider bump) has no resource for build or deploy commands, so `terraform/` manages the worker script, the custom-domain binding, and Access only. The dashboard is the single source of truth for the build settings, so a wrangler version bump happens there by hand and Terraform cannot drift-correct it.
 
 Nothing in this repository pins the wrangler CLI, so the following is a historical record rather than an instruction to follow. At the 2026-09-24 deploy the dashboard's build settings used `npx wrangler@4.139.0 deploy` and `npx wrangler@4.139.0 versions upload`. That deploy hit a 404 from a brand-new wrangler release the npm registry had not finished propagating, which is why the floating `npx wrangler` was avoided then; a floating specifier re-resolves on every build and would hit the same race whenever a release is fresh. Because no file here records or enforces the version or the date, check the dashboard before relying on either.
 
