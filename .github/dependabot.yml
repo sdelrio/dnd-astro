@@ -1,0 +1,25 @@
+version: 2
+
+updates:
+  # Root pnpm manifest; Dependabot handles pnpm via the npm ecosystem.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      astro-and-starlight:
+        patterns:
+          - "astro"
+          - "@astrojs/*"
+
+  # GitHub Actions - no workflows exist yet, future-proofing.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # Terraform provider for the Cloudflare resources in /terraform.
+  - package-ecosystem: "terraform"
+    directory: "/terraform"
+    schedule:
+      interval: "weekly"
