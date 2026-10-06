@@ -73,6 +73,72 @@ describe('resolveCastingAbility', () => {
     expect(resolved.ability).toBe('intelligence');
   });
 
+  it.each([
+    ['Blood Hunter', 'intelligence'],
+    ['Anti Paladin', 'charisma'],
+  ])('resolves %s from the class name alone to %s', (className, expected) => {
+    // Both are absent from the corpus table's printed class list, and both cast on
+    // the printed rules' word: a Blood Hunter is an Intelligence caster (the
+    // patron's blood magic is an arcane discipline) and an Anti Paladin is a
+    // Charisma caster (it takes the Paladin's spellcasting and Oath powers). Left
+    // out, both were sent to the inferred fallback and printed a wrong Save DC.
+    const resolved = resolveCastingAbility([klass(className, 5)], wizardAbilities);
+    expect(resolved.ability).toBe(expected);
+    expect(resolved.recorded).toBe(true);
+  });
+
+  it.each([
+    ['Psi Warrior', 'wisdom'],
+    ['Soulknife', 'wisdom'],
+    ['Oathbreaker', 'charisma'],
+  ])('resolves the %s subclass to %s on the subclass name alone', (subclass, expected) => {
+    // The parent class here is deliberately one the class table does not know,
+    // because the property under test is that the *subclass name* resolves by
+    // itself. That is what makes a half-caster resolve when its class node is a
+    // name this repo has not been taught, and it is the same property the Blood
+    // Hunter patron tests below lean on.
+    //
+    // Psi Warrior and Soulknife are Wisdom half-casters: the Psi Warrior's
+    // Psionic Energy is psionics rather than spells, but it is a Wisdom save DC
+    // and a Wisdom attack either way. Oathbreaker is an Anti Paladin's patron
+    // oath and casts on the Charisma its anti-paladin class already uses.
+    const resolved = resolveCastingAbility([klass('Fighter', 7, subclass)], wizardAbilities);
+    expect(resolved.ability).toBe(expected);
+    expect(resolved.recorded).toBe(true);
+  });
+
+  it.each([
+    'Order of the Profane Soul',
+    'Order of the Ghostslayer',
+    'Order of the Lycanthropy',
+    'Order of the Mutant',
+    'Order of Profanity',
+  ])('resolves the %s patron subclass to Intelligence', (subclass) => {
+    // The patron table is what makes a patron resolve *independently of the class
+    // name*, which is the half that matters: a sheet whose class node reads
+    // `Blood Hunter` but whose patron is one this repo has never seen still
+    // resolves Intelligence through the class, and one that names the patron
+    // resolves it through the patron.
+    const resolved = resolveCastingAbility([klass('Fighter', 7, subclass)], wizardAbilities);
+    expect(resolved.ability).toBe('intelligence');
+    expect(resolved.recorded).toBe(true);
+  });
+
+  it('resolves a Blood Hunter whose patron is unrecognised, through the class name', () => {
+    // The half of the patron table that cannot be tested with the patrons: a
+    // patron published after this table was written matches nothing, and the card
+    // must still print Intelligence rather than fall through to the guess. Before
+    // the class name was taught, this character - and every Blood Hunter in the
+    // corpus - was the wrong Save DC with an Inferred label on it.
+    const resolved = resolveCastingAbility(
+      [klass('Blood Hunter', 7, 'Order of Something New')],
+      wizardAbilities
+    );
+    expect(resolved.ability).toBe('intelligence');
+    expect(resolved.recorded).toBe(true);
+    expect(resolved.modifier).toBe(4);
+  });
+
   it('does not resolve from the Fighter class alone', () => {
     // A Fighter with no casting subclass is not a caster. The answer is still
     // returned so the section can render, but it is flagged as inferred rather

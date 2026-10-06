@@ -47,10 +47,21 @@ export const CASTING_ABILITY_LABEL: Record<CastingAbility, { short: string; name
  * a class-table source: both are full casters, and leaving either out would hand
  * its character to the inferred fallback while the card showed the same shape of
  * figure.
+ *
+ * Blood Hunter and Anti Paladin are here for the same reason and with more force:
+ * both are absent from the 2024 Player's Handbook, so a table kept to the printed
+ * classes leaves them out by accident rather than by decision, and the fallback
+ * then prints them a wrong Save DC. Blood Hunter is Intelligence on the printed
+ * rule (the patron's blood magic is an arcane discipline studied rather than
+ * granted), Anti Paladin is Charisma (it takes the Paladin's spellcasting and its
+ * patron oath both). The corpus invariant in `casting-ability-corpus.test.ts` is
+ * what keeps this table from drifting again: it fails on any corpus character who
+ * has spell data and resolves as inferred.
  */
 export const CASTING_CLASS_ABILITIES: Record<string, CastingAbility> = {
   wizard: 'intelligence',
   artificer: 'intelligence',
+  'blood hunter': 'intelligence',
   cleric: 'wisdom',
   druid: 'wisdom',
   ranger: 'wisdom',
@@ -58,6 +69,7 @@ export const CASTING_CLASS_ABILITIES: Record<string, CastingAbility> = {
   sorcerer: 'charisma',
   warlock: 'charisma',
   paladin: 'charisma',
+  'anti paladin': 'charisma',
 };
 
 /**
@@ -66,10 +78,30 @@ export const CASTING_CLASS_ABILITIES: Record<string, CastingAbility> = {
  * This table is the whole reason a Fighter with Eldritch Knight resolves at all:
  * the class name matches nothing, and without it the card would either guess or
  * show nothing to a character who casts three spells a day.
+ *
+ * The Blood Hunter patrons are here *as well as* the class, and that duplication
+ * is the point rather than an oversight. Every patron resolves Intelligence
+ * through the class name, so an unrecognised patron is not a gap; but a sheet
+ * rebuilt mid-play can lose the class node and keep the patron, and a multiclass
+ * sheet can carry the patron on an entry the class table would not recognise at
+ * all. Naming them here makes the patron resolve on its own.
+ *
+ * Psi Warrior and Soulknife are the other two the class table cannot reach, both
+ * Wisdom on the printed rule (the Psi Warrior's Psionic Energy is psionics rather
+ * than spells, but its save DC and its attack are Wisdom either way), and
+ * Oathbreaker is the Anti Paladin's patron oath.
  */
 export const CASTING_SUBCLASS_ABILITIES: Record<string, CastingAbility> = {
   'eldritch knight': 'intelligence',
   'arcane trickster': 'intelligence',
+  'psi warrior': 'wisdom',
+  soulknife: 'wisdom',
+  oathbreaker: 'charisma',
+  'order of the profane soul': 'intelligence',
+  'order of the ghostslayer': 'intelligence',
+  'order of the lycanthropy': 'intelligence',
+  'order of the mutant': 'intelligence',
+  'order of profanity': 'intelligence',
 };
 
 export interface CastingAbilityResolution {

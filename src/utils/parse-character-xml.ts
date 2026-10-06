@@ -104,12 +104,27 @@ const SPELL_SLOT_LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 // Subclass naming patterns per class, used only for the level-1 feature-entry
 // fallback (a granted feature whose name IS the subclass, e.g.
 // <name>School of Transmutation</name><source>Wizard</source>).
+//
+// Keys are the class name exactly as the sheet writes it in `<source>`, which for
+// a two-word class carries the space (`Blood Hunter`, not `BloodHunter`).
+//
+// These are reconciled with the casting tables in `spellcasting-display.ts`, and
+// the two lists answer different questions about the same names: a pattern here
+// recognises a *feature name* that stands in for a subclass the sheet's class node
+// no longer carries, while a casting entry maps a *subclass name* to the ability it
+// casts with. A subclass only reaches a card if the parser can recover it and the
+// casting table can read it, so a name taught to one and not the other is a name
+// half the pipeline cannot use. `casting-ability-corpus.test.ts` is what catches
+// the case where a class is missing from the casting side.
 const SUBCLASS_NAME_PATTERNS: Record<string, RegExp> = {
   Barbarian: /^Path of (?:the )?\S.*$|^(?:Ancestral Guardian|Storm Herald)$/,
   Bard: /^College of \S.*$/,
+  'Blood Hunter': /^Order of (?:the )?\S.*$/,
   Cleric: /^\S+ Domain$/,
   Druid: /^Circle of \S.*$/,
-  Fighter: /^(?:Battle Master|Champion|Eldritch Knight|Purple Dragon Knight|Psi Warrior|Arcane Archer|Cavalier|Samurai)$/,
+  'Anti Paladin': /^Oathbreaker$/,
+  Fighter:
+    /^(?:Battle Master|Champion|Eldritch Knight|Purple Dragon Knight|Psi Warrior|Soulknife|Arcane Archer|Cavalier|Samurai)$/,
   Monk: /^Way of \S.*$|^(?:Sun Soul|Long Death|Four Elements|Kensei)$/,
   Paladin: /^Oath of \S.*$|^Oathbreaker$/,
   Ranger: /^\S+ Conclave$|^(?:Beast Master|Gloom Stalker|Horizon Walker|Monster Slayer|Fey Wanderer)$/,
