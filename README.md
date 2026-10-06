@@ -45,6 +45,8 @@ Prerequisites:
 - pnpm 11
 - Optional: devbox, which pins Node 24 and pnpm for the repo
 
+The runtime and package-manager requirements are enforced at install time: `package.json` declares `engines.node` and `packageManager`, and `pnpm-workspace.yaml` sets `engineStrict`, so `pnpm install` on the wrong Node or pnpm fails with a clear message rather than an obscure build failure later.
+
 ```sh
 pnpm install
 pnpm dev
@@ -82,6 +84,11 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 | `pnpm test` | Run the Vitest unit tests |
 | `pnpm astro` | Run the Astro CLI |
 | `make check` | Run every gate: lint, typecheck, test, build |
+| `make lint` | ESLint, the same gate `pnpm lint` runs |
+| `make typecheck` | Astro diagnostics with `CI=true`, the same gate `pnpm typecheck` runs |
+| `make test` | Vitest unit tests, the same gate `pnpm test` runs |
+| `make build` | Production build to `./dist/`, the same gate `pnpm build` runs |
+| `make help` | Print every target, grouped |
 | `make capture` | Write `desktop.png` and `mobile.png` for design review |
 | `make measure` | Measure a rendered page: overflow, contrast, tap, pointer |
 | `make handbook` | Print the book - a cover, a contents and the eight house rules - as one A4 PDF under `tmp/`, plus the committed manifest. Not published yet |
@@ -90,8 +97,9 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 | `make submodule-update` | Bump Impeccable to upstream HEAD and relink |
 | `make submodule-link` | Relink the skill for `IMPECCABLE_PROVIDER=<harness>` |
 | `make upgrade` | Interactive. Upgrades Astro and rewrites `package.json` |
+| `make clean-tmp` | Delete `tmp/` files older than three days, then the directories they empty |
 
-Run `make help` for the full list, grouped the same way.
+The table lists every make target; run `make help` for the same set grouped with live descriptions.
 
 ## Project structure
 
@@ -101,9 +109,11 @@ Committed layout, with generated output annotated:
 .opencode/               Dev-time tooling; not part of the site build
   lib/
     design-review/       Browser capture, page measurement, and handbook generators run by make
-docs/                    Architecture decisions, specs, and agent workflow docs
+docs/                    Architecture decisions, specs, audits, and agent workflow docs
   adr/                   Architecture decision records (ADR 0001 - 0024)
   agents/                Issue tracker, triage, and domain conventions
+  audits/                Dated design and rendered-verification reports
+  fonts-licensing.md     Font provenance and license obligations
   specs/                 Feature specifications
 public/                  Static assets served as-is
   fg/
@@ -127,7 +137,7 @@ src/
     feats-explorer/      Feat Explorer Alpine.js component
     point-buy/           Point Buy Alpine.js component
     rulebook-index/      Site index spread the homepage mounts
-    xml-viewer/          XML Character Viewer components (XmlCard, CharSearch, PartyView)
+    xml-viewer/          XML Character Viewer components (CharSearch, CompactAbilityGrid, LanguagesFeats, PartyView, SavesTable, SectionHeader, SkillsTable, SpellcastingPanel, WeaponsTable, XmlCard)
   content.config.ts      Docs content collection config, loaded by Starlight
   content/
     docs/                Starlight Markdown and MDX content
@@ -141,7 +151,7 @@ src/
     handbook/
       print.astro        Inert print route the handbook generator renders
       spike-fixture.astro  Two-sheet regression fixture for the handbook renderer
-  styles/                Tailwind v4 entry, theme CSS, and the print stylesheet
+  styles/                Tailwind v4 entry, theme CSS, the print stylesheet, and the shared WCAG contrast helper the colour tests use
   test-utils/
     alpine-dom.ts        Mounts a component and boots a real Alpine over it
   types/                 Shared ambient declarations
@@ -201,7 +211,7 @@ The Starlight sidebar groups are configured in `astro.config.mjs`:
 | Fantasy Grounds | explicit slugs under `fantasy-grounds/` |
 | Handbook | explicit slug `handbook`, the printed handbook's publisher page |
 
-The first two groups autogenerate from their directory, so a new page appears as soon as it lands. The Fantasy Grounds group lists explicit slugs instead, so new pages there must be added to the sidebar by hand. The Handbook group carries the one page that is not house rules: it states the printed handbook's version and edition date and that the PDF is not published yet, and it lives outside `dnd/` so the Handbook is not printed into itself. The sidebar is global, so it is reachable from every page. The former Guides group was retired: its XmlCard test page is still built at `src/content/docs/guides/xml-card-test.mdx`, but its front matter sets `sidebar.hidden`, so it is reachable by URL only and never appears in the sidebar.
+The first two groups autogenerate from their directory, so a new page appears as soon as it lands. The Fantasy Grounds group lists explicit slugs instead, so new pages there must be added to the sidebar by hand. The Handbook group carries the one page that is not house rules: it states the printed handbook's version and edition date and that the PDF is not published yet, and it lives outside `dnd/` so the Handbook is not printed into itself. The sidebar is global to the content pages. It is not on every page: the prerendered Character pages opt out, because `src/pages/fantasy-grounds/characters/[slug].astro` sets `hasSidebar={false}`, so all 111 character pages render without one. The former Guides group was retired: its XmlCard test page is still built at `src/content/docs/guides/xml-card-test.mdx`, but its front matter sets `sidebar.hidden`, so it is reachable by URL only and never appears in the sidebar.
 
 Admonitions follow the restriction listed under [Rendering conventions](#rendering-conventions): only the four Starlight types are allowed.
 
@@ -223,16 +233,11 @@ Infrastructure is managed as code in `terraform/`:
 - Secrets and account identifiers stay out of git: they live in the gitignored `terraform.tfvars` or in environment variables. Copy the committed template [terraform/terraform.tfvars.example](terraform/terraform.tfvars.example) to `terraform/terraform.tfvars` and fill in real values. This README documents the approach only, never the values.
 - [terraform/.terraform.lock.hcl](terraform/.terraform.lock.hcl) is committed on purpose so every operator gets the same pinned provider versions. State, plans, tfvars, and `.terraform/` stay ignored. If the lock file goes missing, restore it with `git checkout -- terraform/.terraform.lock.hcl` before running `terraform init`; see `make help` in `terraform/`.
 
-### Pinned wrangler deploy path
-
-The Worker's build settings pin wrangler to an exact version so the same CLI runs on every build:
-
-- Deploy command: `npx wrangler@4.139.0 deploy`
-- Version build command: `npx wrangler@4.139.0 versions upload`
-
-A floating `npx wrangler` must not replace the pin. During the 2026-09-24 deploy, a brand-new wrangler release returned 404 because the npm registry had not finished propagating the new version. A floating specifier re-resolves to the latest release on every build, so it would hit the same race whenever a release is fresh. Bump the pin by hand to a version that is already published and propagated.
+### Wrangler deploy path (historical note)
 
 Workers Builds configuration is dashboard-only. The Cloudflare Terraform provider in use (v4) has no resource for build or deploy commands, so `terraform/` manages the worker script, custom domain, DNS, and Access only. The dashboard is the single source of truth for the build settings, so a wrangler version bump happens there by hand and Terraform cannot drift-correct it.
+
+Nothing in this repository pins the wrangler CLI, so the following is a historical record rather than an instruction to follow. At the 2026-09-24 deploy the dashboard's build settings used `npx wrangler@4.139.0 deploy` and `npx wrangler@4.139.0 versions upload`. That deploy hit a 404 from a brand-new wrangler release the npm registry had not finished propagating, which is why the floating `npx wrangler` was avoided then; a floating specifier re-resolves on every build and would hit the same race whenever a release is fresh. Because no file here records or enforces the version or the date, check the dashboard before relying on either.
 
 ## Documentation and workflow
 
@@ -240,6 +245,8 @@ The repo keeps its documentation next to the code it describes:
 
 - [docs/adr/README.md](docs/adr/README.md) indexes the architecture decision records. Only `accepted` ADRs are binding, so check status before relying on a decision.
 - [docs/specs/README.md](docs/specs/README.md) indexes the feature specifications.
+- [docs/audits/](docs/audits/) collects dated design and rendered-verification reports, including the account of what a synthesized tap and an emulated pointer profile do and do not establish.
+- [docs/fonts-licensing.md](docs/fonts-licensing.md) records the provenance and license obligations of the self-hosted fonts.
 - [CONTEXT.md](CONTEXT.md) is the domain glossary. Use its vocabulary in code, tests, and docs.
 - [docs/agents/issue-tracker.md](docs/agents/issue-tracker.md), [docs/agents/triage-labels.md](docs/agents/triage-labels.md), and [docs/agents/domain.md](docs/agents/domain.md) record the issue tracker, triage label, and domain doc conventions.
 - [AGENTS.md](AGENTS.md) is the canonical guide for agents and contributors: development, verification, and workflow rules.

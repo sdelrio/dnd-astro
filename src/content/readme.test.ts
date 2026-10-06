@@ -10,6 +10,16 @@ const buildPipelineSource = readFileSync(
   join(repoRoot, 'src/utils/build-xml-characters.ts'),
   'utf8'
 );
+const packageJson = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8'));
+const workspaceSource = readFileSync(join(repoRoot, 'pnpm-workspace.yaml'), 'utf8');
+const makefileSource = readFileSync(join(repoRoot, 'Makefile'), 'utf8');
+const characterSheetFiles = readdirSync(
+  join(repoRoot, 'src/assets/fantasy-grounds-sheets')
+).filter((name) => name.endsWith('.xml'));
+const characterPageRouteSource = readFileSync(
+  join(repoRoot, 'src/pages/fantasy-grounds/characters/[slug].astro'),
+  'utf8'
+);
 
 /**
  * The committed sheet directory, read out of the build hook that consumes it.
@@ -641,5 +651,113 @@ describe('README', () => {
 
     expect(existsSync(join(repoRoot, 'LICENSE'))).toBe(false);
     expect(readme).not.toMatch(/\[[^\]]*\]\(\s*LICENSE\s*\)/);
+  });
+
+  it('states version badges that match the installed dependencies', () => {
+    const major = (specifier: string) => specifier.match(/(\d+)/)?.[1];
+    const starlight = packageJson.dependencies['@astrojs/starlight'].match(/(\d+\.\d+)/)?.[1];
+
+    const badges = [
+      `Astro-${major(packageJson.dependencies.astro)}`,
+      `Starlight-${starlight}`,
+      `Alpine.js-${major(packageJson.dependencies.alpinejs)}`,
+      `Tailwind-v${major(packageJson.devDependencies.tailwindcss)}`,
+      `TypeScript-${major(packageJson.devDependencies.typescript)}`,
+      `Vitest-${major(packageJson.devDependencies.vitest)}`,
+      `Node-${major(packageJson.engines?.node ?? '')}`,
+      `pnpm-${major(packageJson.packageManager ?? '')}`,
+    ];
+
+    for (const badge of badges) {
+      expect(badge, 'a version source resolved to undefined').not.toMatch(/undefined/);
+      expect(readme).toContain(`badge/${badge}-`);
+    }
+  });
+
+  it('enforces the runtime and package-manager versions at install time', () => {
+    expect(packageJson.engines?.node).toMatch(/^>=24 </);
+    expect(packageJson.packageManager).toMatch(/^pnpm@11\./);
+    expect(workspaceSource).toMatch(/^engineStrict:\s*true$/m);
+
+    const quickStart = section('Quick start');
+    expect(quickStart).toContain('Node 24');
+    expect(quickStart).toContain('pnpm 11');
+    expect(quickStart).toMatch(/engineStrict|enforced at install/i);
+  });
+
+  it('counts the committed sheets and scopes the sidebar claim to the content pages', () => {
+    const content = section('Content authoring');
+
+    expect(characterSheetFiles).toHaveLength(111);
+    expect(readme).toContain(`${characterSheetFiles.length} files`);
+    expect(content).toContain(`all ${characterSheetFiles.length} character pages`);
+    expect(content).not.toMatch(/sidebar is global, so it is reachable from every page/i);
+    expect(characterPageRouteSource).toMatch(/hasSidebar=\{false\}/);
+  });
+
+  it('describes the styles directory with its print stylesheet and shared helper', () => {
+    const line =
+      fencedBlock(section('Project structure'))
+        .split('\n')
+        .find((entry) => /^\s*styles\//.test(entry)) ?? '';
+
+    expect(line).toMatch(/print stylesheet/i);
+    expect(line).toMatch(/contrast/i);
+    expect(existsSync(join(repoRoot, 'src/styles/handbook-print.css'))).toBe(true);
+    expect(existsSync(join(repoRoot, 'src/styles/contrast.ts'))).toBe(true);
+  });
+
+  it('names every xml-viewer component in the tree', () => {
+    const components = readdirSync(join(repoRoot, 'src/components/xml-viewer'))
+      .filter((name) => name.endsWith('.astro'))
+      .map((name) => name.replace(/\.astro$/, ''));
+    const line =
+      fencedBlock(section('Project structure'))
+        .split('\n')
+        .find((entry) => /xml-viewer\//.test(entry)) ?? '';
+
+    expect(components).toHaveLength(10);
+
+    for (const component of components) {
+      expect(line).toContain(component);
+    }
+  });
+
+  it('documents the audits directory and the font licensing note', () => {
+    const paths = treeEntries(fencedBlock(section('Project structure'))).map(
+      (entry) => entry.path
+    );
+
+    expect(paths).toContain('docs/audits/');
+    expect(paths).toContain('docs/fonts-licensing.md');
+
+    const docs = section('Documentation and workflow');
+
+    expect(docs).toContain('docs/audits/');
+    expect(docs).toContain('docs/fonts-licensing.md');
+  });
+
+  it('documents every make target in the commands table', () => {
+    const targets = [...makefileSource.matchAll(/^([a-z][a-z0-9-]*):/gm)].map(
+      (match) => match[1]
+    );
+    const commands = section('Commands');
+
+    expect(targets.length).toBeGreaterThan(10);
+
+    for (const target of targets) {
+      expect(commands).toContain(`| \`make ${target}\` |`);
+    }
+  });
+
+  it('presents the dashboard-only wrangler pin as history, not an instruction', () => {
+    const deployment = section('Deployment and security');
+
+    expect(deployment).toMatch(/dashboard-only/i);
+    expect(deployment).toMatch(/nothing in this repository pins/i);
+    expect(deployment).toMatch(/historical/i);
+    expect(deployment).not.toMatch(
+      /pin wrangler to an exact version so the same CLI runs on every build/i
+    );
   });
 });
