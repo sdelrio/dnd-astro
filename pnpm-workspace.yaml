@@ -1,6 +1,12 @@
 packages:
   - "."
 
+# Fail the install with a clear error when the running Node does not satisfy
+# package.json engines.node, rather than letting a wrong runtime fail obscurely
+# later in the build. The pnpm version is pinned by package.json packageManager,
+# which pnpm enforces itself.
+engineStrict: true
+
 # Reject versions published less than one day (1440 minutes) ago
 minimumReleaseAge: 1440
 
