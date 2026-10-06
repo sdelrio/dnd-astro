@@ -147,6 +147,29 @@ describe('PartyView', () => {
     expect(warnMessages.some((m: string) => /character data missing for "ghost"/.test(m))).toBe(true);
   });
 
+  it('renders a roster that names one character twice as a single member', async () => {
+    const roster = join(tempDir, 'party.json');
+    writeFileSync(
+      roster,
+      JSON.stringify({
+        partyName: 'Dupes',
+        members: [
+          { filename: 'draknor', roles: ['tank'], notes: 'front line' },
+          { filename: 'draknor', roles: ['healer'] },
+        ],
+      })
+    );
+    const html = await render(roster);
+    expect(memberCards(html)).toHaveLength(1);
+    expect(html).toContain('1 active members');
+    expect(html).toContain('Drakknor');
+    // The first entry wins whole, so its note and role pill survive.
+    expect(html).toContain('front line');
+    expect(html).toContain('Tank');
+    const warnMessages = warnSpy.mock.calls.map((call: unknown[]) => String(call[0]));
+    expect(warnMessages.some((m: string) => /duplicate party member "draknor"/.test(m))).toBe(true);
+  });
+
   it('renders a usable page for a roster where no member resolves', async () => {
     const roster = join(tempDir, 'party.json');
     writeFileSync(
