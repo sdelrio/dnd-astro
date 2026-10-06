@@ -200,7 +200,7 @@ describe('README', () => {
 
     const rows = [
       'Astro 7 (SSG) + Starlight',
-      'Alpine.js islands',
+      'Alpine.js components',
       'Tailwind v4',
       'fast-xml-parser build pipeline',
       'Mermaid',
@@ -310,12 +310,17 @@ describe('README', () => {
     }
   });
 
-  it('states the least client-side JavaScript rule and the islands boundary', () => {
+  it('states the least client-side JavaScript rule and the site-wide Alpine runtime', () => {
     const architecture = section('Architecture');
 
     expect(architecture).toMatch(/least client-side JavaScript/i);
-    expect(architecture).toMatch(/islands?/i);
+    expect(architecture).toMatch(/no UI framework runtime ships to the browser/i);
+    expect(architecture).toMatch(/small Alpine\.js components scoped to the component/i);
     expect(architecture).toContain('Alpine.js');
+    expect(architecture).toContain('@astrojs/alpinejs');
+    expect(architecture).toContain('src/alpine.ts');
+    expect(architecture).toMatch(/injected site-wide/i);
+    expect(architecture).not.toMatch(/islands?/i);
   });
 
   it('documents the build-time Fantasy Grounds XML pipeline', () => {
