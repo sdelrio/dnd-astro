@@ -769,6 +769,138 @@ describe('parseCharacterXML', () => {
     ]);
   });
 
+  describe('the non-finite coercion invariant from #448', () => {
+    /** One sheet carrying one junk HP total, and nothing else. */
+    const hpSheet = (total: string) =>
+      `<root><character><hp><total type="number">${total}</total></hp></character></root>`;
+
+    it.each([
+      ['a non-numeric total', 'abc'],
+      ['an exponential literal', '1e999'],
+    ])('resolves %s to the fallback rather than a non-finite number', (_label, total) => {
+      const result = parseCharacterXML(hpSheet(total));
+      expect(result?.hp).toBe(0);
+      expect(Number.isFinite(result?.hp)).toBe(true);
+    });
+
+    it('reads a thousand-separated total, junk and an exponential each, on one sheet', () => {
+      const xml = `
+        <root>
+          <character>
+            <hp><total type="number">1,000</total><temporary type="number">abc</temporary></hp>
+            <profbonus type="number">1e999</profbonus>
+          </character>
+        </root>
+      `;
+      const result = parseCharacterXML(xml);
+      expect(result?.hp).toBe(1000);
+      expect(result?.tempHp).toBe(0);
+      expect(result?.profBonus).toBe(0);
+    });
+
+    it('resolves every numeric field the parser reads to a finite number', () => {
+      const junkSheet = `
+        <root>
+          <character>
+            <hp><total type="number">abc</total><temporary type="number">1e999</temporary></hp>
+            <speed><total type="number">abc</total></speed>
+            <initiative><total type="number">1e999</total></initiative>
+            <defenses><ac><total type="number">abc</total></ac></defenses>
+            <profbonus type="number">1e999</profbonus>
+            <abilities>
+              <strength><score type="number">abc</score><bonus type="number">1e999</bonus><save type="number">abc</save><saveprof type="number">1e999</saveprof></strength>
+            </abilities>
+            <skilllist>
+              <id-00001><name type="string">Perception</name><total type="number">abc</total><prof type="number">1e999</prof></id-00001>
+            </skilllist>
+            <classes><id-00001><name type="string">Fighter</name><level type="number">abc</level></id-00001></classes>
+            <featurelist><id-00001><level type="number">1e999</level><name type="string">X</name><source type="string">Fighter</source></id-00001></featurelist>
+            <powers><id-00001><level type="number">abc</level><name type="string">Y</name><group type="string">Spells</group><prepared type="number">1e999</prepared><preparedDomain type="number">abc</preparedDomain></id-00001></powers>
+            <weaponlist>
+              <id-00001>
+                <name type="string">Sword</name>
+                <attackbonus type="number">abc</attackbonus>
+                <carried type="number">1e999</carried>
+                <type type="number">abc</type>
+                <damagelist><id-00001><bonus type="number">1e999</bonus><dice type="dice">1d6</dice><stat type="string">base</stat><statmult type="number">abc</statmult></id-00001></damagelist>
+              </id-00001>
+            </weaponlist>
+            <powermeta><spellslots1><max type="number">abc</max><used type="number">1e999</used></spellslots1></powermeta>
+            <inventorylist><id-00001><name type="string">Rope</name><count type="number">abc</count><weight type="number">1e999</weight><carried type="number">abc</carried></id-00001></inventorylist>
+            <coins><id-00001><name type="string">GP</name><amount type="number">1e999</amount></id-00001></coins>
+          </character>
+        </root>
+      `;
+      const result = parseCharacterXML(junkSheet);
+      expect(result).not.toBeNull();
+      const nonFinite: string[] = [];
+      const check = (label: string, value: unknown) => {
+        if (typeof value === 'number' && !Number.isFinite(value)) nonFinite.push(label);
+      };
+      check('hp', result?.hp);
+      check('tempHp', result?.tempHp);
+      check('speed', result?.speed);
+      check('initiative', result?.initiative);
+      check('ac', result?.ac);
+      check('profBonus', result?.profBonus);
+      for (const [stat, ability] of Object.entries(result?.abilities ?? {})) {
+        check(`${stat}.score`, ability.score);
+        check(`${stat}.bonus`, ability.bonus);
+        check(`${stat}.save`, ability.save);
+        check(`${stat}.saveprof`, ability.saveprof);
+      }
+      for (const entry of result?.allSkills ?? []) check(`skill ${entry.name}.total`, entry.total);
+      for (const entry of result?.classes ?? []) check(`class ${entry.name}.level`, entry.level);
+      for (const entry of result?.features ?? []) check(`feature ${entry.name}.level`, entry.level);
+      for (const entry of result?.powers ?? []) {
+        check(`power ${entry.name}.level`, entry.level);
+        check(`power ${entry.name}.prepared`, entry.prepared);
+        check(`power ${entry.name}.preparedDomain`, entry.preparedDomain);
+      }
+      for (const weapon of result?.weapons ?? []) {
+        check(`weapon ${weapon.name}.attackbonus`, weapon.attackbonus);
+        check(`weapon ${weapon.name}.carried`, weapon.carried);
+        check(`weapon ${weapon.name}.type`, weapon.type);
+        for (const damage of weapon.damage) {
+          check(`weapon ${weapon.name}.damage.bonus`, damage.bonus);
+          check(`weapon ${weapon.name}.damage.statmult`, damage.statmult);
+        }
+      }
+      for (const slot of result?.spellSlots ?? []) {
+        check(`slot ${slot.level}.max`, slot.max);
+        check(`slot ${slot.level}.used`, slot.used);
+      }
+      for (const item of result?.inventory ?? []) {
+        check(`item ${item.name}.count`, item.count);
+        check(`item ${item.name}.weight`, item.weight);
+        check(`item ${item.name}.carried`, item.carried);
+      }
+      for (const [denomination, amount] of Object.entries(result?.coins ?? {})) {
+        check(`coin ${denomination}`, amount);
+      }
+      check('passives.perception', result?.passives.perception);
+      expect(nonFinite).toEqual([]);
+    });
+
+    it('falls back to a multiplier of 1 for an unparseable damage statmult', () => {
+      const xml = `
+        <root>
+          <character>
+            <weaponlist>
+              <id-00001>
+                <name type="string">Sword</name>
+                <damagelist>
+                  <id-00001><bonus type="number">0</bonus><dice type="dice">1d6</dice><stat type="string">base</stat><statmult type="number">abc</statmult></id-00001>
+                </damagelist>
+              </id-00001>
+            </weaponlist>
+          </character>
+        </root>
+      `;
+      expect(parseCharacterXML(xml)?.weapons[0].damage[0].statmult).toBe(1);
+    });
+  });
+
   it('returns null if no <character> node', () => {
     const xml = `<root><foo>bar</foo></root>`;
     const result = parseCharacterXML(xml);
