@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 
-const repoRoot = join(__dirname, '../..');
-const docsRoot = join(repoRoot, 'src/content/docs');
+import { CONTENT_ROOT, contentPageFiles } from '../test-utils/content-pages';
+
+const docsRoot = CONTENT_ROOT;
 
 /**
  * The front-matter keys a content page is allowed to declare.
@@ -40,46 +41,19 @@ const KNOWN_FRONTMATTER_KEYS = new Set([
 ]);
 
 /**
- * The house-rule pages, which are the non-partial pages under `dnd/`. Astro
- * treats a leading `_` as a partial rather than a page, so `_markdown-impactful`
- * is not one.
+ * The house-rule pages, which are the non-partial pages under `dnd/`.
  *
  * Every one of these is expected to declare `tags`, because the tag is how a
  * reader finds the rule that answers a question, and a page with no tag is
  * invisible to that search.
  */
 function houseRulePages() {
-  return contentPages().filter((path) => path.startsWith('dnd/') && !path.slice('dnd/'.length).startsWith('_'));
+  return contentPages().filter((path) => path.startsWith('dnd/'));
 }
 
 /** Every `.md`/`.mdx` page under `src/content/docs`, relative to that root, `/`-separated. */
 function contentPages(): string[] {
-  const walk = (dir: string): string[] =>
-    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
-      const full = join(dir, entry.name);
-
-      if (entry.isDirectory()) {
-        return walk(full);
-      }
-
-      if (!/\.(md|mdx)$/.test(entry.name)) {
-        return [];
-      }
-
-      // `statSync` follows symlinks, so a dangling one throws. A link that no
-      // longer resolves is not a page this project maintains.
-      try {
-        if (!statSync(full).isFile()) {
-          return [];
-        }
-      } catch {
-        return [];
-      }
-
-      return [relative(docsRoot, full).split(sep).join('/')];
-    });
-
-  return walk(docsRoot);
+  return contentPageFiles().map((file) => relative(docsRoot, file).split(sep).join('/'));
 }
 
 /**

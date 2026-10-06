@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
+
+import { contentPageFiles } from '../test-utils/content-pages';
 
 const repoRoot = join(__dirname, '../..');
 const HANDBOOK_DIR = join(repoRoot, 'src/content/docs/dnd');
@@ -29,10 +31,7 @@ const HANDBOOK_DIR = join(repoRoot, 'src/content/docs/dnd');
 
 /** The eight house-rule sources, in the order the sidebar lists them. */
 function houseRuleFiles(dir = HANDBOOK_DIR): string[] {
-  return readdirSync(dir, { withFileTypes: true })
-    .filter((entry) => entry.isFile() && !entry.name.startsWith('_') && /\.(md|mdx)$/.test(entry.name))
-    .map((entry) => join(dir, entry.name))
-    .sort();
+  return contentPageFiles(dir).sort();
 }
 
 /** The path a file is reported under, so a failure names the page. */

@@ -1,7 +1,7 @@
 import { docsSchema } from '@astrojs/starlight/schema';
 import { describe, expect, it } from 'vitest';
 
-import { HANDBOOK_COLUMNS, handbookColumnsSchema } from '../../content.config';
+import { HANDBOOK_COLUMNS, handbookColumnsSchema } from '../content.config';
 
 /**
  * The per-page column count, asserted as *readable*.

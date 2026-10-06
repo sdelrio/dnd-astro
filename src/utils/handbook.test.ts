@@ -86,7 +86,7 @@ describe('handbookSourcePages', () => {
     // The key is declared through the schema's `extend` option rather than added
     // as a bare frontmatter key, because Starlight's default schema is a Zod
     // object in strip mode and would drop it silently. See
-    // `src/content/docs/handbook-columns-schema.test.ts` for the parsing side;
+    // `src/content/handbook-columns-schema.test.ts` for the parsing side;
     // this is the side that has to *use* what parsing kept.
     it('carries a single-column opt-out through to the sheet', () => {
       // Typed as the literal `1` rather than widened to `number`: the entry
