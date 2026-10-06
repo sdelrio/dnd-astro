@@ -24,7 +24,7 @@
     "alpinejs": "^3.17.3",
     "astro": "^7.3.5",
     "astro-mermaid": "^2.1.0",
-    "fast-xml-parser": "^5.11.1",
+    "fast-xml-parser": "^5.11.2",
     "he": "^1.2.0",
     "mermaid": "^11.17.2",
     "sharp": "^0.35.3"
