@@ -168,6 +168,31 @@ describe('resolveCastingAbility', () => {
     expect(multiclass.recorded).toBe(true);
   });
 
+  it('takes the higher-level class when the two candidates are a new class and a new subclass', () => {
+    // The same rule with the classes #447 added, because a table that is taught
+    // more names is a table with more ways to have two candidates: a Blood Hunter 2
+    // casting alongside a Fighter 7 (Psi Warrior) is a level question, and level
+    // is the answer rather than whichever table the name came from.
+    const multiclass = resolveCastingAbility(
+      [klass('Blood Hunter', 2), klass('Fighter', 7, 'Psi Warrior')],
+      wizardAbilities
+    );
+    expect(multiclass.ability).toBe('wisdom');
+    expect(multiclass.recorded).toBe(true);
+  });
+
+  it('prefers the class name over a subclass at the same level, for the new entries too', () => {
+    // Fighter 7 (Soulknife) against Anti Paladin 7 is a tie between Charisma and
+    // Wisdom, and it is the Anti Paladin's Charisma: the sheet wrote the class as
+    // well as the specialisation, and the class is what the character is.
+    const tie = resolveCastingAbility(
+      [klass('Fighter', 7, 'Soulknife'), klass('Anti Paladin', 7)],
+      wizardAbilities
+    );
+    expect(tie.ability).toBe('charisma');
+    expect(tie.recorded).toBe(true);
+  });
+
   it('prefers the class name over a subclass at the same level', () => {
     // Cleric 3 / Fighter 3 (Eldritch Knight) is a tie between two different
     // abilities, and a class name is the stronger record: the sheet wrote
