@@ -42,7 +42,7 @@
     "solbera-dnd-fonts": "^1.0.2",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.0",
+    "typescript-eslint": "^8.71.1",
     "vitest": "^5.0.0"
   }
 }
