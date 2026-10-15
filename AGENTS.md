@@ -10,7 +10,7 @@ Manage the background server with `astro dev stop`, `astro dev status`, and `ast
 
 ### Commit trailers
 
-Do not put `Co-authored-by` or `Co-Authored-By` trailers in commit messages. The author is always `sdelrio`. A project plugin (`.opencode/plugins/strip-coauthor.js`) rewrites `git commit` bash commands to drop the trailer if a model still adds one.
+Do not put `Co-authored-by` or `Co-Authored-By` trailers in commit messages. The author is always `sdelrio`. A project plugin (`.opencode/plugins/strip-coauthor.js`) rewrites `git commit` shell commands to drop the trailer if a model still adds one.
 
 ## Documentation
 

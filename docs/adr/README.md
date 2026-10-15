@@ -30,6 +30,7 @@ This directory contains Architecture Decision Records (ADRs) for the DnD Compani
 | 0022 | Do Not Publish the Printed Handbook Until the Design Settles | accepted | 2026-10-04 |
 | 0023 | The Sheet Is the Page Box | accepted | 2026-10-04 |
 | 0024 | A 13px Print Type Scale, and the Generator Owns the Page Breaks | accepted | 2026-10-04 |
+| 0025 | Port the Project Plugins to the OpenCode V2 Plugin API | accepted | 2026-10-15 |
 
 ## About ADRs
 
