@@ -112,7 +112,7 @@ Committed layout, with generated output annotated:
     design-review/       Browser capture, page measurement, and handbook generators run by make
 .github/                 Dependabot config for pnpm and terraform manifests
 docs/                    Architecture decisions, specs, audits, and agent workflow docs
-  adr/                   Architecture decision records (ADR 0001 - 0024)
+  adr/                   Architecture decision records (ADR 0001 - 0025)
   agents/                Issue tracker, triage, and domain conventions
   audits/                Dated design and rendered-verification reports
   fonts-licensing.md     Font provenance and license obligations

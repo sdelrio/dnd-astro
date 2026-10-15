@@ -3,13 +3,22 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import { TmpRedirect } from '../plugins/tmp-redirect.js';
+import plugin from '../plugins/tmp-redirect.js';
 
-const toolInput = (tool) => ({ tool, sessionID: 'ses', callID: 'call' });
+const toolEvent = (tool, input) => ({ tool, input });
 
 async function loadBeforeHook(repoRoot) {
-  const hooks = await TmpRedirect({ directory: repoRoot, worktree: repoRoot });
-  return hooks['tool.execute.before'];
+  let before;
+  await plugin.setup({
+    location: { directory: repoRoot, project: { canonical: repoRoot } },
+    tool: {
+      hook: async (name, callback) => {
+        if (name === 'execute.before') before = callback;
+        return { dispose: async () => {} };
+      },
+    },
+  });
+  return before;
 }
 
 describe('TmpRedirect plugin', () => {
@@ -26,29 +35,34 @@ describe('TmpRedirect plugin', () => {
     vi.restoreAllMocks();
   });
 
-  it('redirects a write to /tmp into repo tmp and creates the parent directory', async () => {
-    const output = { args: { filePath: '/tmp/sub/notes.md', content: 'hi' } };
+  it('is a V2 default definition with an id and a setup function', () => {
+    expect(plugin.id).toBe('tmp-redirect');
+    expect(typeof plugin.setup).toBe('function');
+  });
 
-    await before(toolInput('write'), output);
+  it('redirects a write to /tmp into repo tmp and creates the parent directory', async () => {
+    const event = toolEvent('write', { path: '/tmp/sub/notes.md', content: 'hi' });
+
+    await before(event);
 
     const expected = path.join(repoRoot, 'tmp', 'sub', 'notes.md');
-    expect(output.args.filePath).toBe(expected);
+    expect(event.input.path).toBe(expected);
     expect(fs.existsSync(path.dirname(expected))).toBe(true);
   });
 
   it('redirects an edit targeting /private/tmp', async () => {
-    const output = { args: { filePath: '/private/tmp/notes.md', oldString: 'a', newString: 'b' } };
+    const event = toolEvent('edit', { path: '/private/tmp/notes.md', oldString: 'a', newString: 'b' });
 
-    await before(toolInput('edit'), output);
+    await before(event);
 
-    expect(output.args.filePath).toBe(path.join(repoRoot, 'tmp', 'notes.md'));
+    expect(event.input.path).toBe(path.join(repoRoot, 'tmp', 'notes.md'));
   });
 
   it('logs each redirect', async () => {
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-    const output = { args: { filePath: '/tmp/notes.md', content: 'hi' } };
+    const event = toolEvent('write', { path: '/tmp/notes.md', content: 'hi' });
 
-    await before(toolInput('write'), output);
+    await before(event);
 
     expect(log).toHaveBeenCalledWith(expect.stringContaining('/tmp/notes.md'));
     expect(log).toHaveBeenCalledWith(expect.stringContaining(path.join(repoRoot, 'tmp', 'notes.md')));
@@ -56,38 +70,38 @@ describe('TmpRedirect plugin', () => {
 
   it('leaves a write already under the repo tmp untouched', async () => {
     const filePath = path.join(repoRoot, 'tmp', 'notes.md');
-    const output = { args: { filePath, content: 'hi' } };
+    const event = toolEvent('write', { path: filePath, content: 'hi' });
 
-    await before(toolInput('write'), output);
+    await before(event);
 
-    expect(output.args.filePath).toBe(filePath);
+    expect(event.input.path).toBe(filePath);
   });
 
   it('leaves read calls untouched', async () => {
-    const output = { args: { filePath: '/tmp/notes.md' } };
+    const event = toolEvent('read', { path: '/tmp/notes.md' });
 
-    await before(toolInput('read'), output);
+    await before(event);
 
-    expect(output.args.filePath).toBe('/tmp/notes.md');
+    expect(event.input.path).toBe('/tmp/notes.md');
   });
 
-  it('rejects a bash command referencing /tmp with guidance', async () => {
-    const output = { args: { command: 'echo hi > /tmp/notes.md' } };
+  it('rejects a shell command referencing /tmp with guidance', async () => {
+    const event = toolEvent('shell', { command: 'echo hi > /tmp/notes.md' });
 
-    await expect(before(toolInput('bash'), output)).rejects.toThrow(/AGENTS\.md/);
-    await expect(before(toolInput('bash'), output)).rejects.toThrow(/tmp\//);
+    expect(() => before(event)).toThrow(/AGENTS\.md/);
+    expect(() => before(event)).toThrow(/tmp\//);
   });
 
-  it('allows a bash command using the repo-relative tmp convention', async () => {
-    const output = { args: { command: 'mkdir -p tmp && echo hi > tmp/notes.md' } };
+  it('allows a shell command using the repo-relative tmp convention', () => {
+    const event = toolEvent('shell', { command: 'mkdir -p tmp && echo hi > tmp/notes.md' });
 
-    await expect(before(toolInput('bash'), output)).resolves.toBeUndefined();
+    expect(() => before(event)).not.toThrow();
   });
 
-  it('ignores tools it does not guard', async () => {
-    const output = { args: { filePath: '/tmp/notes.md' } };
+  it('ignores tools it does not guard', () => {
+    const event = toolEvent('list', { path: '/tmp/notes.md' });
 
-    await expect(before(toolInput('list'), output)).resolves.toBeUndefined();
-    expect(output.args.filePath).toBe('/tmp/notes.md');
+    expect(() => before(event)).not.toThrow();
+    expect(event.input.path).toBe('/tmp/notes.md');
   });
 });
