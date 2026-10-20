@@ -22,7 +22,7 @@
     "@iconify-json/game-icons": "^1.2.4",
     "@iconify-json/mdi": "^1.2.3",
     "alpinejs": "^3.17.4",
-    "astro": "^7.3.8",
+    "astro": "^7.4.0",
     "astro-mermaid": "^2.1.0",
     "fast-xml-parser": "^5.11.2",
     "he": "^1.2.0",
