@@ -4,6 +4,7 @@
     "chrome-devtools": {
       "type": "local",
       "command": [
+        "corepack",
         "pnpm",
         "dlx",
         "chrome-devtools-mcp@1.10.1",

@@ -150,7 +150,10 @@ calls on the same `pageId` - never a re-navigation.
 
 `--filesystem-root` is what lets `take_screenshot` write inside the repository.
 It holds an **absolute path**, so if you clone the repository elsewhere, edit that
-one value in `opencode.json` before expecting writes to land.
+one value in `opencode.json` before expecting writes to land. It cannot be
+written home-relative: the server resolves the flag with `path.resolve`, which
+expands neither `~` nor `$HOME`, so `--filesystem-root=$HOME/...` is read as a
+literal directory name and resolves to one that does not exist.
 
 ### The dev-time boundary
 
@@ -175,8 +178,26 @@ only (never in the server's `--log-file`, and not in `opencode --print-logs`), a
 so must be checked against captured stderr:
 
 ```
-pnpm dlx chrome-devtools-mcp@1.10.1 <the flags from opencode.json> </dev/null >/dev/null 2>tmp/mcp-stderr.log
+corepack pnpm dlx chrome-devtools-mcp@1.10.1 <the flags from opencode.json> </dev/null >/dev/null 2>tmp/mcp-stderr.log
 rg "Unknown arguments" tmp/mcp-stderr.log    # expect no match
+```
+
+The `corepack` prefix is not decoration. An MCP `command` is spawned directly,
+without a shell, so `pnpm` has to be on the *server process's* `PATH`: a `pnpm`
+in a devbox shell's environment is invisible to it, and the spawn fails with
+`NotFound: ChildProcess.spawn (pnpm dlx ...)`. `pnpm` here is provisioned by
+devbox into `.devbox/nix/profile/default/bin`, which is only on `PATH` inside
+this project's direnv shell, while `corepack` ships with the Node 24 that is on
+the service's own `PATH` and honours `packageManager: pnpm@11.25.0` in
+`package.json`. Reproduce the failure and the fix with the same `PATH` the
+service has:
+
+```
+DEVBOX_BIN=$HOME/.local/share/devbox/global/default/.devbox/nix/profile/default/bin
+env -i HOME=$HOME PATH=/usr/bin:/bin:$DEVBOX_BIN \
+  pnpm dlx chrome-devtools-mcp@1.10.1 --version          # 127, command not found
+env -i HOME=$HOME PATH=/usr/bin:/bin:$DEVBOX_BIN \
+  corepack pnpm dlx chrome-devtools-mcp@1.10.1 --version # 1.10.1
 ```
 
 Also verify by capture, not by inspection: confirm a screenshot actually exists
