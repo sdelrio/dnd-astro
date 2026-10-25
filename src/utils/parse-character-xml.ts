@@ -1,5 +1,5 @@
 import { XMLParser } from 'fast-xml-parser';
-import he from 'he';
+import { decode } from 'he';
 import { coerceNumber } from './numeric';
 
 export interface PassiveSkills {
@@ -255,10 +255,10 @@ function parseCharacterXmlUnsafe(xml: string): ParsedCharacter | null {
   const getText = (obj: XmlField | undefined, key: string) => {
     const field = obj && typeof obj === 'object' ? obj[key] : undefined;
     const val = typeof field === 'object' && field !== null ? field['#text'] : field;
-    if (typeof val === 'string') return he.decode(val);
+    if (typeof val === 'string') return decode(val);
     if (val == null) return '';
     // handle numbers or other (should not happen for text fields, but guard for tests)
-    return he.decode(String(val));
+    return decode(String(val));
   };
   // Classes
   // Classes node may be <classes>.<id-XXXXX> for each class taken
@@ -290,7 +290,7 @@ function parseCharacterXmlUnsafe(xml: string): ParsedCharacter | null {
     if (!key.startsWith('id-')) continue;
     const cc = rawClasses[key];
     // Both name and level might be encoded/strings with entities
-    const cname = typeof cc.name === 'string' ? he.decode(cc.name) : he.decode(cc.name?.['#text'] ?? '');
+    const cname = typeof cc.name === 'string' ? decode(cc.name) : decode(cc.name?.['#text'] ?? '');
     const clevel = coerceNumber(
       typeof cc.level === 'number' ? cc.level : cc.level?.['#text']
     );
