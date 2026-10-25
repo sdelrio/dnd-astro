@@ -145,9 +145,18 @@ That line goes to **stderr only**. It does not appear in the server's own
 The check is therefore only meaningful against captured stderr:
 
 ```sh
-pnpm dlx chrome-devtools-mcp@1.10.1 <flags> </dev/null >/dev/null 2>tmp/mcp-stderr.log
+corepack pnpm dlx chrome-devtools-mcp@1.10.1 <flags> </dev/null >/dev/null 2>tmp/mcp-stderr.log
 rg "Unknown arguments" tmp/mcp-stderr.log   # no match expected
 ```
+
+The `corepack` prefix is load-bearing: an MCP `command` is spawned without a
+shell, so `pnpm` must be on the server process's own `PATH`. `pnpm` is
+provisioned by devbox into this project's `.devbox/nix/profile/default/bin`,
+which only reaches `PATH` inside the direnv shell, and a server started from
+anywhere else fails with `NotFound: ChildProcess.spawn (pnpm dlx ...)`.
+`corepack` ships with the Node that is already on that `PATH` and honours
+`packageManager: pnpm@11.25.0`. See
+[the note in AGENTS.md](../../AGENTS.md#after-changing-any-flag-grep-the-stderr).
 
 ### Verify by capture, not by inspection
 
