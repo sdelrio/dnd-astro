@@ -21,7 +21,7 @@
     "@astrojs/starlight": "^0.42.6",
     "@iconify-json/game-icons": "^1.2.4",
     "@iconify-json/mdi": "^1.2.3",
-    "alpinejs": "^3.17.4",
+    "alpinejs": "^3.17.5",
     "astro": "^7.4.0",
     "astro-mermaid": "^2.1.0",
     "fast-xml-parser": "^5.11.2",
